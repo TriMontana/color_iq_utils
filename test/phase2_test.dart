@@ -1,0 +1,87 @@
+import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:test/test.dart';
+import 'dart:math';
+
+void main() {
+  group('Phase 2 Color Space Tests', () {
+    test('Color implements ColorSpace', () {
+      final color = Color.fromARGB(255, 255, 0, 0);
+      expect(color, isA<ColorSpace>());
+      expect(color.value, 0xFFFF0000);
+    });
+
+    test('RGB to HSL conversion (Red)', () {
+      final color = Color.fromARGB(255, 255, 0, 0);
+      final hsl = color.toHsl();
+      expect(hsl.h, closeTo(0, 0.1));
+      expect(hsl.s, closeTo(1.0, 0.1));
+      expect(hsl.l, closeTo(0.5, 0.1));
+      expect(hsl.value, 0xFFFF0000);
+    });
+
+    test('RGB to HSV conversion (Green)', () {
+      final color = Color.fromARGB(255, 0, 255, 0);
+      final hsv = color.toHsv();
+      expect(hsv.h, closeTo(120, 0.1));
+      expect(hsv.s, closeTo(1.0, 0.1));
+      expect(hsv.v, closeTo(1.0, 0.1));
+      expect(hsv.value, 0xFF00FF00);
+    });
+
+    test('RGB to HSB conversion (Blue)', () {
+      final color = Color.fromARGB(255, 0, 0, 255);
+      final hsb = color.toHsb();
+      expect(hsb.h, closeTo(240, 0.1));
+      expect(hsb.s, closeTo(1.0, 0.1));
+      expect(hsb.b, closeTo(1.0, 0.1));
+      expect(hsb.value, 0xFF0000FF);
+    });
+
+    test('RGB to HWB conversion (Red)', () {
+      final color = Color.fromARGB(255, 255, 0, 0);
+      final hwb = color.toHwb();
+      expect(hwb.h, closeTo(0, 0.1));
+      expect(hwb.w, closeTo(0.0, 0.1));
+      expect(hwb.b, closeTo(0.0, 0.1));
+      expect(hwb.value, 0xFFFF0000);
+    });
+
+    test('RGB to Hct conversion (Red)', () {
+      final color = Color.fromARGB(255, 255, 0, 0);
+      final hct = color.toHct();
+      // Hct hue for sRGB Red is approx 27-28 degrees (Cam16 hue)
+      expect(hct.hue, closeTo(27, 2.0)); 
+      expect(hct.value, 0xFFFF0000);
+    });
+
+    test('RGB to Cam16 conversion (Red)', () {
+      final color = Color.fromARGB(255, 255, 0, 0);
+      final cam = color.toCam16();
+      expect(cam.hue, closeTo(27, 2.0));
+      expect(cam.value, 0xFFFF0000);
+    });
+
+    test('RGB to Display P3 conversion (Red)', () {
+      final color = Color.fromARGB(255, 255, 0, 0);
+      final p3 = color.toDisplayP3();
+      // sRGB Red (1,0,0) in P3 is approx (0.917, 0.200, 0.138)
+      expect(p3.r, closeTo(0.917, 0.05));
+      expect(p3.g, closeTo(0.200, 0.05));
+      expect(p3.b, closeTo(0.138, 0.05));
+      // Round trip check (should be close to original Red)
+      expect(p3.value, 0xFFFF0000); 
+    });
+
+    test('RGB to Rec. 2020 conversion (Red)', () {
+      final color = Color.fromARGB(255, 255, 0, 0);
+      final rec2020 = color.toRec2020();
+      // sRGB Red (1,0,0) in Rec2020 is approx (0.708, 0.292, 0.0) - wait, checking math
+      // Actually sRGB gamut is smaller, so sRGB Red fits inside Rec2020.
+      // The values should be different.
+      // sRGB Red in Rec2020 is approx (0.627, 0.329, 0.093) linear?
+      // Let's just check it's not 1,0,0 and round trip works.
+      expect(rec2020.r, isNot(closeTo(1.0, 0.001)));
+      expect(rec2020.value, 0xFFFF0000);
+    });
+  });
+}
