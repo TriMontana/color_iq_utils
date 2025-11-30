@@ -21,6 +21,37 @@ class MunsellColor implements ColorSpacesIQ {
   }
 
   @override
+  MunsellColor saturate([double amount = 25]) {
+    return toColor().saturate(amount).toMunsell();
+  }
+
+  @override
+  MunsellColor desaturate([double amount = 25]) {
+    return toColor().desaturate(amount).toMunsell();
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
+
+  @override
+  List<double> get linearSrgb => toColor().linearSrgb;
+
+  @override
+  MunsellColor get inverted => toColor().inverted.toMunsell();
+
+  @override
+  MunsellColor get grayscale => toColor().grayscale.toMunsell();
+
+  @override
+  MunsellColor whiten([double amount = 20]) => toColor().whiten(amount).toMunsell();
+
+  @override
+  MunsellColor blacken([double amount = 20]) => toColor().blacken(amount).toMunsell();
+
+  @override
+  MunsellColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toMunsell();
+
+  @override
   MunsellColor lighten([double amount = 20]) {
     return toColor().lighten(amount).toMunsell();
   }

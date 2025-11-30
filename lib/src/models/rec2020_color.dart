@@ -47,6 +47,37 @@ class Rec2020Color implements ColorSpacesIQ {
   }
 
   @override
+  Rec2020Color saturate([double amount = 25]) {
+    return toColor().saturate(amount).toRec2020();
+  }
+
+  @override
+  Rec2020Color desaturate([double amount = 25]) {
+    return toColor().desaturate(amount).toRec2020();
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
+
+  @override
+  List<double> get linearSrgb => toColor().linearSrgb;
+
+  @override
+  Rec2020Color get inverted => toColor().inverted.toRec2020();
+
+  @override
+  Rec2020Color get grayscale => toColor().grayscale.toRec2020();
+
+  @override
+  Rec2020Color whiten([double amount = 20]) => toColor().whiten(amount).toRec2020();
+
+  @override
+  Rec2020Color blacken([double amount = 20]) => toColor().blacken(amount).toRec2020();
+
+  @override
+  Rec2020Color lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toRec2020();
+
+  @override
   Rec2020Color lighten([double amount = 20]) {
     return toColor().lighten(amount).toRec2020();
   }

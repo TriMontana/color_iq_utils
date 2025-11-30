@@ -87,5 +87,36 @@ class XyzColor implements ColorSpacesIQ {
   }
 
   @override
+  XyzColor saturate([double amount = 25]) {
+    return toColor().saturate(amount).toXyz();
+  }
+
+  @override
+  XyzColor desaturate([double amount = 25]) {
+    return toColor().desaturate(amount).toXyz();
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
+
+  @override
+  List<double> get linearSrgb => toColor().linearSrgb;
+
+  @override
+  XyzColor get inverted => toColor().inverted.toXyz();
+
+  @override
+  XyzColor get grayscale => toColor().grayscale.toXyz();
+
+  @override
+  XyzColor whiten([double amount = 20]) => toColor().whiten(amount).toXyz();
+
+  @override
+  XyzColor blacken([double amount = 20]) => toColor().blacken(amount).toXyz();
+
+  @override
+  XyzColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toXyz();
+
+  @override
   String toString() => 'XyzColor(x: ${x.toStringAsFixed(2)}, y: ${y.toStringAsFixed(2)}, z: ${z.toStringAsFixed(2)})';
 }

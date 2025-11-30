@@ -36,5 +36,36 @@ class OkHsvColor implements ColorSpacesIQ {
   }
 
   @override
+  OkHsvColor saturate([double amount = 25]) {
+    return OkHsvColor(h, min(1.0, s + amount / 100), v);
+  }
+
+  @override
+  OkHsvColor desaturate([double amount = 25]) {
+    return OkHsvColor(h, max(0.0, s - amount / 100), v);
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
+
+  @override
+  List<double> get linearSrgb => toColor().linearSrgb;
+
+  @override
+  OkHsvColor get inverted => toColor().inverted.toOkHsv();
+
+  @override
+  OkHsvColor get grayscale => toColor().grayscale.toOkHsv();
+
+  @override
+  OkHsvColor whiten([double amount = 20]) => toColor().whiten(amount).toOkHsv();
+
+  @override
+  OkHsvColor blacken([double amount = 20]) => toColor().blacken(amount).toOkHsv();
+
+  @override
+  OkHsvColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toOkHsv();
+
+  @override
   String toString() => 'OkHsvColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)})';
 }

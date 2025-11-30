@@ -43,6 +43,37 @@ class HunterLabColor implements ColorSpacesIQ {
   }
 
   @override
+  HunterLabColor saturate([double amount = 25]) {
+    return toColor().saturate(amount).toHunterLab();
+  }
+
+  @override
+  HunterLabColor desaturate([double amount = 25]) {
+    return toColor().desaturate(amount).toHunterLab();
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
+
+  @override
+  List<double> get linearSrgb => toColor().linearSrgb;
+
+  @override
+  HunterLabColor get inverted => toColor().inverted.toHunterLab();
+
+  @override
+  HunterLabColor get grayscale => toColor().grayscale.toHunterLab();
+
+  @override
+  HunterLabColor whiten([double amount = 20]) => toColor().whiten(amount).toHunterLab();
+
+  @override
+  HunterLabColor blacken([double amount = 20]) => toColor().blacken(amount).toHunterLab();
+
+  @override
+  HunterLabColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toHunterLab();
+
+  @override
   HunterLabColor lighten([double amount = 20]) {
     return HunterLabColor(min(100, l + amount), a, b);
   }

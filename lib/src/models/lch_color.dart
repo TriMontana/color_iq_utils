@@ -33,5 +33,36 @@ class LchColor implements ColorSpacesIQ {
   }
 
   @override
+  LchColor saturate([double amount = 25]) {
+    return LchColor(l, c + amount, h);
+  }
+
+  @override
+  LchColor desaturate([double amount = 25]) {
+    return LchColor(l, max(0, c - amount), h);
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
+
+  @override
+  List<double> get linearSrgb => toColor().linearSrgb;
+
+  @override
+  LchColor get inverted => toColor().inverted.toLch();
+
+  @override
+  LchColor get grayscale => toColor().grayscale.toLch();
+
+  @override
+  LchColor whiten([double amount = 20]) => toColor().whiten(amount).toLch();
+
+  @override
+  LchColor blacken([double amount = 20]) => toColor().blacken(amount).toLch();
+
+  @override
+  LchColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toLch();
+
+  @override
   String toString() => 'LchColor(l: ${l.toStringAsFixed(2)}, c: ${c.toStringAsFixed(2)}, h: ${h.toStringAsFixed(2)})';
 }

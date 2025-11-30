@@ -430,5 +430,64 @@ class Color implements ColorSpacesIQ {
   }
 
   @override
+  Color saturate([double amount = 25]) {
+    return toHsl().saturate(amount).toColor();
+  }
+
+  @override
+  Color desaturate([double amount = 25]) {
+    return toHsl().desaturate(amount).toColor();
+  }
+
+  @override
+  List<int> get srgb => [red, green, blue, alpha];
+
+  @override
+  List<double> get linearSrgb {
+    double r = red / 255.0;
+    double g = green / 255.0;
+    double b = blue / 255.0;
+
+    r = (r > 0.04045) ? pow((r + 0.055) / 1.055, 2.4).toDouble() : (r / 12.92);
+    g = (g > 0.04045) ? pow((g + 0.055) / 1.055, 2.4).toDouble() : (g / 12.92);
+    b = (b > 0.04045) ? pow((b + 0.055) / 1.055, 2.4).toDouble() : (b / 12.92);
+
+    return [r, g, b, alpha / 255.0];
+  }
+
+  @override
+  Color get inverted {
+    return Color.fromARGB(alpha, 255 - red, 255 - green, 255 - blue);
+  }
+
+  @override
+  Color get grayscale => desaturate(100);
+
+  @override
+  Color whiten([double amount = 20]) {
+    return lerp(const Color(0xFFFFFFFF), amount / 100) as Color;
+  }
+
+  @override
+  Color blacken([double amount = 20]) {
+    return lerp(const Color(0xFF000000), amount / 100) as Color;
+  }
+
+  @override
+  ColorSpacesIQ lerp(ColorSpacesIQ other, double t) {
+    if (other is! Color) {
+      return lerp(Color(other.value), t);
+    }
+    
+    final otherColor = other;
+    return Color.fromARGB(
+      (alpha + (otherColor.alpha - alpha) * t).round(),
+      (red + (otherColor.red - red) * t).round(),
+      (green + (otherColor.green - green) * t).round(),
+      (blue + (otherColor.blue - blue) * t).round(),
+    );
+  }
+
+  @override
   String toString() => 'Color(0x${value.toRadixString(16).toUpperCase().padLeft(8, '0')})';
 }

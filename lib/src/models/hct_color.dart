@@ -28,5 +28,36 @@ class HctColor implements ColorSpacesIQ {
   }
 
   @override
+  HctColor saturate([double amount = 25]) {
+    return HctColor(hue, chroma + amount, tone);
+  }
+
+  @override
+  HctColor desaturate([double amount = 25]) {
+    return HctColor(hue, max(0, chroma - amount), tone);
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
+
+  @override
+  List<double> get linearSrgb => toColor().linearSrgb;
+
+  @override
+  HctColor get inverted => toColor().inverted.toHct();
+
+  @override
+  HctColor get grayscale => toColor().grayscale.toHct();
+
+  @override
+  HctColor whiten([double amount = 20]) => toColor().whiten(amount).toHct();
+
+  @override
+  HctColor blacken([double amount = 20]) => toColor().blacken(amount).toHct();
+
+  @override
+  HctColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toHct();
+
+  @override
   String toString() => 'HctColor(hue: ${hue.toStringAsFixed(2)}, chroma: ${chroma.toStringAsFixed(2)}, tone: ${tone.toStringAsFixed(2)})';
 }

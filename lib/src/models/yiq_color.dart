@@ -24,6 +24,37 @@ class YiqColor implements ColorSpacesIQ {
   }
 
   @override
+  YiqColor saturate([double amount = 25]) {
+    return toColor().saturate(amount).toYiq();
+  }
+
+  @override
+  YiqColor desaturate([double amount = 25]) {
+    return toColor().desaturate(amount).toYiq();
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
+
+  @override
+  List<double> get linearSrgb => toColor().linearSrgb;
+
+  @override
+  YiqColor get inverted => toColor().inverted.toYiq();
+
+  @override
+  YiqColor get grayscale => toColor().grayscale.toYiq();
+
+  @override
+  YiqColor whiten([double amount = 20]) => toColor().whiten(amount).toYiq();
+
+  @override
+  YiqColor blacken([double amount = 20]) => toColor().blacken(amount).toYiq();
+
+  @override
+  YiqColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toYiq();
+
+  @override
   YiqColor lighten([double amount = 20]) {
     return toColor().lighten(amount).toYiq();
   }

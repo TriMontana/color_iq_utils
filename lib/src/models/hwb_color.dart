@@ -33,6 +33,37 @@ class HwbColor implements ColorSpacesIQ {
   }
 
   @override
+  HwbColor saturate([double amount = 25]) {
+    return toColor().saturate(amount).toHwb();
+  }
+
+  @override
+  HwbColor desaturate([double amount = 25]) {
+    return toColor().desaturate(amount).toHwb();
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
+
+  @override
+  List<double> get linearSrgb => toColor().linearSrgb;
+
+  @override
+  HwbColor get inverted => toColor().inverted.toHwb();
+
+  @override
+  HwbColor get grayscale => toColor().grayscale.toHwb();
+
+  @override
+  HwbColor whiten([double amount = 20]) => toColor().whiten(amount).toHwb();
+
+  @override
+  HwbColor blacken([double amount = 20]) => toColor().blacken(amount).toHwb();
+
+  @override
+  HwbColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toHwb();
+
+  @override
   HwbColor lighten([double amount = 20]) {
     return toColor().lighten(amount).toHwb();
   }

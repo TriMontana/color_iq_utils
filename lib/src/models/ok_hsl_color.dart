@@ -35,5 +35,36 @@ class OkHslColor implements ColorSpacesIQ {
   }
 
   @override
+  OkHslColor saturate([double amount = 25]) {
+    return OkHslColor(h, min(1.0, s + amount / 100), l);
+  }
+
+  @override
+  OkHslColor desaturate([double amount = 25]) {
+    return OkHslColor(h, max(0.0, s - amount / 100), l);
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
+
+  @override
+  List<double> get linearSrgb => toColor().linearSrgb;
+
+  @override
+  OkHslColor get inverted => toColor().inverted.toOkHsl();
+
+  @override
+  OkHslColor get grayscale => toColor().grayscale.toOkHsl();
+
+  @override
+  OkHslColor whiten([double amount = 20]) => toColor().whiten(amount).toOkHsl();
+
+  @override
+  OkHslColor blacken([double amount = 20]) => toColor().blacken(amount).toOkHsl();
+
+  @override
+  OkHslColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toOkHsl();
+
+  @override
   String toString() => 'OkHslColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, l: ${l.toStringAsFixed(2)})';
 }

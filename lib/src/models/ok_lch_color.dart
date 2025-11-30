@@ -33,5 +33,36 @@ class OkLchColor implements ColorSpacesIQ {
   }
 
   @override
+  OkLchColor saturate([double amount = 25]) {
+    return OkLchColor(l, c + amount / 100, h);
+  }
+
+  @override
+  OkLchColor desaturate([double amount = 25]) {
+    return OkLchColor(l, max(0.0, c - amount / 100), h);
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
+
+  @override
+  List<double> get linearSrgb => toColor().linearSrgb;
+
+  @override
+  OkLchColor get inverted => toColor().inverted.toOkLch();
+
+  @override
+  OkLchColor get grayscale => toColor().grayscale.toOkLch();
+
+  @override
+  OkLchColor whiten([double amount = 20]) => toColor().whiten(amount).toOkLch();
+
+  @override
+  OkLchColor blacken([double amount = 20]) => toColor().blacken(amount).toOkLch();
+
+  @override
+  OkLchColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toOkLch();
+
+  @override
   String toString() => 'OkLchColor(l: ${l.toStringAsFixed(2)}, c: ${c.toStringAsFixed(2)}, h: ${h.toStringAsFixed(2)})';
 }

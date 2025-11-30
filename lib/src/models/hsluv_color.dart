@@ -32,5 +32,36 @@ class HsluvColor implements ColorSpacesIQ {
   }
 
   @override
+  HsluvColor saturate([double amount = 25]) {
+    return HsluvColor(h, min(100, s + amount), l);
+  }
+
+  @override
+  HsluvColor desaturate([double amount = 25]) {
+    return HsluvColor(h, max(0, s - amount), l);
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
+
+  @override
+  List<double> get linearSrgb => toColor().linearSrgb;
+
+  @override
+  HsluvColor get inverted => toColor().inverted.toHsluv();
+
+  @override
+  HsluvColor get grayscale => toColor().grayscale.toHsluv();
+
+  @override
+  HsluvColor whiten([double amount = 20]) => toColor().whiten(amount).toHsluv();
+
+  @override
+  HsluvColor blacken([double amount = 20]) => toColor().blacken(amount).toHsluv();
+
+  @override
+  HsluvColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toHsluv();
+
+  @override
   String toString() => 'HsluvColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, l: ${l.toStringAsFixed(2)})';
 }

@@ -55,5 +55,36 @@ class LabColor implements ColorSpacesIQ {
   }
 
   @override
+  LabColor saturate([double amount = 25]) {
+    return toLch().saturate(amount).toLab();
+  }
+
+  @override
+  LabColor desaturate([double amount = 25]) {
+    return toLch().desaturate(amount).toLab();
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
+
+  @override
+  List<double> get linearSrgb => toColor().linearSrgb;
+
+  @override
+  LabColor get inverted => toColor().inverted.toLab();
+
+  @override
+  LabColor get grayscale => toColor().grayscale.toLab();
+
+  @override
+  LabColor whiten([double amount = 20]) => toColor().whiten(amount).toLab();
+
+  @override
+  LabColor blacken([double amount = 20]) => toColor().blacken(amount).toLab();
+
+  @override
+  LabColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toLab();
+
+  @override
   String toString() => 'LabColor(l: ${l.toStringAsFixed(2)}, a: ${a.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
 }

@@ -1,3 +1,4 @@
+import 'dart:math';
 import '../color_interfaces.dart';
 import 'color.dart';
 
@@ -24,6 +25,37 @@ class HspColor implements ColorSpacesIQ {
   HspColor lighten([double amount = 20]) {
     return toColor().lighten(amount).toHsp();
   }
+
+  @override
+  HspColor saturate([double amount = 25]) {
+    return HspColor(h, min(1.0, s + amount / 100), p);
+  }
+
+  @override
+  HspColor desaturate([double amount = 25]) {
+    return HspColor(h, max(0.0, s - amount / 100), p);
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
+
+  @override
+  List<double> get linearSrgb => toColor().linearSrgb;
+
+  @override
+  HspColor get inverted => toColor().inverted.toHsp();
+
+  @override
+  HspColor get grayscale => toColor().grayscale.toHsp();
+
+  @override
+  HspColor whiten([double amount = 20]) => toColor().whiten(amount).toHsp();
+
+  @override
+  HspColor blacken([double amount = 20]) => toColor().blacken(amount).toHsp();
+
+  @override
+  HspColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toHsp();
 
   @override
   String toString() => 'HspColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, p: ${p.toStringAsFixed(2)})';

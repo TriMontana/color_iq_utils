@@ -65,6 +65,37 @@ class OkLabColor implements ColorSpacesIQ {
   }
 
   @override
+  OkLabColor saturate([double amount = 25]) {
+    return toOkLch().saturate(amount).toOkLab();
+  }
+
+  @override
+  OkLabColor desaturate([double amount = 25]) {
+    return toOkLch().desaturate(amount).toOkLab();
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
+
+  @override
+  List<double> get linearSrgb => toColor().linearSrgb;
+
+  @override
+  OkLabColor get inverted => toColor().inverted.toOkLab();
+
+  @override
+  OkLabColor get grayscale => toColor().grayscale.toOkLab();
+
+  @override
+  OkLabColor whiten([double amount = 20]) => toColor().whiten(amount).toOkLab();
+
+  @override
+  OkLabColor blacken([double amount = 20]) => toColor().blacken(amount).toOkLab();
+
+  @override
+  OkLabColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toOkLab();
+
+  @override
   OkLabColor lighten([double amount = 20]) {
     return OkLabColor(min(1.0, l + amount / 100), a, b);
   }

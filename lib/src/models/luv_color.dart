@@ -10,7 +10,6 @@ class LuvColor implements ColorSpacesIQ {
 
   const LuvColor(this.l, this.u, this.v);
 
-
   XyzColor toXyz() {
     const double refX = 95.047;
     const double refY = 100.000;
@@ -50,6 +49,37 @@ class LuvColor implements ColorSpacesIQ {
   LuvColor darken([double amount = 20]) {
     return LuvColor(max(0, l - amount), u, v);
   }
+
+  @override
+  LuvColor saturate([double amount = 25]) {
+    return toColor().saturate(amount).toLuv();
+  }
+
+  @override
+  LuvColor desaturate([double amount = 25]) {
+    return toColor().desaturate(amount).toLuv();
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
+
+  @override
+  List<double> get linearSrgb => toColor().linearSrgb;
+
+  @override
+  LuvColor get inverted => toColor().inverted.toLuv();
+
+  @override
+  LuvColor get grayscale => toColor().grayscale.toLuv();
+
+  @override
+  LuvColor whiten([double amount = 20]) => toColor().whiten(amount).toLuv();
+
+  @override
+  LuvColor blacken([double amount = 20]) => toColor().blacken(amount).toLuv();
+
+  @override
+  LuvColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toLuv();
 
   @override
   LuvColor lighten([double amount = 20]) {

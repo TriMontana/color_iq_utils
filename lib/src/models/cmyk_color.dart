@@ -1,4 +1,4 @@
-import 'dart:math';
+
 import '../color_interfaces.dart';
 import 'color.dart';
 
@@ -35,6 +35,37 @@ class CmykColor implements ColorSpacesIQ {
   CmykColor darken([double amount = 20]) {
     return toColor().darken(amount).toCmyk();
   }
+
+  @override
+  CmykColor saturate([double amount = 25]) {
+    return toColor().saturate(amount).toCmyk();
+  }
+
+  @override
+  CmykColor desaturate([double amount = 25]) {
+    return toColor().desaturate(amount).toCmyk();
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
+
+  @override
+  List<double> get linearSrgb => toColor().linearSrgb;
+
+  @override
+  CmykColor get inverted => toColor().inverted.toCmyk();
+
+  @override
+  CmykColor get grayscale => toColor().grayscale.toCmyk();
+
+  @override
+  CmykColor whiten([double amount = 20]) => toColor().whiten(amount).toCmyk();
+
+  @override
+  CmykColor blacken([double amount = 20]) => toColor().blacken(amount).toCmyk();
+
+  @override
+  CmykColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toCmyk();
 
   @override
   String toString() => 'CmykColor(c: ${c.toStringAsFixed(2)}, m: ${m.toStringAsFixed(2)}, y: ${y.toStringAsFixed(2)}, k: ${k.toStringAsFixed(2)})';

@@ -31,5 +31,36 @@ class Cam16Color implements ColorSpacesIQ {
   }
 
   @override
+  Cam16Color saturate([double amount = 25]) {
+    return Cam16Color(hue, chroma + amount, j, m, s, q);
+  }
+
+  @override
+  Cam16Color desaturate([double amount = 25]) {
+    return Cam16Color(hue, max(0, chroma - amount), j, m, s, q);
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
+
+  @override
+  List<double> get linearSrgb => toColor().linearSrgb;
+
+  @override
+  Cam16Color get inverted => toColor().inverted.toCam16();
+
+  @override
+  Cam16Color get grayscale => toColor().grayscale.toCam16();
+
+  @override
+  Cam16Color whiten([double amount = 20]) => toColor().whiten(amount).toCam16();
+
+  @override
+  Cam16Color blacken([double amount = 20]) => toColor().blacken(amount).toCam16();
+
+  @override
+  Cam16Color lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toCam16();
+
+  @override
   String toString() => 'Cam16Color(hue: ${hue.toStringAsFixed(2)}, chroma: ${chroma.toStringAsFixed(2)}, j: ${j.toStringAsFixed(2)})';
 }

@@ -43,6 +43,37 @@ class DisplayP3Color implements ColorSpacesIQ {
   }
 
   @override
+  DisplayP3Color saturate([double amount = 25]) {
+    return toColor().saturate(amount).toDisplayP3();
+  }
+
+  @override
+  DisplayP3Color desaturate([double amount = 25]) {
+    return toColor().desaturate(amount).toDisplayP3();
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
+
+  @override
+  List<double> get linearSrgb => toColor().linearSrgb;
+
+  @override
+  DisplayP3Color get inverted => toColor().inverted.toDisplayP3();
+
+  @override
+  DisplayP3Color get grayscale => toColor().grayscale.toDisplayP3();
+
+  @override
+  DisplayP3Color whiten([double amount = 20]) => toColor().whiten(amount).toDisplayP3();
+
+  @override
+  DisplayP3Color blacken([double amount = 20]) => toColor().blacken(amount).toDisplayP3();
+
+  @override
+  DisplayP3Color lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toDisplayP3();
+
+  @override
   DisplayP3Color lighten([double amount = 20]) {
     return toColor().lighten(amount).toDisplayP3();
   }

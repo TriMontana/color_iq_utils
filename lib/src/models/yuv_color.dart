@@ -24,6 +24,37 @@ class YuvColor implements ColorSpacesIQ {
   }
 
   @override
+  YuvColor saturate([double amount = 25]) {
+    return toColor().saturate(amount).toYuv();
+  }
+
+  @override
+  YuvColor desaturate([double amount = 25]) {
+    return toColor().desaturate(amount).toYuv();
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
+
+  @override
+  List<double> get linearSrgb => toColor().linearSrgb;
+
+  @override
+  YuvColor get inverted => toColor().inverted.toYuv();
+
+  @override
+  YuvColor get grayscale => toColor().grayscale.toYuv();
+
+  @override
+  YuvColor whiten([double amount = 20]) => toColor().whiten(amount).toYuv();
+
+  @override
+  YuvColor blacken([double amount = 20]) => toColor().blacken(amount).toYuv();
+
+  @override
+  YuvColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toYuv();
+
+  @override
   YuvColor lighten([double amount = 20]) {
     return toColor().lighten(amount).toYuv();
   }
