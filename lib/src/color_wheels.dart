@@ -87,101 +87,15 @@ List<ColorSlice> _generateWheel(
   return slices;
 }
 
+/// Returns a name for the given hue (0-360).
+String getColorNameFromHue(double hue) {
+  int index = (hue / 6).round() % 60;
+  return _getColorName(index);
+}
+
 /// Returns a name for one of the 60 color sections.
 String _getColorName(int index) {
-  // 60 sections, 6 degrees each.
-  // 0: 0-6 (Red)
-  // 10: 60-66 (Yellow)
-  // 20: 120-126 (Green)
-  // 30: 180-186 (Cyan)
-  // 40: 240-246 (Blue)
-  // 50: 300-306 (Magenta)
-  
-  const fullNames = [
-    "Red", "Red-Vermilion", "Vermilion", "Scarlet", "Orange-Red", // 0-24
-    "Orange", "Deep Orange", "Amber", "Chrome Yellow", "Golden Yellow", // 30-54
-    "Yellow", "Lemon Yellow", "Lime Yellow", "Chartreuse", "Yellow-Green", // 60-84
-    "Lime", "Spring Green", "Harlequin", "Green", "Medium Green", // 90-114
-    "Forest Green", "Emerald", "Jungle Green", "Mint", "Teal", // 120-144
-    "Aqua", "Cyan", "Turquoise", "Sky Blue", "Cerulean", // 150-174
-    "Azure", "Cobalt", "Blue", "Medium Blue", "Dark Blue", // 180-204
-    "Indigo", "Blue-Violet", "Violet", "Purple", "Electric Purple", // 210-234
-    "Deep Purple", "Phlox", "Magenta", "Fuchsia", "Orchid", // 240-264
-    "Deep Pink", "Hot Pink", "Rose", "Raspberry", "Crimson", // 270-294
-    "Amaranth", "Ruby", "Cardinal", "Carmine", "Burgundy", // 300-324
-    "Maroon", "Brown", "Sienna", "Rust", "Garnet" // 330-354
-  ];
-  
-  // Corrected list to better align with HSV:
-  // 0: Red
-  // 10: Yellow
-  // 20: Green
-  // 30: Cyan
-  // 40: Blue
-  // 50: Magenta
-  
-  const alignedNames = [
-    "Red", "Red-Orange", "Vermilion", "Scarlet", "Orange-Red", // 0-24
-    "Orange", "Deep Orange", "Amber", "Chrome Yellow", "Golden Yellow", // 30-54
-    "Yellow", "Lemon", "Lime", "Chartreuse", "Lawn Green", // 60-84
-    "Spring Green", "Harlequin", "Green", "Medium Green", "Forest Green", // 90-114
-    "Emerald", "Jungle Green", "Mint", "Teal", "Aqua", // 120-144
-    "Cyan", "Turquoise", "Sky Blue", "Cerulean", "Azure", // 150-174
-    "Cobalt", "Blue", "Medium Blue", "Dark Blue", "Indigo", // 180-204
-    "Blue-Violet", "Violet", "Purple", "Electric Purple", "Deep Purple", // 210-234
-    "Phlox", "Magenta", "Fuchsia", "Orchid", "Deep Pink", // 240-264
-    "Hot Pink", "Rose", "Raspberry", "Crimson", "Amaranth", // 270-294
-    "Ruby", "Cardinal", "Carmine", "Burgundy", "Maroon", // 300-324
-    "Brown", "Sienna", "Rust", "Garnet", "Dark Red" // 330-354
-  ];
-  
-  // Wait, I need to be careful with indices.
-  // 0: Red
-  // 10: Yellow (60 deg).
-  // 20: Green (120 deg).
-  // 30: Cyan (180 deg).
-  // 40: Blue (240 deg).
-  // 50: Magenta (300 deg).
-  
-  const hsvNames = [
-    "Red", "Red-Orange", "Vermilion", "Scarlet", "Orange-Red", // 0-24
-    "Orange", "Deep Orange", "Amber", "Chrome Yellow", "Golden Yellow", // 30-54
-    "Yellow", "Lemon", "Lime", "Chartreuse", "Lawn Green", // 60-84
-    "Spring Green", "Harlequin", "Green", "Medium Green", "Forest Green", // 90-114
-    "Emerald", "Jungle Green", "Mint", "Teal", "Aqua", // 120-144
-    "Turquoise", "Sky Blue", "Cerulean", "Azure", "Cyan", // 150-174 (Cyan at 29? No, 174-180 is 29. 180 starts at 30)
-    // Wait, 180 is Index 30. So Cyan should be at 30.
-    // Let's shift "Cyan" to 30.
-    // 25-29 needs to be Green-Cyan to Cyan.
-    // 30 needs to be Cyan.
-  ];
-  
-  // Let's try again with strict anchors.
-  const alignedHsvNames = [
-    // 0-9 (Red to Yellow)
-    "Red", "Red-Orange", "Vermilion", "Scarlet", "Orange-Red", // 0, 6, 12, 18, 24
-    "Orange", "Deep Orange", "Amber", "Chrome Yellow", "Golden Yellow", // 30, 36, 42, 48, 54
-    
-    // 10-19 (Yellow to Green)
-    "Yellow", "Lemon", "Lime", "Chartreuse", "Lawn Green", // 60, 66, 72, 78, 84
-    "Spring Green", "Harlequin", "Green-Yellow", "Lime Green", "Pale Green", // 90, 96, 102, 108, 114
-    
-    // 20-29 (Green to Cyan)
-    "Green", "Medium Green", "Forest Green", "Emerald", "Jungle Green", // 120, 126, 132, 138, 144
-    "Mint", "Teal", "Aqua", "Turquoise", "Sky Blue", // 150, 156, 162, 168, 174
-    
-    // 30-39 (Cyan to Blue)
-    "Cyan", "Cerulean", "Azure", "Cobalt", "Cornflower", // 180, 186, 192, 198, 204
-    "Blue", "Medium Blue", "Dark Blue", "Royal Blue", "Indigo", // 210, 216, 222, 228, 234 (Blue is 240, so Blue should be at 40)
-    
-    // Wait, Blue is 240. Index 40.
-    // My list above has Blue at 35 (210). That's wrong.
-    // 210 is Azure/Blue-Cyan.
-    // 240 is Blue.
-    
-    // Let's restart the list carefully.
-  ];
-
+  // ... (existing list)
   const finalNames = [
     // 0-4 (Red -> Orange)
     "Red", "Red-Orange", "Vermilion", "Scarlet", "Orange-Red",
