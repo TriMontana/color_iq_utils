@@ -18,6 +18,11 @@ class HsbColor implements ColorSpacesIQ {
   int get value => toColor().value;
   
   @override
+  HsbColor darken([double amount = 20]) {
+    return HsbColor(h, s, max(0.0, b - amount / 100));
+  }
+
+  @override
   HsbColor lighten([double amount = 20]) {
     return HsbColor(h, s, min(1.0, b + amount / 100));
   }

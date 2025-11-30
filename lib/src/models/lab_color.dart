@@ -50,5 +50,10 @@ class LabColor implements ColorSpacesIQ {
   }
 
   @override
+  LabColor darken([double amount = 20]) {
+    return LabColor(max(0, l - amount), a, b);
+  }
+
+  @override
   String toString() => 'LabColor(l: ${l.toStringAsFixed(2)}, a: ${a.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
 }

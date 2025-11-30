@@ -1,12 +1,11 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
 import 'package:test/test.dart';
-import 'dart:math';
 
 void main() {
   group('Phase 2 Color Space Tests', () {
-    test('Color implements ColorSpace', () {
+    test('Color implements ColorSpacesIQ', () {
       final color = Color.fromARGB(255, 255, 0, 0);
-      expect(color, isA<ColorSpace>());
+      expect(color, isA<ColorSpacesIQ>());
       expect(color.value, 0xFFFF0000);
     });
 

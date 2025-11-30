@@ -16,6 +16,7 @@ import 'ok_hsv_color.dart';
 import 'hunter_lab_color.dart';
 import 'hsluv_color.dart';
 import 'munsell_color.dart';
+
 import 'hsl_color.dart';
 import 'hsv_color.dart';
 import 'hsb_color.dart';
@@ -416,11 +417,18 @@ class Color implements ColorSpacesIQ {
   @override
   int get hashCode => value.hashCode;
 
+
+
   @override
   Color lighten([double amount = 20]) {
     return toHsl().lighten(amount).toColor();
   }
 
   @override
-  String toString() => 'Color(0x${value.toRadixString(16).padLeft(8, '0')})';
+  Color darken([double amount = 20]) {
+    return toHsl().darken(amount).toColor();
+  }
+
+  @override
+  String toString() => 'Color(0x${value.toRadixString(16).toUpperCase().padLeft(8, '0')})';
 }

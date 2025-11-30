@@ -42,6 +42,11 @@ class Rec2020Color implements ColorSpacesIQ {
   int get value => toColor().value;
   
   @override
+  Rec2020Color darken([double amount = 20]) {
+    return toColor().darken(amount).toRec2020();
+  }
+
+  @override
   Rec2020Color lighten([double amount = 20]) {
     return toColor().lighten(amount).toRec2020();
   }

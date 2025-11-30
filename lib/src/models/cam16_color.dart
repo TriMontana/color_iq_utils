@@ -21,6 +21,11 @@ class Cam16Color implements ColorSpacesIQ {
   int get value => toColor().value;
   
   @override
+  Cam16Color darken([double amount = 20]) {
+    return Cam16Color(hue, chroma, max(0, j - amount), m, s, q);
+  }
+
+  @override
   Cam16Color lighten([double amount = 20]) {
     return Cam16Color(hue, chroma, min(100, j + amount), m, s, q);
   }

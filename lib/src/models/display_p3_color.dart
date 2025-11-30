@@ -38,6 +38,11 @@ class DisplayP3Color implements ColorSpacesIQ {
   int get value => toColor().value;
   
   @override
+  DisplayP3Color darken([double amount = 20]) {
+    return toColor().darken(amount).toDisplayP3();
+  }
+
+  @override
   DisplayP3Color lighten([double amount = 20]) {
     return toColor().lighten(amount).toDisplayP3();
   }

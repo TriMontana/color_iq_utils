@@ -60,6 +60,11 @@ class OkLabColor implements ColorSpacesIQ {
   }
 
   @override
+  OkLabColor darken([double amount = 20]) {
+    return OkLabColor(max(0.0, l - amount / 100), a, b);
+  }
+
+  @override
   OkLabColor lighten([double amount = 20]) {
     return OkLabColor(min(1.0, l + amount / 100), a, b);
   }

@@ -19,6 +19,11 @@ class YuvColor implements ColorSpacesIQ {
   int get value => toColor().value;
   
   @override
+  YuvColor darken([double amount = 20]) {
+    return toColor().darken(amount).toYuv();
+  }
+
+  @override
   YuvColor lighten([double amount = 20]) {
     return toColor().lighten(amount).toYuv();
   }

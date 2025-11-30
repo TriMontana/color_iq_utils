@@ -26,6 +26,11 @@ class OkHsvColor implements ColorSpacesIQ {
   int get value => toColor().value;
   
   @override
+  OkHsvColor darken([double amount = 20]) {
+    return OkHsvColor(h, s, max(0.0, v - amount / 100));
+  }
+
+  @override
   OkHsvColor lighten([double amount = 20]) {
     return OkHsvColor(h, s, min(1.0, v + amount / 100));
   }

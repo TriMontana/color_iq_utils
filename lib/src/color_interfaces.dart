@@ -5,4 +5,7 @@ abstract class ColorSpacesIQ {
 
   /// Lightens the color by the given [amount] (0-100).
   ColorSpacesIQ lighten([double amount = 20]);
+
+  /// Darkens the color by the given [amount] (0-100).
+  ColorSpacesIQ darken([double amount = 20]);
 }

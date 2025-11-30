@@ -18,6 +18,11 @@ class HctColor implements ColorSpacesIQ {
   int get value => toColor().value;
   
   @override
+  HctColor darken([double amount = 20]) {
+    return HctColor(hue, chroma, max(0, tone - amount));
+  }
+
+  @override
   HctColor lighten([double amount = 20]) {
     return HctColor(hue, chroma, min(100, tone + amount));
   }

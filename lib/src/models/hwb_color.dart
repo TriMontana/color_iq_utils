@@ -28,6 +28,11 @@ class HwbColor implements ColorSpacesIQ {
   int get value => toColor().value;
   
   @override
+  HwbColor darken([double amount = 20]) {
+    return toColor().darken(amount).toHwb();
+  }
+
+  @override
   HwbColor lighten([double amount = 20]) {
     return toColor().lighten(amount).toHwb();
   }

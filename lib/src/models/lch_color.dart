@@ -23,6 +23,11 @@ class LchColor implements ColorSpacesIQ {
   int get value => toColor().value;
   
   @override
+  LchColor darken([double amount = 20]) {
+    return LchColor(max(0, l - amount), c, h);
+  }
+
+  @override
   LchColor lighten([double amount = 20]) {
     return LchColor(min(100, l + amount), c, h);
   }

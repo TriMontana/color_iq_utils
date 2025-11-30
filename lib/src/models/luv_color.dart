@@ -47,6 +47,11 @@ class LuvColor implements ColorSpacesIQ {
   int get value => toColor().value;
   
   @override
+  LuvColor darken([double amount = 20]) {
+    return LuvColor(max(0, l - amount), u, v);
+  }
+
+  @override
   LuvColor lighten([double amount = 20]) {
     return LuvColor(min(100, l + amount), u, v);
   }

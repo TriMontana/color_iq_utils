@@ -19,6 +19,11 @@ class YiqColor implements ColorSpacesIQ {
   int get value => toColor().value;
   
   @override
+  YiqColor darken([double amount = 20]) {
+    return toColor().darken(amount).toYiq();
+  }
+
+  @override
   YiqColor lighten([double amount = 20]) {
     return toColor().lighten(amount).toYiq();
   }

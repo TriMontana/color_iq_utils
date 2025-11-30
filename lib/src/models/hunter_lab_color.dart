@@ -38,6 +38,11 @@ class HunterLabColor implements ColorSpacesIQ {
   int get value => toColor().value;
   
   @override
+  HunterLabColor darken([double amount = 20]) {
+    return HunterLabColor(max(0, l - amount), a, b);
+  }
+
+  @override
   HunterLabColor lighten([double amount = 20]) {
     return HunterLabColor(min(100, l + amount), a, b);
   }

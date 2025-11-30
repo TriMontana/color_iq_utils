@@ -16,6 +16,11 @@ class MunsellColor implements ColorSpacesIQ {
   int get value => toColor().value;
   
   @override
+  MunsellColor darken([double amount = 20]) {
+    return toColor().darken(amount).toMunsell();
+  }
+
+  @override
   MunsellColor lighten([double amount = 20]) {
     return toColor().lighten(amount).toMunsell();
   }

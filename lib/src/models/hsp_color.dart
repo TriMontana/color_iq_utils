@@ -16,6 +16,11 @@ class HspColor implements ColorSpacesIQ {
   int get value => toColor().value;
   
   @override
+  HspColor darken([double amount = 20]) {
+    return toColor().darken(amount).toHsp();
+  }
+
+  @override
   HspColor lighten([double amount = 20]) {
     return toColor().lighten(amount).toHsp();
   }

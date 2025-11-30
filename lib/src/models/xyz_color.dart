@@ -82,5 +82,10 @@ class XyzColor implements ColorSpacesIQ {
   }
 
   @override
+  XyzColor darken([double amount = 20]) {
+    return toColor().darken(amount).toXyz();
+  }
+
+  @override
   String toString() => 'XyzColor(x: ${x.toStringAsFixed(2)}, y: ${y.toStringAsFixed(2)}, z: ${z.toStringAsFixed(2)})';
 }

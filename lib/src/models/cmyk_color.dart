@@ -32,5 +32,10 @@ class CmykColor implements ColorSpacesIQ {
   }
 
   @override
+  CmykColor darken([double amount = 20]) {
+    return toColor().darken(amount).toCmyk();
+  }
+
+  @override
   String toString() => 'CmykColor(c: ${c.toStringAsFixed(2)}, m: ${m.toStringAsFixed(2)}, y: ${y.toStringAsFixed(2)}, k: ${k.toStringAsFixed(2)})';
 }

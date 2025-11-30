@@ -23,6 +23,11 @@ class OkLchColor implements ColorSpacesIQ {
   int get value => toColor().value;
   
   @override
+  OkLchColor darken([double amount = 20]) {
+    return OkLchColor(max(0.0, l - amount / 100), c, h);
+  }
+
+  @override
   OkLchColor lighten([double amount = 20]) {
     return OkLchColor(min(1.0, l + amount / 100), c, h);
   }

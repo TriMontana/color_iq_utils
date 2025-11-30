@@ -22,6 +22,11 @@ class HsluvColor implements ColorSpacesIQ {
   int get value => toColor().value;
   
   @override
+  HsluvColor darken([double amount = 20]) {
+    return HsluvColor(h, s, max(0, l - amount));
+  }
+
+  @override
   HsluvColor lighten([double amount = 20]) {
     return HsluvColor(h, s, min(100, l + amount));
   }
