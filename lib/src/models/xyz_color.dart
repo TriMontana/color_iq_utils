@@ -217,5 +217,52 @@ class XyzColor implements ColorSpacesIQ {
   List<XyzColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toXyz()).toList();
 
   @override
+  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+
+  @override
+  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+
+  @override
+  ColorSlice closestColorSlice() => toColor().closestColorSlice();
+
+  @override
+  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) {
+    if (gamut == Gamut.sRGB) {
+      // Convert to sRGB linear
+      double xTemp = x / 100;
+      double yTemp = y / 100;
+      double zTemp = z / 100;
+
+      double r = xTemp * 3.2406 + yTemp * -1.5372 + zTemp * -0.4986;
+      double g = xTemp * -0.9689 + yTemp * 1.8758 + zTemp * 0.0415;
+      double b = xTemp * 0.0557 + yTemp * -0.2040 + zTemp * 1.0570;
+
+      // Gamma correction
+      r = (r > 0.0031308) ? (1.055 * pow(r, 1 / 2.4) - 0.055) : (12.92 * r);
+      g = (g > 0.0031308) ? (1.055 * pow(g, 1 / 2.4) - 0.055) : (12.92 * g);
+      b = (b > 0.0031308) ? (1.055 * pow(b, 1 / 2.4) - 0.055) : (12.92 * b);
+
+      const epsilon = 0.0001;
+      return r >= -epsilon && r <= 1.0 + epsilon &&
+             g >= -epsilon && g <= 1.0 + epsilon &&
+             b >= -epsilon && b <= 1.0 + epsilon;
+    }
+    return true;
+  }
+
+  @override
+  List<double> get whitePoint => [95.047, 100.0, 108.883];
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'XyzColor',
+      'x': x,
+      'y': y,
+      'z': z,
+    };
+  }
+
+  @override
   String toString() => 'XyzColor(x: ${x.toStringAsFixed(2)}, y: ${y.toStringAsFixed(2)}, z: ${z.toStringAsFixed(2)})';
 }

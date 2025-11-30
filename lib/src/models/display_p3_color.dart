@@ -178,5 +178,31 @@ class DisplayP3Color implements ColorSpacesIQ {
   List<DisplayP3Color> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toDisplayP3()).toList();
 
   @override
-  String toString() => 'DisplayP3Color(r: ${r.toStringAsFixed(2)}, g: ${g.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
+  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+
+  @override
+  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+
+  @override
+  ColorSlice closestColorSlice() => toColor().closestColorSlice();
+
+  @override
+  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+
+  @override
+  List<double> get whitePoint => [95.047, 100.0, 108.883];
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'DisplayP3Color',
+      'r': r,
+      'g': g,
+      'b': b,
+      'opacity': transparency,
+    };
+  }
+
+  @override
+  String toString() => 'DisplayP3Color(r: ${r.toStringAsFixed(4)}, g: ${g.toStringAsFixed(4)}, b: ${b.toStringAsFixed(4)}, opacity: ${transparency.toStringAsFixed(2)})';
 }

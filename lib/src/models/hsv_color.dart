@@ -8,8 +8,9 @@ class HsvColor implements ColorSpacesIQ {
   final double h;
   final double s;
   final double v;
+  final double alpha;
 
-  const HsvColor(this.h, this.s, this.v);
+  const HsvColor(this.h, this.s, this.v, [this.alpha = 1.0]);
 
   @override
   Color toColor() {
@@ -32,7 +33,7 @@ class HsvColor implements ColorSpacesIQ {
           r = c; g = 0; b = x;
       }
       
-      return Color.fromARGB(255, ((r + m) * 255).round().clamp(0, 255), ((g + m) * 255).round().clamp(0, 255), ((b + m) * 255).round().clamp(0, 255));
+      return Color.fromARGB((alpha * 255).round(), ((r + m) * 255).round().clamp(0, 255), ((g + m) * 255).round().clamp(0, 255), ((b + m) * 255).round().clamp(0, 255));
   }
   
   @override
@@ -40,17 +41,17 @@ class HsvColor implements ColorSpacesIQ {
   
   @override
   HsvColor darken([double amount = 20]) {
-    return HsvColor(h, s, max(0.0, v - amount / 100));
+    return HsvColor(h, s, max(0.0, v - amount / 100), alpha);
   }
 
   @override
   HsvColor saturate([double amount = 25]) {
-    return HsvColor(h, min(1.0, s + amount / 100), v);
+    return HsvColor(h, min(1.0, s + amount / 100), v, alpha);
   }
 
   @override
   HsvColor desaturate([double amount = 25]) {
-    return HsvColor(h, max(0.0, s - amount / 100), v);
+    return HsvColor(h, max(0.0, s - amount / 100), v, alpha);
   }
 
   @override
@@ -76,7 +77,7 @@ class HsvColor implements ColorSpacesIQ {
 
   @override
   HsvColor lighten([double amount = 20]) {
-    return HsvColor(h, s, min(1.0, v + amount / 100));
+    return HsvColor(h, s, min(1.0, v + amount / 100), alpha);
   }
 
   @override
@@ -105,11 +106,12 @@ class HsvColor implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  HsvColor copyWith({double? h, double? s, double? v}) {
+  HsvColor copyWith({double? h, double? s, double? v, double? alpha}) {
     return HsvColor(
       h ?? this.h,
       s ?? this.s,
       v ?? this.v,
+      alpha ?? this.alpha,
     );
   }
 
@@ -184,5 +186,31 @@ class HsvColor implements ColorSpacesIQ {
   List<HsvColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toHsv()).toList();
 
   @override
-  String toString() => 'HsvColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)})';
+  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+
+  @override
+  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+
+  @override
+  ColorSlice closestColorSlice() => toColor().closestColorSlice();
+
+  @override
+  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+
+  @override
+  List<double> get whitePoint => [95.047, 100.0, 108.883];
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'HsvColor',
+      'hue': h,
+      'saturation': s,
+      'value': v,
+      'alpha': alpha,
+    };
+  }
+
+  @override
+  String toString() => 'HsvColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)}, a: ${alpha.toStringAsFixed(2)})';
 }

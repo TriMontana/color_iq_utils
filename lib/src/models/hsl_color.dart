@@ -8,8 +8,9 @@ class HslColor implements ColorSpacesIQ {
   final double h;
   final double s;
   final double l;
+  final double alpha;
 
-  const HslColor(this.h, this.s, this.l);
+  const HslColor(this.h, this.s, this.l, [this.alpha = 1.0]);
 
   @override
   Color toColor() {
@@ -32,7 +33,7 @@ class HslColor implements ColorSpacesIQ {
           r = c; g = 0; b = x;
       }
       
-      return Color.fromARGB(255, ((r + m) * 255).round().clamp(0, 255), ((g + m) * 255).round().clamp(0, 255), ((b + m) * 255).round().clamp(0, 255));
+      return Color.fromARGB((alpha * 255).round(), ((r + m) * 255).round().clamp(0, 255), ((g + m) * 255).round().clamp(0, 255), ((b + m) * 255).round().clamp(0, 255));
   }
   
   @override
@@ -40,17 +41,17 @@ class HslColor implements ColorSpacesIQ {
   
   @override
   HslColor darken([double amount = 20]) {
-    return HslColor(h, s, max(0.0, l - amount / 100));
+    return HslColor(h, s, max(0.0, l - amount / 100), alpha);
   }
 
   @override
   HslColor saturate([double amount = 25]) {
-    return HslColor(h, min(1.0, s + amount / 100), l);
+    return HslColor(h, min(1.0, s + amount / 100), l, alpha);
   }
 
   @override
   HslColor desaturate([double amount = 25]) {
-    return HslColor(h, max(0.0, s - amount / 100), l);
+    return HslColor(h, max(0.0, s - amount / 100), l, alpha);
   }
 
   @override
@@ -63,7 +64,7 @@ class HslColor implements ColorSpacesIQ {
   HslColor get inverted => toColor().inverted.toHsl();
 
   @override
-  HslColor get grayscale => HslColor(h, 0.0, l);
+  HslColor get grayscale => HslColor(h, 0.0, l, alpha);
 
   @override
   HslColor whiten([double amount = 20]) => toColor().whiten(amount).toHsl();
@@ -76,7 +77,7 @@ class HslColor implements ColorSpacesIQ {
 
   @override
   HslColor lighten([double amount = 20]) {
-    return HslColor(h, s, min(1.0, l + amount / 100));
+    return HslColor(h, s, min(1.0, l + amount / 100), alpha);
   }
 
   @override
@@ -105,11 +106,12 @@ class HslColor implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  HslColor copyWith({double? h, double? s, double? l}) {
+  HslColor copyWith({double? h, double? s, double? l, double? alpha}) {
     return HslColor(
       h ?? this.h,
       s ?? this.s,
       l ?? this.l,
+      alpha ?? this.alpha,
     );
   }
 
@@ -120,7 +122,7 @@ class HslColor implements ColorSpacesIQ {
     for (int i = 0; i < 5; i++) {
         double delta = (i - 2) * 0.1; // 10%
         double newL = (l + delta).clamp(0.0, 1.0);
-        results.add(HslColor(h, s, newL));
+        results.add(HslColor(h, s, newL, alpha));
     }
     return results;
   }
@@ -137,7 +139,7 @@ class HslColor implements ColorSpacesIQ {
 
     for (int i = 1; i <= 5; i++) {
       double newL = (l + delta * i).clamp(0.0, 1.0);
-      results.add(HslColor(h, s, newL));
+      results.add(HslColor(h, s, newL, alpha));
     }
     return results;
   }
@@ -154,7 +156,7 @@ class HslColor implements ColorSpacesIQ {
 
     for (int i = 1; i <= 5; i++) {
       double newL = (l - delta * i).clamp(0.0, 1.0);
-      results.add(HslColor(h, s, newL));
+      results.add(HslColor(h, s, newL, alpha));
     }
     return results;
   }
@@ -211,5 +213,31 @@ class HslColor implements ColorSpacesIQ {
   List<HslColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toHsl()).toList();
 
   @override
-  String toString() => 'HslColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, l: ${l.toStringAsFixed(2)})';
+  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+
+  @override
+  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+
+  @override
+  ColorSlice closestColorSlice() => toColor().closestColorSlice();
+
+  @override
+  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+
+  @override
+  List<double> get whitePoint => [95.047, 100.0, 108.883];
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'HslColor',
+      'hue': h,
+      'saturation': s,
+      'lightness': l,
+      'alpha': alpha,
+    };
+  }
+
+  @override
+  String toString() => 'HslColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, l: ${l.toStringAsFixed(2)}, alpha: ${alpha.toStringAsFixed(2)})';
 }

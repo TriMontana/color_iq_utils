@@ -9,12 +9,13 @@ class OkLchColor implements ColorSpacesIQ {
   final double l;
   final double c;
   final double h;
+  final double alpha;
 
-  const OkLchColor(this.l, this.c, this.h);
+  const OkLchColor(this.l, this.c, this.h, [this.alpha = 1.0]);
 
   OkLabColor toOkLab() {
     double hRad = h * pi / 180;
-    return OkLabColor(l, c * cos(hRad), c * sin(hRad));
+    return OkLabColor(l, c * cos(hRad), c * sin(hRad), alpha);
   }
   
   @override
@@ -25,17 +26,17 @@ class OkLchColor implements ColorSpacesIQ {
   
   @override
   OkLchColor darken([double amount = 20]) {
-    return OkLchColor(max(0.0, l - amount / 100), c, h);
+    return OkLchColor(max(0.0, l - amount / 100), c, h, alpha);
   }
 
   @override
   OkLchColor saturate([double amount = 25]) {
-    return OkLchColor(l, c + amount / 100, h);
+    return OkLchColor(l, c + amount / 100, h, alpha);
   }
 
   @override
   OkLchColor desaturate([double amount = 25]) {
-    return OkLchColor(l, max(0.0, c - amount / 100), h);
+    return OkLchColor(l, max(0.0, c - amount / 100), h, alpha);
   }
 
   @override
@@ -61,7 +62,7 @@ class OkLchColor implements ColorSpacesIQ {
 
   @override
   OkLchColor lighten([double amount = 20]) {
-    return OkLchColor(min(1.0, l + amount / 100), c, h);
+    return OkLchColor(min(1.0, l + amount / 100), c, h, alpha);
   }
 
   @override
@@ -82,11 +83,12 @@ class OkLchColor implements ColorSpacesIQ {
   ColorTemperature get temperature => toColor().temperature;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  OkLchColor copyWith({double? l, double? c, double? h}) {
+  OkLchColor copyWith({double? l, double? c, double? h, double? alpha}) {
     return OkLchColor(
       l ?? this.l,
       c ?? this.c,
       h ?? this.h,
+      alpha ?? this.alpha,
     );
   }
 
@@ -161,5 +163,31 @@ class OkLchColor implements ColorSpacesIQ {
   List<OkLchColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toOkLch()).toList();
 
   @override
-  String toString() => 'OkLchColor(l: ${l.toStringAsFixed(2)}, c: ${c.toStringAsFixed(2)}, h: ${h.toStringAsFixed(2)})';
+  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+
+  @override
+  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+
+  @override
+  ColorSlice closestColorSlice() => toColor().closestColorSlice();
+
+  @override
+  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+
+  @override
+  List<double> get whitePoint => [95.047, 100.0, 108.883];
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'OkLchColor',
+      'l': l,
+      'c': c,
+      'h': h,
+      'alpha': alpha,
+    };
+  }
+
+  @override
+  String toString() => 'OkLchColor(l: ${l.toStringAsFixed(2)}, c: ${c.toStringAsFixed(2)}, h: ${h.toStringAsFixed(2)}, alpha: ${alpha.toStringAsFixed(2)})';
 }

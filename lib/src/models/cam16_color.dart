@@ -12,8 +12,9 @@ class Cam16Color implements ColorSpacesIQ {
   final double q;
   final double m;
   final double s;
+  final double alpha;
 
-  const Cam16Color(this.hue, this.chroma, this.j, this.q, this.m, this.s);
+  const Cam16Color(this.hue, this.chroma, this.j, this.q, this.m, this.s, [this.alpha = 1.0]);
 
   @override
   Color toColor() {
@@ -30,7 +31,8 @@ class Cam16Color implements ColorSpacesIQ {
       // mcu.Cam16.fromJch(j, c, h);
       final cam16 = mcu.Cam16.fromJch(j, chroma, hue);
       final int argb = cam16.toInt();
-      return Color(argb);
+      // Restore alpha
+      return Color(argb).copyWith(a: (alpha * 255).round());
   }
   
   @override
@@ -38,17 +40,17 @@ class Cam16Color implements ColorSpacesIQ {
   
   @override
   Cam16Color darken([double amount = 20]) {
-    return Cam16Color(hue, chroma, max(0, j - amount), q, m, s);
+    return Cam16Color(hue, chroma, max(0, j - amount), q, m, s, alpha);
   }
 
   @override
   Cam16Color saturate([double amount = 25]) {
-    return Cam16Color(hue, chroma + amount, j, q, m, s);
+    return Cam16Color(hue, chroma + amount, j, q, m, s, alpha);
   }
 
   @override
   Cam16Color desaturate([double amount = 25]) {
-    return Cam16Color(hue, max(0, chroma - amount), j, q, m, s);
+    return Cam16Color(hue, max(0, chroma - amount), j, q, m, s, alpha);
   }
 
   @override
@@ -74,7 +76,7 @@ class Cam16Color implements ColorSpacesIQ {
 
   @override
   Cam16Color lighten([double amount = 20]) {
-    return Cam16Color(hue, chroma, min(100, j + amount), q, m, s);
+    return Cam16Color(hue, chroma, min(100, j + amount), q, m, s, alpha);
   }
 
   @override
@@ -95,7 +97,7 @@ class Cam16Color implements ColorSpacesIQ {
   ColorTemperature get temperature => toColor().temperature;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  Cam16Color copyWith({double? hue, double? chroma, double? j, double? q, double? m, double? s}) {
+  Cam16Color copyWith({double? hue, double? chroma, double? j, double? q, double? m, double? s, double? alpha}) {
     return Cam16Color(
       hue ?? this.hue,
       chroma ?? this.chroma,
@@ -103,6 +105,7 @@ class Cam16Color implements ColorSpacesIQ {
       q ?? this.q,
       m ?? this.m,
       s ?? this.s,
+      alpha ?? this.alpha,
     );
   }
 
@@ -177,5 +180,34 @@ class Cam16Color implements ColorSpacesIQ {
   List<Cam16Color> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toCam16()).toList();
 
   @override
-  String toString() => 'Cam16Color(hue: ${hue.toStringAsFixed(2)}, chroma: ${chroma.toStringAsFixed(2)}, j: ${j.toStringAsFixed(2)})';
+  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+
+  @override
+  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+
+  @override
+  ColorSlice closestColorSlice() => toColor().closestColorSlice();
+
+  @override
+  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+
+  @override
+  List<double> get whitePoint => [95.047, 100.0, 108.883];
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'Cam16Color',
+      'hue': hue,
+      'chroma': chroma,
+      'j': j,
+      'q': q,
+      'm': m,
+      's': s,
+      'alpha': alpha,
+    };
+  }
+
+  @override
+  String toString() => 'Cam16Color(hue: ${hue.toStringAsFixed(2)}, chroma: ${chroma.toStringAsFixed(2)}, j: ${j.toStringAsFixed(2)}, alpha: ${alpha.toStringAsFixed(2)})';
 }

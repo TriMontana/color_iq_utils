@@ -1,3 +1,4 @@
+
 import 'dart:math';
 import '../color_interfaces.dart';
 import '../color_temperature.dart';
@@ -100,6 +101,9 @@ class Rec2020Color implements ColorSpacesIQ {
   double get transparency => toColor().transparency;
 
   @override
+  double get opacity => 1.0 - transparency;
+
+  @override
   ColorTemperature get temperature => toColor().temperature;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
@@ -182,5 +186,31 @@ class Rec2020Color implements ColorSpacesIQ {
   List<Rec2020Color> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toRec2020()).toList();
 
   @override
-  String toString() => 'Rec2020Color(r: ${r.toStringAsFixed(2)}, g: ${g.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
+  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+
+  @override
+  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+
+  @override
+  ColorSlice closestColorSlice() => toColor().closestColorSlice();
+
+  @override
+  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+
+  @override
+  List<double> get whitePoint => [95.047, 100.0, 108.883];
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'Rec2020Color',
+      'r': r,
+      'g': g,
+      'b': b,
+      'opacity': opacity,
+    };
+  }
+
+  @override
+  String toString() => 'Rec2020Color(r: ${r.toStringAsFixed(4)}, g: ${g.toStringAsFixed(4)}, b: ${b.toStringAsFixed(4)}, opacity: ${opacity.toStringAsFixed(2)})';
 }

@@ -8,8 +8,9 @@ class HspColor implements ColorSpacesIQ {
   final double h;
   final double s;
   final double p;
+  final double alpha;
 
-  const HspColor(this.h, this.s, this.p);
+  const HspColor(this.h, this.s, this.p, [this.alpha = 1.0]);
 
   @override
   Color toColor() {
@@ -64,7 +65,7 @@ class HspColor implements ColorSpacesIQ {
       }
     }
 
-    return Color.fromARGB(255, (r * 255).round().clamp(0, 255), (g * 255).round().clamp(0, 255), (b * 255).round().clamp(0, 255));
+    return Color.fromARGB((alpha * 255).round(), (r * 255).round().clamp(0, 255), (g * 255).round().clamp(0, 255), (b * 255).round().clamp(0, 255));
   }
   
   @override
@@ -82,12 +83,12 @@ class HspColor implements ColorSpacesIQ {
 
   @override
   HspColor saturate([double amount = 25]) {
-    return HspColor(h, min(1.0, s + amount / 100), p);
+    return HspColor(h, min(1.0, s + amount / 100), p, alpha);
   }
 
   @override
   HspColor desaturate([double amount = 25]) {
-    return HspColor(h, max(0.0, s - amount / 100), p);
+    return HspColor(h, max(0.0, s - amount / 100), p, alpha);
   }
 
   @override
@@ -129,11 +130,12 @@ class HspColor implements ColorSpacesIQ {
   ColorTemperature get temperature => toColor().temperature;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  HspColor copyWith({double? h, double? s, double? p}) {
+  HspColor copyWith({double? h, double? s, double? p, double? alpha}) {
     return HspColor(
       h ?? this.h,
       s ?? this.s,
       p ?? this.p,
+      alpha ?? this.alpha,
     );
   }
 
@@ -207,5 +209,31 @@ class HspColor implements ColorSpacesIQ {
   List<HspColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toHsp()).toList();
 
   @override
-  String toString() => 'HspColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, p: ${p.toStringAsFixed(2)})';
+  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+
+  @override
+  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+
+  @override
+  ColorSlice closestColorSlice() => toColor().closestColorSlice();
+
+  @override
+  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+
+  @override
+  List<double> get whitePoint => [95.047, 100.0, 108.883];
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'HspColor',
+      'hue': h,
+      'saturation': s,
+      'perceivedBrightness': p,
+      'alpha': alpha,
+    };
+  }
+
+  @override
+  String toString() => 'HspColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, p: ${p.toStringAsFixed(2)}, alpha: ${alpha.toStringAsFixed(2)})';
 }

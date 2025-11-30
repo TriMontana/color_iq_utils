@@ -7,11 +7,12 @@ import 'ok_lab_color.dart';
 
 
 class OkHsvColor implements ColorSpacesIQ {
-  final double h;
-  final double s;
-  final double v;
+  final double hue;
+  final double saturation;
+  final double v; // Renamed from value to v to avoid conflict with ColorSpacesIQ.value
+  final double alpha;
 
-  const OkHsvColor(this.h, this.s, this.v);
+  const OkHsvColor(this.hue, this.saturation, this.v, [this.alpha = 1.0]);
 
   OkLabColor toOkLab() {
       // Reverse of OkLab.toOkHsv
@@ -20,31 +21,31 @@ class OkHsvColor implements ColorSpacesIQ {
       // -> c/0.4 = s * v
       // -> c = s * v * 0.4
       // -> l = v - c/0.4 = v - s*v = v(1-s)
-      double c = s * v * 0.4;
-      double l = v * (1 - s);
-      double hRad = h * pi / 180;
-      return OkLabColor(l, c * cos(hRad), c * sin(hRad));
+      double c = saturation * v * 0.4;
+      double l = v * (1 - saturation);
+      double hRad = hue * pi / 180;
+      return OkLabColor(l, c * cos(hRad), c * sin(hRad), alpha);
   }
   
   @override
   Color toColor() => toOkLab().toColor();
   
   @override
-  int get value => toColor().value;
+  int get value => toColor().value; 
   
   @override
   OkHsvColor darken([double amount = 20]) {
-    return OkHsvColor(h, s, max(0.0, v - amount / 100));
+    return OkHsvColor(hue, saturation, max(0.0, v - amount / 100), alpha);
   }
 
   @override
   OkHsvColor saturate([double amount = 25]) {
-    return OkHsvColor(h, min(1.0, s + amount / 100), v);
+    return OkHsvColor(hue, min(1.0, saturation + amount / 100), v, alpha);
   }
 
   @override
   OkHsvColor desaturate([double amount = 25]) {
-    return OkHsvColor(h, max(0.0, s - amount / 100), v);
+    return OkHsvColor(hue, max(0.0, saturation - amount / 100), v, alpha);
   }
 
   @override
@@ -70,7 +71,7 @@ class OkHsvColor implements ColorSpacesIQ {
 
   @override
   OkHsvColor lighten([double amount = 20]) {
-    return OkHsvColor(h, s, min(1.0, v + amount / 100));
+    return OkHsvColor(hue, saturation, min(1.0, v + amount / 100), alpha);
   }
 
   @override
@@ -91,11 +92,12 @@ class OkHsvColor implements ColorSpacesIQ {
   ColorTemperature get temperature => toColor().temperature;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  OkHsvColor copyWith({double? h, double? s, double? v}) {
+  OkHsvColor copyWith({double? hue, double? saturation, double? v, double? alpha}) {
     return OkHsvColor(
-      h ?? this.h,
-      s ?? this.s,
+      hue ?? this.hue,
+      saturation ?? this.saturation,
       v ?? this.v,
+      alpha ?? this.alpha,
     );
   }
 
@@ -170,5 +172,31 @@ class OkHsvColor implements ColorSpacesIQ {
   List<OkHsvColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toOkHsv()).toList();
 
   @override
-  String toString() => 'OkHsvColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)})';
+  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+
+  @override
+  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+
+  @override
+  ColorSlice closestColorSlice() => toColor().closestColorSlice();
+
+  @override
+  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+
+  @override
+  List<double> get whitePoint => [95.047, 100.0, 108.883];
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'OkHsvColor',
+      'hue': hue,
+      'saturation': saturation,
+      'value': v,
+      'alpha': alpha,
+    };
+  }
+
+  @override
+  String toString() => 'OkHsvColor(h: ${hue.toStringAsFixed(2)}, s: ${saturation.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)})';
 }

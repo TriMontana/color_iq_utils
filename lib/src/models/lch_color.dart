@@ -163,5 +163,35 @@ class LchColor implements ColorSpacesIQ {
   List<LchColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toLch()).toList();
 
   @override
+  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+
+  @override
+  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+
+  @override
+  ColorSlice closestColorSlice() => toColor().closestColorSlice();
+
+  @override
+  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) {
+    if (gamut == Gamut.sRGB) {
+      return toLab().isWithinGamut(gamut);
+    }
+    return true;
+  }
+
+  @override
+  List<double> get whitePoint => [95.047, 100.0, 108.883];
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'LchColor',
+      'l': l,
+      'c': c,
+      'h': h,
+    };
+  }
+
+  @override
   String toString() => 'LchColor(l: ${l.toStringAsFixed(2)}, c: ${c.toStringAsFixed(2)}, h: ${h.toStringAsFixed(2)})';
 }

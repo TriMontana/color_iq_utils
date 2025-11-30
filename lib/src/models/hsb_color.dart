@@ -167,5 +167,31 @@ class HsbColor implements ColorSpacesIQ {
   List<HsbColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toHsb()).toList();
 
   @override
+  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+
+  @override
+  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+
+  @override
+  ColorSlice closestColorSlice() => toColor().closestColorSlice();
+
+  @override
+  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+
+  @override
+  List<double> get whitePoint => [95.047, 100.0, 108.883];
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'HsbColor',
+      'hue': h,
+      'saturation': s,
+      'brightness': b,
+      'alpha': 1.0 - transparency, // Assuming alpha is 1 - transparency
+    };
+  }
+
+  @override
   String toString() => 'HsbColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
 }

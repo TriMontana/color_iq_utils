@@ -3,13 +3,15 @@ import '../color_temperature.dart';
 import 'color.dart';
 import 'hct_color.dart';
 import 'hsv_color.dart';
+import 'dart:math';
 
 class HwbColor implements ColorSpacesIQ {
   final double h;
   final double w;
   final double b;
+  final double alpha;
 
-  const HwbColor(this.h, this.w, this.b);
+  const HwbColor(this.h, this.w, this.b, [this.alpha = 1.0]);
 
   @override
   Color toColor() {
@@ -24,7 +26,7 @@ class HwbColor implements ColorSpacesIQ {
       double v = 1 - bNorm;
       double s = (v == 0) ? 0 : 1 - wNorm / v;
       
-      return HsvColor(h, s, v).toColor();
+      return HsvColor(h, s, v, alpha).toColor();
   }
   
   @override
@@ -97,11 +99,12 @@ class HwbColor implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  HwbColor copyWith({double? h, double? w, double? b}) {
+  HwbColor copyWith({double? h, double? w, double? b, double? alpha}) {
     return HwbColor(
       h ?? this.h,
       w ?? this.w,
       b ?? this.b,
+      alpha ?? this.alpha,
     );
   }
 
@@ -176,5 +179,31 @@ class HwbColor implements ColorSpacesIQ {
   List<HwbColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toHwb()).toList();
 
   @override
-  String toString() => 'HwbColor(h: ${h.toStringAsFixed(2)}, w: ${w.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
+  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+
+  @override
+  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+
+  @override
+  ColorSlice closestColorSlice() => toColor().closestColorSlice();
+
+  @override
+  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+
+  @override
+  List<double> get whitePoint => [95.047, 100.0, 108.883];
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'HwbColor',
+      'hue': h,
+      'whiteness': w,
+      'blackness': b,
+      'alpha': alpha,
+    };
+  }
+
+  @override
+  String toString() => 'HwbColor(h: ${h.toStringAsFixed(2)}, w: ${w.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)}, alpha: ${alpha.toStringAsFixed(2)})';
 }

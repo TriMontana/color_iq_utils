@@ -178,5 +178,30 @@ class HunterLabColor implements ColorSpacesIQ {
   List<HunterLabColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toHunterLab()).toList();
 
   @override
+  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+
+  @override
+  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+
+  @override
+  ColorSlice closestColorSlice() => toColor().closestColorSlice();
+
+  @override
+  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+
+  @override
+  List<double> get whitePoint => [95.047, 100.0, 108.883];
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'HunterLabColor',
+      'l': l,
+      'a': a,
+      'b': b,
+    };
+  }
+
+  @override
   String toString() => 'HunterLabColor(l: ${l.toStringAsFixed(2)}, a: ${a.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
 }

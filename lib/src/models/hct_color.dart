@@ -174,5 +174,30 @@ class HctColor implements ColorSpacesIQ {
   List<HctColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toHct()).toList();
 
   @override
+  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+
+  @override
+  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+
+  @override
+  ColorSlice closestColorSlice() => toColor().closestColorSlice();
+
+  @override
+  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+
+  @override
+  List<double> get whitePoint => [95.047, 100.0, 108.883];
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'HctColor',
+      'hue': hue,
+      'chroma': chroma,
+      'tone': tone,
+    };
+  }
+
+  @override
   String toString() => 'HctColor(hue: ${hue.toStringAsFixed(2)}, chroma: ${chroma.toStringAsFixed(2)}, tone: ${tone.toStringAsFixed(2)})';
 }

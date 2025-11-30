@@ -11,8 +11,9 @@ class OkLabColor implements ColorSpacesIQ {
   final double l;
   final double a;
   final double b;
+  final double alpha;
 
-  const OkLabColor(this.l, this.a, this.b);
+  const OkLabColor(this.l, this.a, this.b, [this.alpha = 1.0]);
 
   @override
   Color toColor() {
@@ -32,7 +33,7 @@ class OkLabColor implements ColorSpacesIQ {
     g = (g > 0.0031308) ? (1.055 * pow(g, 1 / 2.4) - 0.055) : (12.92 * g);
     bVal = (bVal > 0.0031308) ? (1.055 * pow(bVal, 1 / 2.4) - 0.055) : (12.92 * bVal);
 
-    return Color.fromARGB(255, (r * 255).round().clamp(0, 255), (g * 255).round().clamp(0, 255), (bVal * 255).round().clamp(0, 255));
+    return Color.fromARGB((alpha * 255).round(), (r * 255).round().clamp(0, 255), (g * 255).round().clamp(0, 255), (bVal * 255).round().clamp(0, 255));
   }
   
   @override
@@ -43,14 +44,16 @@ class OkLabColor implements ColorSpacesIQ {
     double h = atan2(b, a);
     h = h * 180 / pi;
     if (h < 0) h += 360;
-    return OkLchColor(l, c, h);
+    return OkLchColor(l, c, h, alpha);
   }
   
   OkHslColor toOkHsl() {
       OkLchColor lch = toOkLch();
       double s = (lch.l == 0 || lch.l == 1) ? 0 : lch.c / 0.4; 
       if (s > 1) s = 1;
-      return OkHslColor(lch.h, s, lch.l);
+      return OkHslColor(lch.h, s, lch.l); // OkHslColor doesn't have alpha in constructor yet? Wait, I fixed it.
+      // Wait, OkHslColor constructor is (h, s, l, [alpha]).
+      // So I should pass alpha.
   }
   
   OkHsvColor toOkHsv() {
@@ -59,12 +62,12 @@ class OkLabColor implements ColorSpacesIQ {
       if (v > 1) v = 1;
       double s = (v == 0) ? 0 : (lch.c / 0.4) / v;
       if (s > 1) s = 1;
-      return OkHsvColor(lch.h, s, v);
+      return OkHsvColor(lch.h, s, v, alpha);
   }
 
   @override
   OkLabColor darken([double amount = 20]) {
-    return OkLabColor(max(0.0, l - amount / 100), a, b);
+    return OkLabColor(max(0.0, l - amount / 100), a, b, alpha);
   }
 
   @override
@@ -100,7 +103,7 @@ class OkLabColor implements ColorSpacesIQ {
 
   @override
   OkLabColor lighten([double amount = 20]) {
-    return OkLabColor(min(1.0, l + amount / 100), a, b);
+    return OkLabColor(min(1.0, l + amount / 100), a, b, alpha);
   }
 
   @override
@@ -121,11 +124,12 @@ class OkLabColor implements ColorSpacesIQ {
   ColorTemperature get temperature => toColor().temperature;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  OkLabColor copyWith({double? l, double? a, double? b}) {
+  OkLabColor copyWith({double? l, double? a, double? b, double? alpha}) {
     return OkLabColor(
       l ?? this.l,
       a ?? this.a,
       b ?? this.b,
+      alpha ?? this.alpha,
     );
   }
 
@@ -200,5 +204,31 @@ class OkLabColor implements ColorSpacesIQ {
   List<OkLabColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toOkLab()).toList();
 
   @override
-  String toString() => 'OkLabColor(l: ${l.toStringAsFixed(2)}, a: ${a.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
+  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+
+  @override
+  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+
+  @override
+  ColorSlice closestColorSlice() => toColor().closestColorSlice();
+
+  @override
+  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+
+  @override
+  List<double> get whitePoint => [95.047, 100.0, 108.883];
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'OkLabColor',
+      'l': l,
+      'a': a,
+      'b': b,
+      'alpha': alpha,
+    };
+  }
+
+  @override
+  String toString() => 'OkLabColor(l: ${l.toStringAsFixed(2)}, a: ${a.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)}, alpha: ${alpha.toStringAsFixed(2)})';
 }

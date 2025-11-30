@@ -4,6 +4,7 @@ import '../color_temperature.dart';
 import 'color.dart';
 import 'hct_color.dart';
 import 'ok_lab_color.dart';
+import 'ok_lch_color.dart';
 
 
 class OkHslColor implements ColorSpacesIQ {
@@ -13,18 +14,18 @@ class OkHslColor implements ColorSpacesIQ {
 
   const OkHslColor(this.h, this.s, this.l);
 
-  OkLabColor toOkLab() {
+  @override
+  Color toColor() {
       // Approximate conversion via OkLch
       // s is roughly c/0.4 for s=1.
-      double c = s * 0.4;
-      // l is l.
-      // h is h.
-      double hRad = h * pi / 180;
-      return OkLabColor(l, c * cos(hRad), c * sin(hRad));
+      // l is roughly L.
+      
+      double L = l;
+      double C = s * 0.4; // Approximation
+      double hue = h;
+      
+      return OkLchColor(L, C, hue).toColor();
   }
-  
-  @override
-  Color toColor() => toOkLab().toColor();
   
   @override
   int get value => toColor().value;
@@ -140,10 +141,14 @@ class OkHslColor implements ColorSpacesIQ {
   OkHslColor opaquer([double amount = 20]) => toColor().opaquer(amount).toOkHsl();
 
   @override
-  OkHslColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toOkHsl();
+  OkHslColor adjustHue([double amount = 20]) {
+      var newHue = (h + amount) % 360;
+      if (newHue < 0) newHue += 360;
+      return OkHslColor(newHue, s, l);
+  }
 
   @override
-  OkHslColor get complementary => toColor().complementary.toOkHsl();
+  OkHslColor get complementary => adjustHue(180);
 
   @override
   OkHslColor warmer([double amount = 20]) => toColor().warmer(amount).toOkHsl();
@@ -165,6 +170,32 @@ class OkHslColor implements ColorSpacesIQ {
 
   @override
   List<OkHslColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toOkHsl()).toList();
+
+  @override
+  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+
+  @override
+  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+
+  @override
+  ColorSlice closestColorSlice() => toColor().closestColorSlice();
+
+  @override
+  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+
+  @override
+  List<double> get whitePoint => [95.047, 100.0, 108.883];
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'OkHslColor',
+      'hue': h,
+      'saturation': s,
+      'lightness': l,
+      'alpha': transparency,
+    };
+  }
 
   @override
   String toString() => 'OkHslColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, l: ${l.toStringAsFixed(2)})';

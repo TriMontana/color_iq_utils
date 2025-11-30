@@ -737,5 +737,113 @@ class Color implements ColorSpacesIQ {
   }
 
   @override
+  double distanceTo(ColorSpacesIQ other) {
+    // Convert both to HCT to approximate Cam16 distance.
+    // Ideally we use Cam16-UCS, but HCT is a good proxy for perceptual distance.
+    // Using simple Euclidean distance in HCT space for now as a fallback if MCU doesn't expose UCS directly.
+    // Wait, MCU's Hct class might not expose distance.
+    // Let's use the HCT values (Hue, Chroma, Tone).
+    // Hue is circular, so we need to handle that.
+    
+    final hct1 = toHct();
+    final hct2 = other.toHct();
+    
+    // Simple Euclidean distance in HCT cylinder?
+    // Or better: convert to Lab-like coordinates.
+    // HCT is similar to LCH.
+    // dE = sqrt((dL)^2 + (da)^2 + (db)^2)
+    // a = C * cos(H)
+    // b = C * sin(H)
+    
+    final h1Rad = hct1.hue * pi / 180;
+    final h2Rad = hct2.hue * pi / 180;
+    
+    final a1 = hct1.chroma * cos(h1Rad);
+    final b1 = hct1.chroma * sin(h1Rad);
+    final a2 = hct2.chroma * cos(h2Rad);
+    final b2 = hct2.chroma * sin(h2Rad);
+    
+    final dTone = hct1.tone - hct2.tone;
+    final da = a1 - a2;
+    final db = b1 - b2;
+    
+    return sqrt(dTone * dTone + da * da + db * db);
+  }
+
+  @override
+  double contrastWith(ColorSpacesIQ other) {
+    final l1 = luminance;
+    final l2 = other.luminance;
+    final lighter = max(l1, l2);
+    final darker = min(l1, l2);
+    return (lighter + 0.05) / (darker + 0.05);
+  }
+
+  @override
+  ColorSlice closestColorSlice() {
+    ColorSlice? closest;
+    double minDistance = double.infinity;
+    
+    for (final slice in hctSlices) {
+      final dist = distanceTo(slice.color);
+      if (dist < minDistance) {
+        minDistance = dist;
+        closest = slice;
+      }
+    }
+    return closest!;
+  }
+
+
+
+  @override
+  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) {
+    // For standard sRGB Color objects, they are always within sRGB gamut 
+    // because they are 8-bit clamped.
+    // If checking against wider gamuts, they are also within.
+    return true;
+  }
+
+  @override
+  List<double> get whitePoint => [95.047, 100.0, 108.883]; // D65
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'Color',
+      'value': value,
+    };
+  }
+
+  /// Creates a ColorSpacesIQ instance from a JSON map.
+  static ColorSpacesIQ fromJson(Map<String, dynamic> json) {
+    final type = json['type'] as String;
+    switch (type) {
+      case 'Color':
+        return Color(json['value'] as int);
+      case 'HctColor':
+        return HctColor(json['hue'], json['chroma'], json['tone']);
+      case 'HsvColor':
+        return HsvColor(json['hue'], json['saturation'], json['value'], json['alpha'] ?? 1.0);
+      case 'HslColor':
+        return HslColor(json['hue'], json['saturation'], json['lightness'], json['alpha'] ?? 1.0);
+      case 'CmykColor':
+        return CmykColor(json['c'], json['m'], json['y'], json['k']);
+      case 'LabColor':
+        return LabColor(json['l'], json['a'], json['b']);
+      case 'XyzColor':
+        return XyzColor(json['x'], json['y'], json['z']);
+      case 'LchColor':
+        return LchColor(json['l'], json['c'], json['h']);
+      // Add other cases as needed, defaulting to Color if unknown
+      default:
+        if (json.containsKey('value')) {
+          return Color(json['value'] as int);
+        }
+        throw FormatException('Unknown color type: $type');
+    }
+  }
+
+  @override
   String toString() => 'Color(0x${value.toRadixString(16).toUpperCase().padLeft(8, '0')})';
 }

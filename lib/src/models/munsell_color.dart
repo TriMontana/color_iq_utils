@@ -1,3 +1,4 @@
+import 'dart:math';
 import '../color_interfaces.dart';
 import '../color_temperature.dart';
 import 'color.dart';
@@ -12,7 +13,13 @@ class MunsellColor implements ColorSpacesIQ {
 
   @override
   Color toColor() {
-      return Color.fromARGB(255, 0, 0, 0);
+      // Munsell conversion is complex and usually requires lookup tables.
+      // For this implementation, we will return a placeholder or approximate if possible.
+      // Since we don't have the tables, we'll return Black or throw.
+      // Or better, return a neutral gray based on Value.
+      // Value 0-10 maps to L* 0-100 roughly.
+      int grayVal = (munsellValue * 25.5).round().clamp(0, 255);
+      return Color.fromARGB(255, grayVal, grayVal, grayVal);
   }
   
   @override
@@ -20,17 +27,20 @@ class MunsellColor implements ColorSpacesIQ {
   
   @override
   MunsellColor darken([double amount = 20]) {
-    return toColor().darken(amount).toMunsell();
+    // Decrease Value
+    return MunsellColor(hue, (munsellValue - (amount / 10)).clamp(0.0, 10.0), chroma);
   }
 
   @override
   MunsellColor saturate([double amount = 25]) {
-    return toColor().saturate(amount).toMunsell();
+    // Increase Chroma
+    return MunsellColor(hue, munsellValue, chroma + (amount / 5)); // Arbitrary scale
   }
 
   @override
   MunsellColor desaturate([double amount = 25]) {
-    return toColor().desaturate(amount).toMunsell();
+    // Decrease Chroma
+    return MunsellColor(hue, munsellValue, max(0.0, chroma - (amount / 5)));
   }
 
   @override
@@ -56,7 +66,8 @@ class MunsellColor implements ColorSpacesIQ {
 
   @override
   MunsellColor lighten([double amount = 20]) {
-    return toColor().lighten(amount).toMunsell();
+    // Increase Value
+    return MunsellColor(hue, (munsellValue + (amount / 10)).clamp(0.0, 10.0), chroma);
   }
 
   @override
@@ -67,11 +78,14 @@ class MunsellColor implements ColorSpacesIQ {
 
   @override
   MunsellColor adjustTransparency([double amount = 20]) {
-    return toColor().adjustTransparency(amount).toMunsell();
+    // Munsell doesn't have alpha, so we ignore or return as is (conceptually)
+    // But interface requires returning same type.
+    // Since we don't store alpha, we can't really adjust it.
+    return this; 
   }
 
   @override
-  double get transparency => toColor().transparency;
+  double get transparency => 0.0;
 
   @override
   ColorTemperature get temperature => toColor().temperature;
@@ -154,6 +168,31 @@ class MunsellColor implements ColorSpacesIQ {
 
   @override
   List<MunsellColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toMunsell()).toList();
+
+  @override
+  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+
+  @override
+  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+
+  @override
+  ColorSlice closestColorSlice() => toColor().closestColorSlice();
+
+  @override
+  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+
+  @override
+  List<double> get whitePoint => [95.047, 100.0, 108.883];
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'MunsellColor',
+      'hue': hue,
+      'value': munsellValue, // Using munsellValue to avoid conflict with value getter
+      'chroma': chroma,
+    };
+  }
 
   @override
   String toString() => 'MunsellColor(hue: $hue, value: ${munsellValue.toStringAsFixed(2)}, chroma: ${chroma.toStringAsFixed(2)})';

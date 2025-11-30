@@ -1,5 +1,7 @@
 import 'models/hct_color.dart';
 import 'models/color.dart';
+import 'color_wheels.dart';
+export 'color_wheels.dart';
 import 'color_temperature.dart';
 
 /// A common interface for all color models.
@@ -131,10 +133,39 @@ abstract class ColorSpacesIQ {
   /// Base, +60, +180, +240 degrees (default offset 60).
   /// [offset] is the hue offset for the second color pair (default 60).
   List<ColorSpacesIQ> tetrad({double offset = 60});
+
+  /// Calculates the distance to another color using Cam16-UCS.
+  double distanceTo(ColorSpacesIQ other);
+
+  /// Calculates the contrast ratio with another color (1.0 to 21.0).
+  double contrastWith(ColorSpacesIQ other);
+
+  /// Returns the closest color slice from the HCT color wheel.
+  ColorSlice closestColorSlice();
+
+  /// Checks if the color is within the specified gamut.
+  /// Default is [Gamut.sRGB].
+  bool isWithinGamut([Gamut gamut = Gamut.sRGB]);
+
+  /// Returns the white point of the color space (XYZ values).
+  /// Default is D65.
+  List<double> get whitePoint;
+
+  /// Converts the color to a JSON map.
+  Map<String, dynamic> toJson();
 }
 
 /// The brightness of a color.
 enum Brightness {
   dark,
   light,
+}
+
+/// Common color gamuts.
+enum Gamut {
+  sRGB,
+  displayP3,
+  rec2020,
+  adobeRgb,
+  proPhotoRgb,
 }

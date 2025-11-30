@@ -160,5 +160,30 @@ class YiqColor implements ColorSpacesIQ {
   List<YiqColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toYiq()).toList();
 
   @override
+  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+
+  @override
+  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+
+  @override
+  ColorSlice closestColorSlice() => toColor().closestColorSlice();
+
+  @override
+  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+
+  @override
+  List<double> get whitePoint => [95.047, 100.0, 108.883];
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'YiqColor',
+      'y': y,
+      'i': i,
+      'q': q,
+    };
+  }
+
+  @override
   String toString() => 'YiqColor(y: ${y.toStringAsFixed(2)}, i: ${i.toStringAsFixed(2)}, q: ${q.toStringAsFixed(2)})';
 }
