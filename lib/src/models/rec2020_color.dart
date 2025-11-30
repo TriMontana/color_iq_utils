@@ -1,0 +1,51 @@
+import 'dart:math';
+import '../color_interfaces.dart';
+import 'color.dart';
+
+class Rec2020Color implements ColorSpacesIQ {
+  final double r;
+  final double g;
+  final double b;
+
+  const Rec2020Color(this.r, this.g, this.b);
+
+  Color toColor() {
+      // Rec. 2020 decoding (Gamma to Linear)
+      double transferInv(double v) {
+          if (v < 0.018 * 4.5) return v / 4.5;
+          return pow((v + 0.099) / 1.099, 1 / 0.45).toDouble();
+      }
+      
+      double rLin = transferInv(r);
+      double gLin = transferInv(g);
+      double bLin = transferInv(b);
+      
+      // Rec. 2020 Linear to XYZ (D65)
+      double x = rLin * 0.6369580 + gLin * 0.1446169 + bLin * 0.1688810;
+      double y = rLin * 0.2627002 + gLin * 0.6779981 + bLin * 0.0593017;
+      double z = rLin * 0.0000000 + gLin * 0.0280727 + bLin * 1.0609851;
+      
+      // XYZ (D65) to sRGB Linear
+      double rS = x * 3.2404542 + y * -1.5371385 + z * -0.4985314;
+      double gS = x * -0.9692660 + y * 1.8760108 + z * 0.0415560;
+      double bS = x * 0.0556434 + y * -0.2040259 + z * 1.0572252;
+      
+      // sRGB Linear to sRGB (Gamma encoded)
+      rS = (rS > 0.0031308) ? (1.055 * pow(rS, 1 / 2.4) - 0.055) : (12.92 * rS);
+      gS = (gS > 0.0031308) ? (1.055 * pow(gS, 1 / 2.4) - 0.055) : (12.92 * gS);
+      bS = (bS > 0.0031308) ? (1.055 * pow(bS, 1 / 2.4) - 0.055) : (12.92 * bS);
+      
+      return Color.fromARGB(255, (rS * 255).round().clamp(0, 255), (gS * 255).round().clamp(0, 255), (bS * 255).round().clamp(0, 255));
+  }
+  
+  @override
+  int get value => toColor().value;
+  
+  @override
+  Rec2020Color lighten([double amount = 20]) {
+    return toColor().lighten(amount).toRec2020();
+  }
+
+  @override
+  String toString() => 'Rec2020Color(r: ${r.toStringAsFixed(2)}, g: ${g.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
+}
