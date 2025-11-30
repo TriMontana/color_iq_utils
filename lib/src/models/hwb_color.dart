@@ -1,5 +1,7 @@
 import '../color_interfaces.dart';
+import '../color_temperature.dart';
 import 'color.dart';
+import 'hct_color.dart';
 import 'hsv_color.dart';
 
 class HwbColor implements ColorSpacesIQ {
@@ -66,6 +68,31 @@ class HwbColor implements ColorSpacesIQ {
   @override
   HwbColor lighten([double amount = 20]) {
     return toColor().lighten(amount).toHwb();
+  }
+
+  @override
+  HctColor toHct() => toColor().toHct();
+
+  @override
+  HwbColor fromHct(HctColor hct) => hct.toColor().toHwb();
+
+  @override
+  HwbColor adjustTransparency([double amount = 20]) {
+    return toColor().adjustTransparency(amount).toHwb();
+  }
+
+  @override
+  double get transparency => toColor().transparency;
+
+  @override
+  ColorTemperature get temperature {
+    // Warm: 0-90 (Red-Yellow-Greenish) and 270-360 (Purple-Red)
+    // Cool: 90-270 (Green-Cyan-Blue-Purple)
+    if (h >= 90 && h < 270) {
+      return ColorTemperature.cool;
+    } else {
+      return ColorTemperature.warm;
+    }
   }
 
   @override

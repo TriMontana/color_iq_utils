@@ -1,6 +1,8 @@
 import 'dart:math';
 import '../color_interfaces.dart';
+import '../color_temperature.dart';
 import 'color.dart';
+import 'hct_color.dart';
 
 class HslColor implements ColorSpacesIQ {
   final double h;
@@ -15,14 +17,21 @@ class HslColor implements ColorSpacesIQ {
       double m = l - c / 2;
       
       double r = 0, g = 0, b = 0;
-      if (h < 60) { r = c; g = x; b = 0; }
-      else if (h < 120) { r = x; g = c; b = 0; }
-      else if (h < 180) { r = 0; g = c; b = x; }
-      else if (h < 240) { r = 0; g = x; b = c; }
-      else if (h < 300) { r = x; g = 0; b = c; }
-      else { r = c; g = 0; b = x; }
+      if (h < 60) {
+          r = c; g = x; b = 0;
+      } else if (h < 120) {
+          r = x; g = c; b = 0;
+      } else if (h < 180) {
+          r = 0; g = c; b = x;
+      } else if (h < 240) {
+          r = 0; g = x; b = c;
+      } else if (h < 300) {
+          r = x; g = 0; b = c;
+      } else {
+          r = c; g = 0; b = x;
+      }
       
-      return Color.fromARGB(255, ((r + m) * 255).round(), ((g + m) * 255).round(), ((b + m) * 255).round());
+      return Color.fromARGB(255, ((r + m) * 255).round().clamp(0, 255), ((g + m) * 255).round().clamp(0, 255), ((b + m) * 255).round().clamp(0, 255));
   }
   
   @override
@@ -31,11 +40,6 @@ class HslColor implements ColorSpacesIQ {
   @override
   HslColor darken([double amount = 20]) {
     return HslColor(h, s, max(0.0, l - amount / 100));
-  }
-
-  @override
-  HslColor lighten([double amount = 20]) {
-    return HslColor(h, s, min(1.0, l + amount / 100));
   }
 
   @override
@@ -58,7 +62,7 @@ class HslColor implements ColorSpacesIQ {
   HslColor get inverted => toColor().inverted.toHsl();
 
   @override
-  HslColor get grayscale => HslColor(h, 0.0, l);
+  HslColor get grayscale => toColor().grayscale.toHsl();
 
   @override
   HslColor whiten([double amount = 20]) => toColor().whiten(amount).toHsl();
@@ -68,6 +72,36 @@ class HslColor implements ColorSpacesIQ {
 
   @override
   HslColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toHsl();
+
+  @override
+  HslColor lighten([double amount = 20]) {
+    return HslColor(h, s, min(1.0, l + amount / 100));
+  }
+
+  @override
+  HctColor toHct() => toColor().toHct();
+
+  @override
+  HslColor fromHct(HctColor hct) => hct.toColor().toHsl();
+
+  @override
+  HslColor adjustTransparency([double amount = 20]) {
+    return toColor().adjustTransparency(amount).toHsl();
+  }
+
+  @override
+  double get transparency => toColor().transparency;
+
+  @override
+  ColorTemperature get temperature {
+    // Warm: 0-90 (Red-Yellow-Greenish) and 270-360 (Purple-Red)
+    // Cool: 90-270 (Green-Cyan-Blue-Purple)
+    if (h >= 90 && h < 270) {
+      return ColorTemperature.cool;
+    } else {
+      return ColorTemperature.warm;
+    }
+  }
 
   @override
   String toString() => 'HslColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, l: ${l.toStringAsFixed(2)})';

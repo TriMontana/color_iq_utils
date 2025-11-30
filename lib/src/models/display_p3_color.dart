@@ -1,6 +1,8 @@
 import 'dart:math';
 import '../color_interfaces.dart';
+import '../color_temperature.dart';
 import 'color.dart';
+import 'hct_color.dart';
 
 class DisplayP3Color implements ColorSpacesIQ {
   final double r;
@@ -77,6 +79,23 @@ class DisplayP3Color implements ColorSpacesIQ {
   DisplayP3Color lighten([double amount = 20]) {
     return toColor().lighten(amount).toDisplayP3();
   }
+
+  @override
+  HctColor toHct() => toColor().toHct();
+
+  @override
+  DisplayP3Color fromHct(HctColor hct) => hct.toColor().toDisplayP3();
+
+  @override
+  DisplayP3Color adjustTransparency([double amount = 20]) {
+    return toColor().adjustTransparency(amount).toDisplayP3();
+  }
+
+  @override
+  double get transparency => toColor().transparency;
+
+  @override
+  ColorTemperature get temperature => toColor().temperature;
 
   @override
   String toString() => 'DisplayP3Color(r: ${r.toStringAsFixed(2)}, g: ${g.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';

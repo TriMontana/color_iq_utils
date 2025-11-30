@@ -1,6 +1,8 @@
 import 'dart:math';
 import '../color_interfaces.dart';
+import '../color_temperature.dart';
 import 'color.dart';
+import 'hct_color.dart';
 import 'ok_lab_color.dart';
 
 class OkLchColor implements ColorSpacesIQ {
@@ -12,11 +14,9 @@ class OkLchColor implements ColorSpacesIQ {
 
   OkLabColor toOkLab() {
     double hRad = h * pi / 180;
-    double a = c * cos(hRad);
-    double b = c * sin(hRad);
-    return OkLabColor(l, a, b);
+    return OkLabColor(l, c * cos(hRad), c * sin(hRad));
   }
-
+  
   Color toColor() => toOkLab().toColor();
   
   @override
@@ -25,11 +25,6 @@ class OkLchColor implements ColorSpacesIQ {
   @override
   OkLchColor darken([double amount = 20]) {
     return OkLchColor(max(0.0, l - amount / 100), c, h);
-  }
-
-  @override
-  OkLchColor lighten([double amount = 20]) {
-    return OkLchColor(min(1.0, l + amount / 100), c, h);
   }
 
   @override
@@ -62,6 +57,28 @@ class OkLchColor implements ColorSpacesIQ {
 
   @override
   OkLchColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toOkLch();
+
+  @override
+  OkLchColor lighten([double amount = 20]) {
+    return OkLchColor(min(1.0, l + amount / 100), c, h);
+  }
+
+  @override
+  HctColor toHct() => toColor().toHct();
+
+  @override
+  OkLchColor fromHct(HctColor hct) => hct.toColor().toOkLch();
+
+  @override
+  OkLchColor adjustTransparency([double amount = 20]) {
+    return toColor().adjustTransparency(amount).toOkLch();
+  }
+
+  @override
+  double get transparency => toColor().transparency;
+
+  @override
+  ColorTemperature get temperature => toColor().temperature;
 
   @override
   String toString() => 'OkLchColor(l: ${l.toStringAsFixed(2)}, c: ${c.toStringAsFixed(2)}, h: ${h.toStringAsFixed(2)})';

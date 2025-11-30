@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:material_color_utilities/material_color_utilities.dart' as mcu;
 import '../color_interfaces.dart';
+import '../color_temperature.dart';
 import 'cmyk_color.dart';
 import 'xyz_color.dart';
 import 'lab_color.dart';
@@ -179,9 +180,9 @@ class Color implements ColorSpacesIQ {
 
     double L = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
     double a = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
-    double b_val = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
+    double bVal = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
 
-    return OkLabColor(L, a, b_val);
+    return OkLabColor(L, a, bVal);
   }
 
   /// Converts this color to OkLch.
@@ -325,6 +326,7 @@ class Color implements ColorSpacesIQ {
   }
 
   /// Converts this color to Hct (Material Color Utilities).
+  @override
   HctColor toHct() {
       int argb = value;
       mcu.Hct hct = mcu.Hct.fromInt(argb);
@@ -486,6 +488,34 @@ class Color implements ColorSpacesIQ {
       (green + (otherColor.green - green) * t).round(),
       (blue + (otherColor.blue - blue) * t).round(),
     );
+  }
+
+  @override
+  Color fromHct(HctColor hct) => hct.toColor();
+
+  @override
+  Color adjustTransparency([double amount = 20]) {
+    return Color.fromARGB(
+      (alpha * (1 - amount / 100)).round().clamp(0, 255),
+      red,
+      green,
+      blue,
+    );
+  }
+
+  @override
+  double get transparency => alpha / 255.0;
+
+  @override
+  ColorTemperature get temperature {
+    final hsl = toHsl();
+    // Warm: 0-90 (Red-Yellow-Greenish) and 270-360 (Purple-Red)
+    // Cool: 90-270 (Green-Cyan-Blue-Purple)
+    if (hsl.h >= 90 && hsl.h < 270) {
+      return ColorTemperature.cool;
+    } else {
+      return ColorTemperature.warm;
+    }
   }
 
   @override

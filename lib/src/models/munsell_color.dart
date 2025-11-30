@@ -1,5 +1,7 @@
 import '../color_interfaces.dart';
+import '../color_temperature.dart';
 import 'color.dart';
+import 'hct_color.dart';
 
 class MunsellColor implements ColorSpacesIQ {
   final String hue;
@@ -55,6 +57,23 @@ class MunsellColor implements ColorSpacesIQ {
   MunsellColor lighten([double amount = 20]) {
     return toColor().lighten(amount).toMunsell();
   }
+
+  @override
+  HctColor toHct() => toColor().toHct();
+
+  @override
+  MunsellColor fromHct(HctColor hct) => hct.toColor().toMunsell();
+
+  @override
+  MunsellColor adjustTransparency([double amount = 20]) {
+    return toColor().adjustTransparency(amount).toMunsell();
+  }
+
+  @override
+  double get transparency => toColor().transparency;
+
+  @override
+  ColorTemperature get temperature => toColor().temperature;
 
   @override
   String toString() => 'MunsellColor(hue: $hue, value: ${munsellValue.toStringAsFixed(2)}, chroma: ${chroma.toStringAsFixed(2)})';

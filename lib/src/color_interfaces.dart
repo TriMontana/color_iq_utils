@@ -1,3 +1,6 @@
+import 'models/hct_color.dart';
+import 'color_temperature.dart';
+
 /// A common interface for all color models.
 abstract class ColorSpacesIQ {
   /// Returns the 32-bit integer ID (ARGB) of this color.
@@ -35,4 +38,20 @@ abstract class ColorSpacesIQ {
 
   /// Linearly interpolates to another [other] color by [t] (0.0-1.0).
   ColorSpacesIQ lerp(ColorSpacesIQ other, double t);
+
+  /// Converts this color to HCT.
+  HctColor toHct();
+
+  /// Creates a new instance of this color type from an HCT color.
+  ColorSpacesIQ fromHct(HctColor hct);
+
+  /// Adjusts the transparency by the given [amount] (percentage 0-100).
+  /// Default is 20%. Reduces opacity by the amount.
+  ColorSpacesIQ adjustTransparency([double amount = 20]);
+
+  /// Returns the transparency (alpha) as a double (0.0-1.0).
+  double get transparency;
+
+  /// Returns the color temperature (Warm or Cool).
+  ColorTemperature get temperature;
 }

@@ -1,6 +1,8 @@
 import 'dart:math';
 import '../color_interfaces.dart';
+import '../color_temperature.dart';
 import 'color.dart';
+import 'hct_color.dart';
 import 'lab_color.dart';
 import 'luv_color.dart';
 
@@ -116,6 +118,23 @@ class XyzColor implements ColorSpacesIQ {
 
   @override
   XyzColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toXyz();
+
+  @override
+  HctColor toHct() => toColor().toHct();
+
+  @override
+  XyzColor fromHct(HctColor hct) => hct.toColor().toXyz();
+
+  @override
+  XyzColor adjustTransparency([double amount = 20]) {
+    return toColor().adjustTransparency(amount).toXyz();
+  }
+
+  @override
+  double get transparency => toColor().transparency;
+
+  @override
+  ColorTemperature get temperature => toColor().temperature;
 
   @override
   String toString() => 'XyzColor(x: ${x.toStringAsFixed(2)}, y: ${y.toStringAsFixed(2)}, z: ${z.toStringAsFixed(2)})';

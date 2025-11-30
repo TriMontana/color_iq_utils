@@ -1,6 +1,8 @@
 
 import '../color_interfaces.dart';
+import '../color_temperature.dart';
 import 'color.dart';
+import 'hct_color.dart';
 
 class CmykColor implements ColorSpacesIQ {
   final double c;
@@ -66,6 +68,23 @@ class CmykColor implements ColorSpacesIQ {
 
   @override
   CmykColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toCmyk();
+
+  @override
+  HctColor toHct() => toColor().toHct();
+
+  @override
+  CmykColor fromHct(HctColor hct) => hct.toColor().toCmyk();
+
+  @override
+  CmykColor adjustTransparency([double amount = 20]) {
+    return toColor().adjustTransparency(amount).toCmyk();
+  }
+
+  @override
+  double get transparency => toColor().transparency;
+
+  @override
+  ColorTemperature get temperature => toColor().temperature;
 
   @override
   String toString() => 'CmykColor(c: ${c.toStringAsFixed(2)}, m: ${m.toStringAsFixed(2)}, y: ${y.toStringAsFixed(2)}, k: ${k.toStringAsFixed(2)})';

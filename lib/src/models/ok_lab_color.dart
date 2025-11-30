@@ -1,6 +1,8 @@
 import 'dart:math';
 import '../color_interfaces.dart';
+import '../color_temperature.dart';
 import 'color.dart';
+import 'hct_color.dart';
 import 'ok_lch_color.dart';
 import 'ok_hsl_color.dart';
 import 'ok_hsv_color.dart';
@@ -99,6 +101,23 @@ class OkLabColor implements ColorSpacesIQ {
   OkLabColor lighten([double amount = 20]) {
     return OkLabColor(min(1.0, l + amount / 100), a, b);
   }
+
+  @override
+  HctColor toHct() => toColor().toHct();
+
+  @override
+  OkLabColor fromHct(HctColor hct) => hct.toColor().toOkLab();
+
+  @override
+  OkLabColor adjustTransparency([double amount = 20]) {
+    return toColor().adjustTransparency(amount).toOkLab();
+  }
+
+  @override
+  double get transparency => toColor().transparency;
+
+  @override
+  ColorTemperature get temperature => toColor().temperature;
 
   @override
   String toString() => 'OkLabColor(l: ${l.toStringAsFixed(2)}, a: ${a.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';

@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:material_color_utilities/material_color_utilities.dart' as mcu;
 import '../color_interfaces.dart';
+import '../color_temperature.dart';
 import 'color.dart';
 
 class HctColor implements ColorSpacesIQ {
@@ -57,6 +58,31 @@ class HctColor implements ColorSpacesIQ {
 
   @override
   HctColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toHct();
+
+  @override
+  HctColor toHct() => this;
+
+  @override
+  HctColor fromHct(HctColor hct) => hct;
+
+  @override
+  HctColor adjustTransparency([double amount = 20]) {
+    return toColor().adjustTransparency(amount).toHct();
+  }
+
+  @override
+  double get transparency => toColor().transparency;
+
+  @override
+  ColorTemperature get temperature {
+    // Warm: 0-90 (Red-Yellow-Greenish) and 270-360 (Purple-Red)
+    // Cool: 90-270 (Green-Cyan-Blue-Purple)
+    if (hue >= 90 && hue < 270) {
+      return ColorTemperature.cool;
+    } else {
+      return ColorTemperature.warm;
+    }
+  }
 
   @override
   String toString() => 'HctColor(hue: ${hue.toStringAsFixed(2)}, chroma: ${chroma.toStringAsFixed(2)}, tone: ${tone.toStringAsFixed(2)})';

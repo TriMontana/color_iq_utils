@@ -1,6 +1,8 @@
 import 'dart:math';
 import '../color_interfaces.dart';
+import '../color_temperature.dart';
 import 'color.dart';
+import 'hct_color.dart';
 
 class HspColor implements ColorSpacesIQ {
   final double h;
@@ -56,6 +58,23 @@ class HspColor implements ColorSpacesIQ {
 
   @override
   HspColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toHsp();
+
+  @override
+  HctColor toHct() => toColor().toHct();
+
+  @override
+  HspColor fromHct(HctColor hct) => hct.toColor().toHsp();
+
+  @override
+  HspColor adjustTransparency([double amount = 20]) {
+    return toColor().adjustTransparency(amount).toHsp();
+  }
+
+  @override
+  double get transparency => toColor().transparency;
+
+  @override
+  ColorTemperature get temperature => toColor().temperature;
 
   @override
   String toString() => 'HspColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, p: ${p.toStringAsFixed(2)})';

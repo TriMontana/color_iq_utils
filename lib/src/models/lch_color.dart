@@ -1,6 +1,8 @@
 import 'dart:math';
 import '../color_interfaces.dart';
+import '../color_temperature.dart';
 import 'color.dart';
+import 'hct_color.dart';
 import 'lab_color.dart';
 
 class LchColor implements ColorSpacesIQ {
@@ -62,6 +64,23 @@ class LchColor implements ColorSpacesIQ {
 
   @override
   LchColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toLch();
+
+  @override
+  HctColor toHct() => toColor().toHct();
+
+  @override
+  LchColor fromHct(HctColor hct) => hct.toColor().toLch();
+
+  @override
+  LchColor adjustTransparency([double amount = 20]) {
+    return toColor().adjustTransparency(amount).toLch();
+  }
+
+  @override
+  double get transparency => toColor().transparency;
+
+  @override
+  ColorTemperature get temperature => toColor().temperature;
 
   @override
   String toString() => 'LchColor(l: ${l.toStringAsFixed(2)}, c: ${c.toStringAsFixed(2)}, h: ${h.toStringAsFixed(2)})';

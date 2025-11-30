@@ -1,6 +1,8 @@
 import 'dart:math';
 import '../color_interfaces.dart';
+import '../color_temperature.dart';
 import 'color.dart';
+import 'hct_color.dart';
 import 'xyz_color.dart';
 
 class LuvColor implements ColorSpacesIQ {
@@ -85,6 +87,23 @@ class LuvColor implements ColorSpacesIQ {
   LuvColor lighten([double amount = 20]) {
     return LuvColor(min(100, l + amount), u, v);
   }
+
+  @override
+  HctColor toHct() => toColor().toHct();
+
+  @override
+  LuvColor fromHct(HctColor hct) => hct.toColor().toLuv();
+
+  @override
+  LuvColor adjustTransparency([double amount = 20]) {
+    return toColor().adjustTransparency(amount).toLuv();
+  }
+
+  @override
+  double get transparency => toColor().transparency;
+
+  @override
+  ColorTemperature get temperature => toColor().temperature;
 
   @override
   String toString() => 'LuvColor(l: ${l.toStringAsFixed(2)}, u: ${u.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)})';

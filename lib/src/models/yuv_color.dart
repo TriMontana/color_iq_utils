@@ -1,5 +1,7 @@
 import '../color_interfaces.dart';
+import '../color_temperature.dart';
 import 'color.dart';
+import 'hct_color.dart';
 
 class YuvColor implements ColorSpacesIQ {
   final double y;
@@ -58,6 +60,23 @@ class YuvColor implements ColorSpacesIQ {
   YuvColor lighten([double amount = 20]) {
     return toColor().lighten(amount).toYuv();
   }
+
+  @override
+  HctColor toHct() => toColor().toHct();
+
+  @override
+  YuvColor fromHct(HctColor hct) => hct.toColor().toYuv();
+
+  @override
+  YuvColor adjustTransparency([double amount = 20]) {
+    return toColor().adjustTransparency(amount).toYuv();
+  }
+
+  @override
+  double get transparency => toColor().transparency;
+
+  @override
+  ColorTemperature get temperature => toColor().temperature;
 
   @override
   String toString() => 'YuvColor(y: ${y.toStringAsFixed(2)}, u: ${u.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)})';

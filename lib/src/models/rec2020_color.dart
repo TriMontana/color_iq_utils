@@ -1,6 +1,8 @@
 import 'dart:math';
 import '../color_interfaces.dart';
+import '../color_temperature.dart';
 import 'color.dart';
+import 'hct_color.dart';
 
 class Rec2020Color implements ColorSpacesIQ {
   final double r;
@@ -81,6 +83,23 @@ class Rec2020Color implements ColorSpacesIQ {
   Rec2020Color lighten([double amount = 20]) {
     return toColor().lighten(amount).toRec2020();
   }
+
+  @override
+  HctColor toHct() => toColor().toHct();
+
+  @override
+  Rec2020Color fromHct(HctColor hct) => hct.toColor().toRec2020();
+
+  @override
+  Rec2020Color adjustTransparency([double amount = 20]) {
+    return toColor().adjustTransparency(amount).toRec2020();
+  }
+
+  @override
+  double get transparency => toColor().transparency;
+
+  @override
+  ColorTemperature get temperature => toColor().temperature;
 
   @override
   String toString() => 'Rec2020Color(r: ${r.toStringAsFixed(2)}, g: ${g.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
