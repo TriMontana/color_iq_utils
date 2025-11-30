@@ -3,7 +3,7 @@ import 'package:material_color_utilities/material_color_utilities.dart' as mcu;
 import 'color_interfaces.dart';
 
 /// A color represented by red, green, blue, and alpha components.
-class Color implements ColorSpace {
+class Color implements ColorSpacesIQ {
   /// The 32-bit alpha-red-green-blue integer value.
   @override
   final int value;
@@ -397,7 +397,7 @@ class Color implements ColorSpace {
   String toString() => 'Color(0x${value.toRadixString(16).padLeft(8, '0')})';
 }
 
-class CmykColor implements ColorSpace {
+class CmykColor implements ColorSpacesIQ {
   final double c;
   final double m;
   final double y;
@@ -425,7 +425,7 @@ class CmykColor implements ColorSpace {
   String toString() => 'CmykColor(c: ${c.toStringAsFixed(2)}, m: ${m.toStringAsFixed(2)}, y: ${y.toStringAsFixed(2)}, k: ${k.toStringAsFixed(2)})';
 }
 
-class XyzColor implements ColorSpace {
+class XyzColor implements ColorSpacesIQ {
   final double x;
   final double y;
   final double z;
@@ -501,7 +501,7 @@ class XyzColor implements ColorSpace {
   String toString() => 'XyzColor(x: ${x.toStringAsFixed(2)}, y: ${y.toStringAsFixed(2)}, z: ${z.toStringAsFixed(2)})';
 }
 
-class LabColor implements ColorSpace {
+class LabColor implements ColorSpacesIQ {
   final double l;
   final double a;
   final double b;
@@ -545,7 +545,7 @@ class LabColor implements ColorSpace {
   String toString() => 'LabColor(l: ${l.toStringAsFixed(2)}, a: ${a.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
 }
 
-class LuvColor implements ColorSpace {
+class LuvColor implements ColorSpacesIQ {
   final double l;
   final double u;
   final double v;
@@ -591,7 +591,7 @@ class LuvColor implements ColorSpace {
   String toString() => 'LuvColor(l: ${l.toStringAsFixed(2)}, u: ${u.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)})';
 }
 
-class LchColor implements ColorSpace {
+class LchColor implements ColorSpacesIQ {
   final double l;
   final double c;
   final double h;
@@ -614,7 +614,7 @@ class LchColor implements ColorSpace {
   String toString() => 'LchColor(l: ${l.toStringAsFixed(2)}, c: ${c.toStringAsFixed(2)}, h: ${h.toStringAsFixed(2)})';
 }
 
-class HspColor implements ColorSpace {
+class HspColor implements ColorSpacesIQ {
   final double h;
   final double s;
   final double p;
@@ -632,7 +632,7 @@ class HspColor implements ColorSpace {
   String toString() => 'HspColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, p: ${p.toStringAsFixed(2)})';
 }
 
-class YiqColor implements ColorSpace {
+class YiqColor implements ColorSpacesIQ {
   final double y;
   final double i;
   final double q;
@@ -653,7 +653,7 @@ class YiqColor implements ColorSpace {
   String toString() => 'YiqColor(y: ${y.toStringAsFixed(2)}, i: ${i.toStringAsFixed(2)}, q: ${q.toStringAsFixed(2)})';
 }
 
-class YuvColor implements ColorSpace {
+class YuvColor implements ColorSpacesIQ {
   final double y;
   final double u;
   final double v;
@@ -674,7 +674,7 @@ class YuvColor implements ColorSpace {
   String toString() => 'YuvColor(y: ${y.toStringAsFixed(2)}, u: ${u.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)})';
 }
 
-class OkLabColor implements ColorSpace {
+class OkLabColor implements ColorSpacesIQ {
   final double l;
   final double a;
   final double b;
@@ -732,7 +732,7 @@ class OkLabColor implements ColorSpace {
   String toString() => 'OkLabColor(l: ${l.toStringAsFixed(2)}, a: ${a.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
 }
 
-class OkLchColor implements ColorSpace {
+class OkLchColor implements ColorSpacesIQ {
   final double l;
   final double c;
   final double h;
@@ -755,7 +755,7 @@ class OkLchColor implements ColorSpace {
   String toString() => 'OkLchColor(l: ${l.toStringAsFixed(2)}, c: ${c.toStringAsFixed(2)}, h: ${h.toStringAsFixed(2)})';
 }
 
-class OkHslColor implements ColorSpace {
+class OkHslColor implements ColorSpacesIQ {
   final double h;
   final double s;
   final double l;
@@ -779,7 +779,7 @@ class OkHslColor implements ColorSpace {
   String toString() => 'OkHslColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, l: ${l.toStringAsFixed(2)})';
 }
 
-class OkHsvColor implements ColorSpace {
+class OkHsvColor implements ColorSpacesIQ {
   final double h;
   final double s;
   final double v;
@@ -804,7 +804,7 @@ class OkHsvColor implements ColorSpace {
   String toString() => 'OkHsvColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)})';
 }
 
-class HunterLabColor implements ColorSpace {
+class HunterLabColor implements ColorSpacesIQ {
   final double l;
   final double a;
   final double b;
@@ -843,7 +843,7 @@ class HunterLabColor implements ColorSpace {
   String toString() => 'HunterLabColor(l: ${l.toStringAsFixed(2)}, a: ${a.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
 }
 
-class HsluvColor implements ColorSpace {
+class HsluvColor implements ColorSpacesIQ {
   final double h;
   final double s;
   final double l;
@@ -865,7 +865,7 @@ class HsluvColor implements ColorSpace {
   String toString() => 'HsluvColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, l: ${l.toStringAsFixed(2)})';
 }
 
-class MunsellColor implements ColorSpace {
+class MunsellColor implements ColorSpacesIQ {
   final String hue;
   final double munsellValue;
   final double chroma;
@@ -883,7 +883,7 @@ class MunsellColor implements ColorSpace {
   String toString() => 'MunsellColor(hue: $hue, value: ${munsellValue.toStringAsFixed(2)}, chroma: ${chroma.toStringAsFixed(2)})';
 }
 
-class HslColor implements ColorSpace {
+class HslColor implements ColorSpacesIQ {
   final double h;
   final double s;
   final double l;
@@ -913,7 +913,7 @@ class HslColor implements ColorSpace {
   String toString() => 'HslColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, l: ${l.toStringAsFixed(2)})';
 }
 
-class HsvColor implements ColorSpace {
+class HsvColor implements ColorSpacesIQ {
   final double h;
   final double s;
   final double v;
@@ -943,7 +943,7 @@ class HsvColor implements ColorSpace {
   String toString() => 'HsvColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)})';
 }
 
-class HsbColor implements ColorSpace {
+class HsbColor implements ColorSpacesIQ {
   final double h;
   final double s;
   final double b;
@@ -961,7 +961,7 @@ class HsbColor implements ColorSpace {
   String toString() => 'HsbColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
 }
 
-class HwbColor implements ColorSpace {
+class HwbColor implements ColorSpacesIQ {
   final double h;
   final double w;
   final double b;
@@ -990,7 +990,7 @@ class HwbColor implements ColorSpace {
   String toString() => 'HwbColor(h: ${h.toStringAsFixed(2)}, w: ${w.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
 }
 
-class HctColor implements ColorSpace {
+class HctColor implements ColorSpacesIQ {
   final double hue;
   final double chroma;
   final double tone;
@@ -1008,7 +1008,7 @@ class HctColor implements ColorSpace {
   String toString() => 'HctColor(hue: ${hue.toStringAsFixed(2)}, chroma: ${chroma.toStringAsFixed(2)}, tone: ${tone.toStringAsFixed(2)})';
 }
 
-class Cam16Color implements ColorSpace {
+class Cam16Color implements ColorSpacesIQ {
   final double hue;
   final double chroma;
   final double j;
@@ -1029,7 +1029,7 @@ class Cam16Color implements ColorSpace {
   String toString() => 'Cam16Color(hue: ${hue.toStringAsFixed(2)}, chroma: ${chroma.toStringAsFixed(2)}, j: ${j.toStringAsFixed(2)})';
 }
 
-class DisplayP3Color implements ColorSpace {
+class DisplayP3Color implements ColorSpacesIQ {
   final double r;
   final double g;
   final double b;
@@ -1068,7 +1068,7 @@ class DisplayP3Color implements ColorSpace {
   String toString() => 'DisplayP3Color(r: ${r.toStringAsFixed(2)}, g: ${g.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
 }
 
-class Rec2020Color implements ColorSpace {
+class Rec2020Color implements ColorSpacesIQ {
   final double r;
   final double g;
   final double b;
