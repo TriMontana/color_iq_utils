@@ -145,5 +145,44 @@ class HsvColor implements ColorSpacesIQ {
   Brightness get brightness => toColor().brightness;
 
   @override
+  bool get isDark => brightness == Brightness.dark;
+
+  @override
+  bool get isLight => brightness == Brightness.light;
+
+  @override
+  HsvColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toHsv();
+
+  @override
+  HsvColor opaquer([double amount = 20]) => toColor().opaquer(amount).toHsv();
+
+  @override
+  HsvColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toHsv();
+
+  @override
+  HsvColor get complementary => toColor().complementary.toHsv();
+
+  @override
+  HsvColor warmer([double amount = 20]) => toColor().warmer(amount).toHsv();
+
+  @override
+  HsvColor cooler([double amount = 20]) => toColor().cooler(amount).toHsv();
+
+  @override
+  List<HsvColor> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toHsv()).toList();
+
+  @override
+  List<HsvColor> tonesPalette() => toColor().tonesPalette().map((c) => c.toHsv()).toList();
+
+  @override
+  List<HsvColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toHsv()).toList();
+
+  @override
+  List<HsvColor> square() => toColor().square().map((c) => c.toHsv()).toList();
+
+  @override
+  List<HsvColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toHsv()).toList();
+
+  @override
   String toString() => 'HsvColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)})';
 }

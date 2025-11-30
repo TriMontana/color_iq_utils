@@ -143,5 +143,44 @@ class Rec2020Color implements ColorSpacesIQ {
   Brightness get brightness => toColor().brightness;
 
   @override
+  bool get isDark => brightness == Brightness.dark;
+
+  @override
+  bool get isLight => brightness == Brightness.light;
+
+  @override
+  Rec2020Color blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toRec2020();
+
+  @override
+  Rec2020Color opaquer([double amount = 20]) => toColor().opaquer(amount).toRec2020();
+
+  @override
+  Rec2020Color adjustHue([double amount = 20]) => toColor().adjustHue(amount).toRec2020();
+
+  @override
+  Rec2020Color get complementary => toColor().complementary.toRec2020();
+
+  @override
+  Rec2020Color warmer([double amount = 20]) => toColor().warmer(amount).toRec2020();
+
+  @override
+  Rec2020Color cooler([double amount = 20]) => toColor().cooler(amount).toRec2020();
+
+  @override
+  List<Rec2020Color> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toRec2020()).toList();
+
+  @override
+  List<Rec2020Color> tonesPalette() => toColor().tonesPalette().map((c) => c.toRec2020()).toList();
+
+  @override
+  List<Rec2020Color> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toRec2020()).toList();
+
+  @override
+  List<Rec2020Color> square() => toColor().square().map((c) => c.toRec2020()).toList();
+
+  @override
+  List<Rec2020Color> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toRec2020()).toList();
+
+  @override
   String toString() => 'Rec2020Color(r: ${r.toStringAsFixed(2)}, g: ${g.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
 }

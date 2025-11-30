@@ -120,5 +120,44 @@ class YuvColor implements ColorSpacesIQ {
   Brightness get brightness => toColor().brightness;
 
   @override
+  bool get isDark => brightness == Brightness.dark;
+
+  @override
+  bool get isLight => brightness == Brightness.light;
+
+  @override
+  YuvColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toYuv();
+
+  @override
+  YuvColor opaquer([double amount = 20]) => toColor().opaquer(amount).toYuv();
+
+  @override
+  YuvColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toYuv();
+
+  @override
+  YuvColor get complementary => toColor().complementary.toYuv();
+
+  @override
+  YuvColor warmer([double amount = 20]) => toColor().warmer(amount).toYuv();
+
+  @override
+  YuvColor cooler([double amount = 20]) => toColor().cooler(amount).toYuv();
+
+  @override
+  List<YuvColor> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toYuv()).toList();
+
+  @override
+  List<YuvColor> tonesPalette() => toColor().tonesPalette().map((c) => c.toYuv()).toList();
+
+  @override
+  List<YuvColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toYuv()).toList();
+
+  @override
+  List<YuvColor> square() => toColor().square().map((c) => c.toYuv()).toList();
+
+  @override
+  List<YuvColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toYuv()).toList();
+
+  @override
   String toString() => 'YuvColor(y: ${y.toStringAsFixed(2)}, u: ${u.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)})';
 }

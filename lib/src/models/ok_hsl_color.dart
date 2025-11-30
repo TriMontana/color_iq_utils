@@ -128,5 +128,44 @@ class OkHslColor implements ColorSpacesIQ {
   Brightness get brightness => toColor().brightness;
 
   @override
+  bool get isDark => brightness == Brightness.dark;
+
+  @override
+  bool get isLight => brightness == Brightness.light;
+
+  @override
+  OkHslColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toOkHsl();
+
+  @override
+  OkHslColor opaquer([double amount = 20]) => toColor().opaquer(amount).toOkHsl();
+
+  @override
+  OkHslColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toOkHsl();
+
+  @override
+  OkHslColor get complementary => toColor().complementary.toOkHsl();
+
+  @override
+  OkHslColor warmer([double amount = 20]) => toColor().warmer(amount).toOkHsl();
+
+  @override
+  OkHslColor cooler([double amount = 20]) => toColor().cooler(amount).toOkHsl();
+
+  @override
+  List<OkHslColor> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toOkHsl()).toList();
+
+  @override
+  List<OkHslColor> tonesPalette() => toColor().tonesPalette().map((c) => c.toOkHsl()).toList();
+
+  @override
+  List<OkHslColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toOkHsl()).toList();
+
+  @override
+  List<OkHslColor> square() => toColor().square().map((c) => c.toOkHsl()).toList();
+
+  @override
+  List<OkHslColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toOkHsl()).toList();
+
+  @override
   String toString() => 'OkHslColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, l: ${l.toStringAsFixed(2)})';
 }

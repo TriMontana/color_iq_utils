@@ -178,5 +178,44 @@ class XyzColor implements ColorSpacesIQ {
   Brightness get brightness => toColor().brightness;
 
   @override
+  bool get isDark => brightness == Brightness.dark;
+
+  @override
+  bool get isLight => brightness == Brightness.light;
+
+  @override
+  XyzColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toXyz();
+
+  @override
+  XyzColor opaquer([double amount = 20]) => toColor().opaquer(amount).toXyz();
+
+  @override
+  XyzColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toXyz();
+
+  @override
+  XyzColor get complementary => toColor().complementary.toXyz();
+
+  @override
+  XyzColor warmer([double amount = 20]) => toColor().warmer(amount).toXyz();
+
+  @override
+  XyzColor cooler([double amount = 20]) => toColor().cooler(amount).toXyz();
+
+  @override
+  List<XyzColor> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toXyz()).toList();
+
+  @override
+  List<XyzColor> tonesPalette() => toColor().tonesPalette().map((c) => c.toXyz()).toList();
+
+  @override
+  List<XyzColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toXyz()).toList();
+
+  @override
+  List<XyzColor> square() => toColor().square().map((c) => c.toXyz()).toList();
+
+  @override
+  List<XyzColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toXyz()).toList();
+
+  @override
   String toString() => 'XyzColor(x: ${x.toStringAsFixed(2)}, y: ${y.toStringAsFixed(2)}, z: ${z.toStringAsFixed(2)})';
 }

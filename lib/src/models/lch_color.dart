@@ -124,5 +124,44 @@ class LchColor implements ColorSpacesIQ {
   Brightness get brightness => toColor().brightness;
 
   @override
+  bool get isDark => brightness == Brightness.dark;
+
+  @override
+  bool get isLight => brightness == Brightness.light;
+
+  @override
+  LchColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toLch();
+
+  @override
+  LchColor opaquer([double amount = 20]) => toColor().opaquer(amount).toLch();
+
+  @override
+  LchColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toLch();
+
+  @override
+  LchColor get complementary => toColor().complementary.toLch();
+
+  @override
+  LchColor warmer([double amount = 20]) => toColor().warmer(amount).toLch();
+
+  @override
+  LchColor cooler([double amount = 20]) => toColor().cooler(amount).toLch();
+
+  @override
+  List<LchColor> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toLch()).toList();
+
+  @override
+  List<LchColor> tonesPalette() => toColor().tonesPalette().map((c) => c.toLch()).toList();
+
+  @override
+  List<LchColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toLch()).toList();
+
+  @override
+  List<LchColor> square() => toColor().square().map((c) => c.toLch()).toList();
+
+  @override
+  List<LchColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toLch()).toList();
+
+  @override
   String toString() => 'LchColor(l: ${l.toStringAsFixed(2)}, c: ${c.toStringAsFixed(2)}, h: ${h.toStringAsFixed(2)})';
 }

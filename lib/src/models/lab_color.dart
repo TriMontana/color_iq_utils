@@ -156,5 +156,44 @@ class LabColor implements ColorSpacesIQ {
   Brightness get brightness => toColor().brightness;
 
   @override
+  bool get isDark => brightness == Brightness.dark;
+
+  @override
+  bool get isLight => brightness == Brightness.light;
+
+  @override
+  LabColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toLab();
+
+  @override
+  LabColor opaquer([double amount = 20]) => toColor().opaquer(amount).toLab();
+
+  @override
+  LabColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toLab();
+
+  @override
+  LabColor get complementary => toColor().complementary.toLab();
+
+  @override
+  LabColor warmer([double amount = 20]) => toColor().warmer(amount).toLab();
+
+  @override
+  LabColor cooler([double amount = 20]) => toColor().cooler(amount).toLab();
+
+  @override
+  List<LabColor> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toLab()).toList();
+
+  @override
+  List<LabColor> tonesPalette() => toColor().tonesPalette().map((c) => c.toLab()).toList();
+
+  @override
+  List<LabColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toLab()).toList();
+
+  @override
+  List<LabColor> square() => toColor().square().map((c) => c.toLab()).toList();
+
+  @override
+  List<LabColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toLab()).toList();
+
+  @override
   String toString() => 'LabColor(l: ${l.toStringAsFixed(2)}, a: ${a.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
 }

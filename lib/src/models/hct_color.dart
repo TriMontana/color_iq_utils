@@ -135,5 +135,44 @@ class HctColor implements ColorSpacesIQ {
   Brightness get brightness => toColor().brightness;
 
   @override
+  bool get isDark => brightness == Brightness.dark;
+
+  @override
+  bool get isLight => brightness == Brightness.light;
+
+  @override
+  HctColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toHct();
+
+  @override
+  HctColor opaquer([double amount = 20]) => toColor().opaquer(amount).toHct();
+
+  @override
+  HctColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toHct();
+
+  @override
+  HctColor get complementary => toColor().complementary.toHct();
+
+  @override
+  HctColor warmer([double amount = 20]) => toColor().warmer(amount).toHct();
+
+  @override
+  HctColor cooler([double amount = 20]) => toColor().cooler(amount).toHct();
+
+  @override
+  List<HctColor> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toHct()).toList();
+
+  @override
+  List<HctColor> tonesPalette() => toColor().tonesPalette().map((c) => c.toHct()).toList();
+
+  @override
+  List<HctColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toHct()).toList();
+
+  @override
+  List<HctColor> square() => toColor().square().map((c) => c.toHct()).toList();
+
+  @override
+  List<HctColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toHct()).toList();
+
+  @override
   String toString() => 'HctColor(hue: ${hue.toStringAsFixed(2)}, chroma: ${chroma.toStringAsFixed(2)}, tone: ${tone.toStringAsFixed(2)})';
 }

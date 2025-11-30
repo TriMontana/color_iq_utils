@@ -168,5 +168,44 @@ class HspColor implements ColorSpacesIQ {
   Brightness get brightness => toColor().brightness;
 
   @override
+  bool get isDark => brightness == Brightness.dark;
+
+  @override
+  bool get isLight => brightness == Brightness.light;
+
+  @override
+  HspColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toHsp();
+
+  @override
+  HspColor opaquer([double amount = 20]) => toColor().opaquer(amount).toHsp();
+
+  @override
+  HspColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toHsp();
+
+  @override
+  HspColor get complementary => toColor().complementary.toHsp();
+
+  @override
+  HspColor warmer([double amount = 20]) => toColor().warmer(amount).toHsp();
+
+  @override
+  HspColor cooler([double amount = 20]) => toColor().cooler(amount).toHsp();
+
+  @override
+  List<HspColor> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toHsp()).toList();
+
+  @override
+  List<HspColor> tonesPalette() => toColor().tonesPalette().map((c) => c.toHsp()).toList();
+
+  @override
+  List<HspColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toHsp()).toList();
+
+  @override
+  List<HspColor> square() => toColor().square().map((c) => c.toHsp()).toList();
+
+  @override
+  List<HspColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toHsp()).toList();
+
+  @override
   String toString() => 'HspColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, p: ${p.toStringAsFixed(2)})';
 }

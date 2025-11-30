@@ -122,5 +122,44 @@ class OkLchColor implements ColorSpacesIQ {
   Brightness get brightness => toColor().brightness;
 
   @override
+  bool get isDark => brightness == Brightness.dark;
+
+  @override
+  bool get isLight => brightness == Brightness.light;
+
+  @override
+  OkLchColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toOkLch();
+
+  @override
+  OkLchColor opaquer([double amount = 20]) => toColor().opaquer(amount).toOkLch();
+
+  @override
+  OkLchColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toOkLch();
+
+  @override
+  OkLchColor get complementary => toColor().complementary.toOkLch();
+
+  @override
+  OkLchColor warmer([double amount = 20]) => toColor().warmer(amount).toOkLch();
+
+  @override
+  OkLchColor cooler([double amount = 20]) => toColor().cooler(amount).toOkLch();
+
+  @override
+  List<OkLchColor> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toOkLch()).toList();
+
+  @override
+  List<OkLchColor> tonesPalette() => toColor().tonesPalette().map((c) => c.toOkLch()).toList();
+
+  @override
+  List<OkLchColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toOkLch()).toList();
+
+  @override
+  List<OkLchColor> square() => toColor().square().map((c) => c.toOkLch()).toList();
+
+  @override
+  List<OkLchColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toOkLch()).toList();
+
+  @override
   String toString() => 'OkLchColor(l: ${l.toStringAsFixed(2)}, c: ${c.toStringAsFixed(2)}, h: ${h.toStringAsFixed(2)})';
 }

@@ -602,5 +602,140 @@ class Color implements ColorSpacesIQ {
   }
 
   @override
+  bool get isDark => brightness == Brightness.dark;
+
+  @override
+  bool get isLight => brightness == Brightness.light;
+
+  @override
+  Color blend(ColorSpacesIQ other, [double amount = 50]) {
+    return lerp(other, amount / 100) as Color;
+  }
+
+  @override
+  Color opaquer([double amount = 20]) {
+    // Increase alpha by amount%
+    int newAlpha = (alpha + (255 * amount / 100)).round().clamp(0, 255);
+    return copyWith(a: newAlpha);
+  }
+
+  @override
+  Color adjustHue([double amount = 20]) {
+    final hsl = toHsl();
+    double newHue = (hsl.h + amount) % 360;
+    if (newHue < 0) newHue += 360;
+    return HslColor(newHue, hsl.s, hsl.l).toColor();
+  }
+
+  @override
+  Color get complementary => adjustHue(180);
+
+  @override
+  Color warmer([double amount = 20]) {
+    // Warmest is around 30 degrees (Orange/Red)
+    // We shift the hue towards 30 degrees by amount%
+    final hsl = toHsl();
+    double currentHue = hsl.h;
+    double targetHue = 30.0;
+    
+    // Find shortest path
+    double diff = targetHue - currentHue;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+    
+    double newHue = currentHue + (diff * amount / 100);
+    if (newHue < 0) newHue += 360;
+    if (newHue >= 360) newHue -= 360;
+    
+    return HslColor(newHue, hsl.s, hsl.l).toColor();
+  }
+
+  @override
+  Color cooler([double amount = 20]) {
+    // Coolest is around 210 degrees (Blue/Cyan)
+    // We shift the hue towards 210 degrees by amount%
+    final hsl = toHsl();
+    double currentHue = hsl.h;
+    double targetHue = 210.0;
+    
+    // Find shortest path
+    double diff = targetHue - currentHue;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+    
+    double newHue = currentHue + (diff * amount / 100);
+    if (newHue < 0) newHue += 360;
+    if (newHue >= 360) newHue -= 360;
+    
+    return HslColor(newHue, hsl.s, hsl.l).toColor();
+  }
+
+  @override
+  List<Color> generateBasicPalette() {
+    return [
+      darken(30),
+      darken(20),
+      darken(10),
+      this,
+      lighten(10),
+      lighten(20),
+      lighten(30),
+    ];
+  }
+
+  @override
+  List<Color> tonesPalette() {
+    // Mix with gray (0xFF808080)
+    const gray = Color(0xFF808080);
+    return [
+      this,
+      lerp(gray, 0.15) as Color,
+      lerp(gray, 0.30) as Color,
+      lerp(gray, 0.45) as Color,
+      lerp(gray, 0.60) as Color,
+    ];
+  }
+
+  @override
+  List<Color> analogous({int count = 5, double offset = 30}) {
+    final results = <Color>[];
+    
+    if (count == 3) {
+      results.add(adjustHue(-offset));
+      results.add(this);
+      results.add(adjustHue(offset));
+    } else {
+      // Default to 5
+      results.add(adjustHue(-offset * 2));
+      results.add(adjustHue(-offset));
+      results.add(this);
+      results.add(adjustHue(offset));
+      results.add(adjustHue(offset * 2));
+    }
+    
+    return results;
+  }
+
+  @override
+  List<Color> square() {
+    return [
+      this,
+      adjustHue(90),
+      adjustHue(180),
+      adjustHue(270),
+    ];
+  }
+
+  @override
+  List<Color> tetrad({double offset = 60}) {
+    return [
+      this,
+      adjustHue(offset),
+      adjustHue(180),
+      adjustHue(180 + offset),
+    ];
+  }
+
+  @override
   String toString() => 'Color(0x${value.toRadixString(16).toUpperCase().padLeft(8, '0')})';
 }

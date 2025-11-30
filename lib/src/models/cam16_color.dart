@@ -138,5 +138,44 @@ class Cam16Color implements ColorSpacesIQ {
   Brightness get brightness => toColor().brightness;
 
   @override
+  bool get isDark => brightness == Brightness.dark;
+
+  @override
+  bool get isLight => brightness == Brightness.light;
+
+  @override
+  Cam16Color blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toCam16();
+
+  @override
+  Cam16Color opaquer([double amount = 20]) => toColor().opaquer(amount).toCam16();
+
+  @override
+  Cam16Color adjustHue([double amount = 20]) => toColor().adjustHue(amount).toCam16();
+
+  @override
+  Cam16Color get complementary => toColor().complementary.toCam16();
+
+  @override
+  Cam16Color warmer([double amount = 20]) => toColor().warmer(amount).toCam16();
+
+  @override
+  Cam16Color cooler([double amount = 20]) => toColor().cooler(amount).toCam16();
+
+  @override
+  List<Cam16Color> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toCam16()).toList();
+
+  @override
+  List<Cam16Color> tonesPalette() => toColor().tonesPalette().map((c) => c.toCam16()).toList();
+
+  @override
+  List<Cam16Color> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toCam16()).toList();
+
+  @override
+  List<Cam16Color> square() => toColor().square().map((c) => c.toCam16()).toList();
+
+  @override
+  List<Cam16Color> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toCam16()).toList();
+
+  @override
   String toString() => 'Cam16Color(hue: ${hue.toStringAsFixed(2)}, chroma: ${chroma.toStringAsFixed(2)}, j: ${j.toStringAsFixed(2)})';
 }

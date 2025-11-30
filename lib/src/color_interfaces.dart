@@ -80,6 +80,57 @@ abstract class ColorSpacesIQ {
 
   /// Returns the relative luminance of this color (0.0 - 1.0).
   double get luminance;
+
+  /// Blends this color with [other] by the given [amount] (0-100).
+  /// Default is 50%.
+  ColorSpacesIQ blend(ColorSpacesIQ other, [double amount = 50]);
+
+  /// Makes the color more opaque by the given [amount] (0-100).
+  /// Default is 20%.
+  ColorSpacesIQ opaquer([double amount = 20]);
+
+  /// Adjusts the hue of the color by the given [amount] (degrees).
+  /// Default is +20 degrees.
+  ColorSpacesIQ adjustHue([double amount = 20]);
+
+  /// Returns the complementary color.
+  ColorSpacesIQ get complementary;
+
+  /// Returns true if the color is dark.
+  bool get isDark => brightness == Brightness.dark;
+
+  /// Returns true if the color is light.
+  bool get isLight => brightness == Brightness.light;
+
+  /// Makes the color warmer (shifts hue towards red/orange) by the given [amount] (0-100).
+  /// Default is 20%.
+  ColorSpacesIQ warmer([double amount = 20]);
+
+  /// Makes the color cooler (shifts hue towards blue) by the given [amount] (0-100).
+  /// Default is 20%.
+  ColorSpacesIQ cooler([double amount = 20]);
+
+  /// Returns a basic palette of 7 colors:
+  /// [darkest, darker, dark, base, light, lighter, lightest].
+  List<ColorSpacesIQ> generateBasicPalette();
+
+  /// Returns a tones palette (base color mixed with grays).
+  /// Returns 5 colors blending towards gray.
+  List<ColorSpacesIQ> tonesPalette();
+
+  /// Returns analogous colors.
+  /// [count] can be 3 or 5.
+  /// [offset] is the hue offset in degrees (default 30).
+  List<ColorSpacesIQ> analogous({int count = 5, double offset = 30});
+
+  /// Returns a square harmony palette (4 colors).
+  /// Base, +90, +180, +270 degrees.
+  List<ColorSpacesIQ> square();
+
+  /// Returns a tetradic (rectangle) harmony palette (4 colors).
+  /// Base, +60, +180, +240 degrees (default offset 60).
+  /// [offset] is the hue offset for the second color pair (default 60).
+  List<ColorSpacesIQ> tetrad({double offset = 60});
 }
 
 /// The brightness of a color.

@@ -161,5 +161,44 @@ class OkLabColor implements ColorSpacesIQ {
   Brightness get brightness => toColor().brightness;
 
   @override
+  bool get isDark => brightness == Brightness.dark;
+
+  @override
+  bool get isLight => brightness == Brightness.light;
+
+  @override
+  OkLabColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toOkLab();
+
+  @override
+  OkLabColor opaquer([double amount = 20]) => toColor().opaquer(amount).toOkLab();
+
+  @override
+  OkLabColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toOkLab();
+
+  @override
+  OkLabColor get complementary => toColor().complementary.toOkLab();
+
+  @override
+  OkLabColor warmer([double amount = 20]) => toColor().warmer(amount).toOkLab();
+
+  @override
+  OkLabColor cooler([double amount = 20]) => toColor().cooler(amount).toOkLab();
+
+  @override
+  List<OkLabColor> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toOkLab()).toList();
+
+  @override
+  List<OkLabColor> tonesPalette() => toColor().tonesPalette().map((c) => c.toOkLab()).toList();
+
+  @override
+  List<OkLabColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toOkLab()).toList();
+
+  @override
+  List<OkLabColor> square() => toColor().square().map((c) => c.toOkLab()).toList();
+
+  @override
+  List<OkLabColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toOkLab()).toList();
+
+  @override
   String toString() => 'OkLabColor(l: ${l.toStringAsFixed(2)}, a: ${a.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
 }

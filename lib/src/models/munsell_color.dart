@@ -117,5 +117,44 @@ class MunsellColor implements ColorSpacesIQ {
   Brightness get brightness => toColor().brightness;
 
   @override
+  bool get isDark => brightness == Brightness.dark;
+
+  @override
+  bool get isLight => brightness == Brightness.light;
+
+  @override
+  MunsellColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toMunsell();
+
+  @override
+  MunsellColor opaquer([double amount = 20]) => toColor().opaquer(amount).toMunsell();
+
+  @override
+  MunsellColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toMunsell();
+
+  @override
+  MunsellColor get complementary => toColor().complementary.toMunsell();
+
+  @override
+  MunsellColor warmer([double amount = 20]) => toColor().warmer(amount).toMunsell();
+
+  @override
+  MunsellColor cooler([double amount = 20]) => toColor().cooler(amount).toMunsell();
+
+  @override
+  List<MunsellColor> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toMunsell()).toList();
+
+  @override
+  List<MunsellColor> tonesPalette() => toColor().tonesPalette().map((c) => c.toMunsell()).toList();
+
+  @override
+  List<MunsellColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toMunsell()).toList();
+
+  @override
+  List<MunsellColor> square() => toColor().square().map((c) => c.toMunsell()).toList();
+
+  @override
+  List<MunsellColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toMunsell()).toList();
+
+  @override
   String toString() => 'MunsellColor(hue: $hue, value: ${munsellValue.toStringAsFixed(2)}, chroma: ${chroma.toStringAsFixed(2)})';
 }

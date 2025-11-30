@@ -129,5 +129,44 @@ class CmykColor implements ColorSpacesIQ {
   Brightness get brightness => toColor().brightness;
 
   @override
+  bool get isDark => brightness == Brightness.dark;
+
+  @override
+  bool get isLight => brightness == Brightness.light;
+
+  @override
+  CmykColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toCmyk();
+
+  @override
+  CmykColor opaquer([double amount = 20]) => toColor().opaquer(amount).toCmyk();
+
+  @override
+  CmykColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toCmyk();
+
+  @override
+  CmykColor get complementary => toColor().complementary.toCmyk();
+
+  @override
+  CmykColor warmer([double amount = 20]) => toColor().warmer(amount).toCmyk();
+
+  @override
+  CmykColor cooler([double amount = 20]) => toColor().cooler(amount).toCmyk();
+
+  @override
+  List<CmykColor> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toCmyk()).toList();
+
+  @override
+  List<CmykColor> tonesPalette() => toColor().tonesPalette().map((c) => c.toCmyk()).toList();
+
+  @override
+  List<CmykColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toCmyk()).toList();
+
+  @override
+  List<CmykColor> square() => toColor().square().map((c) => c.toCmyk()).toList();
+
+  @override
+  List<CmykColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toCmyk()).toList();
+
+  @override
   String toString() => 'CmykColor(c: ${c.toStringAsFixed(2)}, m: ${m.toStringAsFixed(2)}, y: ${y.toStringAsFixed(2)}, k: ${k.toStringAsFixed(2)})';
 }

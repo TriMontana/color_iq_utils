@@ -124,5 +124,44 @@ class HsluvColor implements ColorSpacesIQ {
   Brightness get brightness => toColor().brightness;
 
   @override
+  bool get isDark => brightness == Brightness.dark;
+
+  @override
+  bool get isLight => brightness == Brightness.light;
+
+  @override
+  HsluvColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toHsluv();
+
+  @override
+  HsluvColor opaquer([double amount = 20]) => toColor().opaquer(amount).toHsluv();
+
+  @override
+  HsluvColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toHsluv();
+
+  @override
+  HsluvColor get complementary => toColor().complementary.toHsluv();
+
+  @override
+  HsluvColor warmer([double amount = 20]) => toColor().warmer(amount).toHsluv();
+
+  @override
+  HsluvColor cooler([double amount = 20]) => toColor().cooler(amount).toHsluv();
+
+  @override
+  List<HsluvColor> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toHsluv()).toList();
+
+  @override
+  List<HsluvColor> tonesPalette() => toColor().tonesPalette().map((c) => c.toHsluv()).toList();
+
+  @override
+  List<HsluvColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toHsluv()).toList();
+
+  @override
+  List<HsluvColor> square() => toColor().square().map((c) => c.toHsluv()).toList();
+
+  @override
+  List<HsluvColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toHsluv()).toList();
+
+  @override
   String toString() => 'HsluvColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, l: ${l.toStringAsFixed(2)})';
 }

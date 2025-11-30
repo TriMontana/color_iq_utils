@@ -139,5 +139,44 @@ class DisplayP3Color implements ColorSpacesIQ {
   Brightness get brightness => toColor().brightness;
 
   @override
+  bool get isDark => brightness == Brightness.dark;
+
+  @override
+  bool get isLight => brightness == Brightness.light;
+
+  @override
+  DisplayP3Color blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toDisplayP3();
+
+  @override
+  DisplayP3Color opaquer([double amount = 20]) => toColor().opaquer(amount).toDisplayP3();
+
+  @override
+  DisplayP3Color adjustHue([double amount = 20]) => toColor().adjustHue(amount).toDisplayP3();
+
+  @override
+  DisplayP3Color get complementary => toColor().complementary.toDisplayP3();
+
+  @override
+  DisplayP3Color warmer([double amount = 20]) => toColor().warmer(amount).toDisplayP3();
+
+  @override
+  DisplayP3Color cooler([double amount = 20]) => toColor().cooler(amount).toDisplayP3();
+
+  @override
+  List<DisplayP3Color> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toDisplayP3()).toList();
+
+  @override
+  List<DisplayP3Color> tonesPalette() => toColor().tonesPalette().map((c) => c.toDisplayP3()).toList();
+
+  @override
+  List<DisplayP3Color> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toDisplayP3()).toList();
+
+  @override
+  List<DisplayP3Color> square() => toColor().square().map((c) => c.toDisplayP3()).toList();
+
+  @override
+  List<DisplayP3Color> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toDisplayP3()).toList();
+
+  @override
   String toString() => 'DisplayP3Color(r: ${r.toStringAsFixed(2)}, g: ${g.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
 }

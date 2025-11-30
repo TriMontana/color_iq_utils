@@ -137,5 +137,44 @@ class HwbColor implements ColorSpacesIQ {
   Brightness get brightness => toColor().brightness;
 
   @override
+  bool get isDark => brightness == Brightness.dark;
+
+  @override
+  bool get isLight => brightness == Brightness.light;
+
+  @override
+  HwbColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toHwb();
+
+  @override
+  HwbColor opaquer([double amount = 20]) => toColor().opaquer(amount).toHwb();
+
+  @override
+  HwbColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toHwb();
+
+  @override
+  HwbColor get complementary => toColor().complementary.toHwb();
+
+  @override
+  HwbColor warmer([double amount = 20]) => toColor().warmer(amount).toHwb();
+
+  @override
+  HwbColor cooler([double amount = 20]) => toColor().cooler(amount).toHwb();
+
+  @override
+  List<HwbColor> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toHwb()).toList();
+
+  @override
+  List<HwbColor> tonesPalette() => toColor().tonesPalette().map((c) => c.toHwb()).toList();
+
+  @override
+  List<HwbColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toHwb()).toList();
+
+  @override
+  List<HwbColor> square() => toColor().square().map((c) => c.toHwb()).toList();
+
+  @override
+  List<HwbColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toHwb()).toList();
+
+  @override
   String toString() => 'HwbColor(h: ${h.toStringAsFixed(2)}, w: ${w.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
 }

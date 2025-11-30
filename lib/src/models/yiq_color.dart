@@ -121,5 +121,44 @@ class YiqColor implements ColorSpacesIQ {
   Brightness get brightness => toColor().brightness;
 
   @override
+  bool get isDark => brightness == Brightness.dark;
+
+  @override
+  bool get isLight => brightness == Brightness.light;
+
+  @override
+  YiqColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toYiq();
+
+  @override
+  YiqColor opaquer([double amount = 20]) => toColor().opaquer(amount).toYiq();
+
+  @override
+  YiqColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toYiq();
+
+  @override
+  YiqColor get complementary => toColor().complementary.toYiq();
+
+  @override
+  YiqColor warmer([double amount = 20]) => toColor().warmer(amount).toYiq();
+
+  @override
+  YiqColor cooler([double amount = 20]) => toColor().cooler(amount).toYiq();
+
+  @override
+  List<YiqColor> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toYiq()).toList();
+
+  @override
+  List<YiqColor> tonesPalette() => toColor().tonesPalette().map((c) => c.toYiq()).toList();
+
+  @override
+  List<YiqColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toYiq()).toList();
+
+  @override
+  List<YiqColor> square() => toColor().square().map((c) => c.toYiq()).toList();
+
+  @override
+  List<YiqColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toYiq()).toList();
+
+  @override
   String toString() => 'YiqColor(y: ${y.toStringAsFixed(2)}, i: ${i.toStringAsFixed(2)}, q: ${q.toStringAsFixed(2)})';
 }

@@ -158,5 +158,44 @@ class LuvColor implements ColorSpacesIQ {
   Brightness get brightness => toColor().brightness;
 
   @override
+  bool get isDark => brightness == Brightness.dark;
+
+  @override
+  bool get isLight => brightness == Brightness.light;
+
+  @override
+  LuvColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toLuv();
+
+  @override
+  LuvColor opaquer([double amount = 20]) => toColor().opaquer(amount).toLuv();
+
+  @override
+  LuvColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toLuv();
+
+  @override
+  LuvColor get complementary => toColor().complementary.toLuv();
+
+  @override
+  LuvColor warmer([double amount = 20]) => toColor().warmer(amount).toLuv();
+
+  @override
+  LuvColor cooler([double amount = 20]) => toColor().cooler(amount).toLuv();
+
+  @override
+  List<LuvColor> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toLuv()).toList();
+
+  @override
+  List<LuvColor> tonesPalette() => toColor().tonesPalette().map((c) => c.toLuv()).toList();
+
+  @override
+  List<LuvColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toLuv()).toList();
+
+  @override
+  List<LuvColor> square() => toColor().square().map((c) => c.toLuv()).toList();
+
+  @override
+  List<LuvColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toLuv()).toList();
+
+  @override
   String toString() => 'LuvColor(l: ${l.toStringAsFixed(2)}, u: ${u.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)})';
 }
