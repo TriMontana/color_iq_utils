@@ -11,6 +11,7 @@ class HwbColor implements ColorSpacesIQ {
 
   const HwbColor(this.h, this.w, this.b);
 
+  @override
   Color toColor() {
       double ratio = w + b;
       double wNorm = w;
@@ -94,6 +95,46 @@ class HwbColor implements ColorSpacesIQ {
       return ColorTemperature.warm;
     }
   }
+
+  /// Creates a copy of this color with the given fields replaced with the new values.
+  HwbColor copyWith({double? h, double? w, double? b}) {
+    return HwbColor(
+      h ?? this.h,
+      w ?? this.w,
+      b ?? this.b,
+    );
+  }
+
+  @override
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toHwb()).toList();
+
+  @override
+  List<ColorSpacesIQ> lighterPalette([double? step]) {
+    return toColor()
+        .lighterPalette(step)
+        .map((c) => (c as Color).toHwb())
+        .toList();
+  }
+
+  @override
+  List<ColorSpacesIQ> darkerPalette([double? step]) {
+    return toColor()
+        .darkerPalette(step)
+        .map((c) => (c as Color).toHwb())
+        .toList();
+  }
+
+  @override
+  ColorSpacesIQ get random => (toColor().random as Color).toHwb();
+
+  @override
+  bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+
+  @override
+  double get luminance => toColor().luminance;
+
+  @override
+  Brightness get brightness => toColor().brightness;
 
   @override
   String toString() => 'HwbColor(h: ${h.toStringAsFixed(2)}, w: ${w.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';

@@ -11,6 +11,7 @@ class HslColor implements ColorSpacesIQ {
 
   const HslColor(this.h, this.s, this.l);
 
+  @override
   Color toColor() {
       double c = (1 - (2 * l - 1).abs()) * s;
       double x = c * (1 - ((h / 60) % 2 - 1).abs());
@@ -62,7 +63,7 @@ class HslColor implements ColorSpacesIQ {
   HslColor get inverted => toColor().inverted.toHsl();
 
   @override
-  HslColor get grayscale => toColor().grayscale.toHsl();
+  HslColor get grayscale => HslColor(h, 0.0, l);
 
   @override
   HslColor whiten([double amount = 20]) => toColor().whiten(amount).toHsl();
@@ -102,6 +103,73 @@ class HslColor implements ColorSpacesIQ {
       return ColorTemperature.warm;
     }
   }
+
+  /// Creates a copy of this color with the given fields replaced with the new values.
+  HslColor copyWith({double? h, double? s, double? l}) {
+    return HslColor(
+      h ?? this.h,
+      s ?? this.s,
+      l ?? this.l,
+    );
+  }
+
+  @override
+  List<ColorSpacesIQ> get monochromatic {
+    // Native implementation for HSL
+    final results = <HslColor>[];
+    for (int i = 0; i < 5; i++) {
+        double delta = (i - 2) * 0.1; // 10%
+        double newL = (l + delta).clamp(0.0, 1.0);
+        results.add(HslColor(h, s, newL));
+    }
+    return results;
+  }
+
+  @override
+  List<ColorSpacesIQ> lighterPalette([double? step]) {
+    final results = <HslColor>[];
+    double delta;
+    if (step != null) {
+      delta = step / 100.0;
+    } else {
+      delta = (1.0 - l) / 6.0;
+    }
+
+    for (int i = 1; i <= 5; i++) {
+      double newL = (l + delta * i).clamp(0.0, 1.0);
+      results.add(HslColor(h, s, newL));
+    }
+    return results;
+  }
+
+  @override
+  List<ColorSpacesIQ> darkerPalette([double? step]) {
+    final results = <HslColor>[];
+    double delta;
+    if (step != null) {
+      delta = step / 100.0;
+    } else {
+      delta = l / 6.0;
+    }
+
+    for (int i = 1; i <= 5; i++) {
+      double newL = (l - delta * i).clamp(0.0, 1.0);
+      results.add(HslColor(h, s, newL));
+    }
+    return results;
+  }
+
+  @override
+  ColorSpacesIQ get random => (toColor().random as Color).toHsl();
+
+  @override
+  bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+
+  @override
+  double get luminance => toColor().luminance;
+
+  @override
+  Brightness get brightness => toColor().brightness;
 
   @override
   String toString() => 'HslColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, l: ${l.toStringAsFixed(2)})';

@@ -19,6 +19,7 @@ class LchColor implements ColorSpacesIQ {
     return LabColor(l, a, b);
   }
 
+  @override
   Color toColor() => toLab().toColor();
   
   @override
@@ -81,6 +82,46 @@ class LchColor implements ColorSpacesIQ {
 
   @override
   ColorTemperature get temperature => toColor().temperature;
+
+  /// Creates a copy of this color with the given fields replaced with the new values.
+  LchColor copyWith({double? l, double? c, double? h}) {
+    return LchColor(
+      l ?? this.l,
+      c ?? this.c,
+      h ?? this.h,
+    );
+  }
+
+  @override
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toLch()).toList();
+
+  @override
+  List<ColorSpacesIQ> lighterPalette([double? step]) {
+    return toColor()
+        .lighterPalette(step)
+        .map((c) => (c as Color).toLch())
+        .toList();
+  }
+
+  @override
+  List<ColorSpacesIQ> darkerPalette([double? step]) {
+    return toColor()
+        .darkerPalette(step)
+        .map((c) => (c as Color).toLch())
+        .toList();
+  }
+
+  @override
+  ColorSpacesIQ get random => (toColor().random as Color).toLch();
+
+  @override
+  bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+
+  @override
+  double get luminance => toColor().luminance;
+
+  @override
+  Brightness get brightness => toColor().brightness;
 
   @override
   String toString() => 'LchColor(l: ${l.toStringAsFixed(2)}, c: ${c.toStringAsFixed(2)}, h: ${h.toStringAsFixed(2)})';

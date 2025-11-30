@@ -19,15 +19,11 @@ class OkHslColor implements ColorSpacesIQ {
       double c = s * 0.4;
       // l is l.
       // h is h.
-      // This is a simplification as OkHSL is more complex, but for now we use this approximation or delegate if we had a proper conversion.
-      // Actually, let's use the reverse of what we did in OkLab.toOkHsl
-      // s = (l==0 or l==1) ? 0 : c/0.4.
-      // So c = s * 0.4.
-      // This is only valid if we assume the max chroma is 0.4 which is an approximation for sRGB gamut in Oklab.
       double hRad = h * pi / 180;
       return OkLabColor(l, c * cos(hRad), c * sin(hRad));
   }
   
+  @override
   Color toColor() => toOkLab().toColor();
   
   @override
@@ -90,6 +86,46 @@ class OkHslColor implements ColorSpacesIQ {
 
   @override
   ColorTemperature get temperature => toColor().temperature;
+
+  /// Creates a copy of this color with the given fields replaced with the new values.
+  OkHslColor copyWith({double? h, double? s, double? l}) {
+    return OkHslColor(
+      h ?? this.h,
+      s ?? this.s,
+      l ?? this.l,
+    );
+  }
+
+  @override
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toOkHsl()).toList();
+
+  @override
+  List<ColorSpacesIQ> lighterPalette([double? step]) {
+    return toColor()
+        .lighterPalette(step)
+        .map((c) => (c as Color).toOkHsl())
+        .toList();
+  }
+
+  @override
+  List<ColorSpacesIQ> darkerPalette([double? step]) {
+    return toColor()
+        .darkerPalette(step)
+        .map((c) => (c as Color).toOkHsl())
+        .toList();
+  }
+
+  @override
+  ColorSpacesIQ get random => (toColor().random as Color).toOkHsl();
+
+  @override
+  bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+
+  @override
+  double get luminance => toColor().luminance;
+
+  @override
+  Brightness get brightness => toColor().brightness;
 
   @override
   String toString() => 'OkHslColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, l: ${l.toStringAsFixed(2)})';

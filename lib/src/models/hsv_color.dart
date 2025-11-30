@@ -11,6 +11,7 @@ class HsvColor implements ColorSpacesIQ {
 
   const HsvColor(this.h, this.s, this.v);
 
+  @override
   Color toColor() {
       double c = v * s;
       double x = c * (1 - ((h / 60) % 2 - 1).abs());
@@ -102,6 +103,46 @@ class HsvColor implements ColorSpacesIQ {
       return ColorTemperature.warm;
     }
   }
+
+  /// Creates a copy of this color with the given fields replaced with the new values.
+  HsvColor copyWith({double? h, double? s, double? v}) {
+    return HsvColor(
+      h ?? this.h,
+      s ?? this.s,
+      v ?? this.v,
+    );
+  }
+
+  @override
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toHsv()).toList();
+
+  @override
+  List<ColorSpacesIQ> lighterPalette([double? step]) {
+    return toColor()
+        .lighterPalette(step)
+        .map((c) => (c as Color).toHsv())
+        .toList();
+  }
+
+  @override
+  List<ColorSpacesIQ> darkerPalette([double? step]) {
+    return toColor()
+        .darkerPalette(step)
+        .map((c) => (c as Color).toHsv())
+        .toList();
+  }
+
+  @override
+  ColorSpacesIQ get random => (toColor().random as Color).toHsv();
+
+  @override
+  bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+
+  @override
+  double get luminance => toColor().luminance;
+
+  @override
+  Brightness get brightness => toColor().brightness;
 
   @override
   String toString() => 'HsvColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)})';

@@ -10,6 +10,7 @@ class MunsellColor implements ColorSpacesIQ {
 
   const MunsellColor(this.hue, this.munsellValue, this.chroma);
 
+  @override
   Color toColor() {
       return Color.fromARGB(255, 0, 0, 0);
   }
@@ -74,6 +75,46 @@ class MunsellColor implements ColorSpacesIQ {
 
   @override
   ColorTemperature get temperature => toColor().temperature;
+
+  /// Creates a copy of this color with the given fields replaced with the new values.
+  MunsellColor copyWith({String? hue, double? munsellValue, double? chroma}) {
+    return MunsellColor(
+      hue ?? this.hue,
+      munsellValue ?? this.munsellValue,
+      chroma ?? this.chroma,
+    );
+  }
+
+  @override
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toMunsell()).toList();
+
+  @override
+  List<ColorSpacesIQ> lighterPalette([double? step]) {
+    return toColor()
+        .lighterPalette(step)
+        .map((c) => (c as Color).toMunsell())
+        .toList();
+  }
+
+  @override
+  List<ColorSpacesIQ> darkerPalette([double? step]) {
+    return toColor()
+        .darkerPalette(step)
+        .map((c) => (c as Color).toMunsell())
+        .toList();
+  }
+
+  @override
+  ColorSpacesIQ get random => (toColor().random as Color).toMunsell();
+
+  @override
+  bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+
+  @override
+  double get luminance => toColor().luminance;
+
+  @override
+  Brightness get brightness => toColor().brightness;
 
   @override
   String toString() => 'MunsellColor(hue: $hue, value: ${munsellValue.toStringAsFixed(2)}, chroma: ${chroma.toStringAsFixed(2)})';

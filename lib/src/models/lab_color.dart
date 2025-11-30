@@ -3,7 +3,7 @@ import '../color_interfaces.dart';
 import '../color_temperature.dart';
 import 'color.dart';
 import 'hct_color.dart';
-import 'xyz_color.dart';
+
 import 'lch_color.dart';
 
 class LabColor implements ColorSpacesIQ {
@@ -13,27 +13,38 @@ class LabColor implements ColorSpacesIQ {
 
   const LabColor(this.l, this.a, this.b);
 
-  XyzColor toXyz() {
-    const double refX = 95.047;
-    const double refY = 100.000;
-    const double refZ = 108.883;
+  @override
+  Color toColor() {
+    double y = (l + 16) / 116;
+    double x = a / 500 + y;
+    double z = y - b / 200;
 
-    double yTemp = (l + 16) / 116;
-    double xTemp = a / 500 + yTemp;
-    double zTemp = yTemp - b / 200;
+    double x3 = x * x * x;
+    double y3 = y * y * y;
+    double z3 = z * z * z;
 
-    double x3 = pow(xTemp, 3).toDouble();
-    double y3 = pow(yTemp, 3).toDouble();
-    double z3 = pow(zTemp, 3).toDouble();
+    double xn = 95.047;
+    double yn = 100.0;
+    double zn = 108.883;
 
-    double xOut = (x3 > 0.008856) ? x3 : (xTemp - 16 / 116) / 7.787;
-    double yOut = (y3 > 0.008856) ? y3 : (yTemp - 16 / 116) / 7.787;
-    double zOut = (z3 > 0.008856) ? z3 : (zTemp - 16 / 116) / 7.787;
+    double r = xn * ((x3 > 0.008856) ? x3 : ((x - 16 / 116) / 7.787));
+    double g = yn * ((y3 > 0.008856) ? y3 : ((y - 16 / 116) / 7.787));
+    double bVal = zn * ((z3 > 0.008856) ? z3 : ((z - 16 / 116) / 7.787));
 
-    return XyzColor(xOut * refX, yOut * refY, zOut * refZ);
+    double rS = r / 100;
+    double gS = g / 100;
+    double bS = bVal / 100;
+
+    double rL = rS * 3.2406 + gS * -1.5372 + bS * -0.4986;
+    double gL = rS * -0.9689 + gS * 1.8758 + bS * 0.0415;
+    double bL = rS * 0.0557 + gS * -0.2040 + bS * 1.0570;
+
+    rL = (rL > 0.0031308) ? (1.055 * pow(rL, 1 / 2.4) - 0.055) : (12.92 * rL);
+    gL = (gL > 0.0031308) ? (1.055 * pow(gL, 1 / 2.4) - 0.055) : (12.92 * gL);
+    bL = (bL > 0.0031308) ? (1.055 * pow(bL, 1 / 2.4) - 0.055) : (12.92 * bL);
+
+    return Color.fromARGB(255, (rL * 255).round().clamp(0, 255), (gL * 255).round().clamp(0, 255), (bL * 255).round().clamp(0, 255));
   }
-
-  Color toColor() => toXyz().toColor();
   
   @override
   int get value => toColor().value;
@@ -103,6 +114,46 @@ class LabColor implements ColorSpacesIQ {
 
   @override
   ColorTemperature get temperature => toColor().temperature;
+
+  /// Creates a copy of this color with the given fields replaced with the new values.
+  LabColor copyWith({double? l, double? a, double? b}) {
+    return LabColor(
+      l ?? this.l,
+      a ?? this.a,
+      b ?? this.b,
+    );
+  }
+
+  @override
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toLab()).toList();
+
+  @override
+  List<ColorSpacesIQ> lighterPalette([double? step]) {
+    return toColor()
+        .lighterPalette(step)
+        .map((c) => (c as Color).toLab())
+        .toList();
+  }
+
+  @override
+  List<ColorSpacesIQ> darkerPalette([double? step]) {
+    return toColor()
+        .darkerPalette(step)
+        .map((c) => (c as Color).toLab())
+        .toList();
+  }
+
+  @override
+  ColorSpacesIQ get random => (toColor().random as Color).toLab();
+
+  @override
+  bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+
+  @override
+  double get luminance => toColor().luminance;
+
+  @override
+  Brightness get brightness => toColor().brightness;
 
   @override
   String toString() => 'LabColor(l: ${l.toStringAsFixed(2)}, a: ${a.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';

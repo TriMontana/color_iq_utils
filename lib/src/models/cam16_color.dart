@@ -15,6 +15,7 @@ class Cam16Color implements ColorSpacesIQ {
 
   const Cam16Color(this.hue, this.chroma, this.j, this.q, this.m, this.s);
 
+  @override
   Color toColor() {
       // This is complex, usually requires viewing conditions.
       // MCU library has Cam16.
@@ -92,6 +93,49 @@ class Cam16Color implements ColorSpacesIQ {
 
   @override
   ColorTemperature get temperature => toColor().temperature;
+
+  /// Creates a copy of this color with the given fields replaced with the new values.
+  Cam16Color copyWith({double? hue, double? chroma, double? j, double? q, double? m, double? s}) {
+    return Cam16Color(
+      hue ?? this.hue,
+      chroma ?? this.chroma,
+      j ?? this.j,
+      q ?? this.q,
+      m ?? this.m,
+      s ?? this.s,
+    );
+  }
+
+  @override
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toCam16()).toList();
+
+  @override
+  List<ColorSpacesIQ> lighterPalette([double? step]) {
+    return toColor()
+        .lighterPalette(step)
+        .map((c) => (c as Color).toCam16())
+        .toList();
+  }
+
+  @override
+  List<ColorSpacesIQ> darkerPalette([double? step]) {
+    return toColor()
+        .darkerPalette(step)
+        .map((c) => (c as Color).toCam16())
+        .toList();
+  }
+
+  @override
+  ColorSpacesIQ get random => (toColor().random as Color).toCam16();
+
+  @override
+  bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+
+  @override
+  double get luminance => toColor().luminance;
+
+  @override
+  Brightness get brightness => toColor().brightness;
 
   @override
   String toString() => 'Cam16Color(hue: ${hue.toStringAsFixed(2)}, chroma: ${chroma.toStringAsFixed(2)}, j: ${j.toStringAsFixed(2)})';

@@ -14,6 +14,7 @@ class OkLabColor implements ColorSpacesIQ {
 
   const OkLabColor(this.l, this.a, this.b);
 
+  @override
   Color toColor() {
     double l_ = l + 0.3963377774 * a + 0.2158037573 * b;
     double m_ = l - 0.1055613458 * a - 0.0638541728 * b;
@@ -118,6 +119,46 @@ class OkLabColor implements ColorSpacesIQ {
 
   @override
   ColorTemperature get temperature => toColor().temperature;
+
+  /// Creates a copy of this color with the given fields replaced with the new values.
+  OkLabColor copyWith({double? l, double? a, double? b}) {
+    return OkLabColor(
+      l ?? this.l,
+      a ?? this.a,
+      b ?? this.b,
+    );
+  }
+
+  @override
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toOkLab()).toList();
+
+  @override
+  List<ColorSpacesIQ> lighterPalette([double? step]) {
+    return toColor()
+        .lighterPalette(step)
+        .map((c) => (c as Color).toOkLab())
+        .toList();
+  }
+
+  @override
+  List<ColorSpacesIQ> darkerPalette([double? step]) {
+    return toColor()
+        .darkerPalette(step)
+        .map((c) => (c as Color).toOkLab())
+        .toList();
+  }
+
+  @override
+  ColorSpacesIQ get random => (toColor().random as Color).toOkLab();
+
+  @override
+  bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+
+  @override
+  double get luminance => toColor().luminance;
+
+  @override
+  Brightness get brightness => toColor().brightness;
 
   @override
   String toString() => 'OkLabColor(l: ${l.toStringAsFixed(2)}, a: ${a.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';

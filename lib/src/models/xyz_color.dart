@@ -13,6 +13,7 @@ class XyzColor implements ColorSpacesIQ {
 
   const XyzColor(this.x, this.y, this.z);
 
+  @override
   Color toColor() {
     double xTemp = x / 100;
     double yTemp = y / 100;
@@ -80,7 +81,7 @@ class XyzColor implements ColorSpacesIQ {
   
   @override
   XyzColor lighten([double amount = 20]) {
-    return toLab().lighten(amount).toXyz();
+    return toLab().lighten(amount).toColor().toXyz();
   }
 
   @override
@@ -135,6 +136,46 @@ class XyzColor implements ColorSpacesIQ {
 
   @override
   ColorTemperature get temperature => toColor().temperature;
+
+  /// Creates a copy of this color with the given fields replaced with the new values.
+  XyzColor copyWith({double? x, double? y, double? z}) {
+    return XyzColor(
+      x ?? this.x,
+      y ?? this.y,
+      z ?? this.z,
+    );
+  }
+
+  @override
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toXyz()).toList();
+
+  @override
+  List<ColorSpacesIQ> lighterPalette([double? step]) {
+    return toColor()
+        .lighterPalette(step)
+        .map((c) => (c as Color).toXyz())
+        .toList();
+  }
+
+  @override
+  List<ColorSpacesIQ> darkerPalette([double? step]) {
+    return toColor()
+        .darkerPalette(step)
+        .map((c) => (c as Color).toXyz())
+        .toList();
+  }
+
+  @override
+  ColorSpacesIQ get random => (toColor().random as Color).toXyz();
+
+  @override
+  bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+
+  @override
+  double get luminance => toColor().luminance;
+
+  @override
+  Brightness get brightness => toColor().brightness;
 
   @override
   String toString() => 'XyzColor(x: ${x.toStringAsFixed(2)}, y: ${y.toStringAsFixed(2)}, z: ${z.toStringAsFixed(2)})';

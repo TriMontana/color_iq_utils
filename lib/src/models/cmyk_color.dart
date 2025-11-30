@@ -12,11 +12,12 @@ class CmykColor implements ColorSpacesIQ {
 
   const CmykColor(this.c, this.m, this.y, this.k);
 
+  @override
   Color toColor() {
     double r = 255 * (1 - c) * (1 - k);
     double g = 255 * (1 - m) * (1 - k);
     double b = 255 * (1 - y) * (1 - k);
-    return Color.fromARGB(255, r.round(), g.round(), b.round());
+    return Color.fromARGB(255, r.round().clamp(0, 255), g.round().clamp(0, 255), b.round().clamp(0, 255));
   }
   
   @override
@@ -85,6 +86,47 @@ class CmykColor implements ColorSpacesIQ {
 
   @override
   ColorTemperature get temperature => toColor().temperature;
+
+  /// Creates a copy of this color with the given fields replaced with the new values.
+  CmykColor copyWith({double? c, double? m, double? y, double? k}) {
+    return CmykColor(
+      c ?? this.c,
+      m ?? this.m,
+      y ?? this.y,
+      k ?? this.k,
+    );
+  }
+
+  @override
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toCmyk()).toList();
+
+  @override
+  List<ColorSpacesIQ> lighterPalette([double? step]) {
+    return toColor()
+        .lighterPalette(step)
+        .map((c) => (c as Color).toCmyk())
+        .toList();
+  }
+
+  @override
+  List<ColorSpacesIQ> darkerPalette([double? step]) {
+    return toColor()
+        .darkerPalette(step)
+        .map((c) => (c as Color).toCmyk())
+        .toList();
+  }
+
+  @override
+  ColorSpacesIQ get random => (toColor().random as Color).toCmyk();
+
+  @override
+  bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+
+  @override
+  double get luminance => toColor().luminance;
+
+  @override
+  Brightness get brightness => toColor().brightness;
 
   @override
   String toString() => 'CmykColor(c: ${c.toStringAsFixed(2)}, m: ${m.toStringAsFixed(2)}, y: ${y.toStringAsFixed(2)}, k: ${k.toStringAsFixed(2)})';

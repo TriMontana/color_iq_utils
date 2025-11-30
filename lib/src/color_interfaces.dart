@@ -1,4 +1,5 @@
 import 'models/hct_color.dart';
+import 'models/color.dart';
 import 'color_temperature.dart';
 
 /// A common interface for all color models.
@@ -18,10 +19,10 @@ abstract class ColorSpacesIQ {
   /// Desaturates the color by the given [amount] (0-100).
   ColorSpacesIQ desaturate([double amount = 25]);
 
-  /// Returns the delinearized gamut corrected sRGB values [r, g, b, a] (0-255).
+  /// Returns the sRGB components (0-255).
   List<int> get srgb;
 
-  /// Returns the linearized ARGB (not gamma corrected) values [r, g, b, a] (0.0-1.0).
+  /// Returns the linear sRGB components (0.0-1.0).
   List<double> get linearSrgb;
 
   /// Returns the inverted color.
@@ -30,14 +31,21 @@ abstract class ColorSpacesIQ {
   /// Returns the grayscale version of this color.
   ColorSpacesIQ get grayscale;
 
-  /// Whitens the color by mixing it with white by the given [amount] (0-100).
+  /// Whitens the color by mixing with white. [amount] is 0-100.
   ColorSpacesIQ whiten([double amount = 20]);
 
-  /// Blackens the color by mixing it with black by the given [amount] (0-100).
+  /// Blackens the color by mixing with black. [amount] is 0-100.
   ColorSpacesIQ blacken([double amount = 20]);
 
-  /// Linearly interpolates to another [other] color by [t] (0.0-1.0).
+  /// Linearly interpolates between this color and [other]. [t] is 0.0-1.0.
   ColorSpacesIQ lerp(ColorSpacesIQ other, double t);
+  
+  /// Adjusts the transparency of the color. [amount] is 0-100.
+  ColorSpacesIQ adjustTransparency([double amount = 20]);
+
+
+  /// Converts the color to the standard ARGB [Color] format.
+  Color toColor();
 
   /// Converts this color to HCT.
   HctColor toHct();
@@ -45,13 +53,37 @@ abstract class ColorSpacesIQ {
   /// Creates a new instance of this color type from an HCT color.
   ColorSpacesIQ fromHct(HctColor hct);
 
-  /// Adjusts the transparency by the given [amount] (percentage 0-100).
-  /// Default is 20%. Reduces opacity by the amount.
-  ColorSpacesIQ adjustTransparency([double amount = 20]);
-
   /// Returns the transparency (alpha) as a double (0.0-1.0).
   double get transparency;
 
   /// Returns the color temperature (Warm or Cool).
   ColorTemperature get temperature;
+
+  List<ColorSpacesIQ> get monochromatic;
+
+  /// Returns a palette of 5 colors progressively lighter.
+  /// [step] is the percentage increment (0-100). If null, steps are equidistant to white.
+  List<ColorSpacesIQ> lighterPalette([double? step]);
+
+  /// Returns a palette of 5 colors progressively darker.
+  /// [step] is the percentage increment (0-100). If null, steps are equidistant to black.
+  List<ColorSpacesIQ> darkerPalette([double? step]);
+
+  /// Returns a random color of the same type.
+  ColorSpacesIQ get random;
+
+  /// Compares this color with another color.
+  bool isEqual(ColorSpacesIQ other);
+
+  /// Returns the brightness of this color (light or dark).
+  Brightness get brightness;
+
+  /// Returns the relative luminance of this color (0.0 - 1.0).
+  double get luminance;
+}
+
+/// The brightness of a color.
+enum Brightness {
+  dark,
+  light,
 }

@@ -11,6 +11,7 @@ class Rec2020Color implements ColorSpacesIQ {
 
   const Rec2020Color(this.r, this.g, this.b);
 
+  @override
   Color toColor() {
       // Rec. 2020 decoding (Gamma to Linear)
       double transferInv(double v) {
@@ -100,6 +101,46 @@ class Rec2020Color implements ColorSpacesIQ {
 
   @override
   ColorTemperature get temperature => toColor().temperature;
+
+  /// Creates a copy of this color with the given fields replaced with the new values.
+  Rec2020Color copyWith({double? r, double? g, double? b}) {
+    return Rec2020Color(
+      r ?? this.r,
+      g ?? this.g,
+      b ?? this.b,
+    );
+  }
+
+  @override
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toRec2020()).toList();
+
+  @override
+  List<ColorSpacesIQ> lighterPalette([double? step]) {
+    return toColor()
+        .lighterPalette(step)
+        .map((c) => (c as Color).toRec2020())
+        .toList();
+  }
+
+  @override
+  List<ColorSpacesIQ> darkerPalette([double? step]) {
+    return toColor()
+        .darkerPalette(step)
+        .map((c) => (c as Color).toRec2020())
+        .toList();
+  }
+
+  @override
+  ColorSpacesIQ get random => (toColor().random as Color).toRec2020();
+
+  @override
+  bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+
+  @override
+  double get luminance => toColor().luminance;
+
+  @override
+  Brightness get brightness => toColor().brightness;
 
   @override
   String toString() => 'Rec2020Color(r: ${r.toStringAsFixed(2)}, g: ${g.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';

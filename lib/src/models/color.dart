@@ -518,6 +518,89 @@ class Color implements ColorSpacesIQ {
     }
   }
 
+  /// Creates a copy of this color with the given fields replaced with the new values.
+  Color copyWith({int? a, int? r, int? g, int? b}) {
+    return Color.fromARGB(
+      a ?? alpha,
+      r ?? red,
+      g ?? green,
+      b ?? blue,
+    );
+  }
+
+  @override
+  List<ColorSpacesIQ> get monochromatic {
+    // Generate 5 variations based on lightness/tone.
+    // We can use Hct for perceptually accurate tone steps, or HSL for simple lightness.
+    // Let's use HSL for simplicity and consistency with existing logic, or HCT for better quality?
+    // The user asked for "at least five colors".
+    // Let's generate a range of lightnesses around the current color.
+    final hsl = toHsl();
+    final results = <Color>[];
+    
+    // We want 5 steps. Let's do: L-20, L-10, L, L+10, L+20, clamped.
+    // Or just spread them out evenly?
+    // Let's do a spread.
+    for (int i = 0; i < 5; i++) {
+        // -2, -1, 0, 1, 2
+        double delta = (i - 2) * 10.0; 
+        double newL = (hsl.l * 100 + delta).clamp(0.0, 100.0);
+        results.add(HslColor(hsl.h, hsl.s, newL / 100).toColor());
+    }
+    return results;
+  }
+
+  @override
+  List<ColorSpacesIQ> lighterPalette([double? step]) {
+    return toHsl()
+        .lighterPalette(step)
+        .map((c) => (c as HslColor).toColor())
+        .toList();
+  }
+
+  @override
+  List<ColorSpacesIQ> darkerPalette([double? step]) {
+    return toHsl()
+        .darkerPalette(step)
+        .map((c) => (c as HslColor).toColor())
+        .toList();
+  }
+
+  @override
+  Color toColor() => this;
+
+  @override
+  ColorSpacesIQ get random {
+    final rng = Random();
+    return Color.fromARGB(
+      255,
+      rng.nextInt(256),
+      rng.nextInt(256),
+      rng.nextInt(256),
+    );
+  }
+
+  @override
+  bool isEqual(ColorSpacesIQ other) {
+    return value == other.toColor().value;
+  }
+
+  @override
+  double get luminance {
+    return linearSrgb[0] * 0.2126 + linearSrgb[1] * 0.7152 + linearSrgb[2] * 0.0722;
+  }
+
+  @override
+  Brightness get brightness {
+    // Based on ThemeData.estimateBrightnessForColor
+    final double relativeLuminance = luminance;
+    const double kThreshold = 0.15;
+    if ((relativeLuminance + 0.05) * (relativeLuminance + 0.05) > kThreshold) {
+      return Brightness.light;
+    }
+    return Brightness.dark;
+  }
+
   @override
   String toString() => 'Color(0x${value.toRadixString(16).toUpperCase().padLeft(8, '0')})';
 }

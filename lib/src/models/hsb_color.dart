@@ -12,6 +12,7 @@ class HsbColor implements ColorSpacesIQ {
 
   const HsbColor(this.h, this.s, this.b);
 
+  @override
   Color toColor() {
       // HSB is the same as HSV, just B instead of V
       return HsvColor(h, s, b).toColor();
@@ -85,6 +86,46 @@ class HsbColor implements ColorSpacesIQ {
       return ColorTemperature.warm;
     }
   }
+
+  /// Creates a copy of this color with the given fields replaced with the new values.
+  HsbColor copyWith({double? h, double? s, double? b}) {
+    return HsbColor(
+      h ?? this.h,
+      s ?? this.s,
+      b ?? this.b,
+    );
+  }
+
+  @override
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toHsb()).toList();
+
+  @override
+  List<ColorSpacesIQ> lighterPalette([double? step]) {
+    return toColor()
+        .lighterPalette(step)
+        .map((c) => (c as Color).toHsb())
+        .toList();
+  }
+
+  @override
+  List<ColorSpacesIQ> darkerPalette([double? step]) {
+    return toColor()
+        .darkerPalette(step)
+        .map((c) => (c as Color).toHsb())
+        .toList();
+  }
+
+  @override
+  ColorSpacesIQ get random => (toColor().random as Color).toHsb();
+
+  @override
+  bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+
+  @override
+  double get luminance => toColor().luminance;
+
+  @override
+  Brightness get brightness => toColor().brightness;
 
   @override
   String toString() => 'HsbColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';

@@ -10,10 +10,12 @@ class YiqColor implements ColorSpacesIQ {
 
   const YiqColor(this.y, this.i, this.q);
 
+  @override
   Color toColor() {
     double r = y + 0.956 * i + 0.621 * q;
     double g = y - 0.272 * i - 0.647 * q;
     double b = y - 1.106 * i + 1.703 * q;
+
     return Color.fromARGB(255, (r * 255).round().clamp(0, 255), (g * 255).round().clamp(0, 255), (b * 255).round().clamp(0, 255));
   }
   
@@ -77,6 +79,46 @@ class YiqColor implements ColorSpacesIQ {
 
   @override
   ColorTemperature get temperature => toColor().temperature;
+
+  /// Creates a copy of this color with the given fields replaced with the new values.
+  YiqColor copyWith({double? y, double? i, double? q}) {
+    return YiqColor(
+      y ?? this.y,
+      i ?? this.i,
+      q ?? this.q,
+    );
+  }
+
+  @override
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toYiq()).toList();
+
+  @override
+  List<ColorSpacesIQ> lighterPalette([double? step]) {
+    return toColor()
+        .lighterPalette(step)
+        .map((c) => (c as Color).toYiq())
+        .toList();
+  }
+
+  @override
+  List<ColorSpacesIQ> darkerPalette([double? step]) {
+    return toColor()
+        .darkerPalette(step)
+        .map((c) => (c as Color).toYiq())
+        .toList();
+  }
+
+  @override
+  ColorSpacesIQ get random => (toColor().random as Color).toYiq();
+
+  @override
+  bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+
+  @override
+  double get luminance => toColor().luminance;
+
+  @override
+  Brightness get brightness => toColor().brightness;
 
   @override
   String toString() => 'YiqColor(y: ${y.toStringAsFixed(2)}, i: ${i.toStringAsFixed(2)}, q: ${q.toStringAsFixed(2)})';

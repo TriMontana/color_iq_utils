@@ -11,8 +11,10 @@ class HctColor implements ColorSpacesIQ {
 
   const HctColor(this.hue, this.chroma, this.tone);
 
+  @override
   Color toColor() {
-      return Color(mcu.Hct.from(hue, chroma, tone).toInt());
+    int argb = mcu.Hct.from(hue, chroma, tone).toInt();
+    return Color(argb);
   }
   
   @override
@@ -83,6 +85,54 @@ class HctColor implements ColorSpacesIQ {
       return ColorTemperature.warm;
     }
   }
+
+  /// Creates a copy of this color with the given fields replaced with the new values.
+  HctColor copyWith({double? hue, double? chroma, double? tone}) {
+    return HctColor(
+      hue ?? this.hue,
+      chroma ?? this.chroma,
+      tone ?? this.tone,
+    );
+  }
+
+  @override
+  List<ColorSpacesIQ> get monochromatic {
+    final results = <HctColor>[];
+    for (int i = 0; i < 5; i++) {
+        double delta = (i - 2) * 10.0;
+        double newTone = (tone + delta).clamp(0.0, 100.0);
+        results.add(HctColor(hue, chroma, newTone));
+    }
+    return results;
+  }
+
+  @override
+  List<ColorSpacesIQ> lighterPalette([double? step]) {
+    return toColor()
+        .lighterPalette(step)
+        .map((c) => (c as Color).toHct())
+        .toList();
+  }
+
+  @override
+  List<ColorSpacesIQ> darkerPalette([double? step]) {
+    return toColor()
+        .darkerPalette(step)
+        .map((c) => (c as Color).toHct())
+        .toList();
+  }
+
+  @override
+  ColorSpacesIQ get random => (toColor().random as Color).toHct();
+
+  @override
+  bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+
+  @override
+  double get luminance => toColor().luminance;
+
+  @override
+  Brightness get brightness => toColor().brightness;
 
   @override
   String toString() => 'HctColor(hue: ${hue.toStringAsFixed(2)}, chroma: ${chroma.toStringAsFixed(2)}, tone: ${tone.toStringAsFixed(2)})';

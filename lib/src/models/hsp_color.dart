@@ -11,8 +11,60 @@ class HspColor implements ColorSpacesIQ {
 
   const HspColor(this.h, this.s, this.p);
 
+  @override
   Color toColor() {
-    return Color.fromARGB(255, 0, 0, 0); 
+    // http://alienryderflex.com/hsp.html
+    double part = 0.0;
+    double r = 0.0;
+    double g = 0.0;
+    double b = 0.0;
+    double minOverMax = 1.0 - s;
+    
+    if (minOverMax > 0.0) {
+      double hLocal = h;
+      if ( hLocal < 1.0 / 6.0) {
+         hLocal = 6.0 * ( hLocal - 0.0 / 6.0); part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
+         b = p / sqrt(0.299 / minOverMax / minOverMax + 0.587 * part * part + 0.114);
+         r = (b) / minOverMax; g = (b) + hLocal * ((r) - (b));
+      } else if ( hLocal < 2.0 / 6.0) {
+         hLocal = 6.0 * (-hLocal + 2.0 / 6.0); part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
+         b = p / sqrt(0.587 / minOverMax / minOverMax + 0.299 * part * part + 0.114);
+         g = (b) / minOverMax; r = (b) + hLocal * ((g) - (b));
+      } else if ( hLocal < 3.0 / 6.0) {
+         hLocal = 6.0 * ( hLocal - 2.0 / 6.0); part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
+         r = p / sqrt(0.587 / minOverMax / minOverMax + 0.114 * part * part + 0.299);
+         g = (r) / minOverMax; b = (r) + hLocal * ((g) - (r));
+      } else if ( hLocal < 4.0 / 6.0) {
+         hLocal = 6.0 * (-hLocal + 4.0 / 6.0); part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
+         r = p / sqrt(0.114 / minOverMax / minOverMax + 0.587 * part * part + 0.299);
+         b = (r) / minOverMax; g = (r) + hLocal * ((b) - (r));
+      } else if ( hLocal < 5.0 / 6.0) {
+         hLocal = 6.0 * ( hLocal - 4.0 / 6.0); part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
+         g = p / sqrt(0.114 / minOverMax / minOverMax + 0.299 * part * part + 0.587);
+         b = (g) / minOverMax; r = (g) + hLocal * ((b) - (g));
+      } else {
+         hLocal = 6.0 * (-hLocal + 6.0 / 6.0); part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
+         g = p / sqrt(0.299 / minOverMax / minOverMax + 0.114 * part * part + 0.587);
+         r = (g) / minOverMax; b = (g) + hLocal * ((r) - (g));
+      }
+    } else {
+      double hLocal = h;
+      if ( hLocal < 1.0 / 6.0) {
+         hLocal = 6.0 * ( hLocal - 0.0 / 6.0); r = sqrt(p * p / (0.299 + 0.587 * hLocal * hLocal + 0.114 * (1.0 - hLocal) * (1.0 - hLocal))); g = sqrt(p * p / (0.299 / hLocal / hLocal + 0.587 + 0.114 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0))); b = 0.0;
+      } else if ( hLocal < 2.0 / 6.0) {
+         hLocal = 6.0 * (-hLocal + 2.0 / 6.0); g = sqrt(p * p / (0.587 + 0.299 * hLocal * hLocal + 0.114 * (1.0 - hLocal) * (1.0 - hLocal))); r = sqrt(p * p / (0.587 / hLocal / hLocal + 0.299 + 0.114 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0))); b = 0.0;
+      } else if ( hLocal < 3.0 / 6.0) {
+         hLocal = 6.0 * ( hLocal - 2.0 / 6.0); g = sqrt(p * p / (0.587 + 0.114 * hLocal * hLocal + 0.299 * (1.0 - hLocal) * (1.0 - hLocal))); b = sqrt(p * p / (0.587 / hLocal / hLocal + 0.114 + 0.299 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0))); r = 0.0;
+      } else if ( hLocal < 4.0 / 6.0) {
+         hLocal = 6.0 * (-hLocal + 4.0 / 6.0); b = sqrt(p * p / (0.114 + 0.587 * hLocal * hLocal + 0.299 * (1.0 - hLocal) * (1.0 - hLocal))); g = sqrt(p * p / (0.114 / hLocal / hLocal + 0.587 + 0.299 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0))); r = 0.0;
+      } else if ( hLocal < 5.0 / 6.0) {
+         hLocal = 6.0 * ( hLocal - 4.0 / 6.0); b = sqrt(p * p / (0.114 + 0.299 * hLocal * hLocal + 0.587 * (1.0 - hLocal) * (1.0 - hLocal))); r = sqrt(p * p / (0.114 / hLocal / hLocal + 0.299 + 0.587 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0))); g = 0.0;
+      } else {
+         hLocal = 6.0 * (-hLocal + 6.0 / 6.0); r = sqrt(p * p / (0.299 + 0.114 * hLocal * hLocal + 0.587 * (1.0 - hLocal) * (1.0 - hLocal))); b = sqrt(p * p / (0.299 / hLocal / hLocal + 0.114 + 0.587 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0))); g = 0.0;
+      }
+    }
+
+    return Color.fromARGB(255, (r * 255).round().clamp(0, 255), (g * 255).round().clamp(0, 255), (b * 255).round().clamp(0, 255));
   }
   
   @override
@@ -75,6 +127,45 @@ class HspColor implements ColorSpacesIQ {
 
   @override
   ColorTemperature get temperature => toColor().temperature;
+
+  /// Creates a copy of this color with the given fields replaced with the new values.
+  HspColor copyWith({double? h, double? s, double? p}) {
+    return HspColor(
+      h ?? this.h,
+      s ?? this.s,
+      p ?? this.p,
+    );
+  }
+
+  @override
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toHsp()).toList();
+
+  @override
+  List<ColorSpacesIQ> lighterPalette([double? step]) {
+    return toColor()
+        .lighterPalette(step)
+        .map((c) => (c as Color).toHsp())
+        .toList();
+  }
+
+  @override
+  List<ColorSpacesIQ> darkerPalette([double? step]) {
+    return toColor()
+        .darkerPalette(step)
+        .map((c) => (c as Color).toHsp())
+        .toList();
+  }
+
+  @override
+  ColorSpacesIQ get random => (toColor().random as Color).toHsp();
+
+  @override
+  bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+
+  @override
+  double get luminance => toColor().luminance;
+  @override
+  Brightness get brightness => toColor().brightness;
 
   @override
   String toString() => 'HspColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, p: ${p.toStringAsFixed(2)})';
