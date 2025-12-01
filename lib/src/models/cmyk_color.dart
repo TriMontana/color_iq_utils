@@ -63,6 +63,11 @@ class CmykColor implements ColorSpacesIQ {
   }
 
   @override
+  CmykColor simulate(ColorBlindnessType type) {
+    return toColor().simulate(type).toCmyk();
+  }
+
+  @override
   List<int> get srgb => toColor().srgb;
 
   @override

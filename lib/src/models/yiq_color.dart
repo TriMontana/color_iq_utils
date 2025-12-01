@@ -53,6 +53,11 @@ class YiqColor implements ColorSpacesIQ {
   }
 
   @override
+  YiqColor simulate(ColorBlindnessType type) {
+    return toColor().simulate(type).toYiq();
+  }
+
+  @override
   List<int> get srgb => toColor().srgb;
 
   @override

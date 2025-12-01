@@ -107,6 +107,11 @@ class HspColor implements ColorSpacesIQ {
   }
 
   @override
+  HspColor simulate(ColorBlindnessType type) {
+    return toColor().simulate(type).toHsp();
+  }
+
+  @override
   List<int> get srgb => toColor().srgb;
 
   @override

@@ -43,6 +43,11 @@ class LchColor implements ColorSpacesIQ {
   }
 
   @override
+  LchColor simulate(ColorBlindnessType type) {
+    return toColor().simulate(type).toLch();
+  }
+
+  @override
   List<int> get srgb => toColor().srgb;
 
   @override

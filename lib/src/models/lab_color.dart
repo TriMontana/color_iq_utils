@@ -109,6 +109,11 @@ class LabColor implements ColorSpacesIQ {
   }
 
   @override
+  LabColor simulate(ColorBlindnessType type) {
+    return toColor().simulate(type).toLab();
+  }
+
+  @override
   LabColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toLab();
 
   @override

@@ -123,6 +123,11 @@ class OkLabColor implements ColorSpacesIQ {
   }
 
   @override
+  OkLabColor simulate(ColorBlindnessType type) {
+    return toColor().simulate(type).toOkLab();
+  }
+
+  @override
   HctColor toHct() => toColor().toHct();
 
   @override

@@ -60,6 +60,11 @@ class MunsellColor implements ColorSpacesIQ {
   }
 
   @override
+  MunsellColor simulate(ColorBlindnessType type) {
+    return toColor().simulate(type).toMunsell();
+  }
+
+  @override
   List<int> get srgb => toColor().srgb;
 
   @override

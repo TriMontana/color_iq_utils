@@ -71,6 +71,11 @@ class DisplayP3Color implements ColorSpacesIQ {
   }
 
   @override
+  DisplayP3Color simulate(ColorBlindnessType type) {
+    return toColor().simulate(type).toDisplayP3();
+  }
+
+  @override
   List<int> get srgb => toColor().srgb;
 
   @override

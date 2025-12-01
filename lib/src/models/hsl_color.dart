@@ -70,6 +70,11 @@ class HslColor implements ColorSpacesIQ {
   }
 
   @override
+  HslColor simulate(ColorBlindnessType type) {
+    return toColor().simulate(type).toHsl();
+  }
+
+  @override
   List<int> get srgb => toColor().srgb;
 
   @override

@@ -107,6 +107,11 @@ class LuvColor implements ColorSpacesIQ {
   }
 
   @override
+  LuvColor simulate(ColorBlindnessType type) {
+    return toColor().simulate(type).toLuv();
+  }
+
+  @override
   LuvColor brighten([double amount = 20]) {
     return toColor().brighten(amount).toLuv();
   }

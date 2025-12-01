@@ -3,6 +3,8 @@ import 'models/color.dart';
 import 'color_wheels.dart';
 export 'color_wheels.dart';
 import 'color_temperature.dart';
+import 'color_blindness.dart';
+export 'color_blindness.dart';
 
 /// A common interface for all color models.
 abstract class ColorSpacesIQ {
@@ -64,6 +66,9 @@ abstract class ColorSpacesIQ {
   ColorSpacesIQ deintensify([double amount = 10]);
 
   ColorSpacesIQ fromHct(HctColor hct);
+
+  /// Simulates color blindness on this color.
+  ColorSpacesIQ simulate(ColorBlindnessType type);
 
   /// Returns the transparency (alpha) as a double (0.0-1.0).
   double get transparency;

@@ -56,6 +56,11 @@ class HctColor implements ColorSpacesIQ {
   }
 
   @override
+  HctColor simulate(ColorBlindnessType type) {
+    return toColor().simulate(type).toHct();
+  }
+
+  @override
   List<int> get srgb => toColor().srgb;
 
   @override

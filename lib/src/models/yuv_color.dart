@@ -52,6 +52,11 @@ class YuvColor implements ColorSpacesIQ {
   }
 
   @override
+  YuvColor simulate(ColorBlindnessType type) {
+    return toColor().simulate(type).toYuv();
+  }
+
+  @override
   List<int> get srgb => toColor().srgb;
 
   @override

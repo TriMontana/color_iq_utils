@@ -64,6 +64,11 @@ class Cam16Color implements ColorSpacesIQ {
   }
 
   @override
+  Cam16Color simulate(ColorBlindnessType type) {
+    return toColor().simulate(type).toCam16();
+  }
+
+  @override
   List<int> get srgb => toColor().srgb;
 
   @override

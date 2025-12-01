@@ -457,6 +457,30 @@ class Color implements ColorSpacesIQ {
   }
 
   @override
+  Color simulate(ColorBlindnessType type) {
+    // 1. Convert to Linear sRGB (0-1)
+    List<double> lin = linearSrgb;
+    // 2. Simulate
+    List<double> sim = ColorBlindness.simulate(lin[0], lin[1], lin[2], type);
+    // 3. Convert back to sRGB (Gamma Corrected)
+    // We can use a helper or manual conversion.
+    // Let's use manual for now or add a helper if needed.
+    // Actually, we can construct a Color from linear sRGB if we had a constructor,
+    // but we have `linearSrgb` getter. We don't have `fromLinearSrgb`.
+    // Let's implement the gamma correction here.
+    
+    double gammaCorrect(double v) {
+      return (v > 0.0031308) ? (1.055 * pow(v, 1 / 2.4) - 0.055) : (12.92 * v);
+    }
+
+    int r = (gammaCorrect(sim[0]) * 255).round().clamp(0, 255);
+    int g = (gammaCorrect(sim[1]) * 255).round().clamp(0, 255);
+    int b = (gammaCorrect(sim[2]) * 255).round().clamp(0, 255);
+
+    return Color.fromARGB(alpha, r, g, b);
+  }
+
+  @override
   List<int> get srgb => [red, green, blue, alpha];
 
   @override

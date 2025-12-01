@@ -1,0 +1,254 @@
+import 'color_interfaces.dart';
+import 'models/color.dart';
+import 'models/hsl_color.dart';
+import 'models/ok_lab_color.dart';
+import 'models/ok_lch_color.dart';
+
+/// Supported CSS color spaces.
+enum CssColorSpace {
+  hex,
+  rgb,
+  hsl,
+  oklab,
+  oklch,
+}
+
+/// Extension for CSS string conversion.
+extension CssExtensions on ColorSpacesIQ {
+  /// Converts the color to a CSS string in the specified [space].
+  String toCssString({CssColorSpace space = CssColorSpace.hex}) {
+    switch (space) {
+      case CssColorSpace.hex:
+        return _toHex();
+      case CssColorSpace.rgb:
+        return _toRgb();
+      case CssColorSpace.hsl:
+        return _toHsl();
+      case CssColorSpace.oklab:
+        return _toOklab();
+      case CssColorSpace.oklch:
+        return _toOklch();
+    }
+  }
+
+  String _toHex() {
+    final c = toColor();
+    final a = c.alpha;
+    final r = c.red.toRadixString(16).padLeft(2, '0');
+    final g = c.green.toRadixString(16).padLeft(2, '0');
+    final b = c.blue.toRadixString(16).padLeft(2, '0');
+    
+    if (a == 255) {
+      return '#$r$g$b';
+    } else {
+      final alphaHex = a.toRadixString(16).padLeft(2, '0');
+      return '#$r$g$b$alphaHex';
+    }
+  }
+
+  String _toRgb() {
+    final c = toColor();
+    if (c.alpha == 255) {
+      return 'rgb(${c.red}, ${c.green}, ${c.blue})';
+    } else {
+      final a = (c.alpha / 255.0).toStringAsFixed(2).replaceAll(RegExp(r'\.?0+$'), '');
+      return 'rgba(${c.red}, ${c.green}, ${c.blue}, $a)';
+    }
+  }
+
+  String _toHsl() {
+    final HslColor hsl;
+    if (this is HslColor) {
+      hsl = this as HslColor;
+    } else {
+      hsl = toColor().toHsl();
+    }
+    
+    final h = hsl.h.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
+    final s = (hsl.s * 100).toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '') + '%';
+    final l = (hsl.l * 100).toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '') + '%';
+    
+    if (hsl.alpha >= 0.99) {
+      return 'hsl($h, $s, $l)';
+    } else {
+      final a = hsl.alpha.toStringAsFixed(2).replaceAll(RegExp(r'\.?0+$'), '');
+      return 'hsla($h, $s, $l, $a)';
+    }
+  }
+
+  String _toOklab() {
+    final OkLabColor oklab;
+    if (this is OkLabColor) {
+      oklab = this as OkLabColor;
+    } else {
+      oklab = toColor().toOkLab();
+    }
+
+    final l = oklab.l.toStringAsFixed(3).replaceAll(RegExp(r'\.?0+$'), '');
+    final a = oklab.a.toStringAsFixed(3).replaceAll(RegExp(r'\.?0+$'), '');
+    final b = oklab.b.toStringAsFixed(3).replaceAll(RegExp(r'\.?0+$'), '');
+    
+    if (oklab.alpha >= 0.99) {
+      return 'oklab($l $a $b)';
+    } else {
+      final alpha = oklab.alpha.toStringAsFixed(2).replaceAll(RegExp(r'\.?0+$'), '');
+      return 'oklab($l $a $b / $alpha)';
+    }
+  }
+
+  String _toOklch() {
+    final OkLchColor oklch;
+    if (this is OkLchColor) {
+      oklch = this as OkLchColor;
+    } else {
+      oklch = toColor().toOkLch();
+    }
+
+    final l = oklch.l.toStringAsFixed(3).replaceAll(RegExp(r'\.?0+$'), '');
+    final c = oklch.c.toStringAsFixed(3).replaceAll(RegExp(r'\.?0+$'), '');
+    final h = oklch.h.toStringAsFixed(3).replaceAll(RegExp(r'\.?0+$'), '');
+    
+    if (oklch.alpha >= 0.99) {
+      return 'oklch($l $c $h)';
+    } else {
+      final alpha = oklch.alpha.toStringAsFixed(2).replaceAll(RegExp(r'\.?0+$'), '');
+      return 'oklch($l $c $h / $alpha)';
+    }
+  }
+}
+
+/// Utility for parsing CSS strings.
+class CssColor {
+  /// Parses a CSS string into a [ColorSpacesIQ].
+  /// Supports Hex, RGB, HSL, OKLAB, OKLCH.
+  static ColorSpacesIQ fromCssString(String cssString) {
+    final s = cssString.trim().toLowerCase();
+    
+    if (s.startsWith('#')) {
+      return _parseHex(s);
+    } else if (s.startsWith('rgb')) {
+      return _parseRgb(s);
+    } else if (s.startsWith('hsl')) {
+      return _parseHsl(s);
+    } else if (s.startsWith('oklab')) {
+      return _parseOklab(s);
+    } else if (s.startsWith('oklch')) {
+      return _parseOklch(s);
+    }
+    
+    throw FormatException('Unsupported CSS color format: $cssString');
+  }
+
+  static Color _parseHex(String hex) {
+    hex = hex.substring(1);
+    if (hex.length == 3) {
+      hex = hex.split('').map((c) => '$c$c').join('');
+    }
+    
+    if (hex.length == 6) {
+      hex = 'FF$hex';
+      return Color(int.parse(hex, radix: 16));
+    }
+    
+    if (hex.length == 8) {
+      // CSS hex is RRGGBBAA, Dart Color is AARRGGBB
+      // So we need to move AA to the front.
+      // Input: RRGGBBAA
+      // Output: AARRGGBB
+      final r = hex.substring(0, 2);
+      final g = hex.substring(2, 4);
+      final b = hex.substring(4, 6);
+      final a = hex.substring(6, 8);
+      hex = '$a$r$g$b';
+      return Color(int.parse(hex, radix: 16));
+    }
+    
+    throw FormatException('Invalid hex color: #$hex');
+  }
+
+  static Color _parseRgb(String s) {
+    // rgb(r, g, b) or rgba(r, g, b, a) or rgb(r g b / a)
+    final content = s.substring(s.indexOf('(') + 1, s.lastIndexOf(')'));
+    final parts = content.split(RegExp(r'[,\s/]+')).where((p) => p.isNotEmpty).toList();
+    
+    if (parts.length < 3) throw FormatException('Invalid RGB string');
+    
+    int r = int.parse(parts[0]);
+    int g = int.parse(parts[1]);
+    int b = int.parse(parts[2]);
+    double a = 1.0;
+    
+    if (parts.length >= 4) {
+      a = double.parse(parts[3]);
+    }
+    
+    return Color.fromARGB((a * 255).round(), r, g, b);
+  }
+
+  static HslColor _parseHsl(String s) {
+    // hsl(h, s%, l%)
+    final content = s.substring(s.indexOf('(') + 1, s.lastIndexOf(')'));
+    final parts = content.split(RegExp(r'[,\s/]+')).where((p) => p.isNotEmpty).toList();
+    
+    if (parts.length < 3) throw FormatException('Invalid HSL string');
+    
+    double h = double.parse(parts[0].replaceAll('deg', ''));
+    double sVal = double.parse(parts[1].replaceAll('%', '')) / 100.0;
+    double l = double.parse(parts[2].replaceAll('%', '')) / 100.0;
+    double a = 1.0;
+    
+    if (parts.length >= 4) {
+      a = double.parse(parts[3].replaceAll('%', '')); // Alpha can be percentage? Usually 0-1.
+      // If it has %, divide by 100.
+      if (parts[3].contains('%')) {
+          a /= 100.0;
+      }
+    }
+    
+    return HslColor(h, sVal, l, a);
+  }
+
+  static OkLabColor _parseOklab(String s) {
+    // oklab(l a b / alpha)
+    final content = s.substring(s.indexOf('(') + 1, s.lastIndexOf(')'));
+    final parts = content.split(RegExp(r'[,\s/]+')).where((p) => p.isNotEmpty).toList();
+    
+    if (parts.length < 3) throw FormatException('Invalid OKLAB string');
+    
+    double l = double.parse(parts[0].replaceAll('%', ''));
+    if (parts[0].contains('%')) l /= 100.0; // L can be percentage
+    
+    double aVal = double.parse(parts[1]);
+    double b = double.parse(parts[2]);
+    double alpha = 1.0;
+    
+    if (parts.length >= 4) {
+      alpha = double.parse(parts[3]);
+      if (parts[3].contains('%')) alpha /= 100.0;
+    }
+    
+    return OkLabColor(l, aVal, b, alpha);
+  }
+
+  static OkLchColor _parseOklch(String s) {
+    // oklch(l c h / alpha)
+    final content = s.substring(s.indexOf('(') + 1, s.lastIndexOf(')'));
+    final parts = content.split(RegExp(r'[,\s/]+')).where((p) => p.isNotEmpty).toList();
+    
+    if (parts.length < 3) throw FormatException('Invalid OKLCH string');
+    
+    double l = double.parse(parts[0].replaceAll('%', ''));
+    if (parts[0].contains('%')) l /= 100.0;
+    
+    double c = double.parse(parts[1]);
+    double h = double.parse(parts[2].replaceAll('deg', ''));
+    double alpha = 1.0;
+    
+    if (parts.length >= 4) {
+      alpha = double.parse(parts[3]);
+      if (parts[3].contains('%')) alpha /= 100.0;
+    }
+    
+    return OkLchColor(l, c, h, alpha);
+  }
+}

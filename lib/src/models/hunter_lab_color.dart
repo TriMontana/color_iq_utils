@@ -66,6 +66,11 @@ class HunterLabColor implements ColorSpacesIQ {
   }
 
   @override
+  HunterLabColor simulate(ColorBlindnessType type) {
+    return toColor().simulate(type).toHunterLab();
+  }
+
+  @override
   List<int> get srgb => toColor().srgb;
 
   @override

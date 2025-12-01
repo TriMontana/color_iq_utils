@@ -133,6 +133,11 @@ class XyzColor implements ColorSpacesIQ {
   }
 
   @override
+  XyzColor simulate(ColorBlindnessType type) {
+    return toColor().simulate(type).toXyz();
+  }
+
+  @override
   XyzColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toXyz();
 
   @override

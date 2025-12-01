@@ -76,6 +76,11 @@ class Rec2020Color implements ColorSpacesIQ {
   }
 
   @override
+  Rec2020Color simulate(ColorBlindnessType type) {
+    return toColor().simulate(type).toRec2020();
+  }
+
+  @override
   List<int> get srgb => toColor().srgb;
 
   @override
