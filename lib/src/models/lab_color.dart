@@ -56,10 +56,31 @@ class LabColor implements ColorSpacesIQ {
     if (h < 0) h += 360;
     return LchColor(l, c, h);
   }
-  
+
+  @override
+  List<int> get srgb => toColor().srgb;
+  List<double> get linearSrgb => toColor().linearSrgb;
+
+  @override
+  LabColor get inverted => toColor().inverted.toLab();
+
+  @override
+  LabColor get grayscale => toColor().grayscale.toLab();
+
+  @override
+  LabColor whiten([double amount = 20]) => toColor().whiten(amount).toLab();
+
+  @override
+  LabColor blacken([double amount = 20]) => toColor().blacken(amount).toLab();
+
   @override
   LabColor lighten([double amount = 20]) {
     return LabColor(min(100, l + amount), a, b);
+  }
+
+  @override
+  LabColor brighten([double amount = 20]) {
+    return toColor().brighten(amount).toLab();
   }
 
   @override
@@ -78,22 +99,14 @@ class LabColor implements ColorSpacesIQ {
   }
 
   @override
-  List<int> get srgb => toColor().srgb;
+  LabColor intensify([double amount = 10]) {
+    return toColor().intensify(amount).toLab();
+  }
 
   @override
-  List<double> get linearSrgb => toColor().linearSrgb;
-
-  @override
-  LabColor get inverted => toColor().inverted.toLab();
-
-  @override
-  LabColor get grayscale => toColor().grayscale.toLab();
-
-  @override
-  LabColor whiten([double amount = 20]) => toColor().whiten(amount).toLab();
-
-  @override
-  LabColor blacken([double amount = 20]) => toColor().blacken(amount).toLab();
+  LabColor deintensify([double amount = 10]) {
+    return toColor().deintensify(amount).toLab();
+  }
 
   @override
   LabColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toLab();

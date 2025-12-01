@@ -54,6 +54,16 @@ class Cam16Color implements ColorSpacesIQ {
   }
 
   @override
+  Cam16Color intensify([double amount = 10]) {
+    return toColor().intensify(amount).toCam16();
+  }
+
+  @override
+  Cam16Color deintensify([double amount = 10]) {
+    return toColor().deintensify(amount).toCam16();
+  }
+
+  @override
   List<int> get srgb => toColor().srgb;
 
   @override
@@ -77,6 +87,11 @@ class Cam16Color implements ColorSpacesIQ {
   @override
   Cam16Color lighten([double amount = 20]) {
     return Cam16Color(hue, chroma, min(100, j + amount), q, m, s, alpha);
+  }
+
+  @override
+  Cam16Color brighten([double amount = 20]) {
+    return toColor().brighten(amount).toCam16();
   }
 
   @override

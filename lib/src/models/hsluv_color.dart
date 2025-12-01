@@ -44,19 +44,6 @@ class HsluvColor implements ColorSpacesIQ {
   }
 
   @override
-  HsluvColor saturate([double amount = 25]) {
-    return HsluvColor(h, min(100.0, s + amount), l);
-  }
-
-  @override
-  HsluvColor desaturate([double amount = 25]) {
-    return HsluvColor(h, max(0.0, s - amount), l);
-  }
-
-  @override
-  List<int> get srgb => toColor().srgb;
-
-  @override
   List<double> get linearSrgb => toColor().linearSrgb;
 
   @override
@@ -78,6 +65,34 @@ class HsluvColor implements ColorSpacesIQ {
   HsluvColor lighten([double amount = 20]) {
     return HsluvColor(h, s, min(100.0, l + amount));
   }
+
+  @override
+  HsluvColor brighten([double amount = 20]) {
+    return toColor().brighten(amount).toHsluv();
+  }
+
+  @override
+  HsluvColor saturate([double amount = 25]) {
+    return HsluvColor(h, min(100.0, s + amount), l);
+  }
+
+  @override
+  HsluvColor desaturate([double amount = 25]) {
+    return HsluvColor(h, max(0.0, s - amount), l);
+  }
+
+  @override
+  HsluvColor intensify([double amount = 10]) {
+    return toColor().intensify(amount).toHsluv();
+  }
+
+  @override
+  HsluvColor deintensify([double amount = 10]) {
+    return toColor().deintensify(amount).toHsluv();
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
 
   @override
   HctColor toHct() => toColor().toHct();

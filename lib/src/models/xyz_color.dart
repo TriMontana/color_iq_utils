@@ -78,26 +78,6 @@ class XyzColor implements ColorSpacesIQ {
 
     return LuvColor(l, uOut, vOut);
   }
-  
-  @override
-  XyzColor lighten([double amount = 20]) {
-    return toLab().lighten(amount).toColor().toXyz();
-  }
-
-  @override
-  XyzColor darken([double amount = 20]) {
-    return toColor().darken(amount).toXyz();
-  }
-
-  @override
-  XyzColor saturate([double amount = 25]) {
-    return toColor().saturate(amount).toXyz();
-  }
-
-  @override
-  XyzColor desaturate([double amount = 25]) {
-    return toColor().desaturate(amount).toXyz();
-  }
 
   @override
   List<int> get srgb => toColor().srgb;
@@ -116,6 +96,41 @@ class XyzColor implements ColorSpacesIQ {
 
   @override
   XyzColor blacken([double amount = 20]) => toColor().blacken(amount).toXyz();
+
+  @override
+  XyzColor lighten([double amount = 20]) {
+    return toColor().lighten(amount).toXyz();
+  }
+
+  @override
+  XyzColor brighten([double amount = 20]) {
+    return toColor().brighten(amount).toXyz();
+  }
+
+  @override
+  XyzColor darken([double amount = 20]) {
+    return toColor().darken(amount).toXyz();
+  }
+
+  @override
+  XyzColor saturate([double amount = 25]) {
+    return toColor().saturate(amount).toXyz();
+  }
+
+  @override
+  XyzColor desaturate([double amount = 25]) {
+    return toColor().desaturate(amount).toXyz();
+  }
+
+  @override
+  XyzColor intensify([double amount = 10]) {
+    return toColor().intensify(amount).toXyz();
+  }
+
+  @override
+  XyzColor deintensify([double amount = 10]) {
+    return toColor().deintensify(amount).toXyz();
+  }
 
   @override
   XyzColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toXyz();

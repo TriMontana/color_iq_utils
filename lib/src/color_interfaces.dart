@@ -15,6 +15,10 @@ abstract class ColorSpacesIQ {
   /// Darkens the color by the given [amount] (0-100).
   ColorSpacesIQ darken([double amount = 20]);
 
+  /// Brightens the color by the given [amount] (0-100).
+  /// Increases the brightness/value (HSV Value).
+  ColorSpacesIQ brighten([double amount = 20]);
+
   /// Saturates the color by the given [amount] (0-100).
   ColorSpacesIQ saturate([double amount = 25]);
 
@@ -53,6 +57,12 @@ abstract class ColorSpacesIQ {
   HctColor toHct();
 
   /// Creates a new instance of this color type from an HCT color.
+  /// Intensifies the color by increasing chroma and slightly decreasing tone.
+  ColorSpacesIQ intensify([double amount = 10]);
+
+  /// Deintensifies (mutes) the color by decreasing chroma and slightly increasing tone.
+  ColorSpacesIQ deintensify([double amount = 10]);
+
   ColorSpacesIQ fromHct(HctColor hct);
 
   /// Returns the transparency (alpha) as a double (0.0-1.0).

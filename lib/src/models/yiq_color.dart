@@ -28,6 +28,11 @@ class YiqColor implements ColorSpacesIQ {
   }
 
   @override
+  YiqColor brighten([double amount = 20]) {
+    return toColor().brighten(amount).toYiq();
+  }
+
+  @override
   YiqColor saturate([double amount = 25]) {
     return toColor().saturate(amount).toYiq();
   }
@@ -35,6 +40,16 @@ class YiqColor implements ColorSpacesIQ {
   @override
   YiqColor desaturate([double amount = 25]) {
     return toColor().desaturate(amount).toYiq();
+  }
+
+  @override
+  YiqColor intensify([double amount = 10]) {
+    return toColor().intensify(amount).toYiq();
+  }
+
+  @override
+  YiqColor deintensify([double amount = 10]) {
+    return toColor().deintensify(amount).toYiq();
   }
 
   @override

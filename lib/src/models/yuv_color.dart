@@ -27,6 +27,11 @@ class YuvColor implements ColorSpacesIQ {
   }
 
   @override
+  YuvColor brighten([double amount = 20]) {
+    return toColor().brighten(amount).toYuv();
+  }
+
+  @override
   YuvColor saturate([double amount = 25]) {
     return toColor().saturate(amount).toYuv();
   }
@@ -34,6 +39,16 @@ class YuvColor implements ColorSpacesIQ {
   @override
   YuvColor desaturate([double amount = 25]) {
     return toColor().desaturate(amount).toYuv();
+  }
+
+  @override
+  YuvColor intensify([double amount = 10]) {
+    return toColor().intensify(amount).toYuv();
+  }
+
+  @override
+  YuvColor deintensify([double amount = 10]) {
+    return toColor().deintensify(amount).toYuv();
   }
 
   @override

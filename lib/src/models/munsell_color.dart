@@ -32,6 +32,12 @@ class MunsellColor implements ColorSpacesIQ {
   }
 
   @override
+  MunsellColor brighten([double amount = 20]) {
+    // Increase Value
+    return MunsellColor(hue, (munsellValue + (amount / 10)).clamp(0.0, 10.0), chroma);
+  }
+
+  @override
   MunsellColor saturate([double amount = 25]) {
     // Increase Chroma
     return MunsellColor(hue, munsellValue, chroma + (amount / 5)); // Arbitrary scale
@@ -44,7 +50,34 @@ class MunsellColor implements ColorSpacesIQ {
   }
 
   @override
+  MunsellColor intensify([double amount = 10]) {
+    return toColor().intensify(amount).toMunsell();
+  }
+
+  @override
+  MunsellColor deintensify([double amount = 10]) {
+    return toColor().deintensify(amount).toMunsell();
+  }
+
+  @override
   List<int> get srgb => toColor().srgb;
+
+  @override
+  MunsellColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toMunsell();
+
+  @override
+  MunsellColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toMunsell();
+
+  @override
+  MunsellColor get complementary => toColor().complementary.toMunsell();
+
+  @override
+  bool get isLight => brightness == Brightness.light;
+
+  @override
+  MunsellColor opaquer([double amount = 20]) => toColor().opaquer(amount).toMunsell();
+
+
 
   @override
   List<double> get linearSrgb => toColor().linearSrgb;
@@ -134,20 +167,6 @@ class MunsellColor implements ColorSpacesIQ {
   bool get isDark => brightness == Brightness.dark;
 
   @override
-  bool get isLight => brightness == Brightness.light;
-
-  @override
-  MunsellColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toMunsell();
-
-  @override
-  MunsellColor opaquer([double amount = 20]) => toColor().opaquer(amount).toMunsell();
-
-  @override
-  MunsellColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toMunsell();
-
-  @override
-  MunsellColor get complementary => toColor().complementary.toMunsell();
-
   @override
   MunsellColor warmer([double amount = 20]) => toColor().warmer(amount).toMunsell();
 

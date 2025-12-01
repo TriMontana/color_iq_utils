@@ -27,9 +27,6 @@ class CmykColor implements ColorSpacesIQ {
   bool operator ==(Object other) => other is CmykColor && other.c == c && other.m == m && other.y == y && other.k == k;
   
   @override
-  int get hashCode => Object.hash(c, m, y, k);
-  
-  @override
   CmykColor lighten([double amount = 20]) {
     return toColor().lighten(amount).toCmyk();
   }
@@ -40,6 +37,12 @@ class CmykColor implements ColorSpacesIQ {
   }
 
   @override
+  CmykColor brighten([double amount = 20]) {
+    return toColor().brighten(amount).toCmyk();
+  }
+  
+
+  @override
   CmykColor saturate([double amount = 25]) {
     return toColor().saturate(amount).toCmyk();
   }
@@ -47,6 +50,16 @@ class CmykColor implements ColorSpacesIQ {
   @override
   CmykColor desaturate([double amount = 25]) {
     return toColor().desaturate(amount).toCmyk();
+  }
+
+  @override
+  CmykColor intensify([double amount = 10]) {
+    return toColor().intensify(amount).toCmyk();
+  }
+
+  @override
+  CmykColor deintensify([double amount = 10]) {
+    return toColor().deintensify(amount).toCmyk();
   }
 
   @override

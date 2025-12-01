@@ -45,19 +45,6 @@ class HsvColor implements ColorSpacesIQ {
   }
 
   @override
-  HsvColor saturate([double amount = 25]) {
-    return HsvColor(h, min(1.0, s + amount / 100), v, alpha);
-  }
-
-  @override
-  HsvColor desaturate([double amount = 25]) {
-    return HsvColor(h, max(0.0, s - amount / 100), v, alpha);
-  }
-
-  @override
-  List<int> get srgb => toColor().srgb;
-
-  @override
   List<double> get linearSrgb => toColor().linearSrgb;
 
   @override
@@ -77,8 +64,36 @@ class HsvColor implements ColorSpacesIQ {
 
   @override
   HsvColor lighten([double amount = 20]) {
+    return toColor().lighten(amount).toHsv();
+  }
+
+  @override
+  HsvColor brighten([double amount = 20]) {
     return HsvColor(h, s, min(1.0, v + amount / 100), alpha);
   }
+
+  @override
+  HsvColor saturate([double amount = 25]) {
+    return HsvColor(h, min(1.0, s + amount / 100), v, alpha);
+  }
+
+  @override
+  HsvColor desaturate([double amount = 25]) {
+    return HsvColor(h, max(0.0, s - amount / 100), v, alpha);
+  }
+
+  @override
+  HsvColor intensify([double amount = 10]) {
+    return toColor().intensify(amount).toHsv();
+  }
+
+  @override
+  HsvColor deintensify([double amount = 10]) {
+    return toColor().deintensify(amount).toHsv();
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
 
   @override
   HctColor toHct() => toColor().toHct();

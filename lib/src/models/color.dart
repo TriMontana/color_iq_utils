@@ -432,6 +432,11 @@ class Color implements ColorSpacesIQ {
   }
 
   @override
+  Color brighten([double amount = 20]) {
+    return toHsv().brighten(amount).toColor();
+  }
+
+  @override
   Color saturate([double amount = 25]) {
     return toHsl().saturate(amount).toColor();
   }
@@ -439,6 +444,16 @@ class Color implements ColorSpacesIQ {
   @override
   Color desaturate([double amount = 25]) {
     return toHsl().desaturate(amount).toColor();
+  }
+
+  @override
+  Color intensify([double amount = 10]) {
+    return toHct().intensify(amount).toColor();
+  }
+
+  @override
+  Color deintensify([double amount = 10]) {
+    return toHct().deintensify(amount).toColor();
   }
 
   @override

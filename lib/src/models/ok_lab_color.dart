@@ -65,20 +65,6 @@ class OkLabColor implements ColorSpacesIQ {
       return OkHsvColor(lch.h, s, v, alpha);
   }
 
-  @override
-  OkLabColor darken([double amount = 20]) {
-    return OkLabColor(max(0.0, l - amount / 100), a, b, alpha);
-  }
-
-  @override
-  OkLabColor saturate([double amount = 25]) {
-    return toOkLch().saturate(amount).toOkLab();
-  }
-
-  @override
-  OkLabColor desaturate([double amount = 25]) {
-    return toOkLch().desaturate(amount).toOkLab();
-  }
 
   @override
   List<int> get srgb => toColor().srgb;
@@ -104,6 +90,36 @@ class OkLabColor implements ColorSpacesIQ {
   @override
   OkLabColor lighten([double amount = 20]) {
     return OkLabColor(min(1.0, l + amount / 100), a, b, alpha);
+  }
+
+  @override
+  OkLabColor brighten([double amount = 20]) {
+    return toColor().brighten(amount).toOkLab();
+  }
+
+  @override
+  OkLabColor darken([double amount = 20]) {
+    return OkLabColor(max(0.0, l - amount / 100), a, b, alpha);
+  }
+
+  @override
+  OkLabColor saturate([double amount = 25]) {
+    return (toOkLch().saturate(amount) as OkLchColor).toOkLab();
+  }
+
+  @override
+  OkLabColor desaturate([double amount = 25]) {
+    return (toOkLch().desaturate(amount) as OkLchColor).toOkLab();
+  }
+
+  @override
+  OkLabColor intensify([double amount = 10]) {
+    return toColor().intensify(amount).toOkLab();
+  }
+
+  @override
+  OkLabColor deintensify([double amount = 10]) {
+    return toColor().deintensify(amount).toOkLab();
   }
 
   @override

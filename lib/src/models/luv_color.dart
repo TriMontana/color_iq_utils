@@ -56,23 +56,9 @@ class LuvColor implements ColorSpacesIQ {
 
     return Color.fromARGB(255, (rL * 255).round().clamp(0, 255), (gL * 255).round().clamp(0, 255), (bL * 255).round().clamp(0, 255));
   }
+
   @override
   int get value => toColor().value;
-  
-  @override
-  LuvColor darken([double amount = 20]) {
-    return LuvColor(max(0, l - amount), u, v);
-  }
-
-  @override
-  LuvColor saturate([double amount = 25]) {
-    return toColor().saturate(amount).toLuv();
-  }
-
-  @override
-  LuvColor desaturate([double amount = 25]) {
-    return toColor().desaturate(amount).toLuv();
-  }
 
   @override
   List<int> get srgb => toColor().srgb;
@@ -94,6 +80,36 @@ class LuvColor implements ColorSpacesIQ {
 
   @override
   LuvColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toLuv();
+
+  @override
+  LuvColor darken([double amount = 20]) {
+    return LuvColor(max(0, l - amount), u, v);
+  }
+
+  @override
+  LuvColor saturate([double amount = 25]) {
+    return toColor().saturate(amount).toLuv();
+  }
+
+  @override
+  LuvColor desaturate([double amount = 25]) {
+    return toColor().desaturate(amount).toLuv();
+  }
+
+  @override
+  LuvColor intensify([double amount = 10]) {
+    return toColor().intensify(amount).toLuv();
+  }
+
+  @override
+  LuvColor deintensify([double amount = 10]) {
+    return toColor().deintensify(amount).toLuv();
+  }
+
+  @override
+  LuvColor brighten([double amount = 20]) {
+    return toColor().brighten(amount).toLuv();
+  }
 
   @override
   LuvColor lighten([double amount = 20]) {

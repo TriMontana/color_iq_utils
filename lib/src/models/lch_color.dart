@@ -21,19 +21,6 @@ class LchColor implements ColorSpacesIQ {
 
   @override
   Color toColor() => toLab().toColor();
-  
-  @override
-  int get value => toColor().value;
-  
-  @override
-  LchColor darken([double amount = 20]) {
-    return LchColor(max(0, l - amount), c, h);
-  }
-
-  @override
-  LchColor lighten([double amount = 20]) {
-    return LchColor(min(100, l + amount), c, h);
-  }
 
   @override
   LchColor saturate([double amount = 25]) {
@@ -43,6 +30,16 @@ class LchColor implements ColorSpacesIQ {
   @override
   LchColor desaturate([double amount = 25]) {
     return LchColor(l, max(0, c - amount), h);
+  }
+
+  @override
+  LchColor intensify([double amount = 10]) {
+    return toColor().intensify(amount).toLch();
+  }
+
+  @override
+  LchColor deintensify([double amount = 10]) {
+    return toColor().deintensify(amount).toLch();
   }
 
   @override
@@ -67,6 +64,22 @@ class LchColor implements ColorSpacesIQ {
   LchColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toLch();
 
   @override
+  int get value => toColor().value;
+
+  @override
+  LchColor darken([double amount = 20]) {
+    return LchColor(max(0.0, l - amount), c, h);
+  }
+
+  @override
+  LchColor lighten([double amount = 20]) {
+    return LchColor(min(100.0, l + amount), c, h);
+  }
+
+  @override
+  LchColor brighten([double amount = 20]) {
+    return toColor().brighten(amount).toLch();
+  }
   HctColor toHct() => toColor().toHct();
 
   @override

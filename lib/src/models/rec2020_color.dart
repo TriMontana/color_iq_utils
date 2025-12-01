@@ -51,6 +51,11 @@ class Rec2020Color implements ColorSpacesIQ {
   }
 
   @override
+  Rec2020Color brighten([double amount = 20]) {
+    return toColor().brighten(amount).toRec2020();
+  }
+
+  @override
   Rec2020Color saturate([double amount = 25]) {
     return toColor().saturate(amount).toRec2020();
   }
@@ -58,6 +63,16 @@ class Rec2020Color implements ColorSpacesIQ {
   @override
   Rec2020Color desaturate([double amount = 25]) {
     return toColor().desaturate(amount).toRec2020();
+  }
+
+  @override
+  Rec2020Color intensify([double amount = 10]) {
+    return toColor().intensify(amount).toRec2020();
+  }
+
+  @override
+  Rec2020Color deintensify([double amount = 10]) {
+    return toColor().deintensify(amount).toRec2020();
   }
 
   @override

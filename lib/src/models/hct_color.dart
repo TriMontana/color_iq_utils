@@ -26,6 +26,11 @@ class HctColor implements ColorSpacesIQ {
   }
 
   @override
+  HctColor brighten([double amount = 20]) {
+    return HctColor(hue, chroma, min(100, tone + amount));
+  }
+
+  @override
   HctColor lighten([double amount = 20]) {
     return HctColor(hue, chroma, min(100, tone + amount));
   }
@@ -38,6 +43,16 @@ class HctColor implements ColorSpacesIQ {
   @override
   HctColor desaturate([double amount = 25]) {
     return HctColor(hue, max(0, chroma - amount), tone);
+  }
+
+  @override
+  HctColor intensify([double amount = 10]) {
+    return HctColor(hue, chroma + amount, max(0, tone - (amount / 2)));
+  }
+
+  @override
+  HctColor deintensify([double amount = 10]) {
+    return HctColor(hue, max(0, chroma - amount), min(100, tone + (amount / 2)));
   }
 
   @override

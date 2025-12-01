@@ -45,6 +45,11 @@ class HslColor implements ColorSpacesIQ {
   }
 
   @override
+  HslColor brighten([double amount = 20]) {
+    return toColor().brighten(amount).toHsl();
+  }
+
+  @override
   HslColor saturate([double amount = 25]) {
     return HslColor(h, min(1.0, s + amount / 100), l, alpha);
   }
@@ -52,6 +57,16 @@ class HslColor implements ColorSpacesIQ {
   @override
   HslColor desaturate([double amount = 25]) {
     return HslColor(h, max(0.0, s - amount / 100), l, alpha);
+  }
+
+  @override
+  HslColor intensify([double amount = 10]) {
+    return toColor().intensify(amount).toHsl();
+  }
+
+  @override
+  HslColor deintensify([double amount = 10]) {
+    return toColor().deintensify(amount).toHsl();
   }
 
   @override

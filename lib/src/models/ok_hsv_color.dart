@@ -39,6 +39,11 @@ class OkHsvColor implements ColorSpacesIQ {
   }
 
   @override
+  OkHsvColor brighten([double amount = 20]) {
+    return OkHsvColor(hue, saturation, min(1.0, v + amount / 100), alpha);
+  }
+
+  @override
   OkHsvColor saturate([double amount = 25]) {
     return OkHsvColor(hue, min(1.0, saturation + amount / 100), v, alpha);
   }
@@ -49,9 +54,18 @@ class OkHsvColor implements ColorSpacesIQ {
   }
 
   @override
-  List<int> get srgb => toColor().srgb;
+  OkHsvColor intensify([double amount = 10]) {
+    return toColor().intensify(amount).toOkHsv();
+  }
 
   @override
+  OkHsvColor deintensify([double amount = 10]) {
+    return toColor().deintensify(amount).toOkHsv();
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
+
   List<double> get linearSrgb => toColor().linearSrgb;
 
   @override

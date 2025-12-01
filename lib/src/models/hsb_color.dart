@@ -17,13 +17,18 @@ class HsbColor implements ColorSpacesIQ {
       // HSB is the same as HSV, just B instead of V
       return HsvColor(h, s, b).toColor();
   }
-  
+
   @override
   int get value => toColor().value;
   
   @override
   HsbColor darken([double amount = 20]) {
     return HsbColor(h, s, max(0.0, b - amount / 100));
+  }
+
+  @override
+  HsbColor brighten([double amount = 20]) {
+    return HsbColor(h, s, min(1.0, b + amount / 100));
   }
 
   @override
@@ -34,6 +39,16 @@ class HsbColor implements ColorSpacesIQ {
   @override
   HsbColor desaturate([double amount = 25]) {
     return HsbColor(h, max(0.0, s - amount / 100), b);
+  }
+
+  @override
+  HsbColor intensify([double amount = 10]) {
+    return toColor().intensify(amount).toHsb();
+  }
+
+  @override
+  HsbColor deintensify([double amount = 10]) {
+    return toColor().deintensify(amount).toHsb();
   }
 
   @override

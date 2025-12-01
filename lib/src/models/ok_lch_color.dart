@@ -30,19 +30,6 @@ class OkLchColor implements ColorSpacesIQ {
   }
 
   @override
-  OkLchColor saturate([double amount = 25]) {
-    return OkLchColor(l, c + amount / 100, h, alpha);
-  }
-
-  @override
-  OkLchColor desaturate([double amount = 25]) {
-    return OkLchColor(l, max(0.0, c - amount / 100), h, alpha);
-  }
-
-  @override
-  List<int> get srgb => toColor().srgb;
-
-  @override
   List<double> get linearSrgb => toColor().linearSrgb;
 
   @override
@@ -64,6 +51,34 @@ class OkLchColor implements ColorSpacesIQ {
   OkLchColor lighten([double amount = 20]) {
     return OkLchColor(min(1.0, l + amount / 100), c, h, alpha);
   }
+
+  @override
+  OkLchColor brighten([double amount = 20]) {
+    return toColor().brighten(amount).toOkLch();
+  }
+
+  @override
+  OkLchColor saturate([double amount = 25]) {
+    return OkLchColor(l, c + amount / 100, h, alpha);
+  }
+
+  @override
+  OkLchColor desaturate([double amount = 25]) {
+    return OkLchColor(l, max(0.0, c - amount / 100), h, alpha);
+  }
+
+  @override
+  OkLchColor intensify([double amount = 10]) {
+    return toColor().intensify(amount).toOkLch();
+  }
+
+  @override
+  OkLchColor deintensify([double amount = 10]) {
+    return toColor().deintensify(amount).toOkLch();
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
 
   @override
   HctColor toHct() => toColor().toHct();

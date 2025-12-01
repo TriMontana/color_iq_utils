@@ -77,6 +77,11 @@ class HspColor implements ColorSpacesIQ {
   }
 
   @override
+  HspColor brighten([double amount = 20]) {
+    return toColor().brighten(amount).toHsp();
+  }
+
+  @override
   HspColor lighten([double amount = 20]) {
     return toColor().lighten(amount).toHsp();
   }
@@ -89,6 +94,16 @@ class HspColor implements ColorSpacesIQ {
   @override
   HspColor desaturate([double amount = 25]) {
     return HspColor(h, max(0.0, s - amount / 100), p, alpha);
+  }
+
+  @override
+  HspColor intensify([double amount = 10]) {
+    return toColor().intensify(amount).toHsp();
+  }
+
+  @override
+  HspColor deintensify([double amount = 10]) {
+    return toColor().deintensify(amount).toHsp();
   }
 
   @override

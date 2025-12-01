@@ -36,19 +36,6 @@ class OkHslColor implements ColorSpacesIQ {
   }
 
   @override
-  OkHslColor saturate([double amount = 25]) {
-    return OkHslColor(h, min(1.0, s + amount / 100), l);
-  }
-
-  @override
-  OkHslColor desaturate([double amount = 25]) {
-    return OkHslColor(h, max(0.0, s - amount / 100), l);
-  }
-
-  @override
-  List<int> get srgb => toColor().srgb;
-
-  @override
   List<double> get linearSrgb => toColor().linearSrgb;
 
   @override
@@ -70,6 +57,34 @@ class OkHslColor implements ColorSpacesIQ {
   OkHslColor lighten([double amount = 20]) {
     return OkHslColor(h, s, min(1.0, l + amount / 100));
   }
+
+  @override
+  OkHslColor brighten([double amount = 20]) {
+    return toColor().brighten(amount).toOkHsl();
+  }
+
+  @override
+  OkHslColor saturate([double amount = 25]) {
+    return OkHslColor(h, min(1.0, s + amount / 100), l);
+  }
+
+  @override
+  OkHslColor desaturate([double amount = 25]) {
+    return OkHslColor(h, max(0.0, s - amount / 100), l);
+  }
+
+  @override
+  OkHslColor intensify([double amount = 10]) {
+    return toColor().intensify(amount).toOkHsl();
+  }
+
+  @override
+  OkHslColor deintensify([double amount = 10]) {
+    return toColor().deintensify(amount).toOkHsl();
+  }
+
+  @override
+  List<int> get srgb => toColor().srgb;
 
   @override
   HctColor toHct() => toColor().toHct();

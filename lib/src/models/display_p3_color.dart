@@ -46,6 +46,11 @@ class DisplayP3Color implements ColorSpacesIQ {
   }
 
   @override
+  DisplayP3Color brighten([double amount = 20]) {
+    return toColor().brighten(amount).toDisplayP3();
+  }
+
+  @override
   DisplayP3Color saturate([double amount = 25]) {
     return toColor().saturate(amount).toDisplayP3();
   }
@@ -53,6 +58,16 @@ class DisplayP3Color implements ColorSpacesIQ {
   @override
   DisplayP3Color desaturate([double amount = 25]) {
     return toColor().desaturate(amount).toDisplayP3();
+  }
+
+  @override
+  DisplayP3Color intensify([double amount = 10]) {
+    return toColor().intensify(amount).toDisplayP3();
+  }
+
+  @override
+  DisplayP3Color deintensify([double amount = 10]) {
+    return toColor().deintensify(amount).toDisplayP3();
   }
 
   @override

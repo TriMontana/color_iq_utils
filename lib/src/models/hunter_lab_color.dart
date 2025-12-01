@@ -56,6 +56,16 @@ class HunterLabColor implements ColorSpacesIQ {
   }
 
   @override
+  HunterLabColor intensify([double amount = 10]) {
+    return toColor().intensify(amount).toHunterLab();
+  }
+
+  @override
+  HunterLabColor deintensify([double amount = 10]) {
+    return toColor().deintensify(amount).toHunterLab();
+  }
+
+  @override
   List<int> get srgb => toColor().srgb;
 
   @override
@@ -79,6 +89,11 @@ class HunterLabColor implements ColorSpacesIQ {
   @override
   HunterLabColor lighten([double amount = 20]) {
     return HunterLabColor(min(100, l + amount), a, b);
+  }
+
+  @override
+  HunterLabColor brighten([double amount = 20]) {
+    return toColor().brighten(amount).toHunterLab();
   }
 
   @override
