@@ -17,7 +17,7 @@ class Cam16Color implements ColorSpacesIQ {
   const Cam16Color(this.hue, this.chroma, this.j, this.q, this.m, this.s, [this.alpha = 1.0]);
 
   @override
-  Color toColor() {
+  ColorIQ toColor() {
       // This is complex, usually requires viewing conditions.
       // MCU library has Cam16.
       // We can use MCU to convert back to Int.
@@ -32,7 +32,7 @@ class Cam16Color implements ColorSpacesIQ {
       final cam16 = mcu.Cam16.fromJch(j, chroma, hue);
       final int argb = cam16.toInt();
       // Restore alpha
-      return Color(argb).copyWith(a: (alpha * 255).round());
+      return ColorIQ(argb).copyWith(a: (alpha * 255).round());
   }
   
   @override
@@ -92,7 +92,7 @@ class Cam16Color implements ColorSpacesIQ {
   Cam16Color blacken([double amount = 20]) => toColor().blacken(amount).toCam16();
 
   @override
-  Cam16Color lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toCam16();
+  Cam16Color lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toCam16();
 
   @override
   Cam16Color lighten([double amount = 20]) {
@@ -135,13 +135,13 @@ class Cam16Color implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toCam16()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toCam16()).toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as Color).toCam16())
+        .map((c) => (c as ColorIQ).toCam16())
         .toList();
   }
 
@@ -149,12 +149,12 @@ class Cam16Color implements ColorSpacesIQ {
   List<ColorSpacesIQ> darkerPalette([double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as Color).toCam16())
+        .map((c) => (c as ColorIQ).toCam16())
         .toList();
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as Color).toCam16();
+  ColorSpacesIQ get random => (toColor().random as ColorIQ).toCam16();
 
   @override
   bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);

@@ -3,8 +3,8 @@ import 'package:color_iq_utils/color_iq_utils.dart';
 
 void main() {
   group('Utility Methods Tests', () {
-    test('Color inverted', () {
-      final color = Color.fromARGB(255, 0, 100, 200);
+    test('ColorIQ inverted', () {
+      final color = ColorIQ.fromARGB(255, 0, 100, 200);
       final inverted = color.inverted;
       expect(inverted.red, 255);
       expect(inverted.green, 155);
@@ -12,8 +12,8 @@ void main() {
       expect(inverted.alpha, 255);
     });
 
-    test('Color grayscale', () {
-      final color = Color.fromARGB(255, 255, 0, 0); // Red
+    test('ColorIQ grayscale', () {
+      final color = ColorIQ.fromARGB(255, 255, 0, 0); // Red
       final grayscale = color.grayscale;
       // Desaturate(100) should result in gray.
       // HSL for red is (0, 1.0, 0.5). Desaturated: (0, 0.0, 0.5).
@@ -23,26 +23,26 @@ void main() {
       expect(grayscale.blue, closeTo(128, 1));
     });
 
-    test('Color whiten', () {
-      final color = Color.fromARGB(255, 0, 0, 0); // Black
+    test('ColorIQ whiten', () {
+      final color = ColorIQ.fromARGB(255, 0, 0, 0); // Black
       final whitened = color.whiten(50); // Mix 50% with white
       expect(whitened.red, closeTo(128, 1));
       expect(whitened.green, closeTo(128, 1));
       expect(whitened.blue, closeTo(128, 1));
     });
 
-    test('Color blacken', () {
-      final color = Color.fromARGB(255, 255, 255, 255); // White
+    test('ColorIQ blacken', () {
+      final color = ColorIQ.fromARGB(255, 255, 255, 255); // White
       final blackened = color.blacken(50); // Mix 50% with black
       expect(blackened.red, closeTo(128, 1));
       expect(blackened.green, closeTo(128, 1));
       expect(blackened.blue, closeTo(128, 1));
     });
 
-    test('Color lerp', () {
-      final start = Color.fromARGB(255, 0, 0, 0);
-      final end = Color.fromARGB(255, 100, 200, 255);
-      final mid = start.lerp(end, 0.5) as Color;
+    test('ColorIQ lerp', () {
+      final start = ColorIQ.fromARGB(255, 0, 0, 0);
+      final end = ColorIQ.fromARGB(255, 100, 200, 255);
+      final mid = start.lerp(end, 0.5) as ColorIQ;
       expect(mid.red, 50);
       expect(mid.green, 100);
       expect(mid.blue, 128); // 127.5 rounds to 128

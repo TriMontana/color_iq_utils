@@ -4,8 +4,8 @@ import 'package:test/test.dart';
 void main() {
   group('WCAG Contrast Tests', () {
     test('Contrast Ratio Calculation', () {
-      final black = Color(0xFF000000);
-      final white = Color(0xFFFFFFFF);
+      final black = ColorIQ(0xFF000000);
+      final white = ColorIQ(0xFFFFFFFF);
       
       // Max contrast
       expect(black.contrastWith(white), closeTo(21.0, 0.1));
@@ -16,9 +16,9 @@ void main() {
     });
 
     test('Meets WCAG Levels', () {
-      final black = Color(0xFF000000);
-      final white = Color(0xFFFFFFFF);
-      final gray = Color(0xFF6C6C6C); // ~4.0:1 against black
+      final black = ColorIQ(0xFF000000);
+      final white = ColorIQ(0xFFFFFFFF);
+      final gray = ColorIQ(0xFF6C6C6C); // ~4.0:1 against black
 
       // White on Black (21:1) -> Passes everything
       expect(white.meetsWcag(black, level: WcagLevel.aa), isTrue);

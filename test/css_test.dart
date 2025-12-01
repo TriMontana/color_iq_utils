@@ -4,18 +4,18 @@ import 'package:test/test.dart';
 void main() {
   group('CSS String Tests', () {
     test('toCssString Hex', () {
-      final c = Color(0xFFFF0000);
+      final c = ColorIQ(0xFFFF0000);
       expect(c.toCssString(space: CssColorSpace.hex), equals('#ff0000'));
       
-      final cAlpha = Color(0x80FF0000);
+      final cAlpha = ColorIQ(0x80FF0000);
       expect(cAlpha.toCssString(space: CssColorSpace.hex), equals('#ff000080'));
     });
 
     test('toCssString RGB', () {
-      final c = Color(0xFFFF0000);
+      final c = ColorIQ(0xFFFF0000);
       expect(c.toCssString(space: CssColorSpace.rgb), equals('rgb(255, 0, 0)'));
       
-      final cAlpha = Color(0x80FF0000); // 128/255 = 0.5019
+      final cAlpha = ColorIQ(0x80FF0000); // 128/255 = 0.5019
       expect(cAlpha.toCssString(space: CssColorSpace.rgb), startsWith('rgba(255, 0, 0, 0.5'));
     });
 

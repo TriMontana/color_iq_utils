@@ -3,8 +3,8 @@ import 'package:color_iq_utils/color_iq_utils.dart';
 
 void main() {
   group('CopyWith and Monochromatic Tests', () {
-    test('Color copyWith', () {
-      final color = Color.fromARGB(255, 100, 150, 200);
+    test('ColorIQ copyWith', () {
+      final color = ColorIQ.fromARGB(255, 100, 150, 200);
       final copy = color.copyWith(r: 255, a: 128);
       expect(copy.red, 255);
       expect(copy.alpha, 128);
@@ -28,8 +28,8 @@ void main() {
       expect(copy.m, 0.2); // Unchanged
     });
 
-    test('Color Monochromatic', () {
-      final color = Color.fromARGB(255, 255, 0, 0); // Red
+    test('ColorIQ Monochromatic', () {
+      final color = ColorIQ.fromARGB(255, 255, 0, 0); // Red
       final palette = color.monochromatic;
       expect(palette.length, 5);
       expect(palette[2], color); // Middle color should be original (approximately)
@@ -37,7 +37,7 @@ void main() {
       // Check that all colors have same hue (approximately)
       final hsl = color.toHsl();
       for (var c in palette) {
-        final cHsl = (c as Color).toHsl();
+        final cHsl = (c as ColorIQ).toHsl();
         // Hue might wrap around or be slightly off due to clamping, but for Red (0) it should be close.
         // Actually, if we change lightness, hue stays same.
         // But if lightness goes to 0 or 1, hue is undefined/0.

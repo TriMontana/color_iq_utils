@@ -15,8 +15,8 @@ void main() {
       expect(lightened.l, 1.0);
     });
 
-    test('Color lighten works via HSL conversion', () {
-      final color = Color.fromARGB(255, 100, 100, 100); // Grey
+    test('ColorIQ lighten works via HSL conversion', () {
+      final color = ColorIQ.fromARGB(255, 100, 100, 100); // Grey
       final lightened = color.lighten(20);
       
       // Original L approx 0.39 (100/255)

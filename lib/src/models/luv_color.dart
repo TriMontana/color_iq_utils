@@ -13,7 +13,7 @@ class LuvColor implements ColorSpacesIQ {
   const LuvColor(this.l, this.u, this.v);
 
   @override
-  Color toColor() {
+  ColorIQ toColor() {
     double y = (l + 16) / 116;
     double x, z;
     if (l == 0) {
@@ -54,7 +54,7 @@ class LuvColor implements ColorSpacesIQ {
     gL = (gL > 0.0031308) ? (1.055 * pow(gL, 1 / 2.4) - 0.055) : (12.92 * gL);
     bL = (bL > 0.0031308) ? (1.055 * pow(bL, 1 / 2.4) - 0.055) : (12.92 * bL);
 
-    return Color.fromARGB(255, (rL * 255).round().clamp(0, 255), (gL * 255).round().clamp(0, 255), (bL * 255).round().clamp(0, 255));
+    return ColorIQ.fromARGB(255, (rL * 255).round().clamp(0, 255), (gL * 255).round().clamp(0, 255), (bL * 255).round().clamp(0, 255));
   }
 
   @override
@@ -79,7 +79,7 @@ class LuvColor implements ColorSpacesIQ {
   LuvColor blacken([double amount = 20]) => toColor().blacken(amount).toLuv();
 
   @override
-  LuvColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toLuv();
+  LuvColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toLuv();
 
   @override
   LuvColor darken([double amount = 20]) {
@@ -153,13 +153,13 @@ class LuvColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toLuv()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toLuv()).toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as Color).toLuv())
+        .map((c) => (c as ColorIQ).toLuv())
         .toList();
   }
 
@@ -167,12 +167,12 @@ class LuvColor implements ColorSpacesIQ {
   List<ColorSpacesIQ> darkerPalette([double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as Color).toLuv())
+        .map((c) => (c as ColorIQ).toLuv())
         .toList();
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as Color).toLuv();
+  ColorSpacesIQ get random => (toColor().random as ColorIQ).toLuv();
 
   @override
   bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);

@@ -4,18 +4,18 @@ import 'package:color_iq_utils/color_iq_utils.dart';
 
 void main() {
   group('sRGB and Linear sRGB Tests', () {
-    test('Color srgb getter', () {
-      final color = Color.fromARGB(255, 100, 150, 200);
+    test('ColorIQ srgb getter', () {
+      final color = ColorIQ.fromARGB(255, 100, 150, 200);
       expect(color.srgb, [100, 150, 200, 255]);
     });
 
-    test('Color linearSrgb getter (Red)', () {
-      final red = Color.fromARGB(255, 255, 0, 0);
+    test('ColorIQ linearSrgb getter (Red)', () {
+      final red = ColorIQ.fromARGB(255, 255, 0, 0);
       expect(red.linearSrgb, [1.0, 0.0, 0.0, 1.0]);
     });
 
-    test('Color linearSrgb getter (Mid Gray)', () {
-      final gray = Color.fromARGB(255, 128, 128, 128);
+    test('ColorIQ linearSrgb getter (Mid Gray)', () {
+      final gray = ColorIQ.fromARGB(255, 128, 128, 128);
       // 128/255 = 0.50196
       // ((0.50196 + 0.055) / 1.055) ^ 2.4 = 0.21586
       final linear = gray.linearSrgb;
@@ -25,8 +25,8 @@ void main() {
       expect(linear[3], 1.0);
     });
 
-    test('Color linearSrgb getter (Dark Gray - Linear Segment)', () {
-      final dark = Color.fromARGB(255, 10, 10, 10);
+    test('ColorIQ linearSrgb getter (Dark Gray - Linear Segment)', () {
+      final dark = ColorIQ.fromARGB(255, 10, 10, 10);
       // 10/255 = 0.039215
       // 0.039215 / 12.92 = 0.003035
       final linear = dark.linearSrgb;

@@ -12,9 +12,9 @@ class HctColor implements ColorSpacesIQ {
   const HctColor(this.hue, this.chroma, this.tone);
 
   @override
-  Color toColor() {
+  ColorIQ toColor() {
     int argb = mcu.Hct.from(hue, chroma, tone).toInt();
-    return Color(argb);
+    return ColorIQ(argb);
   }
   
   @override
@@ -85,7 +85,7 @@ class HctColor implements ColorSpacesIQ {
   HctColor blacken([double amount = 20]) => toColor().blacken(amount).toHct();
 
   @override
-  HctColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toHct();
+  HctColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toHct();
 
   @override
   HctColor toHct() => this;
@@ -136,7 +136,7 @@ class HctColor implements ColorSpacesIQ {
   List<ColorSpacesIQ> lighterPalette([double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as Color).toHct())
+        .map((c) => (c as ColorIQ).toHct())
         .toList();
   }
 
@@ -144,12 +144,12 @@ class HctColor implements ColorSpacesIQ {
   List<ColorSpacesIQ> darkerPalette([double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as Color).toHct())
+        .map((c) => (c as ColorIQ).toHct())
         .toList();
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as Color).toHct();
+  ColorSpacesIQ get random => (toColor().random as ColorIQ).toHct();
 
   @override
   bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);

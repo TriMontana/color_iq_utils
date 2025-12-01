@@ -139,7 +139,7 @@ class CssColor {
     throw FormatException('Unsupported CSS color format: $cssString');
   }
 
-  static Color _parseHex(String hex) {
+  static ColorIQ _parseHex(String hex) {
     hex = hex.substring(1);
     if (hex.length == 3) {
       hex = hex.split('').map((c) => '$c$c').join('');
@@ -147,7 +147,7 @@ class CssColor {
     
     if (hex.length == 6) {
       hex = 'FF$hex';
-      return Color(int.parse(hex, radix: 16));
+      return ColorIQ(int.parse(hex, radix: 16));
     }
     
     if (hex.length == 8) {
@@ -160,13 +160,13 @@ class CssColor {
       final b = hex.substring(4, 6);
       final a = hex.substring(6, 8);
       hex = '$a$r$g$b';
-      return Color(int.parse(hex, radix: 16));
+      return ColorIQ(int.parse(hex, radix: 16));
     }
     
     throw FormatException('Invalid hex color: #$hex');
   }
 
-  static Color _parseRgb(String s) {
+  static ColorIQ _parseRgb(String s) {
     // rgb(r, g, b) or rgba(r, g, b, a) or rgb(r g b / a)
     final content = s.substring(s.indexOf('(') + 1, s.lastIndexOf(')'));
     final parts = content.split(RegExp(r'[,\s/]+')).where((p) => p.isNotEmpty).toList();
@@ -182,7 +182,7 @@ class CssColor {
       a = double.parse(parts[3]);
     }
     
-    return Color.fromARGB((a * 255).round(), r, g, b);
+    return ColorIQ.fromARGB((a * 255).round(), r, g, b);
   }
 
   static HslColor _parseHsl(String s) {

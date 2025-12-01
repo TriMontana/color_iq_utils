@@ -15,7 +15,7 @@ class OkHslColor implements ColorSpacesIQ {
   const OkHslColor(this.h, this.s, this.l);
 
   @override
-  Color toColor() {
+  ColorIQ toColor() {
       // Approximate conversion via OkLch
       // s is roughly c/0.4 for s=1.
       // l is roughly L.
@@ -51,7 +51,7 @@ class OkHslColor implements ColorSpacesIQ {
   OkHslColor blacken([double amount = 20]) => toColor().blacken(amount).toOkHsl();
 
   @override
-  OkHslColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toOkHsl();
+  OkHslColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toOkHsl();
 
   @override
   OkHslColor lighten([double amount = 20]) {
@@ -123,13 +123,13 @@ class OkHslColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toOkHsl()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toOkHsl()).toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as Color).toOkHsl())
+        .map((c) => (c as ColorIQ).toOkHsl())
         .toList();
   }
 
@@ -137,12 +137,12 @@ class OkHslColor implements ColorSpacesIQ {
   List<ColorSpacesIQ> darkerPalette([double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as Color).toOkHsl())
+        .map((c) => (c as ColorIQ).toOkHsl())
         .toList();
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as Color).toOkHsl();
+  ColorSpacesIQ get random => (toColor().random as ColorIQ).toOkHsl();
 
   @override
   bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);

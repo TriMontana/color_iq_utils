@@ -13,7 +13,7 @@ class HsvColor implements ColorSpacesIQ {
   const HsvColor(this.h, this.s, this.v, [this.alpha = 1.0]);
 
   @override
-  Color toColor() {
+  ColorIQ toColor() {
       double c = v * s;
       double x = c * (1 - ((h / 60) % 2 - 1).abs());
       double m = v - c;
@@ -33,7 +33,7 @@ class HsvColor implements ColorSpacesIQ {
           r = c; g = 0; b = x;
       }
       
-      return Color.fromARGB((alpha * 255).round(), ((r + m) * 255).round().clamp(0, 255), ((g + m) * 255).round().clamp(0, 255), ((b + m) * 255).round().clamp(0, 255));
+      return ColorIQ.fromARGB((alpha * 255).round(), ((r + m) * 255).round().clamp(0, 255), ((g + m) * 255).round().clamp(0, 255), ((b + m) * 255).round().clamp(0, 255));
   }
   
   @override
@@ -60,7 +60,7 @@ class HsvColor implements ColorSpacesIQ {
   HsvColor blacken([double amount = 20]) => toColor().blacken(amount).toHsv();
 
   @override
-  HsvColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toHsv();
+  HsvColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toHsv();
 
   @override
   HsvColor lighten([double amount = 20]) {
@@ -141,13 +141,13 @@ class HsvColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toHsv()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toHsv()).toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as Color).toHsv())
+        .map((c) => (c as ColorIQ).toHsv())
         .toList();
   }
 
@@ -155,12 +155,12 @@ class HsvColor implements ColorSpacesIQ {
   List<ColorSpacesIQ> darkerPalette([double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as Color).toHsv())
+        .map((c) => (c as ColorIQ).toHsv())
         .toList();
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as Color).toHsv();
+  ColorSpacesIQ get random => (toColor().random as ColorIQ).toHsv();
 
   @override
   bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);

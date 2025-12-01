@@ -4,13 +4,13 @@ import 'package:test/test.dart';
 void main() {
   group('Gamut, WhitePoint, and JSON', () {
     test('isWithinGamut returns true for sRGB colors', () {
-      final color = Color(0xFF00FF00);
+      final color = ColorIQ(0xFF00FF00);
       expect(color.isWithinGamut(Gamut.sRGB), isTrue);
       expect(color.isWithinGamut(Gamut.displayP3), isTrue);
     });
 
     test('whitePoint returns D65 default', () {
-      final color = Color(0xFFFFFFFF);
+      final color = ColorIQ(0xFFFFFFFF);
       final wp = color.whitePoint;
       expect(wp.length, 3);
       expect(wp[0], closeTo(95.047, 0.001));
@@ -18,13 +18,13 @@ void main() {
       expect(wp[2], closeTo(108.883, 0.001));
     });
 
-    test('toJson and fromJson for Color', () {
-      final color = Color(0xFF123456);
+    test('toJson and fromJson for ColorIQ', () {
+      final color = ColorIQ(0xFF123456);
       final json = color.toJson();
-      expect(json['type'], 'Color');
+      expect(json['type'], 'ColorIQ');
       expect(json['value'], 0xFF123456);
 
-      final fromJson = Color.fromJson(json);
+      final fromJson = ColorIQ.fromJson(json);
       expect(fromJson.toColor().value, color.value);
     });
 
@@ -36,7 +36,7 @@ void main() {
       expect(json['saturation'], 0.5);
       expect(json['value'], 0.8);
 
-      final fromJson = Color.fromJson(json) as HsvColor;
+      final fromJson = ColorIQ.fromJson(json) as HsvColor;
       expect(fromJson.h, 120);
       expect(fromJson.s, 0.5);
       expect(fromJson.v, 0.8);
@@ -50,7 +50,7 @@ void main() {
       expect(json['saturation'], 0.6);
       expect(json['lightness'], 0.4);
 
-      final fromJson = Color.fromJson(json) as HslColor;
+      final fromJson = ColorIQ.fromJson(json) as HslColor;
       expect(fromJson.h, 240);
       expect(fromJson.s, 0.6);
       expect(fromJson.l, 0.4);
@@ -64,7 +64,7 @@ void main() {
       expect(json['a'], 10);
       expect(json['b'], -20);
 
-      final fromJson = Color.fromJson(json) as LabColor;
+      final fromJson = ColorIQ.fromJson(json) as LabColor;
       expect(fromJson.l, 50);
       expect(fromJson.a, 10);
       expect(fromJson.b, -20);
@@ -78,7 +78,7 @@ void main() {
       expect(json['y'], 30);
       expect(json['z'], 40);
 
-      final fromJson = Color.fromJson(json) as XyzColor;
+      final fromJson = ColorIQ.fromJson(json) as XyzColor;
       expect(fromJson.x, 20);
       expect(fromJson.y, 30);
       expect(fromJson.z, 40);
@@ -93,7 +93,7 @@ void main() {
       expect(json['y'], 0.3);
       expect(json['k'], 0.4);
 
-      final fromJson = Color.fromJson(json) as CmykColor;
+      final fromJson = ColorIQ.fromJson(json) as CmykColor;
       expect(fromJson.c, 0.1);
       expect(fromJson.m, 0.2);
       expect(fromJson.y, 0.3);
@@ -108,7 +108,7 @@ void main() {
       expect(json['c'], 30);
       expect(json['h'], 180);
 
-      final fromJson = Color.fromJson(json) as LchColor;
+      final fromJson = ColorIQ.fromJson(json) as LchColor;
       expect(fromJson.l, 60);
       expect(fromJson.c, 30);
       expect(fromJson.h, 180);

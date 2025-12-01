@@ -14,7 +14,7 @@ class HsluvColor implements ColorSpacesIQ {
   const HsluvColor(this.h, this.s, this.l);
 
   @override
-  Color toColor() {
+  ColorIQ toColor() {
       // HSLuv to Luv to XYZ to RGB
       // This requires the full HSLuv implementation which is quite large.
       // For now, we can use a placeholder or simplified version if available,
@@ -32,7 +32,7 @@ class HsluvColor implements ColorSpacesIQ {
       
       // Fallback: Convert L to grayscale
       int gray = (l * 2.55).round().clamp(0, 255);
-      return Color.fromARGB(255, gray, gray, gray);
+      return ColorIQ.fromARGB(255, gray, gray, gray);
   }
   
   @override
@@ -59,7 +59,7 @@ class HsluvColor implements ColorSpacesIQ {
   HsluvColor blacken([double amount = 20]) => toColor().blacken(amount).toHsluv();
 
   @override
-  HsluvColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toHsluv();
+  HsluvColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toHsluv();
 
   @override
   HsluvColor lighten([double amount = 20]) {
@@ -131,13 +131,13 @@ class HsluvColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toHsluv()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toHsluv()).toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as Color).toHsluv())
+        .map((c) => (c as ColorIQ).toHsluv())
         .toList();
   }
 
@@ -145,12 +145,12 @@ class HsluvColor implements ColorSpacesIQ {
   List<ColorSpacesIQ> darkerPalette([double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as Color).toHsluv())
+        .map((c) => (c as ColorIQ).toHsluv())
         .toList();
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as Color).toHsluv();
+  ColorSpacesIQ get random => (toColor().random as ColorIQ).toHsluv();
 
   @override
   bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);

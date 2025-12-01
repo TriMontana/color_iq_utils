@@ -22,8 +22,8 @@ void main() {
       expect(deintensified.hue, equals(hct.hue));
     });
 
-    test('Color intensify delegates to HctColor', () {
-      final color = Color.fromARGB(255, 100, 150, 200); // Some blueish color
+    test('ColorIQ intensify delegates to HctColor', () {
+      final color = ColorIQ.fromARGB(255, 100, 150, 200); // Some blueish color
       final intensified = color.intensify(20);
       
       // Convert back to HCT to verify properties
@@ -36,8 +36,8 @@ void main() {
       expect(intensifiedHct.tone, lessThan(originalHct.tone));
     });
 
-    test('Color deintensify delegates to HctColor', () {
-      final color = Color.fromARGB(255, 100, 150, 200);
+    test('ColorIQ deintensify delegates to HctColor', () {
+      final color = ColorIQ.fromARGB(255, 100, 150, 200);
       final deintensified = color.deintensify(20);
       
       final originalHct = color.toHct();

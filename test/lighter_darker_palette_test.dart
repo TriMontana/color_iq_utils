@@ -37,12 +37,12 @@ void main() {
       expect((palette.last as HslColor).l, closeTo(0.083, 0.01)); // 0.5 - 5 * (0.5/6) = 0.5 - 0.416 = 0.083
     });
 
-    test('Color Lighter Palette (Custom Step)', () {
-      final color = Color.fromARGB(255, 128, 128, 128); // Grey (L=0.5)
+    test('ColorIQ Lighter Palette (Custom Step)', () {
+      final color = ColorIQ.fromARGB(255, 128, 128, 128); // Grey (L=0.5)
       final palette = color.lighterPalette(10); // 10% steps
       expect(palette.length, 5);
       
-      final first = palette.first as Color;
+      final first = palette.first as ColorIQ;
       final hslFirst = first.toHsl();
       expect(hslFirst.l, closeTo(0.6, 0.01)); // 0.5 + 0.1
     });

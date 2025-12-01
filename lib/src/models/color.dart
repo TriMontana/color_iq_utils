@@ -28,16 +28,16 @@ import 'display_p3_color.dart';
 import 'rec2020_color.dart';
 
 /// A color represented by red, green, blue, and alpha components.
-class Color implements ColorSpacesIQ {
+class ColorIQ implements ColorSpacesIQ {
   /// The 32-bit alpha-red-green-blue integer value.
   @override
   final int value;
 
   /// Construct a color from the lower 32 bits of an [int].
-  const Color(this.value);
+  const ColorIQ(this.value);
 
   /// Construct a color from 4 integers, a, r, g, b.
-  const Color.fromARGB(int a, int r, int g, int b)
+  const ColorIQ.fromARGB(int a, int r, int g, int b)
       : value = (((a & 0xff) << 24) |
                 ((r & 0xff) << 16) |
                 ((g & 0xff) << 8) |
@@ -413,7 +413,7 @@ class Color implements ColorSpacesIQ {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is Color && other.value == value;
+    return other is ColorIQ && other.value == value;
   }
 
   @override
@@ -422,47 +422,47 @@ class Color implements ColorSpacesIQ {
 
 
   @override
-  Color lighten([double amount = 20]) {
+  ColorIQ lighten([double amount = 20]) {
     return toHsl().lighten(amount).toColor();
   }
 
   @override
-  Color darken([double amount = 20]) {
+  ColorIQ darken([double amount = 20]) {
     return toHsl().darken(amount).toColor();
   }
 
   @override
-  Color brighten([double amount = 20]) {
+  ColorIQ brighten([double amount = 20]) {
     return toHsv().brighten(amount).toColor();
   }
 
   @override
-  Color saturate([double amount = 25]) {
+  ColorIQ saturate([double amount = 25]) {
     return toHsl().saturate(amount).toColor();
   }
 
   @override
-  Color desaturate([double amount = 25]) {
+  ColorIQ desaturate([double amount = 25]) {
     return toHsl().desaturate(amount).toColor();
   }
 
   @override
-  Color intensify([double amount = 10]) {
+  ColorIQ intensify([double amount = 10]) {
     return toHct().intensify(amount).toColor();
   }
 
   @override
-  Color deintensify([double amount = 10]) {
+  ColorIQ deintensify([double amount = 10]) {
     return toHct().deintensify(amount).toColor();
   }
 
   @override
-  Color accented([double amount = 15]) {
+  ColorIQ accented([double amount = 15]) {
     return toHct().accented(amount).toColor();
   }
 
   @override
-  Color simulate(ColorBlindnessType type) {
+  ColorIQ simulate(ColorBlindnessType type) {
     // 1. Convert to Linear sRGB (0-1)
     List<double> lin = linearSrgb;
     // 2. Simulate
@@ -482,7 +482,7 @@ class Color implements ColorSpacesIQ {
     int g = (gammaCorrect(sim[1]) * 255).round().clamp(0, 255);
     int b = (gammaCorrect(sim[2]) * 255).round().clamp(0, 255);
 
-    return Color.fromARGB(alpha, r, g, b);
+    return ColorIQ.fromARGB(alpha, r, g, b);
   }
 
   @override
@@ -502,31 +502,31 @@ class Color implements ColorSpacesIQ {
   }
 
   @override
-  Color get inverted {
-    return Color.fromARGB(alpha, 255 - red, 255 - green, 255 - blue);
+  ColorIQ get inverted {
+    return ColorIQ.fromARGB(alpha, 255 - red, 255 - green, 255 - blue);
   }
 
   @override
-  Color get grayscale => desaturate(100);
+  ColorIQ get grayscale => desaturate(100);
 
   @override
-  Color whiten([double amount = 20]) {
-    return lerp(const Color(0xFFFFFFFF), amount / 100) as Color;
+  ColorIQ whiten([double amount = 20]) {
+    return lerp(const ColorIQ(0xFFFFFFFF), amount / 100) as ColorIQ;
   }
 
   @override
-  Color blacken([double amount = 20]) {
-    return lerp(const Color(0xFF000000), amount / 100) as Color;
+  ColorIQ blacken([double amount = 20]) {
+    return lerp(const ColorIQ(0xFF000000), amount / 100) as ColorIQ;
   }
 
   @override
   ColorSpacesIQ lerp(ColorSpacesIQ other, double t) {
-    if (other is! Color) {
-      return lerp(Color(other.value), t);
+    if (other is! ColorIQ) {
+      return lerp(ColorIQ(other.value), t);
     }
     
     final otherColor = other;
-    return Color.fromARGB(
+    return ColorIQ.fromARGB(
       (alpha + (otherColor.alpha - alpha) * t).round(),
       (red + (otherColor.red - red) * t).round(),
       (green + (otherColor.green - green) * t).round(),
@@ -535,11 +535,11 @@ class Color implements ColorSpacesIQ {
   }
 
   @override
-  Color fromHct(HctColor hct) => hct.toColor();
+  ColorIQ fromHct(HctColor hct) => hct.toColor();
 
   @override
-  Color adjustTransparency([double amount = 20]) {
-    return Color.fromARGB(
+  ColorIQ adjustTransparency([double amount = 20]) {
+    return ColorIQ.fromARGB(
       (alpha * (1 - amount / 100)).round().clamp(0, 255),
       red,
       green,
@@ -563,8 +563,8 @@ class Color implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  Color copyWith({int? a, int? r, int? g, int? b}) {
-    return Color.fromARGB(
+  ColorIQ copyWith({int? a, int? r, int? g, int? b}) {
+    return ColorIQ.fromARGB(
       a ?? alpha,
       r ?? red,
       g ?? green,
@@ -580,7 +580,7 @@ class Color implements ColorSpacesIQ {
     // The user asked for "at least five colors".
     // Let's generate a range of lightnesses around the current color.
     final hsl = toHsl();
-    final results = <Color>[];
+    final results = <ColorIQ>[];
     
     // We want 5 steps. Let's do: L-20, L-10, L, L+10, L+20, clamped.
     // Or just spread them out evenly?
@@ -611,12 +611,12 @@ class Color implements ColorSpacesIQ {
   }
 
   @override
-  Color toColor() => this;
+  ColorIQ toColor() => this;
 
   @override
   ColorSpacesIQ get random {
     final rng = Random();
-    return Color.fromARGB(
+    return ColorIQ.fromARGB(
       255,
       rng.nextInt(256),
       rng.nextInt(256),
@@ -652,19 +652,19 @@ class Color implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  Color blend(ColorSpacesIQ other, [double amount = 50]) {
-    return lerp(other, amount / 100) as Color;
+  ColorIQ blend(ColorSpacesIQ other, [double amount = 50]) {
+    return lerp(other, amount / 100) as ColorIQ;
   }
 
   @override
-  Color opaquer([double amount = 20]) {
+  ColorIQ opaquer([double amount = 20]) {
     // Increase alpha by amount%
     int newAlpha = (alpha + (255 * amount / 100)).round().clamp(0, 255);
     return copyWith(a: newAlpha);
   }
 
   @override
-  Color adjustHue([double amount = 20]) {
+  ColorIQ adjustHue([double amount = 20]) {
     final hsl = toHsl();
     double newHue = (hsl.h + amount) % 360;
     if (newHue < 0) newHue += 360;
@@ -672,10 +672,10 @@ class Color implements ColorSpacesIQ {
   }
 
   @override
-  Color get complementary => adjustHue(180);
+  ColorIQ get complementary => adjustHue(180);
 
   @override
-  Color warmer([double amount = 20]) {
+  ColorIQ warmer([double amount = 20]) {
     // Warmest is around 30 degrees (Orange/Red)
     // We shift the hue towards 30 degrees by amount%
     final hsl = toHsl();
@@ -695,7 +695,7 @@ class Color implements ColorSpacesIQ {
   }
 
   @override
-  Color cooler([double amount = 20]) {
+  ColorIQ cooler([double amount = 20]) {
     // Coolest is around 210 degrees (Blue/Cyan)
     // We shift the hue towards 210 degrees by amount%
     final hsl = toHsl();
@@ -715,7 +715,7 @@ class Color implements ColorSpacesIQ {
   }
 
   @override
-  List<Color> generateBasicPalette() {
+  List<ColorIQ> generateBasicPalette() {
     return [
       darken(30),
       darken(20),
@@ -728,21 +728,21 @@ class Color implements ColorSpacesIQ {
   }
 
   @override
-  List<Color> tonesPalette() {
+  List<ColorIQ> tonesPalette() {
     // Mix with gray (0xFF808080)
-    const gray = Color(0xFF808080);
+    const gray = ColorIQ(0xFF808080);
     return [
       this,
-      lerp(gray, 0.15) as Color,
-      lerp(gray, 0.30) as Color,
-      lerp(gray, 0.45) as Color,
-      lerp(gray, 0.60) as Color,
+      lerp(gray, 0.15) as ColorIQ,
+      lerp(gray, 0.30) as ColorIQ,
+      lerp(gray, 0.45) as ColorIQ,
+      lerp(gray, 0.60) as ColorIQ,
     ];
   }
 
   @override
-  List<Color> analogous({int count = 5, double offset = 30}) {
-    final results = <Color>[];
+  List<ColorIQ> analogous({int count = 5, double offset = 30}) {
+    final results = <ColorIQ>[];
     
     if (count == 3) {
       results.add(adjustHue(-offset));
@@ -761,7 +761,7 @@ class Color implements ColorSpacesIQ {
   }
 
   @override
-  List<Color> square() {
+  List<ColorIQ> square() {
     return [
       this,
       adjustHue(90),
@@ -771,7 +771,7 @@ class Color implements ColorSpacesIQ {
   }
 
   @override
-  List<Color> tetrad({double offset = 60}) {
+  List<ColorIQ> tetrad({double offset = 60}) {
     return [
       this,
       adjustHue(offset),
@@ -854,7 +854,7 @@ class Color implements ColorSpacesIQ {
   @override
   Map<String, dynamic> toJson() {
     return {
-      'type': 'Color',
+      'type': 'ColorIQ',
       'value': value,
     };
   }
@@ -863,8 +863,8 @@ class Color implements ColorSpacesIQ {
   static ColorSpacesIQ fromJson(Map<String, dynamic> json) {
     final type = json['type'] as String;
     switch (type) {
-      case 'Color':
-        return Color(json['value'] as int);
+      case 'ColorIQ':
+        return ColorIQ(json['value'] as int);
       case 'HctColor':
         return HctColor(json['hue'], json['chroma'], json['tone']);
       case 'HsvColor':
@@ -882,12 +882,12 @@ class Color implements ColorSpacesIQ {
       // Add other cases as needed, defaulting to Color if unknown
       default:
         if (json.containsKey('value')) {
-          return Color(json['value'] as int);
+          return ColorIQ(json['value'] as int);
         }
         throw FormatException('Unknown color type: $type');
     }
   }
 
   @override
-  String toString() => 'Color(0x${value.toRadixString(16).toUpperCase().padLeft(8, '0')})';
+  String toString() => 'ColorIQ(0x${value.toRadixString(16).toUpperCase().padLeft(8, '0')})';
 }

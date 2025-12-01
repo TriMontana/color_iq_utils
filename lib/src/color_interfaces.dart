@@ -52,8 +52,8 @@ abstract class ColorSpacesIQ {
   ColorSpacesIQ adjustTransparency([double amount = 20]);
 
 
-  /// Converts the color to the standard ARGB [Color] format.
-  Color toColor();
+  /// Converts the color to the standard ARGB [ColorIQ] format.
+  ColorIQ toColor();
 
   /// Converts this color to HCT.
   HctColor toHct();

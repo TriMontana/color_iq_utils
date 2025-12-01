@@ -12,7 +12,7 @@ class HunterLabColor implements ColorSpacesIQ {
   const HunterLabColor(this.l, this.a, this.b);
 
   @override
-  Color toColor() {
+  ColorIQ toColor() {
     // Using D65 reference values to match sRGB/XYZ white point
     const double xn = 95.047;
     const double yn = 100.0;
@@ -34,7 +34,7 @@ class HunterLabColor implements ColorSpacesIQ {
     g = (g > 0.0031308) ? (1.055 * pow(g, 1 / 2.4) - 0.055) : (12.92 * g);
     bVal = (bVal > 0.0031308) ? (1.055 * pow(bVal, 1 / 2.4) - 0.055) : (12.92 * bVal);
 
-    return Color.fromARGB(255, (r * 255).round().clamp(0, 255), (g * 255).round().clamp(0, 255), (bVal * 255).round().clamp(0, 255));
+    return ColorIQ.fromARGB(255, (r * 255).round().clamp(0, 255), (g * 255).round().clamp(0, 255), (bVal * 255).round().clamp(0, 255));
   }
   
   @override
@@ -94,7 +94,7 @@ class HunterLabColor implements ColorSpacesIQ {
   HunterLabColor blacken([double amount = 20]) => toColor().blacken(amount).toHunterLab();
 
   @override
-  HunterLabColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toHunterLab();
+  HunterLabColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toHunterLab();
 
   @override
   HunterLabColor lighten([double amount = 20]) {
@@ -133,13 +133,13 @@ class HunterLabColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toHunterLab()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toHunterLab()).toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as Color).toHunterLab())
+        .map((c) => (c as ColorIQ).toHunterLab())
         .toList();
   }
 
@@ -147,12 +147,12 @@ class HunterLabColor implements ColorSpacesIQ {
   List<ColorSpacesIQ> darkerPalette([double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as Color).toHunterLab())
+        .map((c) => (c as ColorIQ).toHunterLab())
         .toList();
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as Color).toHunterLab();
+  ColorSpacesIQ get random => (toColor().random as ColorIQ).toHunterLab();
 
   @override
   bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);

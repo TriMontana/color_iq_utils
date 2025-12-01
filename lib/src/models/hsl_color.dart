@@ -13,7 +13,7 @@ class HslColor implements ColorSpacesIQ {
   const HslColor(this.h, this.s, this.l, [this.alpha = 1.0]);
 
   @override
-  Color toColor() {
+  ColorIQ toColor() {
       double c = (1 - (2 * l - 1).abs()) * s;
       double x = c * (1 - ((h / 60) % 2 - 1).abs());
       double m = l - c / 2;
@@ -33,7 +33,7 @@ class HslColor implements ColorSpacesIQ {
           r = c; g = 0; b = x;
       }
       
-      return Color.fromARGB((alpha * 255).round(), ((r + m) * 255).round().clamp(0, 255), ((g + m) * 255).round().clamp(0, 255), ((b + m) * 255).round().clamp(0, 255));
+      return ColorIQ.fromARGB((alpha * 255).round(), ((r + m) * 255).round().clamp(0, 255), ((g + m) * 255).round().clamp(0, 255), ((b + m) * 255).round().clamp(0, 255));
   }
   
   @override
@@ -98,7 +98,7 @@ class HslColor implements ColorSpacesIQ {
   HslColor blacken([double amount = 20]) => toColor().blacken(amount).toHsl();
 
   @override
-  HslColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toHsl();
+  HslColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toHsl();
 
   @override
   HslColor lighten([double amount = 20]) {
@@ -187,7 +187,7 @@ class HslColor implements ColorSpacesIQ {
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as Color).toHsl();
+  ColorSpacesIQ get random => (toColor().random as ColorIQ).toHsl();
 
   @override
   bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);

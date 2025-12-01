@@ -11,11 +11,11 @@ class YuvColor implements ColorSpacesIQ {
   const YuvColor(this.y, this.u, this.v);
 
   @override
-  Color toColor() {
+  ColorIQ toColor() {
     double r = y + 1.13983 * v;
     double g = y - 0.39465 * u - 0.58060 * v;
     double b = y + 2.03211 * u;
-    return Color.fromARGB(255, (r * 255).round().clamp(0, 255), (g * 255).round().clamp(0, 255), (b * 255).round().clamp(0, 255));
+    return ColorIQ.fromARGB(255, (r * 255).round().clamp(0, 255), (g * 255).round().clamp(0, 255), (b * 255).round().clamp(0, 255));
   }
   
   @override
@@ -80,7 +80,7 @@ class YuvColor implements ColorSpacesIQ {
   YuvColor blacken([double amount = 20]) => toColor().blacken(amount).toYuv();
 
   @override
-  YuvColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toYuv();
+  YuvColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toYuv();
 
   @override
   YuvColor lighten([double amount = 20]) {
@@ -114,13 +114,13 @@ class YuvColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toYuv()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toYuv()).toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as Color).toYuv())
+        .map((c) => (c as ColorIQ).toYuv())
         .toList();
   }
 
@@ -128,12 +128,12 @@ class YuvColor implements ColorSpacesIQ {
   List<ColorSpacesIQ> darkerPalette([double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as Color).toYuv())
+        .map((c) => (c as ColorIQ).toYuv())
         .toList();
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as Color).toYuv();
+  ColorSpacesIQ get random => (toColor().random as ColorIQ).toYuv();
 
   @override
   bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);

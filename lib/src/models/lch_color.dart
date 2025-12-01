@@ -20,7 +20,7 @@ class LchColor implements ColorSpacesIQ {
   }
 
   @override
-  Color toColor() => toLab().toColor();
+  ColorIQ toColor() => toLab().toColor();
 
   @override
   LchColor saturate([double amount = 25]) {
@@ -71,7 +71,7 @@ class LchColor implements ColorSpacesIQ {
   LchColor blacken([double amount = 20]) => toColor().blacken(amount).toLch();
 
   @override
-  LchColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toLch();
+  LchColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toLch();
 
   @override
   int get value => toColor().value;
@@ -116,13 +116,13 @@ class LchColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toLch()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toLch()).toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as Color).toLch())
+        .map((c) => (c as ColorIQ).toLch())
         .toList();
   }
 
@@ -130,12 +130,12 @@ class LchColor implements ColorSpacesIQ {
   List<ColorSpacesIQ> darkerPalette([double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as Color).toLch())
+        .map((c) => (c as ColorIQ).toLch())
         .toList();
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as Color).toLch();
+  ColorSpacesIQ get random => (toColor().random as ColorIQ).toLch();
 
   @override
   bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);

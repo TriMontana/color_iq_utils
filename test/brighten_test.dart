@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 
 void main() {
   group('Brighten', () {
-    test('Color.brighten increases HSV Value', () {
-      final color = Color.fromARGB(255, 100, 0, 0); // Dark Red
+    test('ColorIQ.brighten increases HSV Value', () {
+      final color = ColorIQ.fromARGB(255, 100, 0, 0); // Dark Red
       final brightened = color.brighten(20);
       
       final hsvOriginal = color.toHsv();
@@ -25,7 +25,7 @@ void main() {
     });
 
     test('Brighten vs Lighten', () {
-      final color = Color.fromARGB(255, 200, 0, 0); // Red
+      final color = ColorIQ.fromARGB(255, 200, 0, 0); // Red
       
       final brightened = color.brighten(20); // Increases Value (maxes out at 1.0)
       final lightened = color.lighten(20); // Increases Lightness (adds white)

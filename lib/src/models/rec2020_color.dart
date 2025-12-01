@@ -13,7 +13,7 @@ class Rec2020Color implements ColorSpacesIQ {
   const Rec2020Color(this.r, this.g, this.b);
 
   @override
-  Color toColor() {
+  ColorIQ toColor() {
       // Rec. 2020 decoding (Gamma to Linear)
       double transferInv(double v) {
           if (v < 0.018 * 4.5) return v / 4.5;
@@ -39,7 +39,7 @@ class Rec2020Color implements ColorSpacesIQ {
       gS = (gS > 0.0031308) ? (1.055 * pow(gS, 1 / 2.4) - 0.055) : (12.92 * gS);
       bS = (bS > 0.0031308) ? (1.055 * pow(bS, 1 / 2.4) - 0.055) : (12.92 * bS);
       
-      return Color.fromARGB(255, (rS * 255).round().clamp(0, 255), (gS * 255).round().clamp(0, 255), (bS * 255).round().clamp(0, 255));
+      return ColorIQ.fromARGB(255, (rS * 255).round().clamp(0, 255), (gS * 255).round().clamp(0, 255), (bS * 255).round().clamp(0, 255));
   }
   
   @override
@@ -104,7 +104,7 @@ class Rec2020Color implements ColorSpacesIQ {
   Rec2020Color blacken([double amount = 20]) => toColor().blacken(amount).toRec2020();
 
   @override
-  Rec2020Color lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toRec2020();
+  Rec2020Color lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toRec2020();
 
   @override
   Rec2020Color lighten([double amount = 20]) {
@@ -141,13 +141,13 @@ class Rec2020Color implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toRec2020()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toRec2020()).toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as Color).toRec2020())
+        .map((c) => (c as ColorIQ).toRec2020())
         .toList();
   }
 
@@ -155,12 +155,12 @@ class Rec2020Color implements ColorSpacesIQ {
   List<ColorSpacesIQ> darkerPalette([double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as Color).toRec2020())
+        .map((c) => (c as ColorIQ).toRec2020())
         .toList();
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as Color).toRec2020();
+  ColorSpacesIQ get random => (toColor().random as ColorIQ).toRec2020();
 
   @override
   bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);

@@ -13,11 +13,11 @@ class CmykColor implements ColorSpacesIQ {
   const CmykColor(this.c, this.m, this.y, this.k);
 
   @override
-  Color toColor() {
+  ColorIQ toColor() {
     double r = 255 * (1 - c) * (1 - k);
     double g = 255 * (1 - m) * (1 - k);
     double b = 255 * (1 - y) * (1 - k);
-    return Color.fromARGB(255, r.round().clamp(0, 255), g.round().clamp(0, 255), b.round().clamp(0, 255));
+    return ColorIQ.fromARGB(255, r.round().clamp(0, 255), g.round().clamp(0, 255), b.round().clamp(0, 255));
   }
   
   @override
@@ -91,7 +91,7 @@ class CmykColor implements ColorSpacesIQ {
   CmykColor blacken([double amount = 20]) => toColor().blacken(amount).toCmyk();
 
   @override
-  CmykColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toCmyk();
+  CmykColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toCmyk();
 
   @override
   HctColor toHct() => toColor().toHct();
@@ -121,13 +121,13 @@ class CmykColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toCmyk()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toCmyk()).toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as Color).toCmyk())
+        .map((c) => (c as ColorIQ).toCmyk())
         .toList();
   }
 
@@ -135,12 +135,12 @@ class CmykColor implements ColorSpacesIQ {
   List<ColorSpacesIQ> darkerPalette([double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as Color).toCmyk())
+        .map((c) => (c as ColorIQ).toCmyk())
         .toList();
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as Color).toCmyk();
+  ColorSpacesIQ get random => (toColor().random as ColorIQ).toCmyk();
 
   @override
   bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);

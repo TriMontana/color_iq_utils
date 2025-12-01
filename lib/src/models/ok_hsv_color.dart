@@ -28,7 +28,7 @@ class OkHsvColor implements ColorSpacesIQ {
   }
   
   @override
-  Color toColor() => toOkLab().toColor();
+  ColorIQ toColor() => toOkLab().toColor();
   
   @override
   int get value => toColor().value; 
@@ -91,7 +91,7 @@ class OkHsvColor implements ColorSpacesIQ {
   OkHsvColor blacken([double amount = 20]) => toColor().blacken(amount).toOkHsv();
 
   @override
-  OkHsvColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toOkHsv();
+  OkHsvColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toOkHsv();
 
   @override
   OkHsvColor lighten([double amount = 20]) {
@@ -126,13 +126,13 @@ class OkHsvColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toOkHsv()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toOkHsv()).toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as Color).toOkHsv())
+        .map((c) => (c as ColorIQ).toOkHsv())
         .toList();
   }
 
@@ -140,12 +140,12 @@ class OkHsvColor implements ColorSpacesIQ {
   List<ColorSpacesIQ> darkerPalette([double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as Color).toOkHsv())
+        .map((c) => (c as ColorIQ).toOkHsv())
         .toList();
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as Color).toOkHsv();
+  ColorSpacesIQ get random => (toColor().random as ColorIQ).toOkHsv();
 
   @override
   bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);

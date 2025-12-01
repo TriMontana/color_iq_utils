@@ -13,7 +13,7 @@ class HsbColor implements ColorSpacesIQ {
   const HsbColor(this.h, this.s, this.b);
 
   @override
-  Color toColor() {
+  ColorIQ toColor() {
       // HSB is the same as HSV, just B instead of V
       return HsvColor(h, s, b).toColor();
   }
@@ -80,7 +80,7 @@ class HsbColor implements ColorSpacesIQ {
   HsbColor blacken([double amount = 20]) => toColor().blacken(amount).toHsb();
 
   @override
-  HsbColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toHsb();
+  HsbColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toHsb();
 
   @override
   HsbColor lighten([double amount = 20]) {
@@ -122,13 +122,13 @@ class HsbColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toHsb()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toHsb()).toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as Color).toHsb())
+        .map((c) => (c as ColorIQ).toHsb())
         .toList();
   }
 
@@ -136,12 +136,12 @@ class HsbColor implements ColorSpacesIQ {
   List<ColorSpacesIQ> darkerPalette([double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as Color).toHsb())
+        .map((c) => (c as ColorIQ).toHsb())
         .toList();
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as Color).toHsb();
+  ColorSpacesIQ get random => (toColor().random as ColorIQ).toHsb();
 
   @override
   bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);

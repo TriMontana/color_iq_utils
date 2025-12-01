@@ -4,11 +4,11 @@ import 'package:test/test.dart';
 void main() {
   group('ColorDescriptor', () {
     test('Achromatic colors', () {
-      expect(ColorDescriptor.describe(Color(0xFFFFFFFF)), 'White');
-      expect(ColorDescriptor.describe(Color(0xFF000000)), 'Black');
-      expect(ColorDescriptor.describe(Color(0xFF808080)), 'Gray');
-      expect(ColorDescriptor.describe(Color(0xFFD3D3D3)), 'Very Light Gray'); // LightGray is D3D3D3
-      expect(ColorDescriptor.describe(Color(0xFF303030)), 'Very Dark Gray');
+      expect(ColorDescriptor.describe(ColorIQ(0xFFFFFFFF)), 'White');
+      expect(ColorDescriptor.describe(ColorIQ(0xFF000000)), 'Black');
+      expect(ColorDescriptor.describe(ColorIQ(0xFF808080)), 'Gray');
+      expect(ColorDescriptor.describe(ColorIQ(0xFFD3D3D3)), 'Very Light Gray'); // LightGray is D3D3D3
+      expect(ColorDescriptor.describe(ColorIQ(0xFF303030)), 'Very Dark Gray');
     });
 
     test('Chromatic colors', () {

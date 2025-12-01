@@ -41,9 +41,9 @@ void main() {
       expect(desaturated.c, closeTo(0.05, 0.01));
     });
 
-    test('Color saturate/desaturate (via HSL)', () {
+    test('ColorIQ saturate/desaturate (via HSL)', () {
       // Red: HSL(0, 1.0, 0.5)
-      final red = Color.fromARGB(255, 255, 0, 0);
+      final red = ColorIQ.fromARGB(255, 255, 0, 0);
       final desaturated = red.desaturate(50);
       // HSL(0, 0.5, 0.5) -> RGB approx (191, 64, 64)
       final hsl = desaturated.toHsl();

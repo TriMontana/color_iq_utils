@@ -12,14 +12,14 @@ class MunsellColor implements ColorSpacesIQ {
   const MunsellColor(this.hue, this.munsellValue, this.chroma);
 
   @override
-  Color toColor() {
+  ColorIQ toColor() {
       // Munsell conversion is complex and usually requires lookup tables.
       // For this implementation, we will return a placeholder or approximate if possible.
       // Since we don't have the tables, we'll return Black or throw.
       // Or better, return a neutral gray based on Value.
       // Value 0-10 maps to L* 0-100 roughly.
       int grayVal = (munsellValue * 25.5).round().clamp(0, 255);
-      return Color.fromARGB(255, grayVal, grayVal, grayVal);
+      return ColorIQ.fromARGB(255, grayVal, grayVal, grayVal);
   }
   
   @override
@@ -105,7 +105,7 @@ class MunsellColor implements ColorSpacesIQ {
   MunsellColor blacken([double amount = 20]) => toColor().blacken(amount).toMunsell();
 
   @override
-  MunsellColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toMunsell();
+  MunsellColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toMunsell();
 
   @override
   MunsellColor lighten([double amount = 20]) {
@@ -143,13 +143,13 @@ class MunsellColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toMunsell()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toMunsell()).toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as Color).toMunsell())
+        .map((c) => (c as ColorIQ).toMunsell())
         .toList();
   }
 
@@ -157,12 +157,12 @@ class MunsellColor implements ColorSpacesIQ {
   List<ColorSpacesIQ> darkerPalette([double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as Color).toMunsell())
+        .map((c) => (c as ColorIQ).toMunsell())
         .toList();
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as Color).toMunsell();
+  ColorSpacesIQ get random => (toColor().random as ColorIQ).toMunsell();
 
   @override
   bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);

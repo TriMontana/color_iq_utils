@@ -14,7 +14,7 @@ class LabColor implements ColorSpacesIQ {
   const LabColor(this.l, this.a, this.b);
 
   @override
-  Color toColor() {
+  ColorIQ toColor() {
     double y = (l + 16) / 116;
     double x = a / 500 + y;
     double z = y - b / 200;
@@ -43,7 +43,7 @@ class LabColor implements ColorSpacesIQ {
     gL = (gL > 0.0031308) ? (1.055 * pow(gL, 1 / 2.4) - 0.055) : (12.92 * gL);
     bL = (bL > 0.0031308) ? (1.055 * pow(bL, 1 / 2.4) - 0.055) : (12.92 * bL);
 
-    return Color.fromARGB(255, (rL * 255).round().clamp(0, 255), (gL * 255).round().clamp(0, 255), (bL * 255).round().clamp(0, 255));
+    return ColorIQ.fromARGB(255, (rL * 255).round().clamp(0, 255), (gL * 255).round().clamp(0, 255), (bL * 255).round().clamp(0, 255));
   }
   
   @override
@@ -119,7 +119,7 @@ class LabColor implements ColorSpacesIQ {
   }
 
   @override
-  LabColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toLab();
+  LabColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toLab();
 
   @override
   HctColor toHct() => toColor().toHct();
@@ -148,13 +148,13 @@ class LabColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toLab()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toLab()).toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as Color).toLab())
+        .map((c) => (c as ColorIQ).toLab())
         .toList();
   }
 
@@ -162,12 +162,12 @@ class LabColor implements ColorSpacesIQ {
   List<ColorSpacesIQ> darkerPalette([double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as Color).toLab())
+        .map((c) => (c as ColorIQ).toLab())
         .toList();
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as Color).toLab();
+  ColorSpacesIQ get random => (toColor().random as ColorIQ).toLab();
 
   @override
   bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);

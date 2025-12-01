@@ -12,7 +12,7 @@ class DisplayP3Color implements ColorSpacesIQ {
   const DisplayP3Color(this.r, this.g, this.b);
 
   @override
-  Color toColor() {
+  ColorIQ toColor() {
       // Gamma decoding (P3 to Linear)
       double rLin = (r > 0.04045) ? pow((r + 0.055) / 1.055, 2.4).toDouble() : (r / 12.92);
       double gLin = (g > 0.04045) ? pow((g + 0.055) / 1.055, 2.4).toDouble() : (g / 12.92);
@@ -34,7 +34,7 @@ class DisplayP3Color implements ColorSpacesIQ {
       gS = (gS > 0.0031308) ? (1.055 * pow(gS, 1 / 2.4) - 0.055) : (12.92 * gS);
       bS = (bS > 0.0031308) ? (1.055 * pow(bS, 1 / 2.4) - 0.055) : (12.92 * bS);
       
-      return Color.fromARGB(255, (rS * 255).round().clamp(0, 255), (gS * 255).round().clamp(0, 255), (bS * 255).round().clamp(0, 255));
+      return ColorIQ.fromARGB(255, (rS * 255).round().clamp(0, 255), (gS * 255).round().clamp(0, 255), (bS * 255).round().clamp(0, 255));
   }
   
   @override
@@ -99,7 +99,7 @@ class DisplayP3Color implements ColorSpacesIQ {
   DisplayP3Color blacken([double amount = 20]) => toColor().blacken(amount).toDisplayP3();
 
   @override
-  DisplayP3Color lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toDisplayP3();
+  DisplayP3Color lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toDisplayP3();
 
   @override
   DisplayP3Color lighten([double amount = 20]) {
@@ -133,13 +133,13 @@ class DisplayP3Color implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toDisplayP3()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toDisplayP3()).toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as Color).toDisplayP3())
+        .map((c) => (c as ColorIQ).toDisplayP3())
         .toList();
   }
 
@@ -147,12 +147,12 @@ class DisplayP3Color implements ColorSpacesIQ {
   List<ColorSpacesIQ> darkerPalette([double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as Color).toDisplayP3())
+        .map((c) => (c as ColorIQ).toDisplayP3())
         .toList();
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as Color).toDisplayP3();
+  ColorSpacesIQ get random => (toColor().random as ColorIQ).toDisplayP3();
 
   @override
   bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);

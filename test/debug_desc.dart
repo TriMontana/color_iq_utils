@@ -13,7 +13,7 @@ void main() {
   print('  Slice: ${yellow.closestColorSlice().name}');
   print('  Desc: ${ColorDescriptor.describe(yellow)}');
   
-  final lightGray = Color(0xFFD3D3D3);
+  final lightGray = ColorIQ(0xFFD3D3D3);
   print('LightGray (D3D3D3):');
   print('  HSL: ${lightGray.toHsl()}');
   print('  Desc: ${ColorDescriptor.describe(lightGray)}');

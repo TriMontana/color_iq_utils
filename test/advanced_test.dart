@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('Advanced Color Conversion Tests', () {
     test('RGB to XYZ conversion (White)', () {
-      final color = Color.fromARGB(255, 255, 255, 255);
+      final color = ColorIQ.fromARGB(255, 255, 255, 255);
       final xyz = color.toXyz();
       
       // D65 White point
@@ -19,7 +19,7 @@ void main() {
     });
 
     test('RGB to Lab conversion (Red)', () {
-      final color = Color.fromARGB(255, 255, 0, 0);
+      final color = ColorIQ.fromARGB(255, 255, 0, 0);
       final lab = color.toLab();
       
       // Approximate values for pure red in sRGB -> Lab (D65)
@@ -35,7 +35,7 @@ void main() {
     });
 
     test('RGB to Luv conversion (Green)', () {
-      final color = Color.fromARGB(255, 0, 255, 0);
+      final color = ColorIQ.fromARGB(255, 0, 255, 0);
       final luv = color.toLuv();
       
       // Approximate values for pure green in sRGB -> Luv (D65)
@@ -51,7 +51,7 @@ void main() {
     });
 
     test('RGB to LCH conversion (Blue)', () {
-      final color = Color.fromARGB(255, 0, 0, 255);
+      final color = ColorIQ.fromARGB(255, 0, 0, 255);
       final lch = color.toLch();
       
       // Blue Lab: L=32.30, a=79.18, b=-107.86
@@ -69,7 +69,7 @@ void main() {
     });
     
     test('Black conversion', () {
-        final color = Color.fromARGB(255, 0, 0, 0);
+        final color = ColorIQ.fromARGB(255, 0, 0, 0);
         
         final xyz = color.toXyz();
         expect(xyz.x, 0);

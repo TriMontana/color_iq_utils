@@ -14,7 +14,7 @@ class XyzColor implements ColorSpacesIQ {
   const XyzColor(this.x, this.y, this.z);
 
   @override
-  Color toColor() {
+  ColorIQ toColor() {
     double xTemp = x / 100;
     double yTemp = y / 100;
     double zTemp = z / 100;
@@ -27,7 +27,7 @@ class XyzColor implements ColorSpacesIQ {
     g = (g > 0.0031308) ? (1.055 * pow(g, 1 / 2.4) - 0.055) : (12.92 * g);
     b = (b > 0.0031308) ? (1.055 * pow(b, 1 / 2.4) - 0.055) : (12.92 * b);
 
-    return Color.fromARGB(255, (r * 255).round().clamp(0, 255), (g * 255).round().clamp(0, 255), (b * 255).round().clamp(0, 255));
+    return ColorIQ.fromARGB(255, (r * 255).round().clamp(0, 255), (g * 255).round().clamp(0, 255), (b * 255).round().clamp(0, 255));
   }
   
   @override
@@ -143,7 +143,7 @@ class XyzColor implements ColorSpacesIQ {
   }
 
   @override
-  XyzColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toXyz();
+  XyzColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toXyz();
 
   @override
   HctColor toHct() => toColor().toHct();
@@ -172,13 +172,13 @@ class XyzColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toXyz()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toXyz()).toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as Color).toXyz())
+        .map((c) => (c as ColorIQ).toXyz())
         .toList();
   }
 
@@ -186,12 +186,12 @@ class XyzColor implements ColorSpacesIQ {
   List<ColorSpacesIQ> darkerPalette([double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as Color).toXyz())
+        .map((c) => (c as ColorIQ).toXyz())
         .toList();
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as Color).toXyz();
+  ColorSpacesIQ get random => (toColor().random as ColorIQ).toXyz();
 
   @override
   bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);

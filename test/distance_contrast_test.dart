@@ -4,13 +4,13 @@ import 'package:test/test.dart';
 void main() {
   group('Distance and Contrast Tests', () {
     test('distanceTo self is 0', () {
-      final color = Color(0xFFFF0000);
+      final color = ColorIQ(0xFFFF0000);
       expect(color.distanceTo(color), 0);
     });
 
     test('distanceTo works for different colors', () {
-      final white = Color(0xFFFFFFFF);
-      final black = Color(0xFF000000);
+      final white = ColorIQ(0xFFFFFFFF);
+      final black = ColorIQ(0xFF000000);
       final dist = white.distanceTo(black);
       expect(dist, greaterThan(0));
       // HCT Tone difference is 100. Distance should be at least 100.
@@ -18,13 +18,13 @@ void main() {
     });
 
     test('contrastWith self is 1.0', () {
-      final color = Color(0xFFFF0000);
+      final color = ColorIQ(0xFFFF0000);
       expect(color.contrastWith(color), closeTo(1.0, 0.01));
     });
 
     test('contrastWith black and white is 21.0', () {
-      final white = Color(0xFFFFFFFF);
-      final black = Color(0xFF000000);
+      final white = ColorIQ(0xFFFFFFFF);
+      final black = ColorIQ(0xFF000000);
       expect(white.contrastWith(black), closeTo(21.0, 0.1));
       expect(black.contrastWith(white), closeTo(21.0, 0.1));
     });
@@ -38,13 +38,13 @@ void main() {
 
   group('Closest Color Slice Tests', () {
     test('Red maps to Red slice', () {
-      final red = Color(0xFFFF0000); // Hue ~0
+      final red = ColorIQ(0xFFFF0000); // Hue ~0
       final slice = red.closestColorSlice();
       expect(slice.name, equals('Red'));
     });
 
     test('Cyan maps to Turquoise slice in HCT', () {
-      final cyan = Color(0xFF00FFFF); // Hue ~180 in HSV, ~192 in HCT
+      final cyan = ColorIQ(0xFF00FFFF); // Hue ~180 in HSV, ~192 in HCT
       final slice = cyan.closestColorSlice();
       // In HCT, #00FFFF is perceptually closer to Turquoise/Sky Blue than pure Cyan (180 deg).
       // Our HCT wheel maps it to "Turquoise".

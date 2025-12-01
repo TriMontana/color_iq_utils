@@ -5,7 +5,7 @@ import 'dart:math';
 void main() {
   group('Additional Color Conversion Tests', () {
     test('RGB to HSP conversion (Red)', () {
-      final color = Color.fromARGB(255, 255, 0, 0);
+      final color = ColorIQ.fromARGB(255, 255, 0, 0);
       final hsp = color.toHsp();
       
       expect(hsp.h, closeTo(0, 0.1));
@@ -14,7 +14,7 @@ void main() {
     });
 
     test('RGB to YIQ conversion (White)', () {
-      final color = Color.fromARGB(255, 255, 255, 255);
+      final color = ColorIQ.fromARGB(255, 255, 255, 255);
       final yiq = color.toYiq();
       
       expect(yiq.y, closeTo(1.0, 0.01));
@@ -23,7 +23,7 @@ void main() {
     });
 
     test('RGB to YUV conversion (White)', () {
-      final color = Color.fromARGB(255, 255, 255, 255);
+      final color = ColorIQ.fromARGB(255, 255, 255, 255);
       final yuv = color.toYuv();
       
       expect(yuv.y, closeTo(1.0, 0.01));
@@ -32,7 +32,7 @@ void main() {
     });
 
     test('RGB to OkLab conversion (White)', () {
-      final color = Color.fromARGB(255, 255, 255, 255);
+      final color = ColorIQ.fromARGB(255, 255, 255, 255);
       final oklab = color.toOkLab();
       
       expect(oklab.l, closeTo(1.0, 0.01));
@@ -42,7 +42,7 @@ void main() {
     
     test('RGB to OkLch conversion (Red)', () {
        // Red is approx L=0.627, C=0.257, h=29.2
-       final color = Color.fromARGB(255, 255, 0, 0);
+       final color = ColorIQ.fromARGB(255, 255, 0, 0);
        final oklch = color.toOkLch();
        
        expect(oklch.l, closeTo(0.627, 0.05));
@@ -51,7 +51,7 @@ void main() {
     });
 
     test('RGB to Hunter Lab conversion (White)', () {
-      final color = Color.fromARGB(255, 255, 255, 255);
+      final color = ColorIQ.fromARGB(255, 255, 255, 255);
       final hunter = color.toHunterLab();
       
       expect(hunter.l, closeTo(100.0, 0.1));

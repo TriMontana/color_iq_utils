@@ -16,7 +16,7 @@ class OkLabColor implements ColorSpacesIQ {
   const OkLabColor(this.l, this.a, this.b, [this.alpha = 1.0]);
 
   @override
-  Color toColor() {
+  ColorIQ toColor() {
     double l_ = l + 0.3963377774 * a + 0.2158037573 * b;
     double m_ = l - 0.1055613458 * a - 0.0638541728 * b;
     double s_ = l - 0.0894841775 * a - 1.2914855480 * b;
@@ -33,7 +33,7 @@ class OkLabColor implements ColorSpacesIQ {
     g = (g > 0.0031308) ? (1.055 * pow(g, 1 / 2.4) - 0.055) : (12.92 * g);
     bVal = (bVal > 0.0031308) ? (1.055 * pow(bVal, 1 / 2.4) - 0.055) : (12.92 * bVal);
 
-    return Color.fromARGB((alpha * 255).round(), (r * 255).round().clamp(0, 255), (g * 255).round().clamp(0, 255), (bVal * 255).round().clamp(0, 255));
+    return ColorIQ.fromARGB((alpha * 255).round(), (r * 255).round().clamp(0, 255), (g * 255).round().clamp(0, 255), (bVal * 255).round().clamp(0, 255));
   }
   
   @override
@@ -85,7 +85,7 @@ class OkLabColor implements ColorSpacesIQ {
   OkLabColor blacken([double amount = 20]) => toColor().blacken(amount).toOkLab();
 
   @override
-  OkLabColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toOkLab();
+  OkLabColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toOkLab();
 
   @override
   OkLabColor lighten([double amount = 20]) {
@@ -160,13 +160,13 @@ class OkLabColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toOkLab()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toOkLab()).toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as Color).toOkLab())
+        .map((c) => (c as ColorIQ).toOkLab())
         .toList();
   }
 
@@ -174,12 +174,12 @@ class OkLabColor implements ColorSpacesIQ {
   List<ColorSpacesIQ> darkerPalette([double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as Color).toOkLab())
+        .map((c) => (c as ColorIQ).toOkLab())
         .toList();
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as Color).toOkLab();
+  ColorSpacesIQ get random => (toColor().random as ColorIQ).toOkLab();
 
   @override
   bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);

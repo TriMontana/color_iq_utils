@@ -11,12 +11,12 @@ class YiqColor implements ColorSpacesIQ {
   const YiqColor(this.y, this.i, this.q);
 
   @override
-  Color toColor() {
+  ColorIQ toColor() {
     double r = y + 0.956 * i + 0.621 * q;
     double g = y - 0.272 * i - 0.647 * q;
     double b = y - 1.106 * i + 1.703 * q;
 
-    return Color.fromARGB(255, (r * 255).round().clamp(0, 255), (g * 255).round().clamp(0, 255), (b * 255).round().clamp(0, 255));
+    return ColorIQ.fromARGB(255, (r * 255).round().clamp(0, 255), (g * 255).round().clamp(0, 255), (b * 255).round().clamp(0, 255));
   }
   
   @override
@@ -81,7 +81,7 @@ class YiqColor implements ColorSpacesIQ {
   YiqColor blacken([double amount = 20]) => toColor().blacken(amount).toYiq();
 
   @override
-  YiqColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toYiq();
+  YiqColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toYiq();
 
   @override
   YiqColor lighten([double amount = 20]) {
@@ -115,13 +115,13 @@ class YiqColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toYiq()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toYiq()).toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as Color).toYiq())
+        .map((c) => (c as ColorIQ).toYiq())
         .toList();
   }
 
@@ -129,12 +129,12 @@ class YiqColor implements ColorSpacesIQ {
   List<ColorSpacesIQ> darkerPalette([double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as Color).toYiq())
+        .map((c) => (c as ColorIQ).toYiq())
         .toList();
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as Color).toYiq();
+  ColorSpacesIQ get random => (toColor().random as ColorIQ).toYiq();
 
   @override
   bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);

@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('Delta E Tests', () {
     test('Self distance is 0', () {
-      final c1 = Color(0xFFFF0000);
+      final c1 = ColorIQ(0xFFFF0000);
       expect(c1.deltaE(c1, algorithm: DeltaEAlgorithm.cie76), equals(0.0));
       expect(c1.deltaE(c1, algorithm: DeltaEAlgorithm.cie94), equals(0.0));
       expect(c1.deltaE(c1, algorithm: DeltaEAlgorithm.ciede2000), equals(0.0));
@@ -61,8 +61,8 @@ void main() {
     });
 
     test('Extension works on other models', () {
-      final red = Color(0xFFFF0000);
-      final green = Color(0xFF00FF00);
+      final red = ColorIQ(0xFFFF0000);
+      final green = ColorIQ(0xFF00FF00);
       
       // Red vs Green is a huge difference
       final dist = red.deltaE(green);

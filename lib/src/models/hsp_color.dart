@@ -13,7 +13,7 @@ class HspColor implements ColorSpacesIQ {
   const HspColor(this.h, this.s, this.p, [this.alpha = 1.0]);
 
   @override
-  Color toColor() {
+  ColorIQ toColor() {
     // http://alienryderflex.com/hsp.html
     double part = 0.0;
     double r = 0.0;
@@ -65,7 +65,7 @@ class HspColor implements ColorSpacesIQ {
       }
     }
 
-    return Color.fromARGB((alpha * 255).round(), (r * 255).round().clamp(0, 255), (g * 255).round().clamp(0, 255), (b * 255).round().clamp(0, 255));
+    return ColorIQ.fromARGB((alpha * 255).round(), (r * 255).round().clamp(0, 255), (g * 255).round().clamp(0, 255), (b * 255).round().clamp(0, 255));
   }
   
   @override
@@ -135,7 +135,7 @@ class HspColor implements ColorSpacesIQ {
   HspColor blacken([double amount = 20]) => toColor().blacken(amount).toHsp();
 
   @override
-  HspColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as Color).toHsp();
+  HspColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toHsp();
 
   @override
   HctColor toHct() => toColor().toHct();
@@ -165,13 +165,13 @@ class HspColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as Color).toHsp()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toHsp()).toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as Color).toHsp())
+        .map((c) => (c as ColorIQ).toHsp())
         .toList();
   }
 
@@ -179,12 +179,12 @@ class HspColor implements ColorSpacesIQ {
   List<ColorSpacesIQ> darkerPalette([double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as Color).toHsp())
+        .map((c) => (c as ColorIQ).toHsp())
         .toList();
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as Color).toHsp();
+  ColorSpacesIQ get random => (toColor().random as ColorIQ).toHsp();
 
   @override
   bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
