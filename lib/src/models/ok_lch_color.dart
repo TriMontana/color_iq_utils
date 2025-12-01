@@ -78,6 +78,11 @@ class OkLchColor implements ColorSpacesIQ {
   }
 
   @override
+  OkLchColor accented([double amount = 15]) {
+    return toColor().accented(amount).toOkLch();
+  }
+
+  @override
   OkLchColor simulate(ColorBlindnessType type) {
     return toColor().simulate(type).toOkLch();
   }

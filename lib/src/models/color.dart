@@ -457,6 +457,11 @@ class Color implements ColorSpacesIQ {
   }
 
   @override
+  Color accented([double amount = 15]) {
+    return toHct().accented(amount).toColor();
+  }
+
+  @override
   Color simulate(ColorBlindnessType type) {
     // 1. Convert to Linear sRGB (0-1)
     List<double> lin = linearSrgb;

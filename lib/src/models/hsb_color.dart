@@ -52,6 +52,11 @@ class HsbColor implements ColorSpacesIQ {
   }
 
   @override
+  HsbColor accented([double amount = 15]) {
+    return toColor().accented(amount).toHsb();
+  }
+
+  @override
   HsbColor simulate(ColorBlindnessType type) {
     return toColor().simulate(type).toHsb();
   }

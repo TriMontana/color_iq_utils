@@ -63,6 +63,11 @@ class CmykColor implements ColorSpacesIQ {
   }
 
   @override
+  CmykColor accented([double amount = 15]) {
+    return toColor().accented(amount).toCmyk();
+  }
+
+  @override
   CmykColor simulate(ColorBlindnessType type) {
     return toColor().simulate(type).toCmyk();
   }

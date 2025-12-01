@@ -84,6 +84,11 @@ class OkHslColor implements ColorSpacesIQ {
   }
 
   @override
+  OkHslColor accented([double amount = 15]) {
+    return toColor().accented(amount).toOkHsl();
+  }
+
+  @override
   OkHslColor simulate(ColorBlindnessType type) {
     return toColor().simulate(type).toOkHsl();
   }

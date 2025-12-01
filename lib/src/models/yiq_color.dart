@@ -53,6 +53,11 @@ class YiqColor implements ColorSpacesIQ {
   }
 
   @override
+  YiqColor accented([double amount = 15]) {
+    return toColor().accented(amount).toYiq();
+  }
+
+  @override
   YiqColor simulate(ColorBlindnessType type) {
     return toColor().simulate(type).toYiq();
   }

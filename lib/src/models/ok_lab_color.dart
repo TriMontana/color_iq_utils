@@ -123,6 +123,11 @@ class OkLabColor implements ColorSpacesIQ {
   }
 
   @override
+  OkLabColor accented([double amount = 15]) {
+    return toColor().accented(amount).toOkLab();
+  }
+
+  @override
   OkLabColor simulate(ColorBlindnessType type) {
     return toColor().simulate(type).toOkLab();
   }

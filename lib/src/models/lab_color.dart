@@ -109,6 +109,11 @@ class LabColor implements ColorSpacesIQ {
   }
 
   @override
+  LabColor accented([double amount = 15]) {
+    return toColor().accented(amount).toLab();
+  }
+
+  @override
   LabColor simulate(ColorBlindnessType type) {
     return toColor().simulate(type).toLab();
   }

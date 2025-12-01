@@ -64,6 +64,11 @@ class Cam16Color implements ColorSpacesIQ {
   }
 
   @override
+  Cam16Color accented([double amount = 15]) {
+    return toColor().accented(amount).toCam16();
+  }
+
+  @override
   Cam16Color simulate(ColorBlindnessType type) {
     return toColor().simulate(type).toCam16();
   }

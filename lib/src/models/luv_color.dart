@@ -107,6 +107,11 @@ class LuvColor implements ColorSpacesIQ {
   }
 
   @override
+  LuvColor accented([double amount = 15]) {
+    return toColor().accented(amount).toLuv();
+  }
+
+  @override
   LuvColor simulate(ColorBlindnessType type) {
     return toColor().simulate(type).toLuv();
   }

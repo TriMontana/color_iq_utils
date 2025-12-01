@@ -107,6 +107,11 @@ class HspColor implements ColorSpacesIQ {
   }
 
   @override
+  HspColor accented([double amount = 15]) {
+    return toColor().accented(amount).toHsp();
+  }
+
+  @override
   HspColor simulate(ColorBlindnessType type) {
     return toColor().simulate(type).toHsp();
   }

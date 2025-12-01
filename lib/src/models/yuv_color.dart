@@ -52,6 +52,11 @@ class YuvColor implements ColorSpacesIQ {
   }
 
   @override
+  YuvColor accented([double amount = 15]) {
+    return toColor().accented(amount).toYuv();
+  }
+
+  @override
   YuvColor simulate(ColorBlindnessType type) {
     return toColor().simulate(type).toYuv();
   }

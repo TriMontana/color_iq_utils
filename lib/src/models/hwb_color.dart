@@ -63,6 +63,11 @@ class HwbColor implements ColorSpacesIQ {
   }
 
   @override
+  HwbColor accented([double amount = 15]) {
+    return toColor().accented(amount).toHwb();
+  }
+
+  @override
   HwbColor simulate(ColorBlindnessType type) {
     return toColor().simulate(type).toHwb();
   }

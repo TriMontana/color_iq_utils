@@ -65,6 +65,10 @@ abstract class ColorSpacesIQ {
   /// Deintensifies (mutes) the color by decreasing chroma and slightly increasing tone.
   ColorSpacesIQ deintensify([double amount = 10]);
 
+  /// Creates an accented version of this color.
+  /// Increases chroma and brightness to make the color stand out.
+  ColorSpacesIQ accented([double amount = 15]);
+
   ColorSpacesIQ fromHct(HctColor hct);
 
   /// Simulates color blindness on this color.

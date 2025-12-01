@@ -93,6 +93,11 @@ class HsvColor implements ColorSpacesIQ {
   }
 
   @override
+  HsvColor accented([double amount = 15]) {
+    return toColor().accented(amount).toHsv();
+  }
+
+  @override
   HsvColor simulate(ColorBlindnessType type) {
     return toColor().simulate(type).toHsv();
   }

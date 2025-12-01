@@ -43,6 +43,11 @@ class LchColor implements ColorSpacesIQ {
   }
 
   @override
+  LchColor accented([double amount = 15]) {
+    return toColor().accented(amount).toLch();
+  }
+
+  @override
   LchColor simulate(ColorBlindnessType type) {
     return toColor().simulate(type).toLch();
   }

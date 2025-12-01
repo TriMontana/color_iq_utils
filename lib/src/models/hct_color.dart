@@ -56,6 +56,12 @@ class HctColor implements ColorSpacesIQ {
   }
 
   @override
+  HctColor accented([double amount = 15]) {
+    // Increase chroma and tone to make it pop.
+    return HctColor(hue, chroma + amount, min(100, tone + (amount / 2)));
+  }
+
+  @override
   HctColor simulate(ColorBlindnessType type) {
     return toColor().simulate(type).toHct();
   }

@@ -60,6 +60,11 @@ class MunsellColor implements ColorSpacesIQ {
   }
 
   @override
+  MunsellColor accented([double amount = 15]) {
+    return toColor().accented(amount).toMunsell();
+  }
+
+  @override
   MunsellColor simulate(ColorBlindnessType type) {
     return toColor().simulate(type).toMunsell();
   }

@@ -76,6 +76,11 @@ class Rec2020Color implements ColorSpacesIQ {
   }
 
   @override
+  Rec2020Color accented([double amount = 15]) {
+    return toColor().accented(amount).toRec2020();
+  }
+
+  @override
   Rec2020Color simulate(ColorBlindnessType type) {
     return toColor().simulate(type).toRec2020();
   }

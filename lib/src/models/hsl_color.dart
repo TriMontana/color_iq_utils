@@ -70,6 +70,11 @@ class HslColor implements ColorSpacesIQ {
   }
 
   @override
+  HslColor accented([double amount = 15]) {
+    return toColor().accented(amount).toHsl();
+  }
+
+  @override
   HslColor simulate(ColorBlindnessType type) {
     return toColor().simulate(type).toHsl();
   }

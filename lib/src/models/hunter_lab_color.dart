@@ -66,6 +66,11 @@ class HunterLabColor implements ColorSpacesIQ {
   }
 
   @override
+  HunterLabColor accented([double amount = 15]) {
+    return toColor().accented(amount).toHunterLab();
+  }
+
+  @override
   HunterLabColor simulate(ColorBlindnessType type) {
     return toColor().simulate(type).toHunterLab();
   }

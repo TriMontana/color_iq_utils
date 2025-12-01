@@ -133,6 +133,11 @@ class XyzColor implements ColorSpacesIQ {
   }
 
   @override
+  XyzColor accented([double amount = 15]) {
+    return toColor().accented(amount).toXyz();
+  }
+
+  @override
   XyzColor simulate(ColorBlindnessType type) {
     return toColor().simulate(type).toXyz();
   }

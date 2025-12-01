@@ -71,6 +71,11 @@ class DisplayP3Color implements ColorSpacesIQ {
   }
 
   @override
+  DisplayP3Color accented([double amount = 15]) {
+    return toColor().accented(amount).toDisplayP3();
+  }
+
+  @override
   DisplayP3Color simulate(ColorBlindnessType type) {
     return toColor().simulate(type).toDisplayP3();
   }

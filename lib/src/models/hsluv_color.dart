@@ -92,6 +92,11 @@ class HsluvColor implements ColorSpacesIQ {
   }
 
   @override
+  HsluvColor accented([double amount = 15]) {
+    return toColor().accented(amount).toHsluv();
+  }
+
+  @override
   HsluvColor simulate(ColorBlindnessType type) {
     return toColor().simulate(type).toHsluv();
   }
