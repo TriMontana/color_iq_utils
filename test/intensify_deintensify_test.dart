@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('Intensify and Deintensify Tests', () {
     test('HctColor intensify increases chroma and decreases tone', () {
-      final HctColor hct = HctColor(120, 50, 50);
+      final HctColor hct = HctColor.alt(120, 50, 50);
       final HctColor intensified = hct.intensify(10);
 
       expect(intensified.chroma, greaterThan(hct.chroma));
@@ -35,7 +35,8 @@ void main() {
       final HctColor intensifiedHct = intensified.toHct();
 
       expect(intensifiedHct.chroma, greaterThan(originalHct.chroma));
-      // Tone might not always strictly decrease due to gamut mapping, but generally should be lower or similar for intensification logic
+      // Tone might not always strictly decrease due to gamut mapping,
+      // but generally should be lower or similar for intensification logic
       // The logic is tone - amount/2.
       expect(intensifiedHct.tone, lessThan(originalHct.tone));
     });
@@ -79,7 +80,7 @@ void main() {
     });
 
     test('Deintensify clamps values correctly', () {
-      final HctColor hct = HctColor(120, 5, 95); // Low chroma, high tone
+      final HctColor hct = HctColor.alt(120, 5, 95); // Low chroma, high tone
       final HctColor deintensified = hct.deintensify(50);
       expect(deintensified.chroma, greaterThanOrEqualTo(0));
       expect(deintensified.tone, lessThanOrEqualTo(100));

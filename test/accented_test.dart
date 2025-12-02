@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('Accented Method Tests', () {
     test('HctColor accented increases chroma and tone', () {
-      final HctColor hct = HctColor(120, 50, 50);
+      final HctColor hct = HctColor.alt(120, 50, 50);
       final HctColor accented = hct.accented(10);
 
       expect(accented.chroma, greaterThan(hct.chroma));
@@ -24,7 +24,7 @@ void main() {
     });
 
     test('Accented clamps tone to 100', () {
-      final HctColor hct = HctColor(120, 50, 95);
+      final HctColor hct = HctColor.alt(120, 50, 95);
       final HctColor accented = hct.accented(
         20,
       ); // Should increase tone by 10, but clamp at 100

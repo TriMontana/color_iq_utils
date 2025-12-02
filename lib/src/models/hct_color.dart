@@ -6,7 +6,9 @@ import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/utils/color_math.dart';
+import 'package:material_color_utilities/hct/cam16.dart';
 import 'package:material_color_utilities/hct/src/hct_solver.dart';
+import 'package:material_color_utilities/utils/color_utils.dart';
 
 /// HCT, hue, chroma, and tone. A color system that provides a perceptually
 /// accurate color measurement system that can also accurately render what
@@ -43,24 +45,29 @@ class HctColor implements ColorSpacesIQ {
       ),
       assert(hue >= 0.0 && hue < kMaxTone, 'Invalid Hue: $hue');
 
-  factory HctColor.alt(
-    final double hue,
-    final double chroma,
-    final double tone, {
+  HctColor.fromInt(
+    int argb, {
+    final double? h,
+    final double? c,
+    final double? t,
+  }) {
+    argb = argb;
+    final Cam16 cam16 = Cam16.fromInt(argb);
+    hue = h?.assertRangeHue('fromInt') ?? cam16.hue;
+    chroma = c?.assertRangeChroma('fromInt') ?? cam16.chroma;
+    tone = t?.assertRange0to100('fromInt') ?? ColorUtils.lstarFromArgb(argb);
+  }
+
+  HctColor.alt(
+    final double h,
+    final double c,
+    final double t, {
     final int? argb,
   }) {
-    assert(tone >= kMinTone && tone <= kMaxTone, 'Invalid Tone: $tone');
-    assert(
-      chroma >= kMinChroma && chroma <= kMaxChroma,
-      'Invalid Chroma: $chroma',
-    );
-    assert(hue >= 0.0 && hue < kMaxTone, 'Invalid Hue: $hue');
-    return HctColor(
-      hue,
-      chroma,
-      tone,
-      argb ?? HctSolver.solveToInt(hue, chroma, tone),
-    );
+    hue = h.assertRangeHue('HctColor.alt');
+    chroma = c.assertRangeChroma('HctColor.alt');
+    tone = t.assertRange0to100('HctColor.alt');
+    this.argb = argb ?? HctSolver.solveToInt(hue, chroma, tone);
   }
 
   @override
@@ -225,7 +232,11 @@ class HctColor implements ColorSpacesIQ {
     final double? chroma,
     final double? tone,
   }) {
-    return HctColor(hue ?? this.hue, chroma ?? this.chroma, tone ?? this.tone);
+    return HctColor.alt(
+      hue ?? this.hue,
+      chroma ?? this.chroma,
+      tone ?? this.tone,
+    );
   }
 
   @override
@@ -234,7 +245,7 @@ class HctColor implements ColorSpacesIQ {
     for (int i = 0; i < 5; i++) {
       final double delta = (i - 2) * 10.0;
       final double newTone = (tone + delta).clamp(0.0, 100.0);
-      results.add(HctColor(hue, chroma, newTone));
+      results.add(HctColor.alt(hue, chroma, newTone));
     }
     return results;
   }

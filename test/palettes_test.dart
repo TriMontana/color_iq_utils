@@ -43,7 +43,7 @@ void main() {
     });
 
     test('Delegation works for other models', () {
-      final HctColor hct = HctColor(180, 50, 50);
+      final HctColor hct = HctColor.alt(180, 50, 50);
       final List<HctColor> palette = hct.generateBasicPalette();
       expect(palette.length, 7);
       expect(palette.first, isA<HctColor>());

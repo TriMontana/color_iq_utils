@@ -1,6 +1,6 @@
 import 'package:color_iq_utils/src/color_interfaces.dart';
-import 'package:color_iq_utils/src/models/hsv_color.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:color_iq_utils/src/models/hsv_color.dart';
 
 /// Represents a slice of a color wheel.
 class ColorSlice {
@@ -26,7 +26,10 @@ class ColorSlice {
 
 /// Generates a 60-section HSV color wheel.
 /// [saturation] and [value] can be customized (default 100).
-List<ColorSlice> generateHsvWheel({final double saturation = 100, final double value = 100}) {
+List<ColorSlice> generateHsvWheel({
+  final double saturation = 100,
+  final double value = 100,
+}) {
   return _generateWheel(
     (final double hue) => HsvColor(hue, saturation / 100, value / 100),
     saturation,
@@ -36,16 +39,27 @@ List<ColorSlice> generateHsvWheel({final double saturation = 100, final double v
 
 /// Generates a 60-section HSV color wheel as a Map of names to slices.
 /// [saturation] and [value] can be customized (default 100).
-Map<String, ColorSlice> getHsvWheelMap({final double saturation = 100, final double value = 100}) {
-  final List<ColorSlice> wheel = generateHsvWheel(saturation: saturation, value: value);
-  return <String, ColorSlice>{for (ColorSlice slice in wheel) slice.name: slice};
+Map<String, ColorSlice> getHsvWheelMap({
+  final double saturation = 100,
+  final double value = 100,
+}) {
+  final List<ColorSlice> wheel = generateHsvWheel(
+    saturation: saturation,
+    value: value,
+  );
+  return <String, ColorSlice>{
+    for (ColorSlice slice in wheel) slice.name: slice,
+  };
 }
 
 /// Generates a 60-section HCT color wheel.
 /// [chroma] and [tone] can be customized (default 50).
-List<ColorSlice> generateHctWheel({final double chroma = 50, final double tone = 50}) {
+List<ColorSlice> generateHctWheel({
+  final double chroma = 50,
+  final double tone = 50,
+}) {
   return _generateWheel(
-    (final double hue) => HctColor(hue, chroma, tone),
+    (final double hue) => HctColor.alt(hue, chroma, tone),
     chroma,
     tone,
     nameProvider: _getHctColorName,
@@ -54,9 +68,14 @@ List<ColorSlice> generateHctWheel({final double chroma = 50, final double tone =
 
 /// Generates a 60-section HCT color wheel as a Map of names to slices.
 /// [chroma] and [tone] can be customized (default 50).
-Map<String, ColorSlice> getHctWheelMap({final double chroma = 50, final double tone = 50}) {
+Map<String, ColorSlice> getHctWheelMap({
+  final double chroma = 50,
+  final double tone = 50,
+}) {
   final List<ColorSlice> wheel = generateHctWheel(chroma: chroma, tone: tone);
-  return <String, ColorSlice>{for (ColorSlice slice in wheel) slice.name: slice};
+  return <String, ColorSlice>{
+    for (ColorSlice slice in wheel) slice.name: slice,
+  };
 }
 
 /// Static access to the HCT color wheel slices.
@@ -76,13 +95,15 @@ List<ColorSlice> _generateWheel(
     final double startAngle = i * step;
     final double endAngle = (i + 1) * step;
     final double centerAngle = startAngle + (step / 2);
-    
-    slices.add(ColorSlice(
-      color: colorFactory(centerAngle),
-      startAngle: startAngle,
-      endAngle: endAngle,
-      name: getName(i),
-    ));
+
+    slices.add(
+      ColorSlice(
+        color: colorFactory(centerAngle),
+        startAngle: startAngle,
+        endAngle: endAngle,
+        name: getName(i),
+      ),
+    );
   }
   return slices;
 }
@@ -120,11 +141,11 @@ String _getColorName(final int index) {
     // 50-54 (Magenta -> Red-Magenta)
     "Magenta", "Fuchsia", "Orchid", "Deep Pink", "Hot Pink",
     // 55-59 (Red-Magenta -> Red)
-    "Rose", "Raspberry", "Crimson", "Amaranth", "Ruby"
+    "Rose", "Raspberry", "Crimson", "Amaranth", "Ruby",
   ];
 
   if (index >= 0 && index < finalNames.length) {
-      return finalNames[index];
+    return finalNames[index];
   }
   return "Unknown";
 }

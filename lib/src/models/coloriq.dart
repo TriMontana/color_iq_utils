@@ -1,48 +1,50 @@
 import 'dart:math';
-import 'package:material_color_utilities/material_color_utilities.dart' as mcu;
+
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/models/cam16_color.dart';
 import 'package:color_iq_utils/src/models/cmyk_color.dart';
-import 'package:color_iq_utils/src/models/xyz_color.dart';
-import 'package:color_iq_utils/src/models/lab_color.dart';
-import 'package:color_iq_utils/src/models/luv_color.dart';
-import 'package:color_iq_utils/src/models/lch_color.dart';
+import 'package:color_iq_utils/src/models/display_p3_color.dart';
+import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:color_iq_utils/src/models/hsb_color.dart';
+import 'package:color_iq_utils/src/models/hsl_color.dart';
+import 'package:color_iq_utils/src/models/hsluv_color.dart';
 import 'package:color_iq_utils/src/models/hsp_color.dart';
-import 'package:color_iq_utils/src/models/yiq_color.dart';
-import 'package:color_iq_utils/src/models/yuv_color.dart';
-import 'package:color_iq_utils/src/models/ok_lab_color.dart';
-import 'package:color_iq_utils/src/models/ok_lch_color.dart';
+import 'package:color_iq_utils/src/models/hsv_color.dart';
+import 'package:color_iq_utils/src/models/hunter_lab_color.dart';
+import 'package:color_iq_utils/src/models/hwb_color.dart';
+import 'package:color_iq_utils/src/models/lab_color.dart';
+import 'package:color_iq_utils/src/models/lch_color.dart';
+import 'package:color_iq_utils/src/models/luv_color.dart';
+import 'package:color_iq_utils/src/models/munsell_color.dart';
 import 'package:color_iq_utils/src/models/ok_hsl_color.dart';
 import 'package:color_iq_utils/src/models/ok_hsv_color.dart';
-import 'package:color_iq_utils/src/models/hunter_lab_color.dart';
-import 'package:color_iq_utils/src/models/hsluv_color.dart';
-import 'package:color_iq_utils/src/models/munsell_color.dart';
-
-import 'package:color_iq_utils/src/models/hsl_color.dart';
-import 'package:color_iq_utils/src/models/hsv_color.dart';
-import 'package:color_iq_utils/src/models/hsb_color.dart';
-import 'package:color_iq_utils/src/models/hwb_color.dart';
-import 'package:color_iq_utils/src/models/hct_color.dart';
-import 'package:color_iq_utils/src/models/cam16_color.dart';
-import 'package:color_iq_utils/src/models/display_p3_color.dart';
+import 'package:color_iq_utils/src/models/ok_lab_color.dart';
+import 'package:color_iq_utils/src/models/ok_lch_color.dart';
 import 'package:color_iq_utils/src/models/rec2020_color.dart';
+import 'package:color_iq_utils/src/models/xyz_color.dart';
+import 'package:color_iq_utils/src/models/yiq_color.dart';
+import 'package:color_iq_utils/src/models/yuv_color.dart';
+import 'package:material_color_utilities/material_color_utilities.dart' as mcu;
 
 /// A color represented by red, green, blue, and alpha components.
 class ColorIQ implements ColorSpacesIQ {
   /// The 32-bit alpha-red-green-blue integer value.
   @override
   final int value;
-  
+
   /// Construct a color from the lower 32 bits of an [int].
   const ColorIQ(this.value);
 
   /// Construct a color from 4 integers, a, r, g, b.
   const ColorIQ.fromARGB(final int a, final int r, final int g, final int b)
-      : value = (((a & 0xff) << 24) |
-                ((r & 0xff) << 16) |
-                ((g & 0xff) << 8) |
-                ((b & 0xff) << 0)) &
-            0xFFFFFFFF;
+    : value =
+          (((a & 0xff) << 24) |
+              ((r & 0xff) << 16) |
+              ((g & 0xff) << 8) |
+              ((b & 0xff) << 0)) &
+          0xFFFFFFFF;
 
   /// The alpha channel of this color in an 8-bit value.
   int get alpha => (value >> 24) & 0xFF;
@@ -111,11 +113,11 @@ class ColorIQ implements ColorSpacesIQ {
     final double b = blue / 255.0;
 
     final double p = sqrt(0.299 * r * r + 0.587 * g * g + 0.114 * b * b);
-    
+
     final double minVal = min(r, min(g, b));
     final double maxVal = max(r, max(g, b));
     final double delta = maxVal - minVal;
-    
+
     double h = 0;
     if (delta != 0) {
       if (maxVal == r) {
@@ -128,7 +130,7 @@ class ColorIQ implements ColorSpacesIQ {
       h *= 60;
       if (h < 0) h += 360;
     }
-    
+
     final double s = (maxVal == 0) ? 0 : delta / maxVal;
 
     return HspColor(h, s, p);
@@ -174,13 +176,14 @@ class ColorIQ implements ColorSpacesIQ {
     final double m = 0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b;
     final double s = 0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b;
 
-    final double l_ = pow(l, 1/3).toDouble();
-    final double m_ = pow(m, 1/3).toDouble();
-    final double s_ = pow(s, 1/3).toDouble();
+    final double l_ = pow(l, 1 / 3).toDouble();
+    final double m_ = pow(m, 1 / 3).toDouble();
+    final double s_ = pow(s, 1 / 3).toDouble();
 
     final double L = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
     final double a = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
-    final double bVal = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
+    final double bVal =
+        0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
 
     return OkLabColor(L, a, bVal);
   }
@@ -209,10 +212,10 @@ class ColorIQ implements ColorSpacesIQ {
     final double lOut = 100.0 * sqrt(y / yn);
     double aOut = 175.0 * (x / xn - y / yn) / sqrt(y / yn);
     double bOut = 70.0 * (y / yn - z / zn) / sqrt(y / yn);
-    
+
     if (y == 0) {
-        aOut = 0;
-        bOut = 0;
+      aOut = 0;
+      bOut = 0;
     }
 
     return HunterLabColor(lOut, aOut, bOut);
@@ -220,16 +223,16 @@ class ColorIQ implements ColorSpacesIQ {
 
   /// Converts this color to HSLuv.
   HsluvColor toHsluv() {
-     final LuvColor luv = toLuv();
-     final double c = sqrt(luv.u * luv.u + luv.v * luv.v);
-     double h = atan2(luv.v, luv.u) * 180 / pi;
-     if (h < 0) h += 360;
-     return HsluvColor(h, c, luv.l);
+    final LuvColor luv = toLuv();
+    final double c = sqrt(luv.u * luv.u + luv.v * luv.v);
+    double h = atan2(luv.v, luv.u) * 180 / pi;
+    if (h < 0) h += 360;
+    return HsluvColor(h, c, luv.l);
   }
-  
+
   /// Converts this color to Munsell.
   MunsellColor toMunsell() {
-      return const MunsellColor("N", 0, 0); 
+    return const MunsellColor("N", 0, 0);
   }
 
   /// Converts this color to HSL.
@@ -291,8 +294,8 @@ class ColorIQ implements ColorSpacesIQ {
 
   /// Converts this color to HSB (Alias for HSV).
   HsbColor toHsb() {
-      final HsvColor hsv = toHsv();
-      return HsbColor(hsv.h, hsv.s, hsv.v);
+    final HsvColor hsv = toHsv();
+    return HsbColor(hsv.h, hsv.s, hsv.v);
   }
 
   /// Converts this color to HWB.
@@ -304,21 +307,21 @@ class ColorIQ implements ColorSpacesIQ {
     final double maxVal = max(r, max(g, b));
     final double minVal = min(r, min(g, b));
     double h = 0;
-    
+
     if (maxVal == minVal) {
-        h = 0;
+      h = 0;
     } else {
-        final double d = maxVal - minVal;
-        if (maxVal == r) {
-            h = (g - b) / d + (g < b ? 6 : 0);
-        } else if (maxVal == g) {
-            h = (b - r) / d + 2;
-        } else {
-            h = (r - g) / d + 4;
-        }
-        h /= 6;
+      final double d = maxVal - minVal;
+      if (maxVal == r) {
+        h = (g - b) / d + (g < b ? 6 : 0);
+      } else if (maxVal == g) {
+        h = (b - r) / d + 2;
+      } else {
+        h = (r - g) / d + 4;
+      }
+      h /= 6;
     }
-    
+
     final double w = minVal;
     final double bl = 1 - maxVal;
 
@@ -328,86 +331,91 @@ class ColorIQ implements ColorSpacesIQ {
   /// Converts this color to Hct (Material Color Utilities).
   @override
   HctColor toHct() {
-      final int argb = value;
-      final mcu.Hct hct = mcu.Hct.fromInt(argb);
-      return HctColor(hct.hue, hct.chroma, hct.tone);
+    final int argb = value;
+    return HctColor.fromInt(argb);
   }
 
   /// Converts this color to Cam16 (Material Color Utilities).
   Cam16Color toCam16() {
-      final int argb = value;
-      final mcu.Cam16 cam = mcu.Cam16.fromInt(argb);
-      return Cam16Color(cam.hue, cam.chroma, cam.j, cam.m, cam.s, cam.q);
+    final int argb = value;
+    final mcu.Cam16 cam = mcu.Cam16.fromInt(argb);
+    return Cam16Color(cam.hue, cam.chroma, cam.j, cam.m, cam.s, cam.q);
   }
-  
+
   /// Converts this color to Display P3.
   DisplayP3Color toDisplayP3() {
-      // Linearize sRGB
-      double r = red / 255.0;
-      double g = green / 255.0;
-      double b = blue / 255.0;
-      
-      r = (r > 0.04045) ? pow((r + 0.055) / 1.055, 2.4).toDouble() : (r / 12.92);
-      g = (g > 0.04045) ? pow((g + 0.055) / 1.055, 2.4).toDouble() : (g / 12.92);
-      b = (b > 0.04045) ? pow((b + 0.055) / 1.055, 2.4).toDouble() : (b / 12.92);
-      
-      // sRGB Linear to XYZ (D65)
-      final double x = r * 0.4124564 + g * 0.3575761 + b * 0.1804375;
-      final double y = r * 0.2126729 + g * 0.7151522 + b * 0.0721750;
-      final double z = r * 0.0193339 + g * 0.1191920 + b * 0.9503041;
-      
-      // XYZ (D65) to Display P3 Linear
-      // Matrix from http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
-      // or Apple's specs.
-      // Using standard P3 D65 matrix.
-      
-      double rP3 = x * 2.4934969 + y * -0.9313836 + z * -0.4027107;
-      double gP3 = x * -0.8294889 + y * 1.7626640 + z * 0.0236246;
-      double bP3 = x * 0.0358458 + y * -0.0761723 + z * 0.9568845;
-      
-      // Gamma correction (Transfer function) for Display P3 is sRGB curve.
-      rP3 = (rP3 > 0.0031308) ? (1.055 * pow(rP3, 1 / 2.4) - 0.055) : (12.92 * rP3);
-      gP3 = (gP3 > 0.0031308) ? (1.055 * pow(gP3, 1 / 2.4) - 0.055) : (12.92 * gP3);
-      bP3 = (bP3 > 0.0031308) ? (1.055 * pow(bP3, 1 / 2.4) - 0.055) : (12.92 * bP3);
-      
-      return DisplayP3Color(rP3, gP3, bP3);
+    // Linearize sRGB
+    double r = red / 255.0;
+    double g = green / 255.0;
+    double b = blue / 255.0;
+
+    r = (r > 0.04045) ? pow((r + 0.055) / 1.055, 2.4).toDouble() : (r / 12.92);
+    g = (g > 0.04045) ? pow((g + 0.055) / 1.055, 2.4).toDouble() : (g / 12.92);
+    b = (b > 0.04045) ? pow((b + 0.055) / 1.055, 2.4).toDouble() : (b / 12.92);
+
+    // sRGB Linear to XYZ (D65)
+    final double x = r * 0.4124564 + g * 0.3575761 + b * 0.1804375;
+    final double y = r * 0.2126729 + g * 0.7151522 + b * 0.0721750;
+    final double z = r * 0.0193339 + g * 0.1191920 + b * 0.9503041;
+
+    // XYZ (D65) to Display P3 Linear
+    // Matrix from http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
+    // or Apple's specs.
+    // Using standard P3 D65 matrix.
+
+    double rP3 = x * 2.4934969 + y * -0.9313836 + z * -0.4027107;
+    double gP3 = x * -0.8294889 + y * 1.7626640 + z * 0.0236246;
+    double bP3 = x * 0.0358458 + y * -0.0761723 + z * 0.9568845;
+
+    // Gamma correction (Transfer function) for Display P3 is sRGB curve.
+    rP3 = (rP3 > 0.0031308)
+        ? (1.055 * pow(rP3, 1 / 2.4) - 0.055)
+        : (12.92 * rP3);
+    gP3 = (gP3 > 0.0031308)
+        ? (1.055 * pow(gP3, 1 / 2.4) - 0.055)
+        : (12.92 * gP3);
+    bP3 = (bP3 > 0.0031308)
+        ? (1.055 * pow(bP3, 1 / 2.4) - 0.055)
+        : (12.92 * bP3);
+
+    return DisplayP3Color(rP3, gP3, bP3);
   }
-  
+
   /// Converts this color to Rec. 2020.
   Rec2020Color toRec2020() {
-      // Linearize sRGB
-      double r = red / 255.0;
-      double g = green / 255.0;
-      double b = blue / 255.0;
-      
-      r = (r > 0.04045) ? pow((r + 0.055) / 1.055, 2.4).toDouble() : (r / 12.92);
-      g = (g > 0.04045) ? pow((g + 0.055) / 1.055, 2.4).toDouble() : (g / 12.92);
-      b = (b > 0.04045) ? pow((b + 0.055) / 1.055, 2.4).toDouble() : (b / 12.92);
-      
-      // sRGB Linear to XYZ (D65)
-      final double x = r * 0.4124564 + g * 0.3575761 + b * 0.1804375;
-      final double y = r * 0.2126729 + g * 0.7151522 + b * 0.0721750;
-      final double z = r * 0.0193339 + g * 0.1191920 + b * 0.9503041;
-      
-      // XYZ (D65) to Rec. 2020 Linear
-      final double r2020 = x * 1.7166511 + y * -0.3556707 + z * -0.2533662;
-      final double g2020 = x * -0.6666843 + y * 1.6164812 + z * 0.0157685;
-      final double b2020 = x * 0.0176398 + y * -0.0427706 + z * 0.9421031;
-      
-      // Gamma correction for Rec. 2020
-      // alpha = 1.099, beta = 0.018 for 10-bit system, but often 2.4 or 2.2 is used in practice for display.
-      // Official Rec. 2020 transfer function:
-      // if E < beta * delta: 4.5 * E
-      // else: alpha * E^(0.45) - (alpha - 1)
-      // alpha = 1.099, beta = 0.018, delta = ? 
-      // Actually: if L < 0.018: 4.5 * L, else 1.099 * L^0.45 - 0.099
-      
-      double transfer(final double v) {
-          if (v < 0.018) return 4.5 * v;
-          return 1.099 * pow(v, 0.45) - 0.099;
-      }
-      
-      return Rec2020Color(transfer(r2020), transfer(g2020), transfer(b2020));
+    // Linearize sRGB
+    double r = red / 255.0;
+    double g = green / 255.0;
+    double b = blue / 255.0;
+
+    r = (r > 0.04045) ? pow((r + 0.055) / 1.055, 2.4).toDouble() : (r / 12.92);
+    g = (g > 0.04045) ? pow((g + 0.055) / 1.055, 2.4).toDouble() : (g / 12.92);
+    b = (b > 0.04045) ? pow((b + 0.055) / 1.055, 2.4).toDouble() : (b / 12.92);
+
+    // sRGB Linear to XYZ (D65)
+    final double x = r * 0.4124564 + g * 0.3575761 + b * 0.1804375;
+    final double y = r * 0.2126729 + g * 0.7151522 + b * 0.0721750;
+    final double z = r * 0.0193339 + g * 0.1191920 + b * 0.9503041;
+
+    // XYZ (D65) to Rec. 2020 Linear
+    final double r2020 = x * 1.7166511 + y * -0.3556707 + z * -0.2533662;
+    final double g2020 = x * -0.6666843 + y * 1.6164812 + z * 0.0157685;
+    final double b2020 = x * 0.0176398 + y * -0.0427706 + z * 0.9421031;
+
+    // Gamma correction for Rec. 2020
+    // alpha = 1.099, beta = 0.018 for 10-bit system, but often 2.4 or 2.2 is used in practice for display.
+    // Official Rec. 2020 transfer function:
+    // if E < beta * delta: 4.5 * E
+    // else: alpha * E^(0.45) - (alpha - 1)
+    // alpha = 1.099, beta = 0.018, delta = ?
+    // Actually: if L < 0.018: 4.5 * L, else 1.099 * L^0.45 - 0.099
+
+    double transfer(final double v) {
+      if (v < 0.018) return 4.5 * v;
+      return 1.099 * pow(v, 0.45) - 0.099;
+    }
+
+    return Rec2020Color(transfer(r2020), transfer(g2020), transfer(b2020));
   }
 
   @override
@@ -418,8 +426,6 @@ class ColorIQ implements ColorSpacesIQ {
 
   @override
   int get hashCode => value.hashCode;
-
-
 
   @override
   ColorIQ lighten([final double amount = 20]) {
@@ -466,14 +472,19 @@ class ColorIQ implements ColorSpacesIQ {
     // 1. Convert to Linear sRGB (0-1)
     final List<double> lin = linearSrgb;
     // 2. Simulate
-    final List<double> sim = ColorBlindness.simulate(lin[0], lin[1], lin[2], type);
+    final List<double> sim = ColorBlindness.simulate(
+      lin[0],
+      lin[1],
+      lin[2],
+      type,
+    );
     // 3. Convert back to sRGB (Gamma Corrected)
     // We can use a helper or manual conversion.
     // Let's use manual for now or add a helper if needed.
     // Actually, we can construct a Color from linear sRGB if we had a constructor,
     // but we have `linearSrgb` getter. We don't have `fromLinearSrgb`.
     // Let's implement the gamma correction here.
-    
+
     double gammaCorrect(final double v) {
       return (v > 0.0031308) ? (1.055 * pow(v, 1 / 2.4) - 0.055) : (12.92 * v);
     }
@@ -524,7 +535,7 @@ class ColorIQ implements ColorSpacesIQ {
     if (other is! ColorIQ) {
       return lerp(ColorIQ(other.value), t);
     }
-    
+
     final ColorIQ otherColor = other;
     return ColorIQ.fromARGB(
       (alpha + (otherColor.alpha - alpha) * t).round(),
@@ -564,12 +575,7 @@ class ColorIQ implements ColorSpacesIQ {
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   ColorIQ copyWith({final int? a, final int? r, final int? g, final int? b}) {
-    return ColorIQ.fromARGB(
-      a ?? alpha,
-      r ?? red,
-      g ?? green,
-      b ?? blue,
-    );
+    return ColorIQ.fromARGB(a ?? alpha, r ?? red, g ?? green, b ?? blue);
   }
 
   @override
@@ -581,15 +587,15 @@ class ColorIQ implements ColorSpacesIQ {
     // Let's generate a range of lightnesses around the current color.
     final HslColor hsl = toHsl();
     final List<ColorIQ> results = <ColorIQ>[];
-    
+
     // We want 5 steps. Let's do: L-20, L-10, L, L+10, L+20, clamped.
     // Or just spread them out evenly?
     // Let's do a spread.
     for (int i = 0; i < 5; i++) {
-        // -2, -1, 0, 1, 2
-        final double delta = (i - 2) * 10.0; 
-        final double newL = (hsl.l * 100 + delta).clamp(0.0, 100.0);
-        results.add(HslColor(hsl.h, hsl.s, newL / 100).toColor());
+      // -2, -1, 0, 1, 2
+      final double delta = (i - 2) * 10.0;
+      final double newL = (hsl.l * 100 + delta).clamp(0.0, 100.0);
+      results.add(HslColor(hsl.h, hsl.s, newL / 100).toColor());
     }
     return results;
   }
@@ -631,7 +637,9 @@ class ColorIQ implements ColorSpacesIQ {
 
   @override
   double get luminance {
-    return linearSrgb[0] * 0.2126 + linearSrgb[1] * 0.7152 + linearSrgb[2] * 0.0722;
+    return linearSrgb[0] * 0.2126 +
+        linearSrgb[1] * 0.7152 +
+        linearSrgb[2] * 0.0722;
   }
 
   @override
@@ -681,16 +689,16 @@ class ColorIQ implements ColorSpacesIQ {
     final HslColor hsl = toHsl();
     final double currentHue = hsl.h;
     const double targetHue = 30.0;
-    
+
     // Find shortest path
     double diff = targetHue - currentHue;
     if (diff > 180) diff -= 360;
     if (diff < -180) diff += 360;
-    
+
     double newHue = currentHue + (diff * amount / 100);
     if (newHue < 0) newHue += 360;
     if (newHue >= 360) newHue -= 360;
-    
+
     return HslColor(newHue, hsl.s, hsl.l).toColor();
   }
 
@@ -701,16 +709,16 @@ class ColorIQ implements ColorSpacesIQ {
     final HslColor hsl = toHsl();
     final double currentHue = hsl.h;
     const double targetHue = 210.0;
-    
+
     // Find shortest path
     double diff = targetHue - currentHue;
     if (diff > 180) diff -= 360;
     if (diff < -180) diff += 360;
-    
+
     double newHue = currentHue + (diff * amount / 100);
     if (newHue < 0) newHue += 360;
     if (newHue >= 360) newHue -= 360;
-    
+
     return HslColor(newHue, hsl.s, hsl.l).toColor();
   }
 
@@ -743,7 +751,7 @@ class ColorIQ implements ColorSpacesIQ {
   @override
   List<ColorIQ> analogous({final int count = 5, final double offset = 30}) {
     final List<ColorIQ> results = <ColorIQ>[];
-    
+
     if (count == 3) {
       results.add(adjustHue(-offset));
       results.add(this);
@@ -756,18 +764,13 @@ class ColorIQ implements ColorSpacesIQ {
       results.add(adjustHue(offset));
       results.add(adjustHue(offset * 2));
     }
-    
+
     return results;
   }
 
   @override
   List<ColorIQ> square() {
-    return <ColorIQ>[
-      this,
-      adjustHue(90),
-      adjustHue(180),
-      adjustHue(270),
-    ];
+    return <ColorIQ>[this, adjustHue(90), adjustHue(180), adjustHue(270)];
   }
 
   @override
@@ -788,29 +791,29 @@ class ColorIQ implements ColorSpacesIQ {
     // Wait, MCU's Hct class might not expose distance.
     // Let's use the HCT values (Hue, Chroma, Tone).
     // Hue is circular, so we need to handle that.
-    
+
     final HctColor hct1 = toHct();
     final HctColor hct2 = other.toHct();
-    
+
     // Simple Euclidean distance in HCT cylinder?
     // Or better: convert to Lab-like coordinates.
     // HCT is similar to LCH.
     // dE = sqrt((dL)^2 + (da)^2 + (db)^2)
     // a = C * cos(H)
     // b = C * sin(H)
-    
+
     final double h1Rad = hct1.hue * pi / 180;
     final double h2Rad = hct2.hue * pi / 180;
-    
+
     final double a1 = hct1.chroma * cos(h1Rad);
     final double b1 = hct1.chroma * sin(h1Rad);
     final double a2 = hct2.chroma * cos(h2Rad);
     final double b2 = hct2.chroma * sin(h2Rad);
-    
+
     final double dTone = hct1.tone - hct2.tone;
     final double da = a1 - a2;
     final double db = b1 - b2;
-    
+
     return sqrt(dTone * dTone + da * da + db * db);
   }
 
@@ -827,7 +830,7 @@ class ColorIQ implements ColorSpacesIQ {
   ColorSlice closestColorSlice() {
     ColorSlice? closest;
     double minDistance = double.infinity;
-    
+
     for (final ColorSlice slice in hctSlices) {
       final double dist = distanceTo(slice.color);
       if (dist < minDistance) {
@@ -838,11 +841,9 @@ class ColorIQ implements ColorSpacesIQ {
     return closest!;
   }
 
-
-
   @override
   bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) {
-    // For standard sRGB Color objects, they are always within sRGB gamut 
+    // For standard sRGB Color objects, they are always within sRGB gamut
     // because they are 8-bit clamped.
     // If checking against wider gamuts, they are also within.
     return true;
@@ -853,10 +854,7 @@ class ColorIQ implements ColorSpacesIQ {
 
   @override
   Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'type': 'ColorIQ',
-      'value': value,
-    };
+    return <String, dynamic>{'type': 'ColorIQ', 'value': value};
   }
 
   /// Creates a ColorSpacesIQ instance from a JSON map.
@@ -864,13 +862,23 @@ class ColorIQ implements ColorSpacesIQ {
     final String type = json['type'] as String;
     switch (type) {
       case 'ColorIQ':
-        return ColorIQ(json['value'] as int);
+        return ColorIQ(json[kValue] as int);
       case 'HctColor':
-        return HctColor(json['hue'], json['chroma'], json['tone']);
+        return HctColor.alt(json['hue'], json[kChroma], json['tone']);
       case 'HsvColor':
-        return HsvColor(json['hue'], json['saturation'], json['value'], json['alpha'] ?? 1.0);
+        return HsvColor(
+          json['hue'],
+          json['saturation'],
+          json['value'],
+          json['alpha'] ?? 1.0,
+        );
       case 'HslColor':
-        return HslColor(json['hue'], json['saturation'], json['lightness'], json['alpha'] ?? 1.0);
+        return HslColor(
+          json['hue'],
+          json['saturation'],
+          json['lightness'],
+          json['alpha'] ?? 1.0,
+        );
       case 'CmykColor':
         return CmykColor(json['c'], json['m'], json['y'], json['k']);
       case 'LabColor':
@@ -884,10 +892,11 @@ class ColorIQ implements ColorSpacesIQ {
         if (json.containsKey('value')) {
           return ColorIQ(json['value'] as int);
         }
-        throw FormatException('Unknown color type: $type');
+        throw FormatException('Unknown color type: $type, ${type.runtimeType}');
     }
   }
 
   @override
-  String toString() => 'ColorIQ(0x${value.toRadixString(16).toUpperCase().padLeft(8, '0')})';
+  String toString() =>
+      'ColorIQ(0x${value.toRadixString(16).toUpperCase().padLeft(8, '0')})';
 }
