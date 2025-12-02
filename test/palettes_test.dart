@@ -26,7 +26,7 @@ void main() {
 
     test('analogous returns correct count and offset', () {
       const HslColor color = HslColor(180, 1.0, 0.5); // Cyan
-      
+
       // Default (count 5, offset 30)
       final List<HslColor> palette5 = color.analogous();
       expect(palette5.length, 5);
@@ -43,11 +43,11 @@ void main() {
     });
 
     test('Delegation works for other models', () {
-      const HctColor hct = HctColor(180, 50, 50);
+      final HctColor hct = HctColor(180, 50, 50);
       final List<HctColor> palette = hct.generateBasicPalette();
       expect(palette.length, 7);
       expect(palette.first, isA<HctColor>());
-      
+
       final List<HctColor> tones = hct.tonesPalette();
       expect(tones.length, 5);
       expect(tones.first, isA<HctColor>());
@@ -77,7 +77,7 @@ void main() {
 
     test('tetrad returns 4 colors with correct spacing', () {
       const HslColor color = HslColor(0, 1.0, 0.5); // Red
-      
+
       // Default offset 60
       final List<HslColor> palette = color.tetrad();
       expect(palette.length, 4);

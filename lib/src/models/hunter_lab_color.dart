@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
@@ -18,13 +19,13 @@ class HunterLabColor implements ColorSpacesIQ {
     const double yn = 100.0;
     const double zn = 108.883;
 
-    double y = pow(l / 100.0, 2) * yn;
-    double x = (a / 175.0 * (l / 100.0) + y / yn) * xn;
-    double z = (y / yn - b / 70.0 * (l / 100.0)) * zn;
+    final double y = pow(l / 100.0, 2) * yn;
+    final double x = (a / 175.0 * (l / 100.0) + y / yn) * xn;
+    final double z = (y / yn - b / 70.0 * (l / 100.0)) * zn;
 
-    double xTemp = x / 100;
-    double yTemp = y / 100;
-    double zTemp = z / 100;
+    final double xTemp = x / 100;
+    final double yTemp = y / 100;
+    final double zTemp = z / 100;
 
     double r = xTemp * 3.2406 + yTemp * -1.5372 + zTemp * -0.4986;
     double g = xTemp * -0.9689 + yTemp * 1.8758 + zTemp * 0.0415;
@@ -32,14 +33,21 @@ class HunterLabColor implements ColorSpacesIQ {
 
     r = (r > 0.0031308) ? (1.055 * pow(r, 1 / 2.4) - 0.055) : (12.92 * r);
     g = (g > 0.0031308) ? (1.055 * pow(g, 1 / 2.4) - 0.055) : (12.92 * g);
-    bVal = (bVal > 0.0031308) ? (1.055 * pow(bVal, 1 / 2.4) - 0.055) : (12.92 * bVal);
+    bVal = (bVal > 0.0031308)
+        ? (1.055 * pow(bVal, 1 / 2.4) - 0.055)
+        : (12.92 * bVal);
 
-    return ColorIQ.fromARGB(255, (r * 255).round().clamp(0, 255), (g * 255).round().clamp(0, 255), (bVal * 255).round().clamp(0, 255));
+    return ColorIQ.fromARGB(
+      255,
+      (r * 255).round().clamp(0, 255),
+      (g * 255).round().clamp(0, 255),
+      (bVal * 255).round().clamp(0, 255),
+    );
   }
-  
+
   @override
   int get value => toColor().value;
-  
+
   @override
   HunterLabColor darken([final double amount = 20]) {
     return HunterLabColor(max(0, l - amount), a, b);
@@ -88,13 +96,16 @@ class HunterLabColor implements ColorSpacesIQ {
   HunterLabColor get grayscale => toColor().grayscale.toHunterLab();
 
   @override
-  HunterLabColor whiten([final double amount = 20]) => toColor().whiten(amount).toHunterLab();
+  HunterLabColor whiten([final double amount = 20]) =>
+      toColor().whiten(amount).toHunterLab();
 
   @override
-  HunterLabColor blacken([final double amount = 20]) => toColor().blacken(amount).toHunterLab();
+  HunterLabColor blacken([final double amount = 20]) =>
+      toColor().blacken(amount).toHunterLab();
 
   @override
-  HunterLabColor lerp(final ColorSpacesIQ other, final double t) => (toColor().lerp(other, t) as ColorIQ).toHunterLab();
+  HunterLabColor lerp(final ColorSpacesIQ other, final double t) =>
+      (toColor().lerp(other, t) as ColorIQ).toHunterLab();
 
   @override
   HunterLabColor lighten([final double amount = 20]) {
@@ -125,15 +136,13 @@ class HunterLabColor implements ColorSpacesIQ {
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   HunterLabColor copyWith({final double? l, final double? a, final double? b}) {
-    return HunterLabColor(
-      l ?? this.l,
-      a ?? this.a,
-      b ?? this.b,
-    );
+    return HunterLabColor(l ?? this.l, a ?? this.a, b ?? this.b);
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((final ColorSpacesIQ c) => (c as ColorIQ).toHunterLab()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+      .map((final ColorSpacesIQ c) => (c as ColorIQ).toHunterLab())
+      .toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([final double? step]) {
@@ -170,63 +179,82 @@ class HunterLabColor implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  HunterLabColor blend(final ColorSpacesIQ other, [final double amount = 50]) => toColor().blend(other, amount).toHunterLab();
+  HunterLabColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
+      toColor().blend(other, amount).toHunterLab();
 
   @override
-  HunterLabColor opaquer([final double amount = 20]) => toColor().opaquer(amount).toHunterLab();
+  HunterLabColor opaquer([final double amount = 20]) =>
+      toColor().opaquer(amount).toHunterLab();
 
   @override
-  HunterLabColor adjustHue([final double amount = 20]) => toColor().adjustHue(amount).toHunterLab();
+  HunterLabColor adjustHue([final double amount = 20]) =>
+      toColor().adjustHue(amount).toHunterLab();
 
   @override
   HunterLabColor get complementary => toColor().complementary.toHunterLab();
 
   @override
-  HunterLabColor warmer([final double amount = 20]) => toColor().warmer(amount).toHunterLab();
+  HunterLabColor warmer([final double amount = 20]) =>
+      toColor().warmer(amount).toHunterLab();
 
   @override
-  HunterLabColor cooler([final double amount = 20]) => toColor().cooler(amount).toHunterLab();
+  HunterLabColor cooler([final double amount = 20]) =>
+      toColor().cooler(amount).toHunterLab();
 
   @override
-  List<HunterLabColor> generateBasicPalette() => toColor().generateBasicPalette().map((final ColorIQ c) => c.toHunterLab()).toList();
+  List<HunterLabColor> generateBasicPalette() => toColor()
+      .generateBasicPalette()
+      .map((final ColorIQ c) => c.toHunterLab())
+      .toList();
 
   @override
-  List<HunterLabColor> tonesPalette() => toColor().tonesPalette().map((final ColorIQ c) => c.toHunterLab()).toList();
+  List<HunterLabColor> tonesPalette() => toColor()
+      .tonesPalette()
+      .map((final ColorIQ c) => c.toHunterLab())
+      .toList();
 
   @override
-  List<HunterLabColor> analogous({final int count = 5, final double offset = 30}) => toColor().analogous(count: count, offset: offset).map((final ColorIQ c) => c.toHunterLab()).toList();
+  List<HunterLabColor> analogous({
+    final int count = 5,
+    final double offset = 30,
+  }) => toColor()
+      .analogous(count: count, offset: offset)
+      .map((final ColorIQ c) => c.toHunterLab())
+      .toList();
 
   @override
-  List<HunterLabColor> square() => toColor().square().map((final ColorIQ c) => c.toHunterLab()).toList();
+  List<HunterLabColor> square() =>
+      toColor().square().map((final ColorIQ c) => c.toHunterLab()).toList();
 
   @override
-  List<HunterLabColor> tetrad({final double offset = 60}) => toColor().tetrad(offset: offset).map((final ColorIQ c) => c.toHunterLab()).toList();
+  List<HunterLabColor> tetrad({final double offset = 60}) => toColor()
+      .tetrad(offset: offset)
+      .map((final ColorIQ c) => c.toHunterLab())
+      .toList();
 
   @override
   double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
 
   @override
-  double contrastWith(final ColorSpacesIQ other) => toColor().contrastWith(other);
+  double contrastWith(final ColorSpacesIQ other) =>
+      toColor().contrastWith(other);
 
   @override
   ColorSlice closestColorSlice() => toColor().closestColorSlice();
 
   @override
-  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) =>
+      toColor().isWithinGamut(gamut);
 
   @override
   List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
 
   @override
   Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'type': 'HunterLabColor',
-      'l': l,
-      'a': a,
-      'b': b,
-    };
+    return <String, dynamic>{'type': 'HunterLabColor', 'l': l, 'a': a, 'b': b};
   }
 
   @override
-  String toString() => 'HunterLabColor(l: ${l.toStringAsFixed(2)}, a: ${a.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
+  String toString() =>
+      'HunterLabColor(l: ${l.toStringAsFixed(2)}, a: ${a.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
 }

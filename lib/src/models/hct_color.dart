@@ -1,64 +1,163 @@
 import 'dart:math';
-import 'package:material_color_utilities/material_color_utilities.dart' as mcu;
+
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
+import 'package:material_color_utilities/hct/src/hct_solver.dart';
 
+/// HCT, hue, chroma, and tone. A color system that provides a perceptually
+/// accurate color measurement system that can also accurately render what
+/// colors will appear as in different lighting environments.
+/// credit: Adapted from material_color_utilities
 class HctColor implements ColorSpacesIQ {
-  final double hue;
-  final double chroma;
-  final double tone;
+  late final double hue;
+  late final double chroma;
+  late final double tone;
+  late final int argb;
 
-  const HctColor(this.hue, this.chroma, this.tone);
-
-  @override
-  ColorIQ toColor() {
-    final int argb = mcu.Hct.from(hue, chroma, tone).toInt();
-    return ColorIQ(argb);
+  /// 0 <= [hue] < 360; invalid values are corrected.
+  /// 0 <= [chroma] <= ?; Informally, colorfulness. The color returned may be
+  ///    lower than the requested chroma. Chroma has a different maximum for any
+  ///    given hue and tone.
+  /// 0 <= [tone] <= 100; informally, lightness. Invalid values are corrected.
+  /// credit: Adapted from material_color_utilities
+  static HctColor from(
+    final double hue,
+    final double chroma,
+    final double tone,
+  ) {
+    final int argb = HctSolver.solveToInt(hue, chroma, tone);
+    return HctColor(hue, chroma, tone, argb);
   }
-  
+
+  /// Primary constructor.
+  /// credit: Adapted from material_color_utilities
+  HctColor(this.hue, this.chroma, this.tone, this.argb)
+    : assert(tone >= kMinTone && tone <= kMaxTone, 'Invalid Tone: $tone'),
+      assert(
+        chroma >= kMinChroma && chroma <= kMaxChroma,
+        'Invalid Chroma: $chroma',
+      ),
+      assert(hue >= 0.0 && hue < kMaxTone, 'Invalid Hue: $hue');
+
+  factory HctColor.alt(
+    final double hue,
+    final double chroma,
+    final double tone, {
+    final int? argb,
+  }) {
+    assert(tone >= kMinTone && tone <= kMaxTone, 'Invalid Tone: $tone');
+    assert(
+      chroma >= kMinChroma && chroma <= kMaxChroma,
+      'Invalid Chroma: $chroma',
+    );
+    assert(hue >= 0.0 && hue < kMaxTone, 'Invalid Hue: $hue');
+    return HctColor(
+      hue,
+      chroma,
+      tone,
+      argb ?? HctSolver.solveToInt(hue, chroma, tone),
+    );
+  }
+
   @override
-  int get value => toColor().value;
-  
+  ColorIQ toColor() => ColorIQ(argb);
+
+  @override
+  int get value => argb;
+
   @override
   HctColor darken([final double amount = 20]) {
-    return HctColor(hue, chroma, max(0, tone - amount));
+    amount.assertRange0to100('darken');
+    final double nuTone = max(kMinTone, tone - amount);
+    final int argb = HctSolver.solveToInt(hue, chroma, nuTone);
+    return HctColor(hue, chroma, nuTone, argb);
   }
 
+  /// Increases the [tone] of this color by the given [amount].
+  /// The resulting color will be brighter.
+  ///
+  /// The [amount] must be between 0 and 100.
+  /// Defaults to 20.
   @override
   HctColor brighten([final double amount = 20]) {
-    return HctColor(hue, chroma, min(100, tone + amount));
+    amount.assertRange0to100('brighten');
+    final double nuTone = min(kMaxTone, tone + amount);
+    final int argb = HctSolver.solveToInt(hue, chroma, nuTone);
+    return HctColor(hue, chroma, nuTone, argb);
   }
 
   @override
   HctColor lighten([final double amount = 20]) {
-    return HctColor(hue, chroma, min(100, tone + amount));
+    amount.assertRange0to100('lighten');
+    final double nuTone = min(kMaxTone, tone + amount);
+    final int argb = HctSolver.solveToInt(hue, chroma, nuTone);
+    return HctColor(hue, chroma, nuTone, argb);
   }
 
   @override
   HctColor saturate([final double amount = 25]) {
-    return HctColor(hue, chroma + amount, tone);
+    amount.assertRange0to100('saturate');
+    final double nuChroma = min(kMaxChroma, chroma + amount);
+    final int argb = HctSolver.solveToInt(hue, nuChroma, tone);
+    return HctColor(hue, nuChroma, tone, argb);
   }
 
+  /// Decreases the [chroma] of this color by the given [amount].
+  /// The resulting color will be less saturated.
+  ///
+  /// The [amount] must be between 0 and 100.
+  /// Defaults to 25.
   @override
   HctColor desaturate([final double amount = 25]) {
-    return HctColor(hue, max(0, chroma - amount), tone);
+    amount.assertRange0to100('desaturate');
+    final double nuChroma = max(kMinChroma, chroma - amount);
+    final int argb = HctSolver.solveToInt(hue, nuChroma, tone);
+    return HctColor(hue, nuChroma, tone, argb);
   }
 
   @override
   HctColor intensify([final double amount = 10]) {
-    return HctColor(hue, chroma + amount, max(0, tone - (amount / 2)));
+    amount.assertRange0to100('intensify');
+    final double nuChroma = min(kMaxChroma, chroma + amount);
+    final double nuTone = max(kMinTone, tone - (amount / 2));
+    final int argb = HctSolver.solveToInt(hue, nuChroma, nuTone);
+    return HctColor(hue, nuChroma, nuTone, argb);
   }
 
+  /// Decreases the [chroma] of this color by the given [amount] and increases
+  /// the [tone] by half of the [amount]. This makes the color less intense
+  /// and lighter.
+  ///
+  /// The resulting color will be less intense and slightly lighter.
+  ///
+  /// The [amount] must be between 0 and 100.
+  /// Defaults to 10.
   @override
   HctColor deintensify([final double amount = 10]) {
-    return HctColor(hue, max(0, chroma - amount), min(100, tone + (amount / 2)));
+    amount.assertRange0to100('deintensify');
+    final double nuChroma = max(kMinChroma, chroma - amount);
+    final double nuTone = min(kMaxTone, tone + (amount / 2));
+    final int argb = HctSolver.solveToInt(hue, nuChroma, nuTone);
+    return HctColor(hue, nuChroma, nuTone, argb);
   }
 
+  /// Increases the [chroma] of this color by the given [amount] and the
+  /// [tone] by half of the [amount]. This makes the color more vibrant and
+  /// slightly lighter, making it "pop".
+  ///
+  /// The [amount] must be between 0 and 100.
+  /// Defaults to 15.
   @override
   HctColor accented([final double amount = 15]) {
-    // Increase chroma and tone to make it pop.
-    return HctColor(hue, chroma + amount, min(100, tone + (amount / 2)));
+    amount.assertRange0to100('accented');
+    final double nuChroma = min(kMaxChroma, chroma + amount);
+    final double nuTone = min(kMaxTone, tone + (amount / 2));
+    final int argb = HctSolver.solveToInt(hue, nuChroma, nuTone);
+    return HctColor(hue, nuChroma, nuTone, argb);
   }
 
   @override
@@ -79,13 +178,21 @@ class HctColor implements ColorSpacesIQ {
   HctColor get grayscale => toColor().grayscale.toHct();
 
   @override
-  HctColor whiten([final double amount = 20]) => toColor().whiten(amount).toHct();
+  HctColor whiten([final double amount = 20]) =>
+      toColor().whiten(amount).toHct();
 
   @override
-  HctColor blacken([final double amount = 20]) => toColor().blacken(amount).toHct();
+  HctColor blacken([final double amount = 20]) =>
+      toColor().blacken(amount).toHct();
 
   @override
-  HctColor lerp(final ColorSpacesIQ other, final double t) => (toColor().lerp(other, t) as ColorIQ).toHct();
+  HctColor lerp(final ColorSpacesIQ other, final double t) {
+    final HctColor otherHct = other.toHct();
+    final double newHue = lerpHue(hue, otherHct.hue, t);
+    final double newChroma = (chroma + (otherHct.chroma - chroma) * t);
+    final double newTone = (tone + (otherHct.tone - tone) * t);
+    return HctColor.from(newHue, newChroma, newTone);
+  }
 
   @override
   HctColor toHct() => this;
@@ -113,21 +220,21 @@ class HctColor implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  HctColor copyWith({final double? hue, final double? chroma, final double? tone}) {
-    return HctColor(
-      hue ?? this.hue,
-      chroma ?? this.chroma,
-      tone ?? this.tone,
-    );
+  HctColor copyWith({
+    final double? hue,
+    final double? chroma,
+    final double? tone,
+  }) {
+    return HctColor(hue ?? this.hue, chroma ?? this.chroma, tone ?? this.tone);
   }
 
   @override
   List<ColorSpacesIQ> get monochromatic {
     final List<HctColor> results = <HctColor>[];
     for (int i = 0; i < 5; i++) {
-        final double delta = (i - 2) * 10.0;
-        final double newTone = (tone + delta).clamp(0.0, 100.0);
-        results.add(HctColor(hue, chroma, newTone));
+      final double delta = (i - 2) * 10.0;
+      final double newTone = (tone + delta).clamp(0.0, 100.0);
+      results.add(HctColor(hue, chroma, newTone));
     }
     return results;
   }
@@ -167,49 +274,68 @@ class HctColor implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  HctColor blend(final ColorSpacesIQ other, [final double amount = 50]) => toColor().blend(other, amount).toHct();
+  HctColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
+      toColor().blend(other, amount).toHct();
 
   @override
-  HctColor opaquer([final double amount = 20]) => toColor().opaquer(amount).toHct();
+  HctColor opaquer([final double amount = 20]) =>
+      toColor().opaquer(amount).toHct();
 
   @override
-  HctColor adjustHue([final double amount = 20]) => toColor().adjustHue(amount).toHct();
+  HctColor adjustHue([final double amount = 20]) =>
+      toColor().adjustHue(amount).toHct();
 
   @override
   HctColor get complementary => toColor().complementary.toHct();
 
   @override
-  HctColor warmer([final double amount = 20]) => toColor().warmer(amount).toHct();
+  HctColor warmer([final double amount = 20]) =>
+      toColor().warmer(amount).toHct();
 
   @override
-  HctColor cooler([final double amount = 20]) => toColor().cooler(amount).toHct();
+  HctColor cooler([final double amount = 20]) =>
+      toColor().cooler(amount).toHct();
 
   @override
-  List<HctColor> generateBasicPalette() => toColor().generateBasicPalette().map((final ColorIQ c) => c.toHct()).toList();
+  List<HctColor> generateBasicPalette() => toColor()
+      .generateBasicPalette()
+      .map((final ColorIQ c) => c.toHct())
+      .toList();
 
   @override
-  List<HctColor> tonesPalette() => toColor().tonesPalette().map((final ColorIQ c) => c.toHct()).toList();
+  List<HctColor> tonesPalette() =>
+      toColor().tonesPalette().map((final ColorIQ c) => c.toHct()).toList();
 
   @override
-  List<HctColor> analogous({final int count = 5, final double offset = 30}) => toColor().analogous(count: count, offset: offset).map((final ColorIQ c) => c.toHct()).toList();
+  List<HctColor> analogous({final int count = 5, final double offset = 30}) =>
+      toColor()
+          .analogous(count: count, offset: offset)
+          .map((final ColorIQ c) => c.toHct())
+          .toList();
 
   @override
-  List<HctColor> square() => toColor().square().map((final ColorIQ c) => c.toHct()).toList();
+  List<HctColor> square() =>
+      toColor().square().map((final ColorIQ c) => c.toHct()).toList();
 
   @override
-  List<HctColor> tetrad({final double offset = 60}) => toColor().tetrad(offset: offset).map((final ColorIQ c) => c.toHct()).toList();
+  List<HctColor> tetrad({final double offset = 60}) => toColor()
+      .tetrad(offset: offset)
+      .map((final ColorIQ c) => c.toHct())
+      .toList();
 
   @override
   double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
 
   @override
-  double contrastWith(final ColorSpacesIQ other) => toColor().contrastWith(other);
+  double contrastWith(final ColorSpacesIQ other) =>
+      toColor().contrastWith(other);
 
   @override
   ColorSlice closestColorSlice() => toColor().closestColorSlice();
 
   @override
-  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) =>
+      toColor().isWithinGamut(gamut);
 
   @override
   List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
@@ -225,5 +351,6 @@ class HctColor implements ColorSpacesIQ {
   }
 
   @override
-  String toString() => 'HctColor(hue: ${hue.toStringAsFixed(2)}, chroma: ${chroma.toStringAsFixed(2)}, tone: ${tone.toStringAsFixed(2)})';
+  String toString() =>
+      'HctColor(hue: ${hue.toStringAsFixed(2)}, chroma: ${chroma.toStringAsFixed(2)}, tone: ${tone.toStringAsFixed(2)})';
 }

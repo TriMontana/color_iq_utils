@@ -1,9 +1,10 @@
 import 'dart:math';
-import '../color_interfaces.dart';
-import '../color_temperature.dart';
-import 'coloriq.dart';
-import 'hct_color.dart';
-import 'lab_color.dart';
+
+import 'package:color_iq_utils/src/color_interfaces.dart';
+import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/models/coloriq.dart';
+import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:color_iq_utils/src/models/lab_color.dart';
 
 class LchColor implements ColorSpacesIQ {
   final double l;
@@ -13,9 +14,9 @@ class LchColor implements ColorSpacesIQ {
   const LchColor(this.l, this.c, this.h);
 
   LabColor toLab() {
-    double hRad = h * pi / 180;
-    double a = c * cos(hRad);
-    double b = c * sin(hRad);
+    final double hRad = h * pi / 180;
+    final double a = c * cos(hRad);
+    final double b = c * sin(hRad);
     return LabColor(l, a, b);
   }
 
@@ -23,32 +24,32 @@ class LchColor implements ColorSpacesIQ {
   ColorIQ toColor() => toLab().toColor();
 
   @override
-  LchColor saturate([double amount = 25]) {
+  LchColor saturate([final double amount = 25]) {
     return LchColor(l, c + amount, h);
   }
 
   @override
-  LchColor desaturate([double amount = 25]) {
+  LchColor desaturate([final double amount = 25]) {
     return LchColor(l, max(0, c - amount), h);
   }
 
   @override
-  LchColor intensify([double amount = 10]) {
+  LchColor intensify([final double amount = 10]) {
     return toColor().intensify(amount).toLch();
   }
 
   @override
-  LchColor deintensify([double amount = 10]) {
+  LchColor deintensify([final double amount = 10]) {
     return toColor().deintensify(amount).toLch();
   }
 
   @override
-  LchColor accented([double amount = 15]) {
+  LchColor accented([final double amount = 15]) {
     return toColor().accented(amount).toLch();
   }
 
   @override
-  LchColor simulate(ColorBlindnessType type) {
+  LchColor simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toLch();
   }
 
@@ -65,39 +66,43 @@ class LchColor implements ColorSpacesIQ {
   LchColor get grayscale => toColor().grayscale.toLch();
 
   @override
-  LchColor whiten([double amount = 20]) => toColor().whiten(amount).toLch();
+  LchColor whiten([final double amount = 20]) =>
+      toColor().whiten(amount).toLch();
 
   @override
-  LchColor blacken([double amount = 20]) => toColor().blacken(amount).toLch();
+  LchColor blacken([final double amount = 20]) =>
+      toColor().blacken(amount).toLch();
 
   @override
-  LchColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toLch();
+  LchColor lerp(final ColorSpacesIQ other, final double t) =>
+      (toColor().lerp(other, t) as ColorIQ).toLch();
 
   @override
   int get value => toColor().value;
 
   @override
-  LchColor darken([double amount = 20]) {
+  LchColor darken([final double amount = 20]) {
     return LchColor(max(0.0, l - amount), c, h);
   }
 
   @override
-  LchColor lighten([double amount = 20]) {
+  LchColor lighten([final double amount = 20]) {
     return LchColor(min(100.0, l + amount), c, h);
   }
 
   @override
-  LchColor brighten([double amount = 20]) {
+  LchColor brighten([final double amount = 20]) {
     return toColor().brighten(amount).toLch();
   }
+
   @override
   HctColor toHct() => toColor().toHct();
 
   @override
-  LchColor fromHct(HctColor hct) => hct.toColor().toLch();
+  LchColor fromHct(final HctColor hct) => hct.toColor().toLch();
 
   @override
-  LchColor adjustTransparency([double amount = 20]) {
+  LchColor adjustTransparency([final double amount = 20]) {
     return toColor().adjustTransparency(amount).toLch();
   }
 
@@ -108,30 +113,28 @@ class LchColor implements ColorSpacesIQ {
   ColorTemperature get temperature => toColor().temperature;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  LchColor copyWith({double? l, double? c, double? h}) {
-    return LchColor(
-      l ?? this.l,
-      c ?? this.c,
-      h ?? this.h,
-    );
+  LchColor copyWith({final double? l, final double? c, final double? h}) {
+    return LchColor(l ?? this.l, c ?? this.c, h ?? this.h);
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((ColorSpacesIQ c) => (c as ColorIQ).toLch()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+      .map((final ColorSpacesIQ c) => (c as ColorIQ).toLch())
+      .toList();
 
   @override
-  List<ColorSpacesIQ> lighterPalette([double? step]) {
+  List<ColorSpacesIQ> lighterPalette([final double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((ColorSpacesIQ c) => (c as ColorIQ).toLch())
+        .map((final ColorSpacesIQ c) => (c as ColorIQ).toLch())
         .toList();
   }
 
   @override
-  List<ColorSpacesIQ> darkerPalette([double? step]) {
+  List<ColorSpacesIQ> darkerPalette([final double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((ColorSpacesIQ c) => (c as ColorIQ).toLch())
+        .map((final ColorSpacesIQ c) => (c as ColorIQ).toLch())
         .toList();
   }
 
@@ -139,7 +142,7 @@ class LchColor implements ColorSpacesIQ {
   ColorSpacesIQ get random => (toColor().random as ColorIQ).toLch();
 
   @override
-  bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+  bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
 
   @override
   double get luminance => toColor().luminance;
@@ -154,49 +157,67 @@ class LchColor implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  LchColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toLch();
+  LchColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
+      toColor().blend(other, amount).toLch();
 
   @override
-  LchColor opaquer([double amount = 20]) => toColor().opaquer(amount).toLch();
+  LchColor opaquer([final double amount = 20]) =>
+      toColor().opaquer(amount).toLch();
 
   @override
-  LchColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toLch();
+  LchColor adjustHue([final double amount = 20]) =>
+      toColor().adjustHue(amount).toLch();
 
   @override
   LchColor get complementary => toColor().complementary.toLch();
 
   @override
-  LchColor warmer([double amount = 20]) => toColor().warmer(amount).toLch();
+  LchColor warmer([final double amount = 20]) =>
+      toColor().warmer(amount).toLch();
 
   @override
-  LchColor cooler([double amount = 20]) => toColor().cooler(amount).toLch();
+  LchColor cooler([final double amount = 20]) =>
+      toColor().cooler(amount).toLch();
 
   @override
-  List<LchColor> generateBasicPalette() => toColor().generateBasicPalette().map((ColorIQ c) => c.toLch()).toList();
+  List<LchColor> generateBasicPalette() => toColor()
+      .generateBasicPalette()
+      .map((final ColorIQ c) => c.toLch())
+      .toList();
 
   @override
-  List<LchColor> tonesPalette() => toColor().tonesPalette().map((ColorIQ c) => c.toLch()).toList();
+  List<LchColor> tonesPalette() =>
+      toColor().tonesPalette().map((final ColorIQ c) => c.toLch()).toList();
 
   @override
-  List<LchColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((ColorIQ c) => c.toLch()).toList();
+  List<LchColor> analogous({final int count = 5, final double offset = 30}) =>
+      toColor()
+          .analogous(count: count, offset: offset)
+          .map((final ColorIQ c) => c.toLch())
+          .toList();
 
   @override
-  List<LchColor> square() => toColor().square().map((ColorIQ c) => c.toLch()).toList();
+  List<LchColor> square() =>
+      toColor().square().map((final ColorIQ c) => c.toLch()).toList();
 
   @override
-  List<LchColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((ColorIQ c) => c.toLch()).toList();
+  List<LchColor> tetrad({final double offset = 60}) => toColor()
+      .tetrad(offset: offset)
+      .map((final ColorIQ c) => c.toLch())
+      .toList();
 
   @override
-  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
 
   @override
-  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+  double contrastWith(final ColorSpacesIQ other) =>
+      toColor().contrastWith(other);
 
   @override
   ColorSlice closestColorSlice() => toColor().closestColorSlice();
 
   @override
-  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) {
+  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) {
     if (gamut == Gamut.sRGB) {
       return toLab().isWithinGamut(gamut);
     }
@@ -208,14 +229,10 @@ class LchColor implements ColorSpacesIQ {
 
   @override
   Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'type': 'LchColor',
-      'l': l,
-      'c': c,
-      'h': h,
-    };
+    return <String, dynamic>{'type': 'LchColor', 'l': l, 'c': c, 'h': h};
   }
 
   @override
-  String toString() => 'LchColor(l: ${l.toStringAsFixed(2)}, c: ${c.toStringAsFixed(2)}, h: ${h.toStringAsFixed(2)})';
+  String toString() =>
+      'LchColor(l: ${l.toStringAsFixed(2)}, c: ${c.toStringAsFixed(2)}, h: ${h.toStringAsFixed(2)})';
 }

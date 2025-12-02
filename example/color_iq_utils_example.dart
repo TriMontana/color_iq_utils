@@ -4,10 +4,10 @@ import 'package:color_iq_utils/src/colors/html.dart';
 void main() {
   // Create a ColorIQ object from RGB
   // const ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0); // Red
-    const ColorIQ color = ColorIQ(HTML.purple.value); // Red
+  final ColorIQ color = ColorIQ(HTML.purple.value); // Red
   print('Original Color (RGB): $color');
 
-    final HctColor hct = color.toHct();
+  final HctColor hct = color.toHct();
   print('HCT: $hct');
 
   // Convert to various color spaces
@@ -22,10 +22,9 @@ void main() {
 
   final OkLchColor oklch = color.toOkLch();
   print('OkLch: $oklch');
-  
+
   final HunterLabColor hunter = color.toHunterLab();
   print('Hunter Lab: $hunter');
- 
 
   // Demonstrate CSS string conversion
   final String cssString = color.toCssString();

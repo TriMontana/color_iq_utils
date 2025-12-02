@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('Accented Method Tests', () {
     test('HctColor accented increases chroma and tone', () {
-      const HctColor hct = HctColor(120, 50, 50);
+      final HctColor hct = HctColor(120, 50, 50);
       final HctColor accented = hct.accented(10);
 
       expect(accented.chroma, greaterThan(hct.chroma));
@@ -24,8 +24,10 @@ void main() {
     });
 
     test('Accented clamps tone to 100', () {
-      const HctColor hct = HctColor(120, 50, 95);
-      final HctColor accented = hct.accented(20); // Should increase tone by 10, but clamp at 100
+      final HctColor hct = HctColor(120, 50, 95);
+      final HctColor accented = hct.accented(
+        20,
+      ); // Should increase tone by 10, but clamp at 100
 
       expect(accented.tone, equals(100));
     });
@@ -35,7 +37,7 @@ void main() {
       final XyzColor xyz = rgb.toXyz();
       final LabColor lab = rgb.toLab();
       final LuvColor luv = rgb.toLuv();
-      
+
       final ColorIQ accentedRgb = rgb.accented();
       final XyzColor accentedXyz = xyz.accented();
       final LabColor accentedLab = lab.accented();
@@ -43,11 +45,11 @@ void main() {
 
       // Since they all delegate to ColorIQ -> Hct -> accented -> ColorIQ -> Model
       // They should represent approximately the same color (allowing for conversion errors)
-      
+
       expect(accentedXyz.toColor().value, closeTo(accentedRgb.value, 1));
       expect(accentedLab.toColor().value, closeTo(accentedRgb.value, 1));
       expect(accentedLuv.toColor().value, closeTo(accentedRgb.value, 1));
-      
+
       print('✓ Accented color model test completed');
       print('  Original RGB: ${rgb.value}');
       print('  Accented RGB: ${accentedRgb.value}');

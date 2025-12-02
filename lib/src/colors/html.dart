@@ -1,7 +1,3 @@
-import 'dart:math';
-import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:color_iq_utils/src/models/hct_color.dart';
-
 /// Color family categories for HTML colors
 enum ColorFamily {
   red,
@@ -17,8 +13,6 @@ enum ColorFamily {
   gray,
   black,
 }
-
-
 
 /// Standard HTML/CSS color names with their hex values
 enum HTML {
@@ -92,26 +86,30 @@ enum HTML {
   lightBlue(0xFFADD8E6, 'LightBlue', ColorFamily.blue),
   lightCoral(0xFFF08080, 'Light Coral', ColorFamily.orange),
   lightCyan(0xFFE0FFFF, 'Light Cyan', ColorFamily.cyan),
-  lightGoldenRodYellow(0xFFFAFAD2, 'Light GoldenRod Yellow', ColorFamily.yellow),
-  lightGray(0xFFD3D3D3, 'LightGray', ColorFamily.gray),
-  lightGrey(0xFFD3D3D3, 'LightGrey', ColorFamily.gray),
-  lightGreen(0xFF90EE90, 'LightGreen', ColorFamily.green),
+  lightGoldenRodYellow(
+    0xFFFAFAD2,
+    'Light GoldenRod Yellow',
+    ColorFamily.yellow,
+  ),
+  lightGray(0xFFD3D3D3, 'Light Gray', ColorFamily.gray),
+  lightGrey(0xFFD3D3D3, 'Light Grey', ColorFamily.gray),
+  lightGreen(0xFF90EE90, 'Light Green', ColorFamily.green),
   lightPink(0xFFFFB6C1, 'LightPink', ColorFamily.pink),
-  lightSalmon(0xFFFFA07A, 'LightSalmon', ColorFamily.orange),
-  lightSeaGreen(0xFF20B2AA, 'LightSeaGreen', ColorFamily.green),
-  lightSkyBlue(0xFF87CEFA, 'LightSkyBlue', ColorFamily.blue),
-  lightSlateGray(0xFF778899, 'LightSlateGray', ColorFamily.gray),
-  lightSlateGrey(0xFF778899, 'LightSlateGrey', ColorFamily.gray),
-  lightSteelBlue(0xFFB0C4DE, 'LightSteelBlue', ColorFamily.blue),
+  lightSalmon(0xFFFFA07A, 'Light Salmon', ColorFamily.orange),
+  lightSeaGreen(0xFF20B2AA, 'Light SeaGreen', ColorFamily.green),
+  lightSkyBlue(0xFF87CEFA, 'Light SkyBlue', ColorFamily.blue),
+  lightSlateGray(0xFF778899, 'Light SlateGray', ColorFamily.gray),
+  lightSlateGrey(0xFF778899, 'Light SlateGrey', ColorFamily.gray),
+  lightSteelBlue(0xFFB0C4DE, 'Light SteelBlue', ColorFamily.blue),
   lightYellow(0xFFFFFFE0, 'LightYellow', ColorFamily.yellow),
   lime(0xFF00FF00, 'Lime', ColorFamily.green),
   limeGreen(0xFF32CD32, 'LimeGreen', ColorFamily.green),
   linen(0xFFFAF0E6, 'Linen', ColorFamily.white),
   magenta(0xFFFF00FF, 'Magenta', ColorFamily.purple),
   maroon(0xFF800000, 'Maroon', ColorFamily.red),
-  mediumAquaMarine(0xFF66CDAA, 'MediumAquaMarine', ColorFamily.cyan),
-  mediumBlue(0xFF0000CD, 'MediumBlue', ColorFamily.blue),
-  mediumOrchid(0xFFBA55D3, 'MediumOrchid', ColorFamily.purple),
+  mediumAquaMarine(0xFF66CDAA, 'Medium AquaMarine', ColorFamily.cyan),
+  mediumBlue(0xFF0000CD, 'Medium Blue', ColorFamily.blue),
+  mediumOrchid(0xFFBA55D3, 'Medium Orchid', ColorFamily.purple),
   mediumPurple(0xFF9370DB, 'Medium Purple', ColorFamily.purple),
   mediumSeaGreen(0xFF3CB371, 'MediumSeaGreen', ColorFamily.green),
   mediumSlateBlue(0xFF7B68EE, 'MediumSlateBlue', ColorFamily.blue),
@@ -122,7 +120,7 @@ enum HTML {
   mintCream(0xFFF5FFFA, 'MintCream', ColorFamily.white),
   mistyRose(0xFFFFE4E1, 'MistyRose', ColorFamily.pink),
   moccasin(0xFFFFE4B5, 'Moccasin', ColorFamily.orange),
-  navajoWhite(0xFFFFDEAD, 'NavajoWhite', ColorFamily.orange),
+  navajoWhite(0xFFFFDEAD, 'Navajo White', ColorFamily.orange),
   navy(0xFF000080, 'Navy', ColorFamily.blue),
   oldLace(0xFFFDF5E6, 'OldLace', ColorFamily.white),
   olive(0xFF808000, 'Olive', ColorFamily.green),
@@ -130,24 +128,24 @@ enum HTML {
   orange(0xFFFFA500, 'Orange', ColorFamily.orange),
   orangeRed(0xFFFF4500, 'OrangeRed', ColorFamily.orange),
   orchid(0xFFDA70D6, 'Orchid', ColorFamily.purple),
-  paleGoldenRod(0xFFEEE8AA, 'PaleGoldenRod', ColorFamily.yellow),
-  paleGreen(0xFF98FB98, 'PaleGreen', ColorFamily.green),
-  paleTurquoise(0xFFAFEEEE, 'PaleTurquoise', ColorFamily.cyan),
+  paleGoldenRod(0xFFEEE8AA, 'Pale GoldenRod', ColorFamily.yellow),
+  paleGreen(0xFF98FB98, 'Pale Green', ColorFamily.green),
+  paleTurquoise(0xFFAFEEEE, 'Pale Turquoise', ColorFamily.cyan),
   paleVioletRed(0xFFDB7093, 'PaleVioletRed', ColorFamily.pink),
   papayaWhip(0xFFFFEFD5, 'PapayaWhip', ColorFamily.orange),
   peachPuff(0xFFFFDAB9, 'PeachPuff', ColorFamily.orange),
   peru(0xFFCD853F, 'Peru', ColorFamily.orange),
   pink(0xFFFFC0CB, 'Pink', ColorFamily.pink),
   plum(0xFFDDA0DD, 'Plum', ColorFamily.purple),
-  powderBlue(0xFFB0E0E6, 'PowderBlue', ColorFamily.blue),
+  powderBlue(0xFFB0E0E6, 'Powder Blue', ColorFamily.blue),
   purple(0xFF800080, 'Purple', ColorFamily.purple),
-  rebeccaPurple(0xFF663399, 'RebeccaPurple', ColorFamily.purple),
+  rebeccaPurple(0xFF663399, 'Rebecca Purple', ColorFamily.purple),
   red(0xFFFF0000, 'Red', ColorFamily.red),
-  rosyBrown(0xFFBC8F8F, 'RosyBrown', ColorFamily.brown),
-  royalBlue(0xFF4169E1, 'RoyalBlue', ColorFamily.blue),
-  saddleBrown(0xFF8B4513, 'SaddleBrown', ColorFamily.brown),
+  rosyBrown(0xFFBC8F8F, 'Rosy Brown', ColorFamily.brown),
+  royalBlue(0xFF4169E1, 'Royal Blue', ColorFamily.blue),
+  saddleBrown(0xFF8B4513, 'Saddle Brown', ColorFamily.brown),
   salmon(0xFFFA8072, 'Salmon', ColorFamily.orange),
-  sandyBrown(0xFFF4A460, 'SandyBrown', ColorFamily.orange),
+  sandyBrown(0xFFF4A460, 'Sandy Brown', ColorFamily.orange),
   seaGreen(0xFF2E8B57, 'SeaGreen', ColorFamily.green),
   seaShell(0xFFFFF5EE, 'SeaShell', ColorFamily.white),
   sienna(0xFFA0522D, 'Sienna', ColorFamily.brown),
@@ -175,186 +173,7 @@ enum HTML {
   final String name;
   final ColorFamily family;
   const HTML(this.value, this.name, this.family);
-}
-
-/// Extension to find the closest color family for any color value
-extension ColorFamilyFinder on int {
-  /// Determines the closest [ColorFamily] for this color value.
-  /// 
-  /// Compares the color against representative colors from each family
-  /// using Euclidean distance in RGB color space.
-  /// 
-  /// Example:
-  /// ```dart
-  /// int myColor = 0xFFFF6B6B;
-  /// ColorFamily family = myColor.closestColorFamily(); // ColorFamily.red
-  /// ```
-  ColorFamily closestColorFamily() {
-    // Extract RGB components from this color
-    final int r = (this >> 16) & 0xFF;
-    final int g = (this >> 8) & 0xFF;
-    final int b = this & 0xFF;
-    
-    // Representative colors for each family (using pure/typical colors)
-    final Map<ColorFamily, (int, int, int)> familyColors = <ColorFamily, (int, int, int)>{
-      ColorFamily.red: (255, 0, 0),
-      ColorFamily.orange: (255, 165, 0),
-      ColorFamily.yellow: (255, 255, 0),
-      ColorFamily.green: (0, 128, 0),
-      ColorFamily.cyan: (0, 255, 255),
-      ColorFamily.blue: (0, 0, 255),
-      ColorFamily.purple: (128, 0, 128),
-      ColorFamily.pink: (255, 192, 203),
-      ColorFamily.brown: (165, 42, 42),
-      ColorFamily.white: (255, 255, 255),
-      ColorFamily.gray: (128, 128, 128),
-      ColorFamily.black: (0, 0, 0),
-    };
-    
-    // Find the family with minimum distance
-    ColorFamily? closestFamily;
-    double minDistance = double.infinity;
-    
-    for (final MapEntry<ColorFamily, (int, int, int)> entry in familyColors.entries) {
-      final (int fr, int fg, int fb) = entry.value;
-      // Calculate Euclidean distance in RGB space
-      final double distance = ((r - fr) * (r - fr) + 
-                       (g - fg) * (g - fg) + 
-                       (b - fb) * (b - fb)).toDouble();
-      
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestFamily = entry.key;
-      }
-    }
-    
-    return closestFamily!;
-  }
-  
-  /// Finds the closest [HTML] color to this color value.
-  /// 
-  /// Compares the color against all HTML colors using Euclidean distance
-  /// in RGB color space.
-  /// 
-  /// Example:
-  /// ```dart
-  /// int myColor = 0xFFFF6B6B;
-  /// HTML closest = myColor.closestHTMLColor(); // HTML.lightCoral
-  /// ```
-  HTML closestHTMLColor() {
-    final int r = (this >> 16) & 0xFF;
-    final int g = (this >> 8) & 0xFF;
-    final int b = this & 0xFF;
-    
-    HTML? closestColor;
-    double minDistance = double.infinity;
-    
-    for (final HTML htmlColor in HTML.values) {
-      final int hr = (htmlColor.value >> 16) & 0xFF;
-      final int hg = (htmlColor.value >> 8) & 0xFF;
-      final int hb = htmlColor.value & 0xFF;
-      
-      final double distance = ((r - hr) * (r - hr) + 
-                       (g - hg) * (g - hg) + 
-                       (b - hb) * (b - hb)).toDouble();
-      
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestColor = htmlColor;
-      }
-    }
-    
-    return closestColor!;
-  }
-  
-  /// Determines the closest [ColorFamily] for this color value using CAM16-based distance.
-  /// 
-  /// Uses perceptually uniform CAM16/HCT color space for more accurate
-  /// color family matching based on human perception.
-  /// 
-  /// Example:
-  /// ```dart
-  /// int myColor = 0xFFFF6B6B;
-  /// ColorFamily family = myColor.closestColorFamilyPerceptual(); // ColorFamily.red
-  /// ```
-  ColorFamily closestColorFamilyPerceptual() {
-    final ColorIQ thisColor = ColorIQ(this);
-    final HctColor hct1 = thisColor.toHct();
-    
-    // Representative colors for each family (using pure/typical colors)
-    final Map<ColorFamily, ColorIQ> familyColors = <ColorFamily, ColorIQ>{
-      ColorFamily.red: const ColorIQ(0xFFFF0000),
-      ColorFamily.orange: const ColorIQ(0xFFFFA500),
-      ColorFamily.yellow: const ColorIQ(0xFFFFFF00),
-      ColorFamily.green: const ColorIQ(0xFF008000),
-      ColorFamily.cyan: const ColorIQ(0xFF00FFFF),
-      ColorFamily.blue: const ColorIQ(0xFF0000FF),
-      ColorFamily.purple: const ColorIQ(0xFF800080),
-      ColorFamily.pink: const ColorIQ(0xFFFFC0CB),
-      ColorFamily.brown: const ColorIQ(0xFFA52A2A),
-      ColorFamily.white: const ColorIQ(0xFFFFFFFF),
-      ColorFamily.gray: const ColorIQ(0xFF808080),
-      ColorFamily.black: const ColorIQ(0xFF000000),
-    };
-    
-    // Find the family with minimum perceptual distance
-    ColorFamily? closestFamily;
-    double minDistance = double.infinity;
-    
-    for (final MapEntry<ColorFamily, ColorIQ> entry in familyColors.entries) {
-      final HctColor hct2 = entry.value.toHct();
-      
-      // Calculate perceptual distance using CAM16/HCT
-      // Convert to Cartesian coordinates for distance calculation
-      final double h1Rad = hct1.hue * pi / 180;
-      final double h2Rad = hct2.hue * pi / 180;
-      
-      final double a1 = hct1.chroma * cos(h1Rad);
-      final double b1 = hct1.chroma * sin(h1Rad);
-      final double a2 = hct2.chroma * cos(h2Rad);
-      final double b2 = hct2.chroma * sin(h2Rad);
-      
-      final double dTone = hct1.tone - hct2.tone;
-      final double da = a1 - a2;
-      final double db = b1 - b2;
-      
-      final double distance = sqrt(dTone * dTone + da * da + db * db);
-      
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestFamily = entry.key;
-      }
-    }
-    
-    return closestFamily!;
-  }
-  
-  /// Finds the closest [HTML] color to this color value using CAM16-based distance.
-  /// 
-  /// Uses perceptually uniform CAM16/HCT color space for more accurate
-  /// color matching based on human perception rather than simple RGB distance.
-  /// 
-  /// Example:
-  /// ```dart
-  /// int myColor = 0xFFFF6B6B;
-  /// HTML closest = myColor.closestHTMLColorPerceptual(); // HTML.lightCoral
-  /// ```
-  HTML closestHTMLColorPerceptual() {
-    final ColorIQ thisColor = ColorIQ(this);
-    
-    HTML? closestColor;
-    double minDistance = double.infinity;
-    
-    for (final HTML htmlColor in HTML.values) {
-      // Use the distanceTo method which uses CAM16/HCT
-      final double distance = thisColor.distanceTo(ColorIQ(htmlColor.value));
-      
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestColor = htmlColor;
-      }
-    }
-    
-    return closestColor!;
-  }
+  int get hexId => value;
+  String get hexString =>
+      '0x${value.toRadixString(16).toUpperCase().padLeft(8, '0')})';
 }

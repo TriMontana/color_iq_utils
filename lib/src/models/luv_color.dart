@@ -1,10 +1,10 @@
 import 'dart:math';
-import '../color_interfaces.dart';
-import '../color_temperature.dart';
-import 'coloriq.dart';
-import 'hct_color.dart';
-import 'xyz_color.dart';
 
+import 'package:color_iq_utils/src/color_interfaces.dart';
+import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/models/coloriq.dart';
+import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:color_iq_utils/src/models/xyz_color.dart';
 
 class LuvColor implements ColorSpacesIQ {
   final double l;
@@ -28,7 +28,9 @@ class LuvColor implements ColorSpacesIQ {
     final double uPrime = u / (13 * l) + refU;
     final double vPrime = v / (13 * l) + refV;
 
-    final double y = l > 8 ? refY * pow((l + 16) / 116, 3).toDouble() : refY * l / 903.3;
+    final double y = l > 8
+        ? refY * pow((l + 16) / 116, 3).toDouble()
+        : refY * l / 903.3;
 
     final double denominator = vPrime * 4;
     double x = 0;
@@ -57,13 +59,16 @@ class LuvColor implements ColorSpacesIQ {
   LuvColor get grayscale => toColor().grayscale.toLuv();
 
   @override
-  LuvColor whiten([final double amount = 20]) => toColor().whiten(amount).toLuv();
+  LuvColor whiten([final double amount = 20]) =>
+      toColor().whiten(amount).toLuv();
 
   @override
-  LuvColor blacken([final double amount = 20]) => toColor().blacken(amount).toLuv();
+  LuvColor blacken([final double amount = 20]) =>
+      toColor().blacken(amount).toLuv();
 
   @override
-  LuvColor lerp(final ColorSpacesIQ other, final double t) => (toColor().lerp(other, t) as ColorIQ).toLuv();
+  LuvColor lerp(final ColorSpacesIQ other, final double t) =>
+      (toColor().lerp(other, t) as ColorIQ).toLuv();
 
   @override
   LuvColor darken([final double amount = 20]) {
@@ -129,15 +134,13 @@ class LuvColor implements ColorSpacesIQ {
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   LuvColor copyWith({final double? l, final double? u, final double? v}) {
-    return LuvColor(
-      l ?? this.l,
-      u ?? this.u,
-      v ?? this.v,
-    );
+    return LuvColor(l ?? this.l, u ?? this.u, v ?? this.v);
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((final ColorSpacesIQ c) => (c as ColorIQ).toLuv()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+      .map((final ColorSpacesIQ c) => (c as ColorIQ).toLuv())
+      .toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([final double? step]) {
@@ -174,63 +177,78 @@ class LuvColor implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  LuvColor blend(final ColorSpacesIQ other, [final double amount = 50]) => toColor().blend(other, amount).toLuv();
+  LuvColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
+      toColor().blend(other, amount).toLuv();
 
   @override
-  LuvColor opaquer([final double amount = 20]) => toColor().opaquer(amount).toLuv();
+  LuvColor opaquer([final double amount = 20]) =>
+      toColor().opaquer(amount).toLuv();
 
   @override
-  LuvColor adjustHue([final double amount = 20]) => toColor().adjustHue(amount).toLuv();
+  LuvColor adjustHue([final double amount = 20]) =>
+      toColor().adjustHue(amount).toLuv();
 
   @override
   LuvColor get complementary => toColor().complementary.toLuv();
 
   @override
-  LuvColor warmer([final double amount = 20]) => toColor().warmer(amount).toLuv();
+  LuvColor warmer([final double amount = 20]) =>
+      toColor().warmer(amount).toLuv();
 
   @override
-  LuvColor cooler([final double amount = 20]) => toColor().cooler(amount).toLuv();
+  LuvColor cooler([final double amount = 20]) =>
+      toColor().cooler(amount).toLuv();
 
   @override
-  List<LuvColor> generateBasicPalette() => toColor().generateBasicPalette().map((final ColorIQ c) => c.toLuv()).toList();
+  List<LuvColor> generateBasicPalette() => toColor()
+      .generateBasicPalette()
+      .map((final ColorIQ c) => c.toLuv())
+      .toList();
 
   @override
-  List<LuvColor> tonesPalette() => toColor().tonesPalette().map((final ColorIQ c) => c.toLuv()).toList();
+  List<LuvColor> tonesPalette() =>
+      toColor().tonesPalette().map((final ColorIQ c) => c.toLuv()).toList();
 
   @override
-  List<LuvColor> analogous({final int count = 5, final double offset = 30}) => toColor().analogous(count: count, offset: offset).map((final ColorIQ c) => c.toLuv()).toList();
+  List<LuvColor> analogous({final int count = 5, final double offset = 30}) =>
+      toColor()
+          .analogous(count: count, offset: offset)
+          .map((final ColorIQ c) => c.toLuv())
+          .toList();
 
   @override
-  List<LuvColor> square() => toColor().square().map((final ColorIQ c) => c.toLuv()).toList();
+  List<LuvColor> square() =>
+      toColor().square().map((final ColorIQ c) => c.toLuv()).toList();
 
   @override
-  List<LuvColor> tetrad({final double offset = 60}) => toColor().tetrad(offset: offset).map((final ColorIQ c) => c.toLuv()).toList();
+  List<LuvColor> tetrad({final double offset = 60}) => toColor()
+      .tetrad(offset: offset)
+      .map((final ColorIQ c) => c.toLuv())
+      .toList();
 
   @override
   double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
 
   @override
-  double contrastWith(final ColorSpacesIQ other) => toColor().contrastWith(other);
+  double contrastWith(final ColorSpacesIQ other) =>
+      toColor().contrastWith(other);
 
   @override
   ColorSlice closestColorSlice() => toColor().closestColorSlice();
 
   @override
-  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) =>
+      toColor().isWithinGamut(gamut);
 
   @override
-  List<double> get whitePoint => [95.047, 100.0, 108.883];
+  List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
 
   @override
   Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'type': 'LuvColor',
-      'l': l,
-      'u': u,
-      'v': v,
-    };
+    return <String, dynamic>{'type': 'LuvColor', 'l': l, 'u': u, 'v': v};
   }
 
   @override
-  String toString() => 'LuvColor(l: ${l.toStringAsFixed(2)}, u: ${u.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)})';
+  String toString() =>
+      'LuvColor(l: ${l.toStringAsFixed(2)}, u: ${u.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)})';
 }
