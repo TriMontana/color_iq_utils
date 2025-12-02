@@ -1,9 +1,14 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
 
 void main() {
   // Create a ColorIQ object from RGB
-  final ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0); // Red
+  // const ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0); // Red
+    const ColorIQ color = ColorIQ(HTML.purple.value); // Red
   print('Original Color (RGB): $color');
+
+    final HctColor hct = color.toHct();
+  print('HCT: $hct');
 
   // Convert to various color spaces
   final HspColor hsp = color.toHsp();

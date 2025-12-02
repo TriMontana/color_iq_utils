@@ -1,8 +1,8 @@
 import 'dart:math';
-import '../color_interfaces.dart';
-import '../color_temperature.dart';
-import 'coloriq.dart';
-import 'hct_color.dart';
+import 'package:color_iq_utils/src/color_interfaces.dart';
+import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/models/coloriq.dart';
+import 'package:color_iq_utils/src/models/hct_color.dart';
 
 class HsvColor implements ColorSpacesIQ {
   final double h;
@@ -14,9 +14,9 @@ class HsvColor implements ColorSpacesIQ {
 
   @override
   ColorIQ toColor() {
-      double c = v * s;
-      double x = c * (1 - ((h / 60) % 2 - 1).abs());
-      double m = v - c;
+      final double c = v * s;
+      final double x = c * (1 - ((h / 60) % 2 - 1).abs());
+      final double m = v - c;
       
       double r = 0, g = 0, b = 0;
       if (h < 60) {
@@ -141,13 +141,13 @@ class HsvColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((final c) => (c as ColorIQ).toHsv()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((final ColorSpacesIQ c) => (c as ColorIQ).toHsv()).toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([final double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((final c) => (c as ColorIQ).toHsv())
+        .map((final ColorSpacesIQ c) => (c as ColorIQ).toHsv())
         .toList();
   }
 
@@ -155,7 +155,7 @@ class HsvColor implements ColorSpacesIQ {
   List<ColorSpacesIQ> darkerPalette([final double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((final c) => (c as ColorIQ).toHsv())
+        .map((final ColorSpacesIQ c) => (c as ColorIQ).toHsv())
         .toList();
   }
 
@@ -196,19 +196,19 @@ class HsvColor implements ColorSpacesIQ {
   HsvColor cooler([final double amount = 20]) => toColor().cooler(amount).toHsv();
 
   @override
-  List<HsvColor> generateBasicPalette() => toColor().generateBasicPalette().map((final c) => c.toHsv()).toList();
+  List<HsvColor> generateBasicPalette() => toColor().generateBasicPalette().map((final ColorIQ c) => c.toHsv()).toList();
 
   @override
-  List<HsvColor> tonesPalette() => toColor().tonesPalette().map((final c) => c.toHsv()).toList();
+  List<HsvColor> tonesPalette() => toColor().tonesPalette().map((final ColorIQ c) => c.toHsv()).toList();
 
   @override
-  List<HsvColor> analogous({final int count = 5, final double offset = 30}) => toColor().analogous(count: count, offset: offset).map((final c) => c.toHsv()).toList();
+  List<HsvColor> analogous({final int count = 5, final double offset = 30}) => toColor().analogous(count: count, offset: offset).map((final ColorIQ c) => c.toHsv()).toList();
 
   @override
-  List<HsvColor> square() => toColor().square().map((final c) => c.toHsv()).toList();
+  List<HsvColor> square() => toColor().square().map((final ColorIQ c) => c.toHsv()).toList();
 
   @override
-  List<HsvColor> tetrad({final double offset = 60}) => toColor().tetrad(offset: offset).map((final c) => c.toHsv()).toList();
+  List<HsvColor> tetrad({final double offset = 60}) => toColor().tetrad(offset: offset).map((final ColorIQ c) => c.toHsv()).toList();
 
   @override
   double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
@@ -223,11 +223,11 @@ class HsvColor implements ColorSpacesIQ {
   bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
 
   @override
-  List<double> get whitePoint => [95.047, 100.0, 108.883];
+  List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
 
   @override
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'type': 'HsvColor',
       'hue': h,
       'saturation': s,

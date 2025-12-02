@@ -1,8 +1,8 @@
 import 'dart:math';
-import '../color_interfaces.dart';
-import '../color_temperature.dart';
-import 'coloriq.dart';
-import 'hct_color.dart';
+import 'package:color_iq_utils/src/color_interfaces.dart';
+import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/models/coloriq.dart';
+import 'package:color_iq_utils/src/models/hct_color.dart';
 
 class HunterLabColor implements ColorSpacesIQ {
   final double l;

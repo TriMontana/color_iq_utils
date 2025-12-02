@@ -69,67 +69,67 @@ class LabColor implements ColorSpacesIQ {
   LabColor get grayscale => toColor().grayscale.toLab();
 
   @override
-  LabColor whiten([double amount = 20]) => toColor().whiten(amount).toLab();
+  LabColor whiten([final double amount = 20]) => toColor().whiten(amount).toLab();
 
   @override
-  LabColor blacken([double amount = 20]) => toColor().blacken(amount).toLab();
+  LabColor blacken([final double amount = 20]) => toColor().blacken(amount).toLab();
 
   @override
-  LabColor lighten([double amount = 20]) {
+  LabColor lighten([final double amount = 20]) {
     return LabColor(min(100, l + amount), a, b);
   }
 
   @override
-  LabColor brighten([double amount = 20]) {
+  LabColor brighten([final double amount = 20]) {
     return toColor().brighten(amount).toLab();
   }
 
   @override
-  LabColor darken([double amount = 20]) {
+  LabColor darken([final double amount = 20]) {
     return LabColor(max(0, l - amount), a, b);
   }
 
   @override
-  LabColor saturate([double amount = 25]) {
+  LabColor saturate([final double amount = 25]) {
     return toLch().saturate(amount).toLab();
   }
 
   @override
-  LabColor desaturate([double amount = 25]) {
+  LabColor desaturate([final double amount = 25]) {
     return toLch().desaturate(amount).toLab();
   }
 
   @override
-  LabColor intensify([double amount = 10]) {
+  LabColor intensify([final double amount = 10]) {
     return toColor().intensify(amount).toLab();
   }
 
   @override
-  LabColor deintensify([double amount = 10]) {
+  LabColor deintensify([final double amount = 10]) {
     return toColor().deintensify(amount).toLab();
   }
 
   @override
-  LabColor accented([double amount = 15]) {
+  LabColor accented([final double amount = 15]) {
     return toColor().accented(amount).toLab();
   }
 
   @override
-  LabColor simulate(ColorBlindnessType type) {
+  LabColor simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toLab();
   }
 
   @override
-  LabColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toLab();
+  LabColor lerp(final ColorSpacesIQ other, final double t) => (toColor().lerp(other, t) as ColorIQ).toLab();
 
   @override
   HctColor toHct() => toColor().toHct();
 
   @override
-  LabColor fromHct(HctColor hct) => hct.toColor().toLab();
+  LabColor fromHct(final HctColor hct) => hct.toColor().toLab();
 
   @override
-  LabColor adjustTransparency([double amount = 20]) {
+  LabColor adjustTransparency([final double amount = 20]) {
     return toColor().adjustTransparency(amount).toLab();
   }
 
@@ -140,7 +140,7 @@ class LabColor implements ColorSpacesIQ {
   ColorTemperature get temperature => toColor().temperature;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  LabColor copyWith({double? l, double? a, double? b}) {
+  LabColor copyWith({final double? l, final double? a, final double? b}) {
     return LabColor(
       l ?? this.l,
       a ?? this.a,
@@ -149,21 +149,21 @@ class LabColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toLab()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((final c) => (c as ColorIQ).toLab()).toList();
 
   @override
-  List<ColorSpacesIQ> lighterPalette([double? step]) {
+  List<ColorSpacesIQ> lighterPalette([final double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as ColorIQ).toLab())
+        .map((final c) => (c as ColorIQ).toLab())
         .toList();
   }
 
   @override
-  List<ColorSpacesIQ> darkerPalette([double? step]) {
+  List<ColorSpacesIQ> darkerPalette([final double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as ColorIQ).toLab())
+        .map((final c) => (c as ColorIQ).toLab())
         .toList();
   }
 
@@ -171,7 +171,7 @@ class LabColor implements ColorSpacesIQ {
   ColorSpacesIQ get random => (toColor().random as ColorIQ).toLab();
 
   @override
-  bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+  bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
 
   @override
   double get luminance => toColor().luminance;
@@ -186,49 +186,49 @@ class LabColor implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  LabColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toLab();
+  LabColor blend(final ColorSpacesIQ other, [final double amount = 50]) => toColor().blend(other, amount).toLab();
 
   @override
-  LabColor opaquer([double amount = 20]) => toColor().opaquer(amount).toLab();
+  LabColor opaquer([final double amount = 20]) => toColor().opaquer(amount).toLab();
 
   @override
-  LabColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toLab();
+  LabColor adjustHue([final double amount = 20]) => toColor().adjustHue(amount).toLab();
 
   @override
   LabColor get complementary => toColor().complementary.toLab();
 
   @override
-  LabColor warmer([double amount = 20]) => toColor().warmer(amount).toLab();
+  LabColor warmer([final double amount = 20]) => toColor().warmer(amount).toLab();
 
   @override
-  LabColor cooler([double amount = 20]) => toColor().cooler(amount).toLab();
+  LabColor cooler([final double amount = 20]) => toColor().cooler(amount).toLab();
 
   @override
-  List<LabColor> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toLab()).toList();
+  List<LabColor> generateBasicPalette() => toColor().generateBasicPalette().map((final c) => c.toLab()).toList();
 
   @override
-  List<LabColor> tonesPalette() => toColor().tonesPalette().map((c) => c.toLab()).toList();
+  List<LabColor> tonesPalette() => toColor().tonesPalette().map((final c) => c.toLab()).toList();
 
   @override
-  List<LabColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toLab()).toList();
+  List<LabColor> analogous({final int count = 5, final double offset = 30}) => toColor().analogous(count: count, offset: offset).map((final c) => c.toLab()).toList();
 
   @override
-  List<LabColor> square() => toColor().square().map((c) => c.toLab()).toList();
+  List<LabColor> square() => toColor().square().map((final c) => c.toLab()).toList();
 
   @override
-  List<LabColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toLab()).toList();
+  List<LabColor> tetrad({final double offset = 60}) => toColor().tetrad(offset: offset).map((final c) => c.toLab()).toList();
 
   @override
-  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
 
   @override
-  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+  double contrastWith(final ColorSpacesIQ other) => toColor().contrastWith(other);
 
   @override
   ColorSlice closestColorSlice() => toColor().closestColorSlice();
 
   @override
-  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) {
+  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) {
     if (gamut == Gamut.sRGB) {
       // Convert to RGB without clamping and check bounds
       // We can use the logic from toColor but return false if out of 0-1 range (before scaling to 255)

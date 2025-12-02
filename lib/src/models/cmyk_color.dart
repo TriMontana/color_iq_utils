@@ -1,8 +1,8 @@
 
-import '../color_interfaces.dart';
-import '../color_temperature.dart';
-import 'coloriq.dart';
-import 'hct_color.dart';
+import 'package:color_iq_utils/src/color_interfaces.dart';
+import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/models/coloriq.dart';
+import 'package:color_iq_utils/src/models/hct_color.dart';
 
 class CmykColor implements ColorSpacesIQ {
   final double c;
@@ -14,9 +14,9 @@ class CmykColor implements ColorSpacesIQ {
 
   @override
   ColorIQ toColor() {
-    double r = 255 * (1 - c) * (1 - k);
-    double g = 255 * (1 - m) * (1 - k);
-    double b = 255 * (1 - y) * (1 - k);
+    final double r = 255 * (1 - c) * (1 - k);
+    final double g = 255 * (1 - m) * (1 - k);
+    final double b = 255 * (1 - y) * (1 - k);
     return ColorIQ.fromARGB(255, r.round().clamp(0, 255), g.round().clamp(0, 255), b.round().clamp(0, 255));
   }
   
@@ -24,51 +24,51 @@ class CmykColor implements ColorSpacesIQ {
   int get value => toColor().value;
 
   @override
-  bool operator ==(Object other) => other is CmykColor && other.c == c && other.m == m && other.y == y && other.k == k;
+  bool operator ==(final Object other) => other is CmykColor && other.c == c && other.m == m && other.y == y && other.k == k;
   
   @override
-  CmykColor lighten([double amount = 20]) {
+  CmykColor lighten([final double amount = 20]) {
     return toColor().lighten(amount).toCmyk();
   }
 
   @override
-  CmykColor darken([double amount = 20]) {
+  CmykColor darken([final double amount = 20]) {
     return toColor().darken(amount).toCmyk();
   }
 
   @override
-  CmykColor brighten([double amount = 20]) {
+  CmykColor brighten([final double amount = 20]) {
     return toColor().brighten(amount).toCmyk();
   }
   
 
   @override
-  CmykColor saturate([double amount = 25]) {
+  CmykColor saturate([final double amount = 25]) {
     return toColor().saturate(amount).toCmyk();
   }
 
   @override
-  CmykColor desaturate([double amount = 25]) {
+  CmykColor desaturate([final double amount = 25]) {
     return toColor().desaturate(amount).toCmyk();
   }
 
   @override
-  CmykColor intensify([double amount = 10]) {
+  CmykColor intensify([final double amount = 10]) {
     return toColor().intensify(amount).toCmyk();
   }
 
   @override
-  CmykColor deintensify([double amount = 10]) {
+  CmykColor deintensify([final double amount = 10]) {
     return toColor().deintensify(amount).toCmyk();
   }
 
   @override
-  CmykColor accented([double amount = 15]) {
+  CmykColor accented([final double amount = 15]) {
     return toColor().accented(amount).toCmyk();
   }
 
   @override
-  CmykColor simulate(ColorBlindnessType type) {
+  CmykColor simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toCmyk();
   }
 
@@ -85,22 +85,22 @@ class CmykColor implements ColorSpacesIQ {
   CmykColor get grayscale => toColor().grayscale.toCmyk();
 
   @override
-  CmykColor whiten([double amount = 20]) => toColor().whiten(amount).toCmyk();
+  CmykColor whiten([final double amount = 20]) => toColor().whiten(amount).toCmyk();
 
   @override
-  CmykColor blacken([double amount = 20]) => toColor().blacken(amount).toCmyk();
+  CmykColor blacken([final double amount = 20]) => toColor().blacken(amount).toCmyk();
 
   @override
-  CmykColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toCmyk();
+  CmykColor lerp(final ColorSpacesIQ other, final double t) => (toColor().lerp(other, t) as ColorIQ).toCmyk();
 
   @override
   HctColor toHct() => toColor().toHct();
 
   @override
-  CmykColor fromHct(HctColor hct) => hct.toColor().toCmyk();
+  CmykColor fromHct(final HctColor hct) => hct.toColor().toCmyk();
 
   @override
-  CmykColor adjustTransparency([double amount = 20]) {
+  CmykColor adjustTransparency([final double amount = 20]) {
     return toColor().adjustTransparency(amount).toCmyk();
   }
 
@@ -111,7 +111,7 @@ class CmykColor implements ColorSpacesIQ {
   ColorTemperature get temperature => toColor().temperature;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  CmykColor copyWith({double? c, double? m, double? y, double? k}) {
+  CmykColor copyWith({final double? c, final double? m, final double? y, final double? k}) {
     return CmykColor(
       c ?? this.c,
       m ?? this.m,
@@ -121,21 +121,21 @@ class CmykColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toCmyk()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((final ColorSpacesIQ c) => (c as ColorIQ).toCmyk()).toList();
 
   @override
-  List<ColorSpacesIQ> lighterPalette([double? step]) {
+  List<ColorSpacesIQ> lighterPalette([final double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as ColorIQ).toCmyk())
+        .map((final ColorSpacesIQ c) => (c as ColorIQ).toCmyk())
         .toList();
   }
 
   @override
-  List<ColorSpacesIQ> darkerPalette([double? step]) {
+  List<ColorSpacesIQ> darkerPalette([final double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as ColorIQ).toCmyk())
+        .map((final ColorSpacesIQ c) => (c as ColorIQ).toCmyk())
         .toList();
   }
 
@@ -143,7 +143,7 @@ class CmykColor implements ColorSpacesIQ {
   ColorSpacesIQ get random => (toColor().random as ColorIQ).toCmyk();
 
   @override
-  bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+  bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
 
   @override
   double get luminance => toColor().luminance;
@@ -158,56 +158,56 @@ class CmykColor implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  CmykColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toCmyk();
+  CmykColor blend(final ColorSpacesIQ other, [final double amount = 50]) => toColor().blend(other, amount).toCmyk();
 
   @override
-  CmykColor opaquer([double amount = 20]) => toColor().opaquer(amount).toCmyk();
+  CmykColor opaquer([final double amount = 20]) => toColor().opaquer(amount).toCmyk();
 
   @override
-  CmykColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toCmyk();
+  CmykColor adjustHue([final double amount = 20]) => toColor().adjustHue(amount).toCmyk();
 
   @override
   CmykColor get complementary => toColor().complementary.toCmyk();
 
   @override
-  CmykColor warmer([double amount = 20]) => toColor().warmer(amount).toCmyk();
+  CmykColor warmer([final double amount = 20]) => toColor().warmer(amount).toCmyk();
 
   @override
-  CmykColor cooler([double amount = 20]) => toColor().cooler(amount).toCmyk();
+  CmykColor cooler([final double amount = 20]) => toColor().cooler(amount).toCmyk();
 
   @override
-  List<CmykColor> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toCmyk()).toList();
+  List<CmykColor> generateBasicPalette() => toColor().generateBasicPalette().map((final ColorIQ c) => c.toCmyk()).toList();
 
   @override
-  List<CmykColor> tonesPalette() => toColor().tonesPalette().map((c) => c.toCmyk()).toList();
+  List<CmykColor> tonesPalette() => toColor().tonesPalette().map((final ColorIQ c) => c.toCmyk()).toList();
 
   @override
-  List<CmykColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toCmyk()).toList();
+  List<CmykColor> analogous({final int count = 5, final double offset = 30}) => toColor().analogous(count: count, offset: offset).map((final ColorIQ c) => c.toCmyk()).toList();
 
   @override
-  List<CmykColor> square() => toColor().square().map((c) => c.toCmyk()).toList();
+  List<CmykColor> square() => toColor().square().map((final ColorIQ c) => c.toCmyk()).toList();
 
   @override
-  List<CmykColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toCmyk()).toList();
+  List<CmykColor> tetrad({final double offset = 60}) => toColor().tetrad(offset: offset).map((final ColorIQ c) => c.toCmyk()).toList();
 
   @override
-  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
 
   @override
-  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+  double contrastWith(final ColorSpacesIQ other) => toColor().contrastWith(other);
 
   @override
   ColorSlice closestColorSlice() => toColor().closestColorSlice();
 
   @override
-  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
 
   @override
-  List<double> get whitePoint => [95.047, 100.0, 108.883];
+  List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
 
   @override
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'type': 'CmykColor',
       'c': c,
       'm': m,

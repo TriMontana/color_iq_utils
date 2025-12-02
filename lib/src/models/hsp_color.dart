@@ -1,8 +1,8 @@
 import 'dart:math';
-import '../color_interfaces.dart';
-import '../color_temperature.dart';
-import 'coloriq.dart';
-import 'hct_color.dart';
+import 'package:color_iq_utils/src/color_interfaces.dart';
+import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/models/coloriq.dart';
+import 'package:color_iq_utils/src/models/hct_color.dart';
 
 class HspColor implements ColorSpacesIQ {
   final double h;
@@ -19,7 +19,7 @@ class HspColor implements ColorSpacesIQ {
     double r = 0.0;
     double g = 0.0;
     double b = 0.0;
-    double minOverMax = 1.0 - s;
+    final double minOverMax = 1.0 - s;
     
     if (minOverMax > 0.0) {
       double hLocal = h;
@@ -72,47 +72,47 @@ class HspColor implements ColorSpacesIQ {
   int get value => toColor().value;
   
   @override
-  HspColor darken([double amount = 20]) {
+  HspColor darken([final double amount = 20]) {
     return toColor().darken(amount).toHsp();
   }
 
   @override
-  HspColor brighten([double amount = 20]) {
+  HspColor brighten([final double amount = 20]) {
     return toColor().brighten(amount).toHsp();
   }
 
   @override
-  HspColor lighten([double amount = 20]) {
+  HspColor lighten([final double amount = 20]) {
     return toColor().lighten(amount).toHsp();
   }
 
   @override
-  HspColor saturate([double amount = 25]) {
+  HspColor saturate([final double amount = 25]) {
     return HspColor(h, min(1.0, s + amount / 100), p, alpha);
   }
 
   @override
-  HspColor desaturate([double amount = 25]) {
+  HspColor desaturate([final double amount = 25]) {
     return HspColor(h, max(0.0, s - amount / 100), p, alpha);
   }
 
   @override
-  HspColor intensify([double amount = 10]) {
+  HspColor intensify([final double amount = 10]) {
     return toColor().intensify(amount).toHsp();
   }
 
   @override
-  HspColor deintensify([double amount = 10]) {
+  HspColor deintensify([final double amount = 10]) {
     return toColor().deintensify(amount).toHsp();
   }
 
   @override
-  HspColor accented([double amount = 15]) {
+  HspColor accented([final double amount = 15]) {
     return toColor().accented(amount).toHsp();
   }
 
   @override
-  HspColor simulate(ColorBlindnessType type) {
+  HspColor simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toHsp();
   }
 
@@ -129,22 +129,22 @@ class HspColor implements ColorSpacesIQ {
   HspColor get grayscale => toColor().grayscale.toHsp();
 
   @override
-  HspColor whiten([double amount = 20]) => toColor().whiten(amount).toHsp();
+  HspColor whiten([final double amount = 20]) => toColor().whiten(amount).toHsp();
 
   @override
-  HspColor blacken([double amount = 20]) => toColor().blacken(amount).toHsp();
+  HspColor blacken([final double amount = 20]) => toColor().blacken(amount).toHsp();
 
   @override
-  HspColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toHsp();
+  HspColor lerp(final ColorSpacesIQ other, final double t) => (toColor().lerp(other, t) as ColorIQ).toHsp();
 
   @override
   HctColor toHct() => toColor().toHct();
 
   @override
-  HspColor fromHct(HctColor hct) => hct.toColor().toHsp();
+  HspColor fromHct(final HctColor hct) => hct.toColor().toHsp();
 
   @override
-  HspColor adjustTransparency([double amount = 20]) {
+  HspColor adjustTransparency([final double amount = 20]) {
     return toColor().adjustTransparency(amount).toHsp();
   }
 
@@ -155,7 +155,7 @@ class HspColor implements ColorSpacesIQ {
   ColorTemperature get temperature => toColor().temperature;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  HspColor copyWith({double? h, double? s, double? p, double? alpha}) {
+  HspColor copyWith({final double? h, final double? s, final double? p, final double? alpha}) {
     return HspColor(
       h ?? this.h,
       s ?? this.s,
@@ -165,21 +165,21 @@ class HspColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toHsp()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((final ColorSpacesIQ c) => (c as ColorIQ).toHsp()).toList();
 
   @override
-  List<ColorSpacesIQ> lighterPalette([double? step]) {
+  List<ColorSpacesIQ> lighterPalette([final double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as ColorIQ).toHsp())
+        .map((final ColorSpacesIQ c) => (c as ColorIQ).toHsp())
         .toList();
   }
 
   @override
-  List<ColorSpacesIQ> darkerPalette([double? step]) {
+  List<ColorSpacesIQ> darkerPalette([final double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as ColorIQ).toHsp())
+        .map((final ColorSpacesIQ c) => (c as ColorIQ).toHsp())
         .toList();
   }
 
@@ -187,7 +187,7 @@ class HspColor implements ColorSpacesIQ {
   ColorSpacesIQ get random => (toColor().random as ColorIQ).toHsp();
 
   @override
-  bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+  bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
 
   @override
   double get luminance => toColor().luminance;
@@ -201,56 +201,56 @@ class HspColor implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  HspColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toHsp();
+  HspColor blend(final ColorSpacesIQ other, [final double amount = 50]) => toColor().blend(other, amount).toHsp();
 
   @override
-  HspColor opaquer([double amount = 20]) => toColor().opaquer(amount).toHsp();
+  HspColor opaquer([final double amount = 20]) => toColor().opaquer(amount).toHsp();
 
   @override
-  HspColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toHsp();
+  HspColor adjustHue([final double amount = 20]) => toColor().adjustHue(amount).toHsp();
 
   @override
   HspColor get complementary => toColor().complementary.toHsp();
 
   @override
-  HspColor warmer([double amount = 20]) => toColor().warmer(amount).toHsp();
+  HspColor warmer([final double amount = 20]) => toColor().warmer(amount).toHsp();
 
   @override
-  HspColor cooler([double amount = 20]) => toColor().cooler(amount).toHsp();
+  HspColor cooler([final double amount = 20]) => toColor().cooler(amount).toHsp();
 
   @override
-  List<HspColor> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toHsp()).toList();
+  List<HspColor> generateBasicPalette() => toColor().generateBasicPalette().map((final ColorIQ c) => c.toHsp()).toList();
 
   @override
-  List<HspColor> tonesPalette() => toColor().tonesPalette().map((c) => c.toHsp()).toList();
+  List<HspColor> tonesPalette() => toColor().tonesPalette().map((final ColorIQ c) => c.toHsp()).toList();
 
   @override
-  List<HspColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toHsp()).toList();
+  List<HspColor> analogous({final int count = 5, final double offset = 30}) => toColor().analogous(count: count, offset: offset).map((final ColorIQ c) => c.toHsp()).toList();
 
   @override
-  List<HspColor> square() => toColor().square().map((c) => c.toHsp()).toList();
+  List<HspColor> square() => toColor().square().map((final ColorIQ c) => c.toHsp()).toList();
 
   @override
-  List<HspColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toHsp()).toList();
+  List<HspColor> tetrad({final double offset = 60}) => toColor().tetrad(offset: offset).map((final ColorIQ c) => c.toHsp()).toList();
 
   @override
-  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
 
   @override
-  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+  double contrastWith(final ColorSpacesIQ other) => toColor().contrastWith(other);
 
   @override
   ColorSlice closestColorSlice() => toColor().closestColorSlice();
 
   @override
-  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
 
   @override
-  List<double> get whitePoint => [95.047, 100.0, 108.883];
+  List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
 
   @override
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'type': 'HspColor',
       'hue': h,
       'saturation': s,

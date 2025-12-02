@@ -1,4 +1,5 @@
-import 'color_interfaces.dart';
+import 'package:color_iq_utils/src/color_interfaces.dart';
+import 'package:color_iq_utils/src/models/hsl_color.dart';
 
 
 /// Provides functionality to describe and classify colors.
@@ -10,11 +11,11 @@ class ColorDescriptor {
   /// - "Pastel Blue"
   /// - "Deep Green"
   /// - "Dark Grayish Orange"
-  static String describe(ColorSpacesIQ color) {
-    final hsl = color.toColor().toHsl();
-    final h = hsl.h;
-    final s = hsl.s;
-    final l = hsl.l;
+  static String describe(final ColorSpacesIQ color) {
+    final HslColor hsl = color.toColor().toHsl();
+    final double h = hsl.h;
+    final double s = hsl.s;
+    final double l = hsl.l;
 
     // 1. Handle Achromatic Colors (Grays)
     if (s < 0.03) {
@@ -29,7 +30,7 @@ class ColorDescriptor {
 
     // 2. Get the base hue name
     // 2. Get the base hue name
-    String hueName = getColorNameFromHue(h);
+    final String hueName = getColorNameFromHue(h);
 
     // 3. Determine Adjectives
     String adjective = "";

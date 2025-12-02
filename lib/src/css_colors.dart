@@ -173,9 +173,9 @@ class CssColor {
     
     if (parts.length < 3) throw const FormatException('Invalid RGB string');
     
-    int r = int.parse(parts[0]);
-    int g = int.parse(parts[1]);
-    int b = int.parse(parts[2]);
+    final int r = int.parse(parts[0]);
+    final int g = int.parse(parts[1]);
+    final int b = int.parse(parts[2]);
     double a = 1.0;
     
     if (parts.length >= 4) {
@@ -192,9 +192,9 @@ class CssColor {
     
     if (parts.length < 3) throw const FormatException('Invalid HSL string');
     
-    double h = double.parse(parts[0].replaceAll('deg', ''));
-    double sVal = double.parse(parts[1].replaceAll('%', '')) / 100.0;
-    double l = double.parse(parts[2].replaceAll('%', '')) / 100.0;
+    final double h = double.parse(parts[0].replaceAll('deg', ''));
+    final double sVal = double.parse(parts[1].replaceAll('%', '')) / 100.0;
+    final double l = double.parse(parts[2].replaceAll('%', '')) / 100.0;
     double a = 1.0;
     
     if (parts.length >= 4) {
@@ -218,8 +218,8 @@ class CssColor {
     double l = double.parse(parts[0].replaceAll('%', ''));
     if (parts[0].contains('%')) l /= 100.0; // L can be percentage
     
-    double aVal = double.parse(parts[1]);
-    double b = double.parse(parts[2]);
+    final double aVal = double.parse(parts[1]);
+    final double b = double.parse(parts[2]);
     double alpha = 1.0;
     
     if (parts.length >= 4) {
@@ -240,8 +240,8 @@ class CssColor {
     double l = double.parse(parts[0].replaceAll('%', ''));
     if (parts[0].contains('%')) l /= 100.0;
     
-    double c = double.parse(parts[1]);
-    double h = double.parse(parts[2].replaceAll('deg', ''));
+    final double c = double.parse(parts[1]);
+    final double h = double.parse(parts[2].replaceAll('deg', ''));
     double alpha = 1.0;
     
     if (parts.length >= 4) {

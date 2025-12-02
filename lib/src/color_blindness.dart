@@ -11,12 +11,12 @@ class ColorBlindness {
   /// Simulates color blindness on a given linear sRGB color (r, g, b in 0..1).
   /// Returns a list [r, g, b] of the simulated color in linear sRGB.
   static List<double> simulate(final double r, final double g, final double b, final ColorBlindnessType type) {
-    if (type == ColorBlindnessType.none) return [r, g, b];
+    if (type == ColorBlindnessType.none) return <double>[r, g, b];
     if (type == ColorBlindnessType.achromatopsia) {
       // Monochromacy / Achromatopsia
       // Using luminance formula
       final double gray = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-      return [gray, gray, gray];
+      return <double>[gray, gray, gray];
     }
 
     // Convert Linear RGB to LMS
@@ -56,7 +56,7 @@ class ColorBlindness {
     final double bSim = 0.02980165 * lSim - 0.19318073 * mSim + 1.16364789 * sSim;
 
     // Clamp results
-    return [
+    return <double>[
       rSim.clamp(0.0, 1.0),
       gSim.clamp(0.0, 1.0),
       bSim.clamp(0.0, 1.0),

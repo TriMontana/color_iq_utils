@@ -1,8 +1,8 @@
-import '../color_interfaces.dart';
-import '../color_temperature.dart';
-import 'coloriq.dart';
-import 'hct_color.dart';
-import 'hsv_color.dart';
+import 'package:color_iq_utils/src/color_interfaces.dart';
+import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/models/coloriq.dart';
+import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:color_iq_utils/src/models/hsv_color.dart';
 
 class HwbColor implements ColorSpacesIQ {
   final double h;
@@ -14,7 +14,7 @@ class HwbColor implements ColorSpacesIQ {
 
   @override
   ColorIQ toColor() {
-      double ratio = w + b;
+      final double ratio = w + b;
       double wNorm = w;
       double bNorm = b;
       if (ratio > 1) {
@@ -22,8 +22,8 @@ class HwbColor implements ColorSpacesIQ {
           bNorm /= ratio;
       }
       
-      double v = 1 - bNorm;
-      double s = (v == 0) ? 0 : 1 - wNorm / v;
+      final double v = 1 - bNorm;
+      final double s = (v == 0) ? 0 : 1 - wNorm / v;
       
       return HsvColor(h, s, v, alpha).toColor();
   }
