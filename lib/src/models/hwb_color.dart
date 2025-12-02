@@ -1,9 +1,8 @@
 import '../color_interfaces.dart';
 import '../color_temperature.dart';
-import 'color.dart';
+import 'coloriq.dart';
 import 'hct_color.dart';
 import 'hsv_color.dart';
-import 'dart:math';
 
 class HwbColor implements ColorSpacesIQ {
   final double h;
@@ -78,6 +77,7 @@ class HwbColor implements ColorSpacesIQ {
   @override
   List<double> get linearSrgb => toColor().linearSrgb;
 
+  @override
   HwbColor get inverted => toColor().inverted.toHwb();
 
   @override

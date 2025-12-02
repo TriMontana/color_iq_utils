@@ -1,6 +1,5 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
 import 'package:test/test.dart';
-import 'dart:math';
 
 void main() {
   group('Intensify and Deintensify Tests', () {
@@ -64,7 +63,7 @@ void main() {
       final intensified = hsl.intensify(10);
       expect(intensified, isA<HslColor>());
       // Saturation should likely increase
-      expect((intensified as HslColor).s, greaterThanOrEqualTo(hsl.s));
+      expect((intensified).s, greaterThanOrEqualTo(hsl.s));
     });
     
     test('Intensify clamps values correctly', () {

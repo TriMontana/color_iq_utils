@@ -1,7 +1,7 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
 
 void main() {
-  final color = Color(0xFFFF0000); // Red
+  final color = ColorIQ(0xFFFF0000); // Red
   final stopwatch = Stopwatch()..start();
   
   const iterations = 100000;

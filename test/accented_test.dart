@@ -46,8 +46,7 @@ void main() {
       
       expect(accentedXyz.toColor().value, closeTo(accentedRgb.value, 1));
       expect(accentedLab.toColor().value, closeTo(accentedRgb.value, 1));
-      // TODO: Fix LuvColor accented test failure. Values differ significantly.
-      // expect(accentedLuv.toColor().value, closeTo(accentedRgb.value, 1));
+      expect(accentedLuv.toColor().value, closeTo(accentedRgb.value, 1));
     });
   });
 }

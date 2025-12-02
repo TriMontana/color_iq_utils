@@ -1,4 +1,4 @@
-export 'models/color.dart';
+export 'models/coloriq.dart';
 export 'models/cmyk_color.dart';
 export 'models/xyz_color.dart';
 export 'models/lab_color.dart';

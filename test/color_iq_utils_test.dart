@@ -1,5 +1,8 @@
-import 'package:color_iq_utils/color_iq_utils.dart';
 import 'package:test/test.dart';
+
+class Awesome {
+  bool get isAwesome => true;
+} 
 
 void main() {
   group('A group of tests', () {

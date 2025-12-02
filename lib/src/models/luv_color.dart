@@ -1,8 +1,9 @@
 import 'dart:math';
 import '../color_interfaces.dart';
 import '../color_temperature.dart';
-import 'color.dart';
+import 'coloriq.dart';
 import 'hct_color.dart';
+import 'xyz_color.dart';
 
 
 class LuvColor implements ColorSpacesIQ {
@@ -14,47 +15,30 @@ class LuvColor implements ColorSpacesIQ {
 
   @override
   ColorIQ toColor() {
-    double y = (l + 16) / 116;
-    double x, z;
     if (l == 0) {
-      x = 0;
-      z = 0;
-    } else {
-      double u0 = 4 * 95.047 / (95.047 + 15 * 100.0 + 3 * 108.883);
-      double v0 = 9 * 100.0 / (95.047 + 15 * 100.0 + 3 * 108.883);
-      double a = 1 / 3 * (52 * l / (u + 13 * l * u0) - 1);
-      double b = -5 * y;
-      double c = -1 / 3;
-      double d = y * (39 * l / (v + 13 * l * v0) - 5);
-      x = (d - b) / (a - c);
-      z = x * a + b;
+      return const ColorIQ.fromARGB(255, 0, 0, 0);
     }
 
-    double x3 = x * x * x;
-    double y3 = y * y * y;
-    double z3 = z * z * z;
+    const double refX = 95.047;
+    const double refY = 100.0;
+    const double refZ = 108.883;
+    const double refU = (4 * refX) / (refX + (15 * refY) + (3 * refZ));
+    const double refV = (9 * refY) / (refX + (15 * refY) + (3 * refZ));
 
-    double xn = 95.047;
-    double yn = 100.0;
-    double zn = 108.883;
+    final double uPrime = u / (13 * l) + refU;
+    final double vPrime = v / (13 * l) + refV;
 
-    double r = xn * ((x3 > 0.008856) ? x3 : ((x - 16 / 116) / 7.787));
-    double g = yn * ((y3 > 0.008856) ? y3 : ((y - 16 / 116) / 7.787));
-    double bVal = zn * ((z3 > 0.008856) ? z3 : ((z - 16 / 116) / 7.787));
+    final double y = l > 8 ? refY * pow((l + 16) / 116, 3).toDouble() : refY * l / 903.3;
 
-    double rS = r / 100;
-    double gS = g / 100;
-    double bS = bVal / 100;
+    final double denominator = vPrime * 4;
+    double x = 0;
+    double z = 0;
+    if (denominator != 0) {
+      x = (9 * y * uPrime) / denominator;
+      z = (9 * y / vPrime - x - 15 * y) / 3;
+    }
 
-    double rL = rS * 3.2406 + gS * -1.5372 + bS * -0.4986;
-    double gL = rS * -0.9689 + gS * 1.8758 + bS * 0.0415;
-    double bL = rS * 0.0557 + gS * -0.2040 + bS * 1.0570;
-
-    rL = (rL > 0.0031308) ? (1.055 * pow(rL, 1 / 2.4) - 0.055) : (12.92 * rL);
-    gL = (gL > 0.0031308) ? (1.055 * pow(gL, 1 / 2.4) - 0.055) : (12.92 * gL);
-    bL = (bL > 0.0031308) ? (1.055 * pow(bL, 1 / 2.4) - 0.055) : (12.92 * bL);
-
-    return ColorIQ.fromARGB(255, (rL * 255).round().clamp(0, 255), (gL * 255).round().clamp(0, 255), (bL * 255).round().clamp(0, 255));
+    return XyzColor(x, y, z).toColor();
   }
 
   @override

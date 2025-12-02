@@ -1,7 +1,7 @@
 import 'dart:math';
 import '../color_interfaces.dart';
 import '../color_temperature.dart';
-import 'color.dart';
+import 'coloriq.dart';
 import 'hct_color.dart';
 import 'lab_color.dart';
 import 'luv_color.dart';

@@ -1,7 +1,7 @@
 import 'dart:math';
 import '../color_interfaces.dart';
 import '../color_temperature.dart';
-import 'color.dart';
+import 'coloriq.dart';
 import 'hct_color.dart';
 
 import 'lch_color.dart';
@@ -59,6 +59,7 @@ class LabColor implements ColorSpacesIQ {
 
   @override
   List<int> get srgb => toColor().srgb;
+  @override
   List<double> get linearSrgb => toColor().linearSrgb;
 
   @override

@@ -1,7 +1,7 @@
 
 import '../color_interfaces.dart';
 import '../color_temperature.dart';
-import 'color.dart';
+import 'coloriq.dart';
 import 'hct_color.dart';
 
 class CmykColor implements ColorSpacesIQ {
@@ -218,4 +218,14 @@ class CmykColor implements ColorSpacesIQ {
 
   @override
   String toString() => 'CmykColor(c: ${c.toStringAsFixed(2)}, m: ${m.toStringAsFixed(2)}, y: ${y.toStringAsFixed(2)}, k: ${k.toStringAsFixed(2)})';
+  
+  @override
+  int get hashCode {
+    final int cHash = c.hashCode;
+    final int mHash = m.hashCode;
+    final int yHash = y.hashCode;
+    final int kHash = k.hashCode;
+    return cHash ^ (mHash << 7) ^ (yHash << 14) ^ (kHash << 21);
+  }
+  
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names, non_constant_identifier_names
+
 import 'dart:math';
 import 'color_interfaces.dart';
 import 'models/lab_color.dart';
@@ -40,7 +42,7 @@ extension DeltaEExtension on ColorSpacesIQ {
 
     final LabColor lab2;
     if (other is LabColor) {
-      lab2 = other as LabColor;
+      lab2 = other;
     } else {
       lab2 = other.toColor().toLab();
     }

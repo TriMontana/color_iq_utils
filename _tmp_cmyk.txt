@@ -1,0 +1,184 @@
+   1: 
+   2: import '../color_interfaces.dart';
+   3: import '../color_temperature.dart';
+   4: import 'color.dart';
+   5: import 'hct_color.dart';
+   6: 
+   8:   final double c;
+   9:   final double m;
+  10:   final double y;
+  11:   final double k;
+  12: 
+  13:   const CmykColor(this.c, this.m, this.y, this.k);
+  14: 
+  15:   @override
+  17:     double r = 255 * (1 - c) * (1 - k);
+  18:     double g = 255 * (1 - m) * (1 - k);
+  19:     double b = 255 * (1 - y) * (1 - k);
+  20:     return ColorIQ.fromARGB(255, r.round().clamp(0, 255), g.round().clamp(0, 255), b.round().clamp(0, 255));
+  22:   
+  23:   @override
+  24:   int get value => toColor().value;
+  25: 
+  26:   @override
+  27:   bool operator ==(Object other) => other is CmykColor && other.c == c && other.m == m && other.y == y && other.k == k;
+  28:   
+  29:   @override
+  31:     return toColor().lighten(amount).toCmyk();
+  33: 
+  34:   @override
+  36:     return toColor().darken(amount).toCmyk();
+  38: 
+  39:   @override
+  41:     return toColor().brighten(amount).toCmyk();
+  43:   
+  44: 
+  45:   @override
+  47:     return toColor().saturate(amount).toCmyk();
+  49: 
+  50:   @override
+  52:     return toColor().desaturate(amount).toCmyk();
+  54: 
+  55:   @override
+  57:     return toColor().intensify(amount).toCmyk();
+  59: 
+  60:   @override
+  62:     return toColor().deintensify(amount).toCmyk();
+  64: 
+  65:   @override
+  67:     return toColor().accented(amount).toCmyk();
+  69: 
+  70:   @override
+  72:     return toColor().simulate(type).toCmyk();
+  74: 
+  75:   @override
+  76:   List<int> get srgb => toColor().srgb;
+  77: 
+  78:   @override
+  79:   List<double> get linearSrgb => toColor().linearSrgb;
+  80: 
+  81:   @override
+  82:   CmykColor get inverted => toColor().inverted.toCmyk();
+  83: 
+  84:   @override
+  85:   CmykColor get grayscale => toColor().grayscale.toCmyk();
+  86: 
+  87:   @override
+  88:   CmykColor whiten([double amount = 20]) => toColor().whiten(amount).toCmyk();
+  89: 
+  90:   @override
+  91:   CmykColor blacken([double amount = 20]) => toColor().blacken(amount).toCmyk();
+  92: 
+  93:   @override
+  94:   CmykColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toCmyk();
+  95: 
+  96:   @override
+  97:   HctColor toHct() => toColor().toHct();
+  98: 
+  99:   @override
+ 100:   CmykColor fromHct(HctColor hct) => hct.toColor().toCmyk();
+ 101: 
+ 102:   @override
+ 104:     return toColor().adjustTransparency(amount).toCmyk();
+ 106: 
+ 107:   @override
+ 108:   double get transparency => toColor().transparency;
+ 109: 
+ 110:   @override
+ 111:   ColorTemperature get temperature => toColor().temperature;
+ 112: 
+ 113:   /// Creates a copy of this color with the given fields replaced with the new values.
+ 115:     return CmykColor(
+ 116:       c ?? this.c,
+ 117:       m ?? this.m,
+ 118:       y ?? this.y,
+ 119:       k ?? this.k,
+ 120:     );
+ 122: 
+ 123:   @override
+ 124:   List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toCmyk()).toList();
+ 125: 
+ 126:   @override
+ 128:     return toColor()
+ 129:         .lighterPalette(step)
+ 130:         .map((c) => (c as ColorIQ).toCmyk())
+ 131:         .toList();
+ 133: 
+ 134:   @override
+ 136:     return toColor()
+ 137:         .darkerPalette(step)
+ 138:         .map((c) => (c as ColorIQ).toCmyk())
+ 139:         .toList();
+ 141: 
+ 142:   @override
+ 143:   ColorSpacesIQ get random => (toColor().random as ColorIQ).toCmyk();
+ 144: 
+ 145:   @override
+ 146:   bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+ 147: 
+ 148:   @override
+ 149:   double get luminance => toColor().luminance;
+ 150: 
+ 151:   @override
+ 152:   Brightness get brightness => toColor().brightness;
+ 153: 
+ 154:   @override
+ 155:   bool get isDark => brightness == Brightness.dark;
+ 156: 
+ 157:   @override
+ 158:   bool get isLight => brightness == Brightness.light;
+ 159: 
+ 160:   @override
+ 161:   CmykColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toCmyk();
+ 162: 
+ 163:   @override
+ 164:   CmykColor opaquer([double amount = 20]) => toColor().opaquer(amount).toCmyk();
+ 165: 
+ 166:   @override
+ 167:   CmykColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toCmyk();
+ 168: 
+ 169:   @override
+ 170:   CmykColor get complementary => toColor().complementary.toCmyk();
+ 171: 
+ 172:   @override
+ 173:   CmykColor warmer([double amount = 20]) => toColor().warmer(amount).toCmyk();
+ 174: 
+ 175:   @override
+ 176:   CmykColor cooler([double amount = 20]) => toColor().cooler(amount).toCmyk();
+ 177: 
+ 178:   @override
+ 179:   List<CmykColor> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toCmyk()).toList();
+ 180: 
+ 181:   @override
+ 182:   List<CmykColor> tonesPalette() => toColor().tonesPalette().map((c) => c.toCmyk()).toList();
+ 183: 
+ 184:   @override
+ 186: 
+ 187:   @override
+ 188:   List<CmykColor> square() => toColor().square().map((c) => c.toCmyk()).toList();
+ 189: 
+ 190:   @override
+ 192: 
+ 193:   @override
+ 194:   double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+ 195: 
+ 196:   @override
+ 197:   double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+ 198: 
+ 199:   @override
+ 200:   ColorSlice closestColorSlice() => toColor().closestColorSlice();
+ 201: 
+ 202:   @override
+ 203:   bool isWithinGamut([Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+ 204: 
+ 205:   @override
+ 206:   List<double> get whitePoint => [95.047, 100.0, 108.883];
+ 207: 
+ 208:   @override
+ 211:       'type': 'CmykColor',
+ 212:       'c': c,
+ 213:       'm': m,
+ 214:       'y': y,
+ 215:       'k': k,
+ 218: 
+ 219:   @override

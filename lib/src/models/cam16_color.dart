@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:material_color_utilities/material_color_utilities.dart' as mcu;
 import '../color_interfaces.dart';
 import '../color_temperature.dart';
-import 'color.dart';
+import 'coloriq.dart';
 import 'hct_color.dart';
 
 class Cam16Color implements ColorSpacesIQ {

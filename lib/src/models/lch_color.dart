@@ -1,7 +1,7 @@
 import 'dart:math';
 import '../color_interfaces.dart';
 import '../color_temperature.dart';
-import 'color.dart';
+import 'coloriq.dart';
 import 'hct_color.dart';
 import 'lab_color.dart';
 
@@ -90,6 +90,7 @@ class LchColor implements ColorSpacesIQ {
   LchColor brighten([double amount = 20]) {
     return toColor().brighten(amount).toLch();
   }
+  @override
   HctColor toHct() => toColor().toHct();
 
   @override

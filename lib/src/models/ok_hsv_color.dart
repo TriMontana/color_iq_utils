@@ -1,7 +1,7 @@
 import 'dart:math';
 import '../color_interfaces.dart';
 import '../color_temperature.dart';
-import 'color.dart';
+import 'coloriq.dart';
 import 'hct_color.dart';
 import 'ok_lab_color.dart';
 
@@ -76,6 +76,7 @@ class OkHsvColor implements ColorSpacesIQ {
   @override
   List<int> get srgb => toColor().srgb;
 
+  @override
   List<double> get linearSrgb => toColor().linearSrgb;
 
   @override

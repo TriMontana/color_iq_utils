@@ -1,4 +1,3 @@
-import 'dart:math';
 
 enum ColorBlindnessType {
   none,

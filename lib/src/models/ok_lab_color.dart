@@ -1,7 +1,7 @@
 import 'dart:math';
 import '../color_interfaces.dart';
 import '../color_temperature.dart';
-import 'color.dart';
+import 'coloriq.dart';
 import 'hct_color.dart';
 import 'ok_lch_color.dart';
 import 'ok_hsl_color.dart';
@@ -104,12 +104,12 @@ class OkLabColor implements ColorSpacesIQ {
 
   @override
   OkLabColor saturate([double amount = 25]) {
-    return (toOkLch().saturate(amount) as OkLchColor).toOkLab();
+    return (toOkLch().saturate(amount)).toOkLab();
   }
 
   @override
   OkLabColor desaturate([double amount = 25]) {
-    return (toOkLch().desaturate(amount) as OkLchColor).toOkLab();
+    return (toOkLch().desaturate(amount)).toOkLab();
   }
 
   @override

@@ -1,5 +1,5 @@
 import 'color_interfaces.dart';
-import 'models/hsl_color.dart';
+
 
 /// Provides functionality to describe and classify colors.
 class ColorDescriptor {

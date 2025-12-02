@@ -1,5 +1,5 @@
 import 'color_interfaces.dart';
-import 'models/color.dart';
+import 'models/coloriq.dart';
 import 'models/hsl_color.dart';
 import 'models/ok_lab_color.dart';
 import 'models/ok_lch_color.dart';
@@ -65,8 +65,8 @@ extension CssExtensions on ColorSpacesIQ {
     }
     
     final h = hsl.h.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
-    final s = (hsl.s * 100).toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '') + '%';
-    final l = (hsl.l * 100).toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '') + '%';
+    final s = '${(hsl.s * 100).toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '')}%';
+    final l = '${(hsl.l * 100).toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '')}%';
     
     if (hsl.alpha >= 0.99) {
       return 'hsl($h, $s, $l)';

@@ -1,5 +1,5 @@
 import 'models/hct_color.dart';
-import 'models/color.dart';
+import 'models/coloriq.dart';
 import 'color_wheels.dart';
 export 'color_wheels.dart';
 import 'color_temperature.dart';

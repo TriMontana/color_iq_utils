@@ -1,10 +1,9 @@
 import 'dart:math';
 import '../color_interfaces.dart';
 import '../color_temperature.dart';
-import 'color.dart';
+import 'coloriq.dart';
 import 'hct_color.dart';
 
-import 'luv_color.dart';
 
 class HsluvColor implements ColorSpacesIQ {
   final double h;

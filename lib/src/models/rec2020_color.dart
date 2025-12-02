@@ -2,7 +2,7 @@
 import 'dart:math';
 import '../color_interfaces.dart';
 import '../color_temperature.dart';
-import 'color.dart';
+import 'coloriq.dart';
 import 'hct_color.dart';
 
 class Rec2020Color implements ColorSpacesIQ {
@@ -125,7 +125,6 @@ class Rec2020Color implements ColorSpacesIQ {
   @override
   double get transparency => toColor().transparency;
 
-  @override
   double get opacity => 1.0 - transparency;
 
   @override
