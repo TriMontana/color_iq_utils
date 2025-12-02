@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('Color Wheels Tests', () {
     test('generateHsvWheel returns 60 slices', () {
-      final wheel = generateHsvWheel();
+      final List<ColorSlice> wheel = generateHsvWheel();
       expect(wheel.length, 60);
       expect(wheel.first.color, isA<HsvColor>());
       expect(wheel.first.name, equals('Red'));
@@ -18,7 +18,7 @@ void main() {
     });
 
     test('generateHctWheel returns 60 slices', () {
-      final wheel = generateHctWheel();
+      final List<ColorSlice> wheel = generateHctWheel();
       expect(wheel.length, 60);
       expect(wheel.first.color, isA<HctColor>());
       // HCT Red is at ~27 degrees (Index 4). Index 0 is shifted to ~336 degrees (Raspberry).
@@ -30,27 +30,27 @@ void main() {
     });
 
     test('Color names are populated', () {
-      final wheel = generateHsvWheel();
-      for (final slice in wheel) {
+      final List<ColorSlice> wheel = generateHsvWheel();
+      for (final ColorSlice slice in wheel) {
         expect(slice.name, isNotEmpty);
         expect(slice.name, isNot(equals('Unknown')));
       }
     });
 
     test('Custom parameters work', () {
-      final hsvWheel = generateHsvWheel(saturation: 50, value: 50);
-      final firstHsv = hsvWheel.first.color as HsvColor;
+      final List<ColorSlice> hsvWheel = generateHsvWheel(saturation: 50, value: 50);
+      final HsvColor firstHsv = hsvWheel.first.color as HsvColor;
       expect(firstHsv.s, closeTo(0.5, 0.01));
       expect(firstHsv.v, closeTo(0.5, 0.01));
 
-      final hctWheel = generateHctWheel(chroma: 80, tone: 60);
-      final firstHct = hctWheel.first.color as HctColor;
+      final List<ColorSlice> hctWheel = generateHctWheel(chroma: 80, tone: 60);
+      final HctColor firstHct = hctWheel.first.color as HctColor;
       expect(firstHct.chroma, closeTo(80, 0.01));
       expect(firstHct.tone, closeTo(60, 0.01));
     });
 
     test('getHsvWheelMap returns map with correct keys', () {
-      final map = getHsvWheelMap();
+      final Map<String, ColorSlice> map = getHsvWheelMap();
       expect(map.length, 60);
       expect(map.containsKey('Red'), isTrue);
       expect(map.containsKey('Scarlet'), isTrue);
@@ -58,7 +58,7 @@ void main() {
     });
 
     test('getHctWheelMap returns map with correct keys', () {
-      final map = getHctWheelMap();
+      final Map<String, ColorSlice> map = getHctWheelMap();
       expect(map.length, 60);
       expect(map.containsKey('Red'), isTrue);
       expect(map['Red']!.color, isA<HctColor>());

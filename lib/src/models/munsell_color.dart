@@ -1,8 +1,8 @@
 import 'dart:math';
-import '../color_interfaces.dart';
-import '../color_temperature.dart';
-import 'coloriq.dart';
-import 'hct_color.dart';
+import 'package:color_iq_utils/src/color_interfaces.dart';
+import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/models/coloriq.dart';
+import 'package:color_iq_utils/src/models/hct_color.dart';
 
 class MunsellColor implements ColorSpacesIQ {
   final String hue;
@@ -26,46 +26,46 @@ class MunsellColor implements ColorSpacesIQ {
   int get value => toColor().value;
   
   @override
-  MunsellColor darken([double amount = 20]) {
+  MunsellColor darken([final double amount = 20]) {
     // Decrease Value
     return MunsellColor(hue, (munsellValue - (amount / 10)).clamp(0.0, 10.0), chroma);
   }
 
   @override
-  MunsellColor brighten([double amount = 20]) {
+  MunsellColor brighten([final double amount = 20]) {
     // Increase Value
     return MunsellColor(hue, (munsellValue + (amount / 10)).clamp(0.0, 10.0), chroma);
   }
 
   @override
-  MunsellColor saturate([double amount = 25]) {
+  MunsellColor saturate([final double amount = 25]) {
     // Increase Chroma
     return MunsellColor(hue, munsellValue, chroma + (amount / 5)); // Arbitrary scale
   }
 
   @override
-  MunsellColor desaturate([double amount = 25]) {
+  MunsellColor desaturate([final double amount = 25]) {
     // Decrease Chroma
     return MunsellColor(hue, munsellValue, max(0.0, chroma - (amount / 5)));
   }
 
   @override
-  MunsellColor intensify([double amount = 10]) {
+  MunsellColor intensify([final double amount = 10]) {
     return toColor().intensify(amount).toMunsell();
   }
 
   @override
-  MunsellColor deintensify([double amount = 10]) {
+  MunsellColor deintensify([final double amount = 10]) {
     return toColor().deintensify(amount).toMunsell();
   }
 
   @override
-  MunsellColor accented([double amount = 15]) {
+  MunsellColor accented([final double amount = 15]) {
     return toColor().accented(amount).toMunsell();
   }
 
   @override
-  MunsellColor simulate(ColorBlindnessType type) {
+  MunsellColor simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toMunsell();
   }
 
@@ -73,10 +73,10 @@ class MunsellColor implements ColorSpacesIQ {
   List<int> get srgb => toColor().srgb;
 
   @override
-  MunsellColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toMunsell();
+  MunsellColor adjustHue([final double amount = 20]) => toColor().adjustHue(amount).toMunsell();
 
   @override
-  MunsellColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toMunsell();
+  MunsellColor blend(final ColorSpacesIQ other, [final double amount = 50]) => toColor().blend(other, amount).toMunsell();
 
   @override
   MunsellColor get complementary => toColor().complementary.toMunsell();
@@ -85,7 +85,7 @@ class MunsellColor implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  MunsellColor opaquer([double amount = 20]) => toColor().opaquer(amount).toMunsell();
+  MunsellColor opaquer([final double amount = 20]) => toColor().opaquer(amount).toMunsell();
 
 
 
@@ -99,16 +99,16 @@ class MunsellColor implements ColorSpacesIQ {
   MunsellColor get grayscale => toColor().grayscale.toMunsell();
 
   @override
-  MunsellColor whiten([double amount = 20]) => toColor().whiten(amount).toMunsell();
+  MunsellColor whiten([final double amount = 20]) => toColor().whiten(amount).toMunsell();
 
   @override
-  MunsellColor blacken([double amount = 20]) => toColor().blacken(amount).toMunsell();
+  MunsellColor blacken([final double amount = 20]) => toColor().blacken(amount).toMunsell();
 
   @override
-  MunsellColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toMunsell();
+  MunsellColor lerp(final ColorSpacesIQ other, final double t) => (toColor().lerp(other, t) as ColorIQ).toMunsell();
 
   @override
-  MunsellColor lighten([double amount = 20]) {
+  MunsellColor lighten([final double amount = 20]) {
     // Increase Value
     return MunsellColor(hue, (munsellValue + (amount / 10)).clamp(0.0, 10.0), chroma);
   }
@@ -117,10 +117,10 @@ class MunsellColor implements ColorSpacesIQ {
   HctColor toHct() => toColor().toHct();
 
   @override
-  MunsellColor fromHct(HctColor hct) => hct.toColor().toMunsell();
+  MunsellColor fromHct(final HctColor hct) => hct.toColor().toMunsell();
 
   @override
-  MunsellColor adjustTransparency([double amount = 20]) {
+  MunsellColor adjustTransparency([final double amount = 20]) {
     // Munsell doesn't have alpha, so we ignore or return as is (conceptually)
     // But interface requires returning same type.
     // Since we don't store alpha, we can't really adjust it.
@@ -134,7 +134,7 @@ class MunsellColor implements ColorSpacesIQ {
   ColorTemperature get temperature => toColor().temperature;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  MunsellColor copyWith({String? hue, double? munsellValue, double? chroma}) {
+  MunsellColor copyWith({final String? hue, final double? munsellValue, final double? chroma}) {
     return MunsellColor(
       hue ?? this.hue,
       munsellValue ?? this.munsellValue,
@@ -143,21 +143,21 @@ class MunsellColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toMunsell()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((final ColorSpacesIQ c) => (c as ColorIQ).toMunsell()).toList();
 
   @override
-  List<ColorSpacesIQ> lighterPalette([double? step]) {
+  List<ColorSpacesIQ> lighterPalette([final double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as ColorIQ).toMunsell())
+        .map((final ColorSpacesIQ c) => (c as ColorIQ).toMunsell())
         .toList();
   }
 
   @override
-  List<ColorSpacesIQ> darkerPalette([double? step]) {
+  List<ColorSpacesIQ> darkerPalette([final double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as ColorIQ).toMunsell())
+        .map((final ColorSpacesIQ c) => (c as ColorIQ).toMunsell())
         .toList();
   }
 
@@ -165,7 +165,7 @@ class MunsellColor implements ColorSpacesIQ {
   ColorSpacesIQ get random => (toColor().random as ColorIQ).toMunsell();
 
   @override
-  bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+  bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
 
   @override
   double get luminance => toColor().luminance;
@@ -178,44 +178,44 @@ class MunsellColor implements ColorSpacesIQ {
 
   @override
   @override
-  MunsellColor warmer([double amount = 20]) => toColor().warmer(amount).toMunsell();
+  MunsellColor warmer([final double amount = 20]) => toColor().warmer(amount).toMunsell();
 
   @override
-  MunsellColor cooler([double amount = 20]) => toColor().cooler(amount).toMunsell();
+  MunsellColor cooler([final double amount = 20]) => toColor().cooler(amount).toMunsell();
 
   @override
-  List<MunsellColor> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toMunsell()).toList();
+  List<MunsellColor> generateBasicPalette() => toColor().generateBasicPalette().map((final ColorIQ c) => c.toMunsell()).toList();
 
   @override
-  List<MunsellColor> tonesPalette() => toColor().tonesPalette().map((c) => c.toMunsell()).toList();
+  List<MunsellColor> tonesPalette() => toColor().tonesPalette().map((final ColorIQ c) => c.toMunsell()).toList();
 
   @override
-  List<MunsellColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toMunsell()).toList();
+  List<MunsellColor> analogous({final int count = 5, final double offset = 30}) => toColor().analogous(count: count, offset: offset).map((final ColorIQ c) => c.toMunsell()).toList();
 
   @override
-  List<MunsellColor> square() => toColor().square().map((c) => c.toMunsell()).toList();
+  List<MunsellColor> square() => toColor().square().map((final ColorIQ c) => c.toMunsell()).toList();
 
   @override
-  List<MunsellColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toMunsell()).toList();
+  List<MunsellColor> tetrad({final double offset = 60}) => toColor().tetrad(offset: offset).map((final ColorIQ c) => c.toMunsell()).toList();
 
   @override
-  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
 
   @override
-  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+  double contrastWith(final ColorSpacesIQ other) => toColor().contrastWith(other);
 
   @override
   ColorSlice closestColorSlice() => toColor().closestColorSlice();
 
   @override
-  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
 
   @override
-  List<double> get whitePoint => [95.047, 100.0, 108.883];
+  List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
 
   @override
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'type': 'MunsellColor',
       'hue': hue,
       'value': munsellValue, // Using munsellValue to avoid conflict with value getter

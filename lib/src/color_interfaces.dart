@@ -1,9 +1,9 @@
-import 'models/hct_color.dart';
-import 'models/coloriq.dart';
-import 'color_wheels.dart';
+import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:color_iq_utils/src/models/coloriq.dart';
+import 'package:color_iq_utils/src/color_wheels.dart';
 export 'color_wheels.dart';
-import 'color_temperature.dart';
-import 'color_blindness.dart';
+import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/color_blindness.dart';
 export 'color_blindness.dart';
 
 /// A common interface for all color models.
@@ -12,20 +12,20 @@ abstract class ColorSpacesIQ {
   int get value;
 
   /// Lightens the color by the given [amount] (0-100).
-  ColorSpacesIQ lighten([double amount = 20]);
+  ColorSpacesIQ lighten([final double amount = 20]);
 
   /// Darkens the color by the given [amount] (0-100).
-  ColorSpacesIQ darken([double amount = 20]);
+  ColorSpacesIQ darken([final double amount = 20]);
 
   /// Brightens the color by the given [amount] (0-100).
   /// Increases the brightness/value (HSV Value).
-  ColorSpacesIQ brighten([double amount = 20]);
+  ColorSpacesIQ brighten([final double amount = 20]);
 
   /// Saturates the color by the given [amount] (0-100).
-  ColorSpacesIQ saturate([double amount = 25]);
+  ColorSpacesIQ saturate([final double amount = 25]);
 
   /// Desaturates the color by the given [amount] (0-100).
-  ColorSpacesIQ desaturate([double amount = 25]);
+  ColorSpacesIQ desaturate([final double amount = 25]);
 
   /// Returns the sRGB components (0-255).
   List<int> get srgb;
@@ -40,16 +40,16 @@ abstract class ColorSpacesIQ {
   ColorSpacesIQ get grayscale;
 
   /// Whitens the color by mixing with white. [amount] is 0-100.
-  ColorSpacesIQ whiten([double amount = 20]);
+  ColorSpacesIQ whiten([final double amount = 20]);
 
   /// Blackens the color by mixing with black. [amount] is 0-100.
-  ColorSpacesIQ blacken([double amount = 20]);
+  ColorSpacesIQ blacken([final double amount = 20]);
 
   /// Linearly interpolates between this color and [other]. [t] is 0.0-1.0.
-  ColorSpacesIQ lerp(ColorSpacesIQ other, double t);
+  ColorSpacesIQ lerp(final ColorSpacesIQ other, final double t);
   
   /// Adjusts the transparency of the color. [amount] is 0-100.
-  ColorSpacesIQ adjustTransparency([double amount = 20]);
+  ColorSpacesIQ adjustTransparency([final double amount = 20]);
 
 
   /// Converts the color to the standard ARGB [ColorIQ] format.
@@ -60,19 +60,19 @@ abstract class ColorSpacesIQ {
 
   /// Creates a new instance of this color type from an HCT color.
   /// Intensifies the color by increasing chroma and slightly decreasing tone.
-  ColorSpacesIQ intensify([double amount = 10]);
+  ColorSpacesIQ intensify([final double amount = 10]);
 
   /// Deintensifies (mutes) the color by decreasing chroma and slightly increasing tone.
-  ColorSpacesIQ deintensify([double amount = 10]);
+  ColorSpacesIQ deintensify([final double amount = 10]);
 
   /// Creates an accented version of this color.
   /// Increases chroma and brightness to make the color stand out.
-  ColorSpacesIQ accented([double amount = 15]);
+  ColorSpacesIQ accented([final double amount = 15]);
 
-  ColorSpacesIQ fromHct(HctColor hct);
+  ColorSpacesIQ fromHct(final HctColor hct);
 
   /// Simulates color blindness on this color.
-  ColorSpacesIQ simulate(ColorBlindnessType type);
+  ColorSpacesIQ simulate(final ColorBlindnessType type);
 
   /// Returns the transparency (alpha) as a double (0.0-1.0).
   double get transparency;
@@ -84,17 +84,17 @@ abstract class ColorSpacesIQ {
 
   /// Returns a palette of 5 colors progressively lighter.
   /// [step] is the percentage increment (0-100). If null, steps are equidistant to white.
-  List<ColorSpacesIQ> lighterPalette([double? step]);
+  List<ColorSpacesIQ> lighterPalette([final double? step]);
 
   /// Returns a palette of 5 colors progressively darker.
   /// [step] is the percentage increment (0-100). If null, steps are equidistant to black.
-  List<ColorSpacesIQ> darkerPalette([double? step]);
+  List<ColorSpacesIQ> darkerPalette([final double? step]);
 
   /// Returns a random color of the same type.
   ColorSpacesIQ get random;
 
   /// Compares this color with another color.
-  bool isEqual(ColorSpacesIQ other);
+  bool isEqual(final ColorSpacesIQ other);
 
   /// Returns the brightness of this color (light or dark).
   Brightness get brightness;
@@ -104,15 +104,15 @@ abstract class ColorSpacesIQ {
 
   /// Blends this color with [other] by the given [amount] (0-100).
   /// Default is 50%.
-  ColorSpacesIQ blend(ColorSpacesIQ other, [double amount = 50]);
+  ColorSpacesIQ blend(final ColorSpacesIQ other, [final double amount = 50]);
 
   /// Makes the color more opaque by the given [amount] (0-100).
   /// Default is 20%.
-  ColorSpacesIQ opaquer([double amount = 20]);
+  ColorSpacesIQ opaquer([final double amount = 20]);
 
   /// Adjusts the hue of the color by the given [amount] (degrees).
   /// Default is +20 degrees.
-  ColorSpacesIQ adjustHue([double amount = 20]);
+  ColorSpacesIQ adjustHue([final double amount = 20]);
 
   /// Returns the complementary color.
   ColorSpacesIQ get complementary;
@@ -125,11 +125,11 @@ abstract class ColorSpacesIQ {
 
   /// Makes the color warmer (shifts hue towards red/orange) by the given [amount] (0-100).
   /// Default is 20%.
-  ColorSpacesIQ warmer([double amount = 20]);
+  ColorSpacesIQ warmer([final double amount = 20]);
 
   /// Makes the color cooler (shifts hue towards blue) by the given [amount] (0-100).
   /// Default is 20%.
-  ColorSpacesIQ cooler([double amount = 20]);
+  ColorSpacesIQ cooler([final double amount = 20]);
 
   /// Returns a basic palette of 7 colors:
   /// [darkest, darker, dark, base, light, lighter, lightest].
@@ -142,7 +142,7 @@ abstract class ColorSpacesIQ {
   /// Returns analogous colors.
   /// [count] can be 3 or 5.
   /// [offset] is the hue offset in degrees (default 30).
-  List<ColorSpacesIQ> analogous({int count = 5, double offset = 30});
+  List<ColorSpacesIQ> analogous({final int count = 5, final double offset = 30});
 
   /// Returns a square harmony palette (4 colors).
   /// Base, +90, +180, +270 degrees.
@@ -151,20 +151,20 @@ abstract class ColorSpacesIQ {
   /// Returns a tetradic (rectangle) harmony palette (4 colors).
   /// Base, +60, +180, +240 degrees (default offset 60).
   /// [offset] is the hue offset for the second color pair (default 60).
-  List<ColorSpacesIQ> tetrad({double offset = 60});
+  List<ColorSpacesIQ> tetrad({final double offset = 60});
 
   /// Calculates the distance to another color using Cam16-UCS.
-  double distanceTo(ColorSpacesIQ other);
+  double distanceTo(final ColorSpacesIQ other);
 
   /// Calculates the contrast ratio with another color (1.0 to 21.0).
-  double contrastWith(ColorSpacesIQ other);
+  double contrastWith(final ColorSpacesIQ other);
 
   /// Returns the closest color slice from the HCT color wheel.
   ColorSlice closestColorSlice();
 
   /// Checks if the color is within the specified gamut.
   /// Default is [Gamut.sRGB].
-  bool isWithinGamut([Gamut gamut = Gamut.sRGB]);
+  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]);
 
   /// Returns the white point of the color space (XYZ values).
   /// Default is D65.

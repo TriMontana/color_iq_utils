@@ -4,8 +4,8 @@ import 'package:test/test.dart';
 void main() {
   group('Intensify and Deintensify Tests', () {
     test('HctColor intensify increases chroma and decreases tone', () {
-      final hct = HctColor(120, 50, 50);
-      final intensified = hct.intensify(10);
+      const HctColor hct = HctColor(120, 50, 50);
+      final HctColor intensified = hct.intensify(10);
       
       expect(intensified.chroma, greaterThan(hct.chroma));
       expect(intensified.tone, lessThan(hct.tone));
@@ -13,8 +13,8 @@ void main() {
     });
 
     test('HctColor deintensify decreases chroma and increases tone', () {
-      final hct = HctColor(120, 50, 50);
-      final deintensified = hct.deintensify(10);
+      const HctColor hct = HctColor(120, 50, 50);
+      final HctColor deintensified = hct.deintensify(10);
       
       expect(deintensified.chroma, lessThan(hct.chroma));
       expect(deintensified.tone, greaterThan(hct.tone));
@@ -22,12 +22,12 @@ void main() {
     });
 
     test('ColorIQ intensify delegates to HctColor', () {
-      final color = ColorIQ.fromARGB(255, 100, 150, 200); // Some blueish color
-      final intensified = color.intensify(20);
+      const ColorIQ color = ColorIQ.fromARGB(255, 100, 150, 200); // Some blueish color
+      final ColorIQ intensified = color.intensify(20);
       
       // Convert back to HCT to verify properties
-      final originalHct = color.toHct();
-      final intensifiedHct = intensified.toHct();
+      final HctColor originalHct = color.toHct();
+      final HctColor intensifiedHct = intensified.toHct();
 
       expect(intensifiedHct.chroma, greaterThan(originalHct.chroma));
       // Tone might not always strictly decrease due to gamut mapping, but generally should be lower or similar for intensification logic
@@ -36,19 +36,19 @@ void main() {
     });
 
     test('ColorIQ deintensify delegates to HctColor', () {
-      final color = ColorIQ.fromARGB(255, 100, 150, 200);
-      final deintensified = color.deintensify(20);
+      const ColorIQ color = ColorIQ.fromARGB(255, 100, 150, 200);
+      final ColorIQ deintensified = color.deintensify(20);
       
-      final originalHct = color.toHct();
-      final deintensifiedHct = deintensified.toHct();
+      final HctColor originalHct = color.toHct();
+      final HctColor deintensifiedHct = deintensified.toHct();
 
       expect(deintensifiedHct.chroma, lessThan(originalHct.chroma));
       expect(deintensifiedHct.tone, greaterThan(originalHct.tone));
     });
 
     test('LabColor intensify delegates correctly', () {
-      final lab = LabColor(50, 20, 20);
-      final intensified = lab.intensify(10);
+      const LabColor lab = LabColor(50, 20, 20);
+      final LabColor intensified = lab.intensify(10);
       
       // Check if it's different
       expect(intensified.l, isNot(equals(lab.l)));
@@ -59,23 +59,23 @@ void main() {
     });
 
     test('HslColor intensify delegates correctly', () {
-      final hsl = HslColor(120, 0.5, 0.5);
-      final intensified = hsl.intensify(10);
+      const HslColor hsl = HslColor(120, 0.5, 0.5);
+      final HslColor intensified = hsl.intensify(10);
       expect(intensified, isA<HslColor>());
       // Saturation should likely increase
       expect((intensified).s, greaterThanOrEqualTo(hsl.s));
     });
     
     test('Intensify clamps values correctly', () {
-       final hct = HctColor(120, 145, 10); // High chroma, low tone
-       final intensified = hct.intensify(50);
+       const HctColor hct = HctColor(120, 145, 10); // High chroma, low tone
+       final HctColor intensified = hct.intensify(50);
        // Chroma is unbounded technically in HCT but practically limited. Tone is 0-100.
        expect(intensified.tone, greaterThanOrEqualTo(0));
     });
 
     test('Deintensify clamps values correctly', () {
-       final hct = HctColor(120, 5, 95); // Low chroma, high tone
-       final deintensified = hct.deintensify(50);
+       const HctColor hct = HctColor(120, 5, 95); // Low chroma, high tone
+       final HctColor deintensified = hct.deintensify(50);
        expect(deintensified.chroma, greaterThanOrEqualTo(0));
        expect(deintensified.tone, lessThanOrEqualTo(100));
     });

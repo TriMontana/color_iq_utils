@@ -4,8 +4,8 @@ import 'package:test/test.dart';
 void main() {
   group('Palette Methods Tests', () {
     test('generateBasicPalette returns 7 colors', () {
-      final color = ColorIQ.fromARGB(255, 100, 150, 200);
-      final palette = color.generateBasicPalette();
+      const ColorIQ color = ColorIQ.fromARGB(255, 100, 150, 200);
+      final List<ColorIQ> palette = color.generateBasicPalette();
       expect(palette.length, 7);
       expect(palette[3], equals(color)); // Base color
       // Check ordering (darkest to lightest)
@@ -15,8 +15,8 @@ void main() {
     });
 
     test('tonesPalette returns 5 colors', () {
-      final color = ColorIQ.fromARGB(255, 255, 0, 0); // Red
-      final palette = color.tonesPalette();
+      const ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0); // Red
+      final List<ColorIQ> palette = color.tonesPalette();
       expect(palette.length, 5);
       expect(palette[0], equals(color)); // Base color
       // Check that subsequent colors are more gray (less saturated)
@@ -25,17 +25,17 @@ void main() {
     });
 
     test('analogous returns correct count and offset', () {
-      final color = HslColor(180, 1.0, 0.5); // Cyan
+      const HslColor color = HslColor(180, 1.0, 0.5); // Cyan
       
       // Default (count 5, offset 30)
-      final palette5 = color.analogous();
+      final List<HslColor> palette5 = color.analogous();
       expect(palette5.length, 5);
       expect(palette5[2].h, closeTo(180, 1.0)); // Base
       expect(palette5[3].h, closeTo(210, 1.0)); // +30
       expect(palette5[1].h, closeTo(150, 1.0)); // -30
 
       // Count 3, offset 10
-      final palette3 = color.analogous(count: 3, offset: 10);
+      final List<HslColor> palette3 = color.analogous(count: 3, offset: 10);
       expect(palette3.length, 3);
       expect(palette3[1].h, closeTo(180, 1.0)); // Base
       expect(palette3[2].h, closeTo(190, 1.0)); // +10
@@ -43,31 +43,31 @@ void main() {
     });
 
     test('Delegation works for other models', () {
-      final hct = HctColor(180, 50, 50);
-      final palette = hct.generateBasicPalette();
+      const HctColor hct = HctColor(180, 50, 50);
+      final List<HctColor> palette = hct.generateBasicPalette();
       expect(palette.length, 7);
       expect(palette.first, isA<HctColor>());
       
-      final tones = hct.tonesPalette();
+      final List<HctColor> tones = hct.tonesPalette();
       expect(tones.length, 5);
       expect(tones.first, isA<HctColor>());
 
-      final analogous = hct.analogous();
+      final List<HctColor> analogous = hct.analogous();
       expect(analogous.length, 5);
       expect(analogous.first, isA<HctColor>());
 
-      final square = hct.square();
+      final List<HctColor> square = hct.square();
       expect(square.length, 4);
       expect(square.first, isA<HctColor>());
 
-      final tetrad = hct.tetrad();
+      final List<HctColor> tetrad = hct.tetrad();
       expect(tetrad.length, 4);
       expect(tetrad.first, isA<HctColor>());
     });
 
     test('square returns 4 colors with 90 degree spacing', () {
-      final color = HslColor(0, 1.0, 0.5); // Red
-      final palette = color.square();
+      const HslColor color = HslColor(0, 1.0, 0.5); // Red
+      final List<HslColor> palette = color.square();
       expect(palette.length, 4);
       expect(palette[0].h, closeTo(0, 1.0));
       expect(palette[1].h, closeTo(90, 1.0));
@@ -76,10 +76,10 @@ void main() {
     });
 
     test('tetrad returns 4 colors with correct spacing', () {
-      final color = HslColor(0, 1.0, 0.5); // Red
+      const HslColor color = HslColor(0, 1.0, 0.5); // Red
       
       // Default offset 60
-      final palette = color.tetrad();
+      final List<HslColor> palette = color.tetrad();
       expect(palette.length, 4);
       expect(palette[0].h, closeTo(0, 1.0));
       expect(palette[1].h, closeTo(60, 1.0));
@@ -87,7 +87,7 @@ void main() {
       expect(palette[3].h, closeTo(240, 1.0)); // 180 + 60
 
       // Custom offset 30
-      final palette30 = color.tetrad(offset: 30);
+      final List<HslColor> palette30 = color.tetrad(offset: 30);
       expect(palette30.length, 4);
       expect(palette30[1].h, closeTo(30, 1.0));
       expect(palette30[3].h, closeTo(210, 1.0)); // 180 + 30

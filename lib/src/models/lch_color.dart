@@ -117,13 +117,13 @@ class LchColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toLch()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((ColorSpacesIQ c) => (c as ColorIQ).toLch()).toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as ColorIQ).toLch())
+        .map((ColorSpacesIQ c) => (c as ColorIQ).toLch())
         .toList();
   }
 
@@ -131,7 +131,7 @@ class LchColor implements ColorSpacesIQ {
   List<ColorSpacesIQ> darkerPalette([double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as ColorIQ).toLch())
+        .map((ColorSpacesIQ c) => (c as ColorIQ).toLch())
         .toList();
   }
 
@@ -172,19 +172,19 @@ class LchColor implements ColorSpacesIQ {
   LchColor cooler([double amount = 20]) => toColor().cooler(amount).toLch();
 
   @override
-  List<LchColor> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toLch()).toList();
+  List<LchColor> generateBasicPalette() => toColor().generateBasicPalette().map((ColorIQ c) => c.toLch()).toList();
 
   @override
-  List<LchColor> tonesPalette() => toColor().tonesPalette().map((c) => c.toLch()).toList();
+  List<LchColor> tonesPalette() => toColor().tonesPalette().map((ColorIQ c) => c.toLch()).toList();
 
   @override
-  List<LchColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toLch()).toList();
+  List<LchColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((ColorIQ c) => c.toLch()).toList();
 
   @override
-  List<LchColor> square() => toColor().square().map((c) => c.toLch()).toList();
+  List<LchColor> square() => toColor().square().map((ColorIQ c) => c.toLch()).toList();
 
   @override
-  List<LchColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toLch()).toList();
+  List<LchColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((ColorIQ c) => c.toLch()).toList();
 
   @override
   double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
@@ -204,11 +204,11 @@ class LchColor implements ColorSpacesIQ {
   }
 
   @override
-  List<double> get whitePoint => [95.047, 100.0, 108.883];
+  List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
 
   @override
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'type': 'LchColor',
       'l': l,
       'c': c,

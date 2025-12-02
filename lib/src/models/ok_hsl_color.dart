@@ -1,9 +1,9 @@
 import 'dart:math';
-import '../color_interfaces.dart';
-import '../color_temperature.dart';
-import 'coloriq.dart';
-import 'hct_color.dart';
-import 'ok_lch_color.dart';
+import 'package:color_iq_utils/src/color_interfaces.dart';
+import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/models/coloriq.dart';
+import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:color_iq_utils/src/models/ok_lch_color.dart';
 
 
 class OkHslColor implements ColorSpacesIQ {
@@ -19,9 +19,9 @@ class OkHslColor implements ColorSpacesIQ {
       // s is roughly c/0.4 for s=1.
       // l is roughly L.
       
-      double L = l;
-      double C = s * 0.4; // Approximation
-      double hue = h;
+      final double L = l;
+      final double C = s * 0.4; // Approximation
+      final double hue = h;
       
       return OkLchColor(L, C, hue).toColor();
   }
@@ -30,7 +30,7 @@ class OkHslColor implements ColorSpacesIQ {
   int get value => toColor().value;
   
   @override
-  OkHslColor darken([double amount = 20]) {
+  OkHslColor darken([final double amount = 20]) {
     return OkHslColor(h, s, max(0.0, l - amount / 100));
   }
 
@@ -44,51 +44,51 @@ class OkHslColor implements ColorSpacesIQ {
   OkHslColor get grayscale => toColor().grayscale.toOkHsl();
 
   @override
-  OkHslColor whiten([double amount = 20]) => toColor().whiten(amount).toOkHsl();
+  OkHslColor whiten([final double amount = 20]) => toColor().whiten(amount).toOkHsl();
 
   @override
-  OkHslColor blacken([double amount = 20]) => toColor().blacken(amount).toOkHsl();
+  OkHslColor blacken([final double amount = 20]) => toColor().blacken(amount).toOkHsl();
 
   @override
-  OkHslColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toOkHsl();
+  OkHslColor lerp(final ColorSpacesIQ other, final double t) => (toColor().lerp(other, t) as ColorIQ).toOkHsl();
 
   @override
-  OkHslColor lighten([double amount = 20]) {
+  OkHslColor lighten([final double amount = 20]) {
     return OkHslColor(h, s, min(1.0, l + amount / 100));
   }
 
   @override
-  OkHslColor brighten([double amount = 20]) {
+  OkHslColor brighten([final double amount = 20]) {
     return toColor().brighten(amount).toOkHsl();
   }
 
   @override
-  OkHslColor saturate([double amount = 25]) {
+  OkHslColor saturate([final double amount = 25]) {
     return OkHslColor(h, min(1.0, s + amount / 100), l);
   }
 
   @override
-  OkHslColor desaturate([double amount = 25]) {
+  OkHslColor desaturate([final double amount = 25]) {
     return OkHslColor(h, max(0.0, s - amount / 100), l);
   }
 
   @override
-  OkHslColor intensify([double amount = 10]) {
+  OkHslColor intensify([final double amount = 10]) {
     return toColor().intensify(amount).toOkHsl();
   }
 
   @override
-  OkHslColor deintensify([double amount = 10]) {
+  OkHslColor deintensify([final double amount = 10]) {
     return toColor().deintensify(amount).toOkHsl();
   }
 
   @override
-  OkHslColor accented([double amount = 15]) {
+  OkHslColor accented([final double amount = 15]) {
     return toColor().accented(amount).toOkHsl();
   }
 
   @override
-  OkHslColor simulate(ColorBlindnessType type) {
+  OkHslColor simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toOkHsl();
   }
 
@@ -99,10 +99,10 @@ class OkHslColor implements ColorSpacesIQ {
   HctColor toHct() => toColor().toHct();
 
   @override
-  OkHslColor fromHct(HctColor hct) => hct.toColor().toOkHsl();
+  OkHslColor fromHct(final HctColor hct) => hct.toColor().toOkHsl();
 
   @override
-  OkHslColor adjustTransparency([double amount = 20]) {
+  OkHslColor adjustTransparency([final double amount = 20]) {
     return toColor().adjustTransparency(amount).toOkHsl();
   }
 
@@ -113,7 +113,7 @@ class OkHslColor implements ColorSpacesIQ {
   ColorTemperature get temperature => toColor().temperature;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  OkHslColor copyWith({double? h, double? s, double? l}) {
+  OkHslColor copyWith({final double? h, final double? s, final double? l}) {
     return OkHslColor(
       h ?? this.h,
       s ?? this.s,
@@ -122,21 +122,21 @@ class OkHslColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toOkHsl()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((final ColorSpacesIQ c) => (c as ColorIQ).toOkHsl()).toList();
 
   @override
-  List<ColorSpacesIQ> lighterPalette([double? step]) {
+  List<ColorSpacesIQ> lighterPalette([final double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as ColorIQ).toOkHsl())
+        .map((final ColorSpacesIQ c) => (c as ColorIQ).toOkHsl())
         .toList();
   }
 
   @override
-  List<ColorSpacesIQ> darkerPalette([double? step]) {
+  List<ColorSpacesIQ> darkerPalette([final double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as ColorIQ).toOkHsl())
+        .map((final ColorSpacesIQ c) => (c as ColorIQ).toOkHsl())
         .toList();
   }
 
@@ -144,7 +144,7 @@ class OkHslColor implements ColorSpacesIQ {
   ColorSpacesIQ get random => (toColor().random as ColorIQ).toOkHsl();
 
   @override
-  bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+  bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
 
   @override
   double get luminance => toColor().luminance;
@@ -159,14 +159,14 @@ class OkHslColor implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  OkHslColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toOkHsl();
+  OkHslColor blend(final ColorSpacesIQ other, [final double amount = 50]) => toColor().blend(other, amount).toOkHsl();
 
   @override
-  OkHslColor opaquer([double amount = 20]) => toColor().opaquer(amount).toOkHsl();
+  OkHslColor opaquer([final double amount = 20]) => toColor().opaquer(amount).toOkHsl();
 
   @override
-  OkHslColor adjustHue([double amount = 20]) {
-      var newHue = (h + amount) % 360;
+  OkHslColor adjustHue([final double amount = 20]) {
+      double newHue = (h + amount) % 360;
       if (newHue < 0) newHue += 360;
       return OkHslColor(newHue, s, l);
   }
@@ -175,44 +175,44 @@ class OkHslColor implements ColorSpacesIQ {
   OkHslColor get complementary => adjustHue(180);
 
   @override
-  OkHslColor warmer([double amount = 20]) => toColor().warmer(amount).toOkHsl();
+  OkHslColor warmer([final double amount = 20]) => toColor().warmer(amount).toOkHsl();
 
   @override
-  OkHslColor cooler([double amount = 20]) => toColor().cooler(amount).toOkHsl();
+  OkHslColor cooler([final double amount = 20]) => toColor().cooler(amount).toOkHsl();
 
   @override
-  List<OkHslColor> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toOkHsl()).toList();
+  List<OkHslColor> generateBasicPalette() => toColor().generateBasicPalette().map((final ColorIQ c) => c.toOkHsl()).toList();
 
   @override
-  List<OkHslColor> tonesPalette() => toColor().tonesPalette().map((c) => c.toOkHsl()).toList();
+  List<OkHslColor> tonesPalette() => toColor().tonesPalette().map((final ColorIQ c) => c.toOkHsl()).toList();
 
   @override
-  List<OkHslColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toOkHsl()).toList();
+  List<OkHslColor> analogous({final int count = 5, final double offset = 30}) => toColor().analogous(count: count, offset: offset).map((final ColorIQ c) => c.toOkHsl()).toList();
 
   @override
-  List<OkHslColor> square() => toColor().square().map((c) => c.toOkHsl()).toList();
+  List<OkHslColor> square() => toColor().square().map((final ColorIQ c) => c.toOkHsl()).toList();
 
   @override
-  List<OkHslColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toOkHsl()).toList();
+  List<OkHslColor> tetrad({final double offset = 60}) => toColor().tetrad(offset: offset).map((final ColorIQ c) => c.toOkHsl()).toList();
 
   @override
-  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
 
   @override
-  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+  double contrastWith(final ColorSpacesIQ other) => toColor().contrastWith(other);
 
   @override
   ColorSlice closestColorSlice() => toColor().closestColorSlice();
 
   @override
-  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
 
   @override
-  List<double> get whitePoint => [95.047, 100.0, 108.883];
+  List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
 
   @override
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'type': 'OkHslColor',
       'hue': h,
       'saturation': s,

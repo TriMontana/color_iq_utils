@@ -1,10 +1,10 @@
 import 'dart:math';
-import '../color_interfaces.dart';
-import '../color_temperature.dart';
-import 'coloriq.dart';
-import 'hct_color.dart';
+import 'package:color_iq_utils/src/color_interfaces.dart';
+import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/models/coloriq.dart';
+import 'package:color_iq_utils/src/models/hct_color.dart';
 
-import 'lch_color.dart';
+import 'package:color_iq_utils/src/models/lch_color.dart';
 
 class LabColor implements ColorSpacesIQ {
   final double l;
@@ -15,25 +15,25 @@ class LabColor implements ColorSpacesIQ {
 
   @override
   ColorIQ toColor() {
-    double y = (l + 16) / 116;
-    double x = a / 500 + y;
-    double z = y - b / 200;
+    final double y = (l + 16) / 116;
+    final double x = a / 500 + y;
+    final double z = y - b / 200;
 
-    double x3 = x * x * x;
-    double y3 = y * y * y;
-    double z3 = z * z * z;
+    final double x3 = x * x * x;
+    final double y3 = y * y * y;
+    final double z3 = z * z * z;
 
-    double xn = 95.047;
-    double yn = 100.0;
-    double zn = 108.883;
+    const double xn = 95.047;
+    const double yn = 100.0;
+    const double zn = 108.883;
 
-    double r = xn * ((x3 > 0.008856) ? x3 : ((x - 16 / 116) / 7.787));
-    double g = yn * ((y3 > 0.008856) ? y3 : ((y - 16 / 116) / 7.787));
-    double bVal = zn * ((z3 > 0.008856) ? z3 : ((z - 16 / 116) / 7.787));
+    final double r = xn * ((x3 > 0.008856) ? x3 : ((x - 16 / 116) / 7.787));
+    final double g = yn * ((y3 > 0.008856) ? y3 : ((y - 16 / 116) / 7.787));
+    final double bVal = zn * ((z3 > 0.008856) ? z3 : ((z - 16 / 116) / 7.787));
 
-    double rS = r / 100;
-    double gS = g / 100;
-    double bS = bVal / 100;
+    final double rS = r / 100;
+    final double gS = g / 100;
+    final double bS = bVal / 100;
 
     double rL = rS * 3.2406 + gS * -1.5372 + bS * -0.4986;
     double gL = rS * -0.9689 + gS * 1.8758 + bS * 0.0415;
@@ -50,7 +50,7 @@ class LabColor implements ColorSpacesIQ {
   int get value => toColor().value;
 
   LchColor toLch() {
-    double c = sqrt(a * a + b * b);
+    final double c = sqrt(a * a + b * b);
     double h = atan2(b, a);
     h = h * 180 / pi;
     if (h < 0) h += 360;
@@ -233,25 +233,25 @@ class LabColor implements ColorSpacesIQ {
       // Convert to RGB without clamping and check bounds
       // We can use the logic from toColor but return false if out of 0-1 range (before scaling to 255)
       
-      double y = (l + 16) / 116;
-      double x = a / 500 + y;
-      double z = y - b / 200;
+      final double y = (l + 16) / 116;
+      final double x = a / 500 + y;
+      final double z = y - b / 200;
 
-      double x3 = x * x * x;
-      double y3 = y * y * y;
-      double z3 = z * z * z;
+      final double x3 = x * x * x;
+      final double y3 = y * y * y;
+      final double z3 = z * z * z;
 
-      double xn = 95.047;
-      double yn = 100.0;
-      double zn = 108.883;
+      const double xn = 95.047;
+      const double yn = 100.0;
+      const double zn = 108.883;
 
-      double rX = xn * ((x3 > 0.008856) ? x3 : ((x - 16 / 116) / 7.787));
-      double gY = yn * ((y3 > 0.008856) ? y3 : ((y - 16 / 116) / 7.787));
-      double bZ = zn * ((z3 > 0.008856) ? z3 : ((z - 16 / 116) / 7.787));
+      final double rX = xn * ((x3 > 0.008856) ? x3 : ((x - 16 / 116) / 7.787));
+      final double gY = yn * ((y3 > 0.008856) ? y3 : ((y - 16 / 116) / 7.787));
+      final double bZ = zn * ((z3 > 0.008856) ? z3 : ((z - 16 / 116) / 7.787));
 
-      double rS = rX / 100;
-      double gS = gY / 100;
-      double bS = bZ / 100;
+      final double rS = rX / 100;
+      final double gS = gY / 100;
+      final double bS = bZ / 100;
 
       double rL = rS * 3.2406 + gS * -1.5372 + bS * -0.4986;
       double gL = rS * -0.9689 + gS * 1.8758 + bS * 0.0415;

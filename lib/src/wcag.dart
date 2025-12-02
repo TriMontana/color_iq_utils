@@ -1,4 +1,4 @@
-import 'color_interfaces.dart';
+import 'package:color_iq_utils/src/color_interfaces.dart';
 
 /// WCAG conformance levels.
 enum WcagLevel {
@@ -19,8 +19,8 @@ extension WcagExtensions on ColorSpacesIQ {
   /// - AA Large: 3.0:1
   /// - AAA Normal: 7.0:1
   /// - AAA Large: 4.5:1
-  bool meetsWcag(ColorSpacesIQ background, {WcagLevel level = WcagLevel.aa, bool isLargeText = false}) {
-    final ratio = contrastWith(background);
+  bool meetsWcag(final ColorSpacesIQ background, {final WcagLevel level = WcagLevel.aa, final bool isLargeText = false}) {
+    final double ratio = contrastWith(background);
     double threshold;
     
     if (level == WcagLevel.aa) {

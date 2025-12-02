@@ -4,11 +4,11 @@ import 'package:test/test.dart';
 void main() {
   group('Brighten', () {
     test('ColorIQ.brighten increases HSV Value', () {
-      final color = ColorIQ.fromARGB(255, 100, 0, 0); // Dark Red
-      final brightened = color.brighten(20);
+      const ColorIQ color = ColorIQ.fromARGB(255, 100, 0, 0); // Dark Red
+      final ColorIQ brightened = color.brighten(20);
       
-      final hsvOriginal = color.toHsv();
-      final hsvBrightened = brightened.toHsv();
+      final HsvColor hsvOriginal = color.toHsv();
+      final HsvColor hsvBrightened = brightened.toHsv();
       
       expect(hsvBrightened.v, greaterThan(hsvOriginal.v));
       expect(hsvBrightened.h, closeTo(hsvOriginal.h, 1.0));
@@ -16,8 +16,8 @@ void main() {
     });
 
     test('HsvColor.brighten increases Value', () {
-      final color = HsvColor(0, 1.0, 0.5); // Dark Red
-      final brightened = color.brighten(20);
+      const HsvColor color = HsvColor(0, 1.0, 0.5); // Dark Red
+      final HsvColor brightened = color.brighten(20);
       
       expect(brightened.v, closeTo(0.7, 0.01));
       expect(brightened.h, equals(0));
@@ -25,16 +25,16 @@ void main() {
     });
 
     test('Brighten vs Lighten', () {
-      final color = ColorIQ.fromARGB(255, 200, 0, 0); // Red
+      const ColorIQ color = ColorIQ.fromARGB(255, 200, 0, 0); // Red
       
-      final brightened = color.brighten(20); // Increases Value (maxes out at 1.0)
-      final lightened = color.lighten(20); // Increases Lightness (adds white)
+      final ColorIQ brightened = color.brighten(20); // Increases Value (maxes out at 1.0)
+      final ColorIQ lightened = color.lighten(20); // Increases Lightness (adds white)
       
       // Brightening a saturated red shouldn't change it much if it's already high value,
       // but lightening it should make it pink.
       
-      final hsvBright = brightened.toHsv();
-      final hsvLight = lightened.toHsv();
+      final HsvColor hsvBright = brightened.toHsv();
+      final HsvColor hsvLight = lightened.toHsv();
       
       // Lighten reduces saturation (adds white)
       expect(hsvLight.s, lessThan(color.toHsv().s));
@@ -44,8 +44,8 @@ void main() {
     });
     
     test('CmykColor.brighten delegates correctly', () {
-        final cmyk = CmykColor(0, 1, 1, 0.5); // Dark Red
-        final brightened = cmyk.brighten(20);
+        const CmykColor cmyk = CmykColor(0, 1, 1, 0.5); // Dark Red
+        final CmykColor brightened = cmyk.brighten(20);
         expect(brightened.toColor().toHsv().v, greaterThan(cmyk.toColor().toHsv().v));
     });
   });

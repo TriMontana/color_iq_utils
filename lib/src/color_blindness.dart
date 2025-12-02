@@ -10,20 +10,20 @@ enum ColorBlindnessType {
 class ColorBlindness {
   /// Simulates color blindness on a given linear sRGB color (r, g, b in 0..1).
   /// Returns a list [r, g, b] of the simulated color in linear sRGB.
-  static List<double> simulate(double r, double g, double b, ColorBlindnessType type) {
+  static List<double> simulate(final double r, final double g, final double b, final ColorBlindnessType type) {
     if (type == ColorBlindnessType.none) return [r, g, b];
     if (type == ColorBlindnessType.achromatopsia) {
       // Monochromacy / Achromatopsia
       // Using luminance formula
-      double gray = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      final double gray = 0.2126 * r + 0.7152 * g + 0.0722 * b;
       return [gray, gray, gray];
     }
 
     // Convert Linear RGB to LMS
     // Hunt-Pointer-Estevez transformation matrix
-    double l = 0.31399022 * r + 0.63951294 * g + 0.04649755 * b;
-    double m = 0.15537241 * r + 0.75789446 * g + 0.08670142 * b;
-    double s = 0.01775239 * r + 0.10944209 * g + 0.87256922 * b;
+    final double l = 0.31399022 * r + 0.63951294 * g + 0.04649755 * b;
+    final double m = 0.15537241 * r + 0.75789446 * g + 0.08670142 * b;
+    final double s = 0.01775239 * r + 0.10944209 * g + 0.87256922 * b;
 
     double lSim = l;
     double mSim = m;
@@ -51,9 +51,9 @@ class ColorBlindness {
 
     // Convert LMS back to Linear RGB
     // Inverse of Hunt-Pointer-Estevez
-    double rSim = 5.47221206 * lSim - 4.6419601 * mSim + 0.16963564 * sSim;
-    double gSim = -1.1252419 * lSim + 2.29317094 * mSim - 0.1678952 * sSim;
-    double bSim = 0.02980165 * lSim - 0.19318073 * mSim + 1.16364789 * sSim;
+    final double rSim = 5.47221206 * lSim - 4.6419601 * mSim + 0.16963564 * sSim;
+    final double gSim = -1.1252419 * lSim + 2.29317094 * mSim - 0.1678952 * sSim;
+    final double bSim = 0.02980165 * lSim - 0.19318073 * mSim + 1.16364789 * sSim;
 
     // Clamp results
     return [

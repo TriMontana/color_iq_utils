@@ -6,7 +6,7 @@ class Awesome {
 
 void main() {
   group('A group of tests', () {
-    final awesome = Awesome();
+    final Awesome awesome = Awesome();
 
     setUp(() {
       // Additional setup goes here.

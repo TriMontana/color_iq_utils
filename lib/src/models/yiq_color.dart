@@ -1,7 +1,7 @@
-import '../color_interfaces.dart';
-import '../color_temperature.dart';
-import 'coloriq.dart';
-import 'hct_color.dart';
+import 'package:color_iq_utils/src/color_interfaces.dart';
+import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/models/coloriq.dart';
+import 'package:color_iq_utils/src/models/hct_color.dart';
 
 class YiqColor implements ColorSpacesIQ {
   final double y;
@@ -12,9 +12,9 @@ class YiqColor implements ColorSpacesIQ {
 
   @override
   ColorIQ toColor() {
-    double r = y + 0.956 * i + 0.621 * q;
-    double g = y - 0.272 * i - 0.647 * q;
-    double b = y - 1.106 * i + 1.703 * q;
+    final double r = y + 0.956 * i + 0.621 * q;
+    final double g = y - 0.272 * i - 0.647 * q;
+    final double b = y - 1.106 * i + 1.703 * q;
 
     return ColorIQ.fromARGB(255, (r * 255).round().clamp(0, 255), (g * 255).round().clamp(0, 255), (b * 255).round().clamp(0, 255));
   }
@@ -23,42 +23,42 @@ class YiqColor implements ColorSpacesIQ {
   int get value => toColor().value;
   
   @override
-  YiqColor darken([double amount = 20]) {
+  YiqColor darken([final double amount = 20]) {
     return toColor().darken(amount).toYiq();
   }
 
   @override
-  YiqColor brighten([double amount = 20]) {
+  YiqColor brighten([final double amount = 20]) {
     return toColor().brighten(amount).toYiq();
   }
 
   @override
-  YiqColor saturate([double amount = 25]) {
+  YiqColor saturate([final double amount = 25]) {
     return toColor().saturate(amount).toYiq();
   }
 
   @override
-  YiqColor desaturate([double amount = 25]) {
+  YiqColor desaturate([final double amount = 25]) {
     return toColor().desaturate(amount).toYiq();
   }
 
   @override
-  YiqColor intensify([double amount = 10]) {
+  YiqColor intensify([final double amount = 10]) {
     return toColor().intensify(amount).toYiq();
   }
 
   @override
-  YiqColor deintensify([double amount = 10]) {
+  YiqColor deintensify([final double amount = 10]) {
     return toColor().deintensify(amount).toYiq();
   }
 
   @override
-  YiqColor accented([double amount = 15]) {
+  YiqColor accented([final double amount = 15]) {
     return toColor().accented(amount).toYiq();
   }
 
   @override
-  YiqColor simulate(ColorBlindnessType type) {
+  YiqColor simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toYiq();
   }
 
@@ -75,16 +75,16 @@ class YiqColor implements ColorSpacesIQ {
   YiqColor get grayscale => toColor().grayscale.toYiq();
 
   @override
-  YiqColor whiten([double amount = 20]) => toColor().whiten(amount).toYiq();
+  YiqColor whiten([final double amount = 20]) => toColor().whiten(amount).toYiq();
 
   @override
-  YiqColor blacken([double amount = 20]) => toColor().blacken(amount).toYiq();
+  YiqColor blacken([final double amount = 20]) => toColor().blacken(amount).toYiq();
 
   @override
-  YiqColor lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toYiq();
+  YiqColor lerp(final ColorSpacesIQ other, final double t) => (toColor().lerp(other, t) as ColorIQ).toYiq();
 
   @override
-  YiqColor lighten([double amount = 20]) {
+  YiqColor lighten([final double amount = 20]) {
     return toColor().lighten(amount).toYiq();
   }
 
@@ -92,10 +92,10 @@ class YiqColor implements ColorSpacesIQ {
   HctColor toHct() => toColor().toHct();
 
   @override
-  YiqColor fromHct(HctColor hct) => hct.toColor().toYiq();
+  YiqColor fromHct(final HctColor hct) => hct.toColor().toYiq();
 
   @override
-  YiqColor adjustTransparency([double amount = 20]) {
+  YiqColor adjustTransparency([final double amount = 20]) {
     return toColor().adjustTransparency(amount).toYiq();
   }
 
@@ -106,7 +106,7 @@ class YiqColor implements ColorSpacesIQ {
   ColorTemperature get temperature => toColor().temperature;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  YiqColor copyWith({double? y, double? i, double? q}) {
+  YiqColor copyWith({final double? y, final double? i, final double? q}) {
     return YiqColor(
       y ?? this.y,
       i ?? this.i,
@@ -115,21 +115,21 @@ class YiqColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toYiq()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((final ColorSpacesIQ c) => (c as ColorIQ).toYiq()).toList();
 
   @override
-  List<ColorSpacesIQ> lighterPalette([double? step]) {
+  List<ColorSpacesIQ> lighterPalette([final double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as ColorIQ).toYiq())
+        .map((final ColorSpacesIQ c) => (c as ColorIQ).toYiq())
         .toList();
   }
 
   @override
-  List<ColorSpacesIQ> darkerPalette([double? step]) {
+  List<ColorSpacesIQ> darkerPalette([final double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as ColorIQ).toYiq())
+        .map((final ColorSpacesIQ c) => (c as ColorIQ).toYiq())
         .toList();
   }
 
@@ -137,7 +137,7 @@ class YiqColor implements ColorSpacesIQ {
   ColorSpacesIQ get random => (toColor().random as ColorIQ).toYiq();
 
   @override
-  bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+  bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
 
   @override
   double get luminance => toColor().luminance;
@@ -152,56 +152,56 @@ class YiqColor implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  YiqColor blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toYiq();
+  YiqColor blend(final ColorSpacesIQ other, [final double amount = 50]) => toColor().blend(other, amount).toYiq();
 
   @override
-  YiqColor opaquer([double amount = 20]) => toColor().opaquer(amount).toYiq();
+  YiqColor opaquer([final double amount = 20]) => toColor().opaquer(amount).toYiq();
 
   @override
-  YiqColor adjustHue([double amount = 20]) => toColor().adjustHue(amount).toYiq();
+  YiqColor adjustHue([final double amount = 20]) => toColor().adjustHue(amount).toYiq();
 
   @override
   YiqColor get complementary => toColor().complementary.toYiq();
 
   @override
-  YiqColor warmer([double amount = 20]) => toColor().warmer(amount).toYiq();
+  YiqColor warmer([final double amount = 20]) => toColor().warmer(amount).toYiq();
 
   @override
-  YiqColor cooler([double amount = 20]) => toColor().cooler(amount).toYiq();
+  YiqColor cooler([final double amount = 20]) => toColor().cooler(amount).toYiq();
 
   @override
-  List<YiqColor> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toYiq()).toList();
+  List<YiqColor> generateBasicPalette() => toColor().generateBasicPalette().map((final ColorIQ c) => c.toYiq()).toList();
 
   @override
-  List<YiqColor> tonesPalette() => toColor().tonesPalette().map((c) => c.toYiq()).toList();
+  List<YiqColor> tonesPalette() => toColor().tonesPalette().map((final ColorIQ c) => c.toYiq()).toList();
 
   @override
-  List<YiqColor> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toYiq()).toList();
+  List<YiqColor> analogous({final int count = 5, final double offset = 30}) => toColor().analogous(count: count, offset: offset).map((final ColorIQ c) => c.toYiq()).toList();
 
   @override
-  List<YiqColor> square() => toColor().square().map((c) => c.toYiq()).toList();
+  List<YiqColor> square() => toColor().square().map((final ColorIQ c) => c.toYiq()).toList();
 
   @override
-  List<YiqColor> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toYiq()).toList();
+  List<YiqColor> tetrad({final double offset = 60}) => toColor().tetrad(offset: offset).map((final ColorIQ c) => c.toYiq()).toList();
 
   @override
-  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
 
   @override
-  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+  double contrastWith(final ColorSpacesIQ other) => toColor().contrastWith(other);
 
   @override
   ColorSlice closestColorSlice() => toColor().closestColorSlice();
 
   @override
-  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
 
   @override
-  List<double> get whitePoint => [95.047, 100.0, 108.883];
+  List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
 
   @override
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'type': 'YiqColor',
       'y': y,
       'i': i,

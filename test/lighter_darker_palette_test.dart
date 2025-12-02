@@ -4,14 +4,14 @@ import 'package:color_iq_utils/color_iq_utils.dart';
 void main() {
   group('Lighter and Darker Palette Tests', () {
     test('HslColor Lighter Palette (Default Steps)', () {
-      final hsl = HslColor(0, 1.0, 0.5); // Red
-      final palette = hsl.lighterPalette();
+      const HslColor hsl = HslColor(0, 1.0, 0.5); // Red
+      final List<ColorSpacesIQ> palette = hsl.lighterPalette();
       expect(palette.length, 5);
       
       // Should be progressively lighter
       double lastL = 0.5;
-      for (var c in palette) {
-        final currentL = (c as HslColor).l;
+      for (ColorSpacesIQ c in palette) {
+        final double currentL = (c as HslColor).l;
         expect(currentL, greaterThan(lastL));
         lastL = currentL;
       }
@@ -21,14 +21,14 @@ void main() {
     });
 
     test('HslColor Darker Palette (Default Steps)', () {
-      final hsl = HslColor(0, 1.0, 0.5); // Red
-      final palette = hsl.darkerPalette();
+      const HslColor hsl = HslColor(0, 1.0, 0.5); // Red
+      final List<ColorSpacesIQ> palette = hsl.darkerPalette();
       expect(palette.length, 5);
       
       // Should be progressively darker
       double lastL = 0.5;
-      for (var c in palette) {
-        final currentL = (c as HslColor).l;
+      for (ColorSpacesIQ c in palette) {
+        final double currentL = (c as HslColor).l;
         expect(currentL, lessThan(lastL));
         lastL = currentL;
       }
@@ -38,24 +38,24 @@ void main() {
     });
 
     test('ColorIQ Lighter Palette (Custom Step)', () {
-      final color = ColorIQ.fromARGB(255, 128, 128, 128); // Grey (L=0.5)
-      final palette = color.lighterPalette(10); // 10% steps
+      const ColorIQ color = ColorIQ.fromARGB(255, 128, 128, 128); // Grey (L=0.5)
+      final List<ColorSpacesIQ> palette = color.lighterPalette(10); // 10% steps
       expect(palette.length, 5);
       
-      final first = palette.first as ColorIQ;
-      final hslFirst = first.toHsl();
+      final ColorIQ first = palette.first as ColorIQ;
+      final HslColor hslFirst = first.toHsl();
       expect(hslFirst.l, closeTo(0.6, 0.01)); // 0.5 + 0.1
     });
 
     test('CmykColor Darker Palette (Delegated)', () {
-      final cmyk = CmykColor(0, 0, 0, 0); // White
-      final palette = cmyk.darkerPalette();
+      const CmykColor cmyk = CmykColor(0, 0, 0, 0); // White
+      final List<ColorSpacesIQ> palette = cmyk.darkerPalette();
       expect(palette.length, 5);
       expect(palette.first, isA<CmykColor>());
       
       // Should get darker (K increases or CMY increases)
       // White in CMYK is 0,0,0,0. Darker means K goes up.
-      final first = palette.first as CmykColor;
+      final CmykColor first = palette.first as CmykColor;
       // Converting to HSL logic: L goes down.
       // 0,0,0,0 -> L=1.0. 
       // Step = 1.0/6 = 0.166.

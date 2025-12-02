@@ -1,9 +1,9 @@
 
 import 'dart:math';
-import '../color_interfaces.dart';
-import '../color_temperature.dart';
-import 'coloriq.dart';
-import 'hct_color.dart';
+import 'package:color_iq_utils/src/color_interfaces.dart';
+import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/models/coloriq.dart';
+import 'package:color_iq_utils/src/models/hct_color.dart';
 
 class Rec2020Color implements ColorSpacesIQ {
   final double r;
@@ -15,19 +15,19 @@ class Rec2020Color implements ColorSpacesIQ {
   @override
   ColorIQ toColor() {
       // Rec. 2020 decoding (Gamma to Linear)
-      double transferInv(double v) {
+      double transferInv(final double v) {
           if (v < 0.018 * 4.5) return v / 4.5;
           return pow((v + 0.099) / 1.099, 1 / 0.45).toDouble();
       }
       
-      double rLin = transferInv(r);
-      double gLin = transferInv(g);
-      double bLin = transferInv(b);
+      final double rLin = transferInv(r);
+      final double gLin = transferInv(g);
+      final double bLin = transferInv(b);
       
       // Rec. 2020 Linear to XYZ (D65)
-      double x = rLin * 0.6369580 + gLin * 0.1446169 + bLin * 0.1688810;
-      double y = rLin * 0.2627002 + gLin * 0.6779981 + bLin * 0.0593017;
-      double z = rLin * 0.0000000 + gLin * 0.0280727 + bLin * 1.0609851;
+      final double x = rLin * 0.6369580 + gLin * 0.1446169 + bLin * 0.1688810;
+      final double y = rLin * 0.2627002 + gLin * 0.6779981 + bLin * 0.0593017;
+      final double z = rLin * 0.0000000 + gLin * 0.0280727 + bLin * 1.0609851;
       
       // XYZ (D65) to sRGB Linear
       double rS = x * 3.2404542 + y * -1.5371385 + z * -0.4985314;
@@ -46,42 +46,42 @@ class Rec2020Color implements ColorSpacesIQ {
   int get value => toColor().value;
   
   @override
-  Rec2020Color darken([double amount = 20]) {
+  Rec2020Color darken([final double amount = 20]) {
     return toColor().darken(amount).toRec2020();
   }
 
   @override
-  Rec2020Color brighten([double amount = 20]) {
+  Rec2020Color brighten([final double amount = 20]) {
     return toColor().brighten(amount).toRec2020();
   }
 
   @override
-  Rec2020Color saturate([double amount = 25]) {
+  Rec2020Color saturate([final double amount = 25]) {
     return toColor().saturate(amount).toRec2020();
   }
 
   @override
-  Rec2020Color desaturate([double amount = 25]) {
+  Rec2020Color desaturate([final double amount = 25]) {
     return toColor().desaturate(amount).toRec2020();
   }
 
   @override
-  Rec2020Color intensify([double amount = 10]) {
+  Rec2020Color intensify([final double amount = 10]) {
     return toColor().intensify(amount).toRec2020();
   }
 
   @override
-  Rec2020Color deintensify([double amount = 10]) {
+  Rec2020Color deintensify([final double amount = 10]) {
     return toColor().deintensify(amount).toRec2020();
   }
 
   @override
-  Rec2020Color accented([double amount = 15]) {
+  Rec2020Color accented([final double amount = 15]) {
     return toColor().accented(amount).toRec2020();
   }
 
   @override
-  Rec2020Color simulate(ColorBlindnessType type) {
+  Rec2020Color simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toRec2020();
   }
 
@@ -98,16 +98,16 @@ class Rec2020Color implements ColorSpacesIQ {
   Rec2020Color get grayscale => toColor().grayscale.toRec2020();
 
   @override
-  Rec2020Color whiten([double amount = 20]) => toColor().whiten(amount).toRec2020();
+  Rec2020Color whiten([final double amount = 20]) => toColor().whiten(amount).toRec2020();
 
   @override
-  Rec2020Color blacken([double amount = 20]) => toColor().blacken(amount).toRec2020();
+  Rec2020Color blacken([final double amount = 20]) => toColor().blacken(amount).toRec2020();
 
   @override
-  Rec2020Color lerp(ColorSpacesIQ other, double t) => (toColor().lerp(other, t) as ColorIQ).toRec2020();
+  Rec2020Color lerp(final ColorSpacesIQ other, final double t) => (toColor().lerp(other, t) as ColorIQ).toRec2020();
 
   @override
-  Rec2020Color lighten([double amount = 20]) {
+  Rec2020Color lighten([final double amount = 20]) {
     return toColor().lighten(amount).toRec2020();
   }
 
@@ -115,10 +115,10 @@ class Rec2020Color implements ColorSpacesIQ {
   HctColor toHct() => toColor().toHct();
 
   @override
-  Rec2020Color fromHct(HctColor hct) => hct.toColor().toRec2020();
+  Rec2020Color fromHct(final HctColor hct) => hct.toColor().toRec2020();
 
   @override
-  Rec2020Color adjustTransparency([double amount = 20]) {
+  Rec2020Color adjustTransparency([final double amount = 20]) {
     return toColor().adjustTransparency(amount).toRec2020();
   }
 
@@ -131,7 +131,7 @@ class Rec2020Color implements ColorSpacesIQ {
   ColorTemperature get temperature => toColor().temperature;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  Rec2020Color copyWith({double? r, double? g, double? b}) {
+  Rec2020Color copyWith({final double? r, final double? g, final double? b}) {
     return Rec2020Color(
       r ?? this.r,
       g ?? this.g,
@@ -140,21 +140,21 @@ class Rec2020Color implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((c) => (c as ColorIQ).toRec2020()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((final ColorSpacesIQ c) => (c as ColorIQ).toRec2020()).toList();
 
   @override
-  List<ColorSpacesIQ> lighterPalette([double? step]) {
+  List<ColorSpacesIQ> lighterPalette([final double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((c) => (c as ColorIQ).toRec2020())
+        .map((final ColorSpacesIQ c) => (c as ColorIQ).toRec2020())
         .toList();
   }
 
   @override
-  List<ColorSpacesIQ> darkerPalette([double? step]) {
+  List<ColorSpacesIQ> darkerPalette([final double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((c) => (c as ColorIQ).toRec2020())
+        .map((final ColorSpacesIQ c) => (c as ColorIQ).toRec2020())
         .toList();
   }
 
@@ -162,7 +162,7 @@ class Rec2020Color implements ColorSpacesIQ {
   ColorSpacesIQ get random => (toColor().random as ColorIQ).toRec2020();
 
   @override
-  bool isEqual(ColorSpacesIQ other) => toColor().isEqual(other);
+  bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
 
   @override
   double get luminance => toColor().luminance;
@@ -177,56 +177,56 @@ class Rec2020Color implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  Rec2020Color blend(ColorSpacesIQ other, [double amount = 50]) => toColor().blend(other, amount).toRec2020();
+  Rec2020Color blend(final ColorSpacesIQ other, [final double amount = 50]) => toColor().blend(other, amount).toRec2020();
 
   @override
-  Rec2020Color opaquer([double amount = 20]) => toColor().opaquer(amount).toRec2020();
+  Rec2020Color opaquer([final double amount = 20]) => toColor().opaquer(amount).toRec2020();
 
   @override
-  Rec2020Color adjustHue([double amount = 20]) => toColor().adjustHue(amount).toRec2020();
+  Rec2020Color adjustHue([final double amount = 20]) => toColor().adjustHue(amount).toRec2020();
 
   @override
   Rec2020Color get complementary => toColor().complementary.toRec2020();
 
   @override
-  Rec2020Color warmer([double amount = 20]) => toColor().warmer(amount).toRec2020();
+  Rec2020Color warmer([final double amount = 20]) => toColor().warmer(amount).toRec2020();
 
   @override
-  Rec2020Color cooler([double amount = 20]) => toColor().cooler(amount).toRec2020();
+  Rec2020Color cooler([final double amount = 20]) => toColor().cooler(amount).toRec2020();
 
   @override
-  List<Rec2020Color> generateBasicPalette() => toColor().generateBasicPalette().map((c) => c.toRec2020()).toList();
+  List<Rec2020Color> generateBasicPalette() => toColor().generateBasicPalette().map((final ColorIQ c) => c.toRec2020()).toList();
 
   @override
-  List<Rec2020Color> tonesPalette() => toColor().tonesPalette().map((c) => c.toRec2020()).toList();
+  List<Rec2020Color> tonesPalette() => toColor().tonesPalette().map((final ColorIQ c) => c.toRec2020()).toList();
 
   @override
-  List<Rec2020Color> analogous({int count = 5, double offset = 30}) => toColor().analogous(count: count, offset: offset).map((c) => c.toRec2020()).toList();
+  List<Rec2020Color> analogous({final int count = 5, final double offset = 30}) => toColor().analogous(count: count, offset: offset).map((final ColorIQ c) => c.toRec2020()).toList();
 
   @override
-  List<Rec2020Color> square() => toColor().square().map((c) => c.toRec2020()).toList();
+  List<Rec2020Color> square() => toColor().square().map((final ColorIQ c) => c.toRec2020()).toList();
 
   @override
-  List<Rec2020Color> tetrad({double offset = 60}) => toColor().tetrad(offset: offset).map((c) => c.toRec2020()).toList();
+  List<Rec2020Color> tetrad({final double offset = 60}) => toColor().tetrad(offset: offset).map((final ColorIQ c) => c.toRec2020()).toList();
 
   @override
-  double distanceTo(ColorSpacesIQ other) => toColor().distanceTo(other);
+  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
 
   @override
-  double contrastWith(ColorSpacesIQ other) => toColor().contrastWith(other);
+  double contrastWith(final ColorSpacesIQ other) => toColor().contrastWith(other);
 
   @override
   ColorSlice closestColorSlice() => toColor().closestColorSlice();
 
   @override
-  bool isWithinGamut([Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
 
   @override
-  List<double> get whitePoint => [95.047, 100.0, 108.883];
+  List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
 
   @override
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'type': 'Rec2020Color',
       'r': r,
       'g': g,
