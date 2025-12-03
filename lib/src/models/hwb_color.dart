@@ -2,13 +2,13 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/constants.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
+import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/hsv_color.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 
 /// A representation of color in the HWB (Hue, Whiteness, Blackness) color model.
@@ -34,6 +34,7 @@ class HwbColor with ColorModelsMixin implements ColorSpacesIQ {
   final double w;
 
   /// The blackness component of the color, ranging from 0.0 to 1.0.
+  @override
   final double b;
 
   /// The alpha (transparency) component of the color, ranging from 0.0 to 1.0.

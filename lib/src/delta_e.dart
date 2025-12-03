@@ -1,6 +1,7 @@
 // ignore_for_file: constant_identifier_names, non_constant_identifier_names
 
 import 'dart:math';
+
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/models/lab_color.dart';
 
@@ -22,17 +23,18 @@ enum DeltaEAlgorithm {
 /// Extension for calculating Delta E between colors.
 extension DeltaEExtension on ColorSpacesIQ {
   /// Calculates the Delta E (perceptual difference) to another color.
-  /// 
+  ///
   /// [other] The color to compare to.
   /// [algorithm] The algorithm to use. Default is [DeltaEAlgorithm.ciede2000].
-  /// 
+  ///
   /// Returns a value where:
   /// - <= 1.0: Not perceptible by human eyes.
   /// - 1-2: Perceptible through close observation.
   /// - 2-10: Perceptible at a glance.
   /// - 11-49: Colors are more similar than opposite.
   /// - 100: Colors are exact opposite.
-  double deltaE(final ColorSpacesIQ other, {final DeltaEAlgorithm algorithm = DeltaEAlgorithm.ciede2000}) {
+  double deltaE(final ColorSpacesIQ other,
+      {final DeltaEAlgorithm algorithm = DeltaEAlgorithm.ciede2000}) {
     final LabColor lab1;
     if (this is LabColor) {
       lab1 = this as LabColor;
@@ -58,20 +60,18 @@ extension DeltaEExtension on ColorSpacesIQ {
   }
 
   double _deltaECie76(final LabColor lab1, final LabColor lab2) {
-    return sqrt(
-      pow(lab1.l - lab2.l, 2) +
-      pow(lab1.a - lab2.a, 2) +
-      pow(lab1.b - lab2.b, 2)
-    );
+    return sqrt(pow(lab1.l - lab2.l, 2) +
+        pow(lab1.aLab - lab2.aLab, 2) +
+        pow(lab1.bLab - lab2.bLab, 2));
   }
 
   double _deltaECie94(final LabColor lab1, final LabColor lab2) {
     final double L1 = lab1.l;
-    final double a1 = lab1.a;
-    final double b1 = lab1.b;
+    final double a1 = lab1.aLab;
+    final double b1 = lab1.bLab;
     final double L2 = lab2.l;
-    final double a2 = lab2.a;
-    final double b2 = lab2.b;
+    final double a2 = lab2.aLab;
+    final double b2 = lab2.bLab;
 
     final double C1 = sqrt(a1 * a1 + b1 * b1);
     final double C2 = sqrt(a2 * a2 + b2 * b2);
@@ -79,7 +79,7 @@ extension DeltaEExtension on ColorSpacesIQ {
     final double dC = C1 - C2;
     final double da = a1 - a2;
     final double db = b1 - b2;
-    
+
     // dH^2 = dE^2 - dL^2 - dC^2 = da^2 + db^2 - dC^2
     double dH2 = da * da + db * db - dC * dC;
     // Handle floating point errors making it slightly negative
@@ -97,31 +97,30 @@ extension DeltaEExtension on ColorSpacesIQ {
     final double sC = 1.0 + K1 * C1;
     final double sH = 1.0 + K2 * C1;
 
-    return sqrt(
-      pow(dL / (kL * sL), 2) +
-      pow(dC / (kC * sC), 2) +
-      pow(dH / (kH * sH), 2)
-    );
+    return sqrt(pow(dL / (kL * sL), 2) +
+        pow(dC / (kC * sC), 2) +
+        pow(dH / (kH * sH), 2));
   }
 
   double _deltaECiede2000(final LabColor lab1, final LabColor lab2) {
     // Implementation of CIEDE2000
     // Based on: http://www.brucelindbloom.com/index.html?Eqn_DeltaE_CIE2000.html
-    
+
     final double L1 = lab1.l;
-    final double a1 = lab1.a;
-    final double b1 = lab1.b;
+    final double a1 = lab1.aLab;
+    final double b1 = lab1.bLab;
     final double L2 = lab2.l;
-    final double a2 = lab2.a;
-    final double b2 = lab2.b;
+    final double a2 = lab2.aLab;
+    final double b2 = lab2.bLab;
 
     final double L_bar = (L1 + L2) / 2.0;
     final double C1 = sqrt(a1 * a1 + b1 * b1);
     final double C2 = sqrt(a2 * a2 + b2 * b2);
     final double C_bar = (C1 + C2) / 2.0;
 
-    final double G = 0.5 * (1.0 - sqrt(pow(C_bar, 7) / (pow(C_bar, 7) + pow(25, 7))));
-    
+    final double G =
+        0.5 * (1.0 - sqrt(pow(C_bar, 7) / (pow(C_bar, 7) + pow(25, 7))));
+
     final double a1_prime = a1 * (1.0 + G);
     final double a2_prime = a2 * (1.0 + G);
 
@@ -131,67 +130,69 @@ extension DeltaEExtension on ColorSpacesIQ {
 
     double h1_prime = atan2(b1, a1_prime) * 180.0 / pi;
     if (h1_prime < 0) h1_prime += 360.0;
-    
+
     double h2_prime = atan2(b2, a2_prime) * 180.0 / pi;
     if (h2_prime < 0) h2_prime += 360.0;
 
     double h_bar_prime;
     if ((C1_prime * C2_prime) == 0) {
-        h_bar_prime = h1_prime + h2_prime;
+      h_bar_prime = h1_prime + h2_prime;
     } else {
-        if ((h1_prime - h2_prime).abs() <= 180.0) {
-            h_bar_prime = (h1_prime + h2_prime) / 2.0;
+      if ((h1_prime - h2_prime).abs() <= 180.0) {
+        h_bar_prime = (h1_prime + h2_prime) / 2.0;
+      } else {
+        if ((h1_prime + h2_prime) < 360.0) {
+          h_bar_prime = (h1_prime + h2_prime + 360.0) / 2.0;
         } else {
-            if ((h1_prime + h2_prime) < 360.0) {
-                h_bar_prime = (h1_prime + h2_prime + 360.0) / 2.0;
-            } else {
-                h_bar_prime = (h1_prime + h2_prime - 360.0) / 2.0;
-            }
+          h_bar_prime = (h1_prime + h2_prime - 360.0) / 2.0;
         }
+      }
     }
 
-    final double T = 1.0 - 0.17 * cos((h_bar_prime - 30.0) * pi / 180.0) +
-              0.24 * cos((2.0 * h_bar_prime) * pi / 180.0) +
-              0.32 * cos((3.0 * h_bar_prime + 6.0) * pi / 180.0) -
-              0.20 * cos((4.0 * h_bar_prime - 63.0) * pi / 180.0);
+    final double T = 1.0 -
+        0.17 * cos((h_bar_prime - 30.0) * pi / 180.0) +
+        0.24 * cos((2.0 * h_bar_prime) * pi / 180.0) +
+        0.32 * cos((3.0 * h_bar_prime + 6.0) * pi / 180.0) -
+        0.20 * cos((4.0 * h_bar_prime - 63.0) * pi / 180.0);
 
     double dh_prime;
     if ((C1_prime * C2_prime) == 0) {
-        dh_prime = 0;
+      dh_prime = 0;
     } else {
-        if ((h2_prime - h1_prime).abs() <= 180.0) {
-            dh_prime = h2_prime - h1_prime;
+      if ((h2_prime - h1_prime).abs() <= 180.0) {
+        dh_prime = h2_prime - h1_prime;
+      } else {
+        if (h2_prime <= h1_prime) {
+          dh_prime = h2_prime - h1_prime + 360.0;
         } else {
-            if (h2_prime <= h1_prime) {
-                dh_prime = h2_prime - h1_prime + 360.0;
-            } else {
-                dh_prime = h2_prime - h1_prime - 360.0;
-            }
+          dh_prime = h2_prime - h1_prime - 360.0;
         }
+      }
     }
-    
+
     final double dL_prime = L2 - L1;
     final double dC_prime = C2_prime - C1_prime;
-    final double dH_prime = 2.0 * sqrt(C1_prime * C2_prime) * sin((dh_prime / 2.0) * pi / 180.0);
+    final double dH_prime =
+        2.0 * sqrt(C1_prime * C2_prime) * sin((dh_prime / 2.0) * pi / 180.0);
 
-    final double S_L = 1.0 + (0.015 * pow(L_bar - 50.0, 2)) / sqrt(20.0 + pow(L_bar - 50.0, 2));
+    final double S_L = 1.0 +
+        (0.015 * pow(L_bar - 50.0, 2)) / sqrt(20.0 + pow(L_bar - 50.0, 2));
     final double S_C = 1.0 + 0.045 * C_bar_prime;
     final double S_H = 1.0 + 0.015 * C_bar_prime * T;
 
     final double dTheta = 30.0 * exp(-pow((h_bar_prime - 275.0) / 25.0, 2));
-    final double R_C = 2.0 * sqrt(pow(C_bar_prime, 7) / (pow(C_bar_prime, 7) + pow(25, 7)));
+    final double R_C =
+        2.0 * sqrt(pow(C_bar_prime, 7) / (pow(C_bar_prime, 7) + pow(25, 7)));
     final double R_T = -sin(2.0 * dTheta * pi / 180.0) * R_C;
 
     const double kL = 1.0;
     const double kC = 1.0;
     const double kH = 1.0;
 
-    final double DE2000 = sqrt(
-        pow(dL_prime / (kL * S_L), 2) +
+    final double DE2000 = sqrt(pow(dL_prime / (kL * S_L), 2) +
         pow(dC_prime / (kC * S_C), 2) +
         pow(dH_prime / (kH * S_H), 2) +
-        R_T * (dC_prime / (kC * S_C)) * (dH_prime / (kH * S_H))
-    );
+        R_T * (dC_prime / (kC * S_C)) * (dH_prime / (kH * S_H)));
 
     return DE2000;
   }

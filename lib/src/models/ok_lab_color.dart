@@ -20,7 +20,7 @@ import 'package:color_iq_utils/src/utils/color_math.dart';
 /// perception of color differences.
 ///
 /// [l] represents lightness (from 0 to 1, where 0 is black and 1 is white).
-/// [a] represents the green-red axis.
+/// [aLab] represents the green-red axis.
 /// [b] represents the blue-yellow axis.
 /// [alpha] represents the opacity (from 0.0 for transparent to 1.0 for opaque).
 class OkLabColor with ColorModelsMixin implements ColorSpacesIQ {
@@ -28,10 +28,10 @@ class OkLabColor with ColorModelsMixin implements ColorSpacesIQ {
   final double l;
 
   /// The 'a' component of the color, representing the green-red axis.
-  final double a;
+  final double aLab;
 
   /// The 'b' component of the color, representing the blue-yellow axis.
-  final double b;
+  final double bLab;
 
   /// The alpha value (opacity) of the color, from 0.0 (transparent) to 1.0 (opaque).
   final double alpha;
@@ -42,7 +42,7 @@ class OkLabColor with ColorModelsMixin implements ColorSpacesIQ {
   /// - [a]: Green-red component.
   /// - [b]: Blue-yellow component.
   /// - [alpha]: Opacity, defaults to 1.0 (fully opaque).
-  const OkLabColor(this.l, this.a, this.b, [this.alpha = 1.0]);
+  const OkLabColor(this.l, this.aLab, this.bLab, [this.alpha = 1.0]);
 
   /// Creates an [OkLabColor] from an ARGB integer.
   ///
@@ -85,9 +85,9 @@ class OkLabColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   ColorIQ toColor() {
-    final double l_ = l + 0.3963377774 * a + 0.2158037573 * b;
-    final double m_ = l - 0.1055613458 * a - 0.0638541728 * b;
-    final double s_ = l - 0.0894841775 * a - 1.2914855480 * b;
+    final double l_ = l + 0.3963377774 * aLab + 0.2158037573 * bLab;
+    final double m_ = l - 0.1055613458 * aLab - 0.0638541728 * bLab;
+    final double s_ = l - 0.0894841775 * aLab - 1.2914855480 * bLab;
 
     final double l3 = l_ * l_ * l_;
     final double m3 = m_ * m_ * m_;
@@ -115,10 +115,12 @@ class OkLabColor with ColorModelsMixin implements ColorSpacesIQ {
   int get value => toColor().value;
 
   OkLchColor toOkLch() {
-    final double c = sqrt(a * a + b * b);
-    double h = atan2(b, a);
+    final double c = sqrt(aLab * aLab + bLab * bLab);
+    double h = atan2(bLab, aLab);
     h = h * 180 / pi;
-    if (h < 0) h += 360;
+    if (h < 0) {
+      h += 360;
+    }
     return OkLchColor(l, c, h, alpha);
   }
 
@@ -138,9 +140,13 @@ class OkLabColor with ColorModelsMixin implements ColorSpacesIQ {
   OkHsvColor toOkHsv() {
     final OkLchColor lch = toOkLch();
     double v = lch.l + lch.c / 0.4;
-    if (v > 1) v = 1;
+    if (v > 1) {
+      v = 1;
+    }
     double s = (v == 0) ? 0 : (lch.c / 0.4) / v;
-    if (s > 1) s = 1;
+    if (s > 1) {
+      s = 1;
+    }
     return OkHsvColor(lch.h, s, v, alpha);
   }
 
@@ -171,15 +177,15 @@ class OkLabColor with ColorModelsMixin implements ColorSpacesIQ {
 
     return OkLabColor(
       lerpDouble(l, otherLab.l, t),
-      lerpDouble(a, otherLab.a, t),
-      lerpDouble(b, otherLab.b, t),
+      lerpDouble(aLab, otherLab.aLab, t),
+      lerpDouble(bLab, otherLab.bLab, t),
       lerpDouble(alpha, otherLab.alpha, t),
     );
   }
 
   @override
   OkLabColor lighten([final double amount = 20]) {
-    return OkLabColor(min(1.0, l + amount / 100), a, b, alpha);
+    return OkLabColor(min(1.0, l + amount / 100), aLab, bLab, alpha);
   }
 
   @override
@@ -189,7 +195,7 @@ class OkLabColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   OkLabColor darken([final double amount = 20]) {
-    return OkLabColor(max(0.0, l - amount / 100), a, b, alpha);
+    return OkLabColor(max(0.0, l - amount / 100), aLab, bLab, alpha);
   }
 
   @override
@@ -248,8 +254,8 @@ class OkLabColor with ColorModelsMixin implements ColorSpacesIQ {
   }) {
     return OkLabColor(
       l ?? this.l,
-      a ?? this.a,
-      b ?? this.b,
+      a ?? aLab,
+      b ?? bLab,
       alpha ?? this.alpha,
     );
   }
@@ -360,13 +366,14 @@ class OkLabColor with ColorModelsMixin implements ColorSpacesIQ {
     return <String, dynamic>{
       'type': 'OkLabColor',
       'l': l,
-      'a': a,
-      'b': b,
+      'a': aLab,
+      'b': bLab,
       'alpha': alpha,
     };
   }
 
   @override
   String toString() => 'OkLabColor(l: ${l.toStringAsFixed(2)}, '
-      'a: ${a.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)}, alpha: ${alpha.toStringAsFixed(2)})';
+      'a: ${aLab.toStringAsFixed(2)}, b: ${bLab.toStringAsFixed(2)}, ' //
+      'alpha: ${alpha.toStringAsFixed(2)})';
 }

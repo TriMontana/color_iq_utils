@@ -1,11 +1,9 @@
 import 'dart:math';
 
-import 'package:color_iq_utils/src/color_interfaces.dart';
-import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/color_iq_utils.dart';
 import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
-import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 import 'package:material_color_utilities/hct/src/hct_solver.dart';
@@ -71,12 +69,22 @@ class HctColor with ColorModelsMixin implements ColorSpacesIQ {
     this.argb = argb ?? HctSolver.solveToInt(hue, chroma, tone);
   }
 
+  /// Converts this HCT color to a [ColorIQ] color.
   @override
   ColorIQ toColor() => ColorIQ(argb);
 
+  /// Converts this HCT color to a [CmykColor].
+  CmykColor toCMYK() => CmykColor.fromInt(argb);
+
+  /// Returns the ARGB integer representation of this color.
   @override
   int get value => argb;
 
+  /// Decreases the [tone] of this color by the given [amount].
+  /// The resulting color will be darker.
+  ///
+  /// The [amount] must be between 0 and 100.
+  /// Defaults to 20.
   @override
   HctColor darken([final double amount = 20]) {
     amount.assertRange0to100('darken');
@@ -98,6 +106,11 @@ class HctColor with ColorModelsMixin implements ColorSpacesIQ {
     return HctColor(hue, chroma, nuTone, argb);
   }
 
+  /// Increases the [tone] of this color by the given [amount].
+  /// The resulting color will be lighter.
+  ///
+  /// The [amount] must be between 0 and 100.
+  /// Defaults to 20.
   @override
   HctColor lighten([final double amount = 20]) {
     amount.assertRange0to100('lighten');
@@ -106,6 +119,11 @@ class HctColor with ColorModelsMixin implements ColorSpacesIQ {
     return HctColor(hue, chroma, nuTone, argb);
   }
 
+  /// Increases the [chroma] of this color by the given [amount].
+  /// The resulting color will be more saturated.
+  ///
+  /// The [amount] must be between 0 and 100.
+  /// Defaults to 25.
   @override
   HctColor saturate([final double amount = 25]) {
     amount.assertRange0to100('saturate');
@@ -297,7 +315,13 @@ class HctColor with ColorModelsMixin implements ColorSpacesIQ {
       toColor().adjustHue(amount).toHct();
 
   @override
-  HctColor get complementary => toColor().complementary.toHct();
+  HctColor get complementary => flipHue();
+
+  /// Returns a new color with the hue rotated by 180 degrees.
+  HctColor flipHue() {
+    final double newHue = (hue + 180) % 360;
+    return copyWith(hue: newHue);
+  }
 
   @override
   HctColor warmer([final double amount = 20]) =>

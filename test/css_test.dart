@@ -69,8 +69,8 @@ void main() {
       expect(c, isA<OkLabColor>());
       final OkLabColor oklab = c as OkLabColor;
       expect(oklab.l, equals(0.5));
-      expect(oklab.a, equals(0.1));
-      expect(oklab.b, equals(-0.1));
+      expect(oklab.aLab, equals(0.1));
+      expect(oklab.bLab, equals(-0.1));
     });
   });
 }

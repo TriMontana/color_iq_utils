@@ -2,12 +2,12 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/constants.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
+import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 
 /// A color representation in the Rec. 2020 color space.
 ///
@@ -17,8 +17,11 @@ import 'package:color_iq_utils/src/models/hct_color.dart';
 ///
 /// The [r], [g], and [b] values are typically in the range of 0.0 to 1.0.
 class Rec2020Color with ColorModelsMixin implements ColorSpacesIQ {
+  @override
   final double r;
+  @override
   final double g;
+  @override
   final double b;
 
   const Rec2020Color(this.r, this.g, this.b);

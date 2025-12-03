@@ -4,11 +4,10 @@ import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
-import 'package:material_color_utilities/hct/cam16.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 
 /// A representation of a color in the Hunter Lab color space.
 ///
@@ -26,10 +25,10 @@ import 'package:material_color_utilities/hct/cam16.dart';
 ///
 class HunterLabColor with ColorModelsMixin implements ColorSpacesIQ {
   final double l;
-  final double a;
-  final double b;
+  final double aLab;
+  final double bLab;
 
-  const HunterLabColor(this.l, this.a, this.b);
+  const HunterLabColor(this.l, this.aLab, this.bLab);
 
   @override
   ColorIQ toColor() {
@@ -39,8 +38,8 @@ class HunterLabColor with ColorModelsMixin implements ColorSpacesIQ {
     const double zn = 108.883;
 
     final double y = pow(l / 100.0, 2) * yn;
-    final double x = (a / 175.0 * (l / 100.0) + y / yn) * xn;
-    final double z = (y / yn - b / 70.0 * (l / 100.0)) * zn;
+    final double x = (aLab / 175.0 * (l / 100.0) + y / yn) * xn;
+    final double z = (y / yn - bLab / 70.0 * (l / 100.0)) * zn;
 
     final double xTemp = x / 100;
     final double yTemp = y / 100;
@@ -69,19 +68,19 @@ class HunterLabColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   HunterLabColor darken([final double amount = 20]) {
-    return HunterLabColor(max(0, l - amount), a, b);
+    return HunterLabColor(max(0, l - amount), aLab, bLab);
   }
 
   @override
   HunterLabColor saturate([final double amount = 25]) {
     final double scale = 1.0 + (amount / 100.0);
-    return HunterLabColor(l, a * scale, b * scale);
+    return HunterLabColor(l, aLab * scale, bLab * scale);
   }
 
   @override
   HunterLabColor desaturate([final double amount = 25]) {
     final double scale = 1.0 - (amount / 100.0);
-    return HunterLabColor(l, a * scale, b * scale);
+    return HunterLabColor(l, aLab * scale, bLab * scale);
   }
 
   @override
@@ -133,14 +132,14 @@ class HunterLabColor with ColorModelsMixin implements ColorSpacesIQ {
 
     return HunterLabColor(
       lerpDouble(l, otherLab.l, t),
-      lerpDouble(a, otherLab.a, t),
-      lerpDouble(b, otherLab.b, t),
+      lerpDouble(aLab, otherLab.aLab, t),
+      lerpDouble(bLab, otherLab.bLab, t),
     );
   }
 
   @override
   HunterLabColor lighten([final double amount = 20]) {
-    return HunterLabColor(min(100, l + amount), a, b);
+    return HunterLabColor(min(100, l + amount), aLab, bLab);
   }
 
   @override
@@ -167,7 +166,7 @@ class HunterLabColor with ColorModelsMixin implements ColorSpacesIQ {
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   HunterLabColor copyWith({final double? l, final double? a, final double? b}) {
-    return HunterLabColor(l ?? this.l, a ?? this.a, b ?? this.b);
+    return HunterLabColor(l ?? this.l, a ?? aLab, b ?? bLab);
   }
 
   @override
@@ -284,13 +283,18 @@ class HunterLabColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   Map<String, dynamic> toJson() {
-    return <String, dynamic>{'type': 'HunterLabColor', 'l': l, 'a': a, 'b': b};
+    return <String, dynamic>{
+      'type': 'HunterLabColor',
+      'l': l,
+      'a': aLab,
+      'b': bLab
+    };
   }
 
   @override
-  String toString() =>
-      'HunterLabColor(l: ${l.toStrTrimZeros(3)}, a: ${a.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
+  String toString() => 'HunterLabColor(l: ${l.toStrTrimZeros(3)}, ' //
+      'a: ${aLab.toStrTrimZeros(3)}, b: ${bLab.toStringAsFixed(2)})';
 
-  @override
-  Cam16 toCam16() => Cam16.fromInt(value);
+  // @override
+  // Cam16 toCam16() => Cam16.fromInt(value);
 }

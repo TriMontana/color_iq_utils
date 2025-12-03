@@ -15,10 +15,28 @@ enum Gamut { sRGB, displayP3, rec2020, adobeRgb, proPhotoRgb }
 /// X, Y, Z tristimulus values of the white point.
 const List<double> kWhitePointD65 = <double>[95.047, 100.0, 108.883];
 
-/// A common interface for all color models.
-abstract interface class ColorSpacesIQ {
+/// A common parent class and interface for all color models.
+abstract class ColorSpacesIQ {
   /// Returns the 32-bit integer ID (ARGB) of this color.
-  int get value;
+  /// The 32-bit alpha-red-green-blue integer value.
+  final int value;
+  final double r;
+  final double g;
+  final double b;
+
+  /// Constructs a color from an integer.
+  const ColorSpacesIQ(this.value,
+      {final double? r, final double? g, final double? b})
+      : r = r ?? (value >> 16 & 0xFF) / 255.0,
+        g = g ?? (value >> 8 & 0xFF) / 255.0,
+        b = b ?? (value & 0xFF) / 255.0;
+  const ColorSpacesIQ.alt(
+      {required this.value, final double? r, final double? g, final double? b})
+      : r = r ?? (value >> 16 & 0xFF) / 255.0,
+        g = g ?? (value >> 8 & 0xFF) / 255.0,
+        b = b ?? (value & 0xFF) / 255.0;
+
+  // double get a => (value >> 24 & 0xFF) / 255.0;
 
   /// Lightens the color by the given [amount] (0-100).
   ColorSpacesIQ lighten([final double amount = 20]);

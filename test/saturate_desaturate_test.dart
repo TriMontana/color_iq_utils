@@ -55,8 +55,8 @@ void main() {
       const LabColor lab = LabColor(50, 50, 0);
       final LabColor saturated = lab.saturate(25);
       // Lch(50, 75, 0) -> Lab(50, 75, 0)
-      expect(saturated.a, closeTo(75, 0.01));
-      expect(saturated.b, closeTo(0, 0.01));
+      expect(saturated.aLab, closeTo(75, 0.01));
+      expect(saturated.bLab, closeTo(0, 0.01));
     });
 
     test('HsluvColor saturate/desaturate', () {

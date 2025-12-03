@@ -59,7 +59,7 @@ void main() {
     });
 
     test('CmykColor Darker Palette (Delegated)', () {
-      const CmykColor cmyk = CmykColor(0, 0, 0, 0); // White
+      final CmykColor cmyk = CmykColor.alt(0, 0, 0, 0); // White
       final List<ColorSpacesIQ> palette = cmyk.darkerPalette();
       expect(palette.length, 5);
       expect(palette.first, isA<CmykColor>());

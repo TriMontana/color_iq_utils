@@ -25,8 +25,8 @@ void main() {
       // Approximate values for pure red in sRGB -> Lab (D65)
       // L=53.24, a=80.09, b=67.20
       expect(lab.l, closeTo(53.24, 0.5));
-      expect(lab.a, closeTo(80.09, 0.5));
-      expect(lab.b, closeTo(67.20, 0.5));
+      expect(lab.aLab, closeTo(80.09, 0.5));
+      expect(lab.bLab, closeTo(67.20, 0.5));
 
       final ColorIQ backToColor = lab.toColor();
       expect(backToColor.red, 255);
@@ -79,8 +79,8 @@ void main() {
 
       final LabColor lab = color.toLab();
       expect(lab.l, 0);
-      expect(lab.a, 0);
-      expect(lab.b, 0);
+      expect(lab.aLab, 0);
+      expect(lab.bLab, 0);
 
       final LuvColor luv = color.toLuv();
       expect(luv.l, 0);

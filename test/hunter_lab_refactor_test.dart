@@ -23,24 +23,24 @@ void main() {
       final HunterLabColor mid = start.lerp(end, 0.5);
 
       expect(mid.l, closeTo(50.0, 0.01));
-      expect(mid.a, closeTo(0.0, 0.01));
-      expect(mid.b, closeTo(0.0, 0.01));
+      expect(mid.aLab, closeTo(0.0, 0.01));
+      expect(mid.bLab, closeTo(0.0, 0.01));
     });
 
     test('saturate increases chrominance', () {
       const HunterLabColor color = HunterLabColor(50.0, 10.0, 10.0);
       final HunterLabColor saturated = color.saturate(50);
 
-      expect(saturated.a.abs(), greaterThan(color.a.abs()));
-      expect(saturated.b.abs(), greaterThan(color.b.abs()));
+      expect(saturated.aLab.abs(), greaterThan(color.aLab.abs()));
+      expect(saturated.bLab.abs(), greaterThan(color.bLab.abs()));
     });
 
     test('desaturate decreases chrominance', () {
       const HunterLabColor color = HunterLabColor(50.0, 10.0, 10.0);
       final HunterLabColor desaturated = color.desaturate(50);
 
-      expect(desaturated.a.abs(), lessThan(color.a.abs()));
-      expect(desaturated.b.abs(), lessThan(color.b.abs()));
+      expect(desaturated.aLab.abs(), lessThan(color.aLab.abs()));
+      expect(desaturated.bLab.abs(), lessThan(color.bLab.abs()));
     });
   });
 }

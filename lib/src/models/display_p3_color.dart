@@ -3,10 +3,10 @@ import 'dart:math';
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/constants.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 
 /// A representation of a color in the Display P3 color space.
@@ -24,8 +24,11 @@ import 'package:material_color_utilities/hct/cam16.dart';
 /// and `HctColor`, by converting to and from `ColorIQ` as an intermediary.
 ///
 class DisplayP3Color with ColorModelsMixin implements ColorSpacesIQ {
+  @override
   final double r;
+  @override
   final double g;
+  @override
   final double b;
 
   const DisplayP3Color(this.r, this.g, this.b);

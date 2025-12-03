@@ -23,8 +23,8 @@ void main() {
       final LabColor mid = start.lerp(end, 0.5);
 
       expect(mid.l, closeTo(50.0, 0.01));
-      expect(mid.a, closeTo(0.0, 0.01));
-      expect(mid.b, closeTo(0.0, 0.01));
+      expect(mid.aLab, closeTo(0.0, 0.01));
+      expect(mid.bLab, closeTo(0.0, 0.01));
     });
   });
 }

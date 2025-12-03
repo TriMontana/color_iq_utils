@@ -48,17 +48,23 @@ import 'package:material_color_utilities/material_color_utilities.dart' as mcu;
 /// - Generating color palettes (monochromatic, analogous, etc.).
 /// - Simulating color blindness.
 /// - Calculating color properties like luminance, contrast, and perceptual distance.
-class ColorIQ with ColorModelsMixin implements ColorSpacesIQ {
-  /// The 32-bit alpha-red-green-blue integer value.
-  @override
-  final int value;
-
+class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
   /// The color space of this color.
   final ColorSpace colorSpace;
+  final double aLab;
+  final int alpha;
+  @override
+  final int red;
+  @override
+  final double r;
+  @override
+  final int green;
+  @override
+  final int blue;
 
   /// Construct a color from the lower 32 bits of an [int].
   ColorIQ(
-    this.value, {
+    super.value, {
     final double? a,
     final double? r,
     final double? g,
@@ -68,26 +74,24 @@ class ColorIQ with ColorModelsMixin implements ColorSpacesIQ {
     final int? green,
     final int? blue,
     this.colorSpace = ColorSpace.sRGB,
-  })  : a = a ?? ((value >> 24 & 0xFF) / 255).clamp0to1,
-        r = r ?? ((value >> 16 & 0xFF) / 255).clamp0to1,
-        g = g ?? ((value >> 8 & 0xFF) / 255).clamp0to1,
-        b = b ?? ((value & 0xFF) / 255).clamp0to1,
-        alpha = alpha ?? (value >> 24 & 0xFF),
-        red = red ?? (value >> 16 & 0xFF),
-        green = green ?? (value >> 8 & 0xFF),
-        blue = blue ?? (value & 0xFF);
-
-  final double a;
-  final int alpha;
-  @override
-  final int red;
-  final double r;
-  @override
-  final int green;
-  final double g;
-  @override
-  final int blue;
-  final double b;
+  })  : aLab = a != null
+            ? a.assertRange0to1()
+            : ((value >> 24 & 0xFF) / 255).clamp0to1,
+        r = r != null
+            ? r.assertRange0to1()
+            : ((value >> 16 & 0xFF) / 255).clamp0to1,
+        alpha =
+            alpha != null ? alpha.assertRange0to255() : (value >> 24 & 0xFF),
+        red = red != null ? red.assertRange0to255() : (value >> 16 & 0xFF),
+        green = green != null ? green.assertRange0to255() : (value >> 8 & 0xFF),
+        blue = blue != null ? blue.assertRange0to255() : (value & 0xFF),
+        super(
+            g: g != null
+                ? g.assertRange0to1()
+                : ((value >> 8 & 0xFF) / 255).clamp0to1,
+            b: b != null
+                ? b.assertRange0to1('ColorIQ()-b')
+                : ((value & 0xFF) / 255).clamp0to1);
 
   /// Construct a color from 4 integers, a, r, g, b.
   ColorIQ.fromARGB(
@@ -104,15 +108,25 @@ class ColorIQ with ColorModelsMixin implements ColorSpacesIQ {
         assert(green >= 0 && green <= 255, 'Invalid Green 0-255 value: $green'),
         assert(blue >= 0 && blue <= 255, 'Invalid Blue 0-255 value: $blue'),
         assert(alpha >= 0 && alpha <= 255, 'Invalid Alpha 0-255 value: $alpha'),
-        value = (((alpha & 0xff) << 24) |
-                ((red & 0xff) << 16) |
-                ((green & 0xff) << 8) |
-                ((blue & 0xff) << 0)) &
-            0xFFFFFFFF,
-        a = a != null ? a.assertRange0to1() : (alpha / 255.0).clamp0to1,
-        r = r != null ? r.assertRange0to1() : (red / 255.0).clamp0to1,
-        g = g != null ? g.assertRange0to1() : (green / 255.0).clamp0to1,
-        b = b != null ? b.assertRange0to1() : (blue / 255.0).clamp0to1;
+        aLab = a != null
+            ? a.assertRange0to1('ColorIQ.fromARGB-Alpha')
+            : alpha.normalized,
+        r = r != null
+            ? r.assertRange0to1('ColorIQ.fromARGB-Red')
+            : red.normalized,
+        super.alt(
+          value: (((alpha & 0xff) << 24) |
+                  ((red & 0xff) << 16) |
+                  ((green & 0xff) << 8) |
+                  ((blue & 0xff) << 0)) &
+              0xFFFFFFFF,
+          g: g != null
+              ? g.assertRange0to1('ColorIQ.fromARGB-Green')
+              : (green / 255.0).clamp0to1,
+          b: b != null
+              ? b.assertRange0to1('ColorIQ.fromARGB-Blue')
+              : (blue / 255.0).clamp0to1,
+        );
 
   /// Construct a color from sRGB delinearized values a, r, g, b (0.0 to 1.0)
   factory ColorIQ.fromSrgb(
@@ -127,21 +141,21 @@ class ColorIQ with ColorModelsMixin implements ColorSpacesIQ {
     int? argb,
     final ColorSpace colorSpace = ColorSpace.sRGB,
   }) {
-    a.assertRange0to1();
-    r.assertRange0to1();
-    g.assertRange0to1();
-    b.assertRange0to1();
+    a.assertRange0to1('ColorIQ.fromSrgb--a');
+    r.assertRange0to1('ColorIQ.fromSrgb--r');
+    g.assertRange0to1('ColorIQ.fromSrgb--g');
+    b.assertRange0to1('ColorIQ.fromSrgb--b');
     redInt = redInt != null
         ? redInt.assertRange0to255()
         : (r * 255).roundAndClamp0to255int();
     greenInt = greenInt != null
-        ? greenInt.assertRange0to255()
+        ? greenInt.assertRange0to255('ColorIQ.fromSrgb-GreenInt')
         : (g * 255).roundAndClamp0to255int();
     blueInt = blueInt != null
-        ? blueInt.assertRange0to255()
-        : (b * 255).roundAndClamp0to255int();
+        ? blueInt.assertRange0to255('ColorIQ.fromSrgb-BlueInt')
+        : (b * 255).roundAndClamp0to255int('ColorIQ.fromSrgb-B');
     alphaInt = alphaInt != null
-        ? alphaInt.assertRange0to255()
+        ? alphaInt.assertRange0to255('ColorIQ.fromSrgb-AlphaInt')
         : (a * 255).roundAndClamp0to255int();
     argb ??= (alphaInt << 24) | (redInt << 16) | (greenInt << 8) | blueInt;
     return ColorIQ(argb,
@@ -154,24 +168,6 @@ class ColorIQ with ColorModelsMixin implements ColorSpacesIQ {
         r: r,
         g: g,
         b: b);
-  }
-
-  /// Converts this color to CMYK.
-  CmykColor toCmyk() {
-    final double r = red / 255.0;
-    final double g = green / 255.0;
-    final double b = blue / 255.0;
-
-    final double k = 1.0 - max(r, max(g, b));
-    if (k == 1.0) {
-      return const CmykColor(0, 0, 0, 1);
-    }
-
-    final double c = (1.0 - r - k) / (1.0 - k);
-    final double m = (1.0 - g - k) / (1.0 - k);
-    final double y = (1.0 - b - k) / (1.0 - k);
-
-    return CmykColor(c, m, y, k);
   }
 
   /// Converts this color to XYZ.
@@ -948,7 +944,7 @@ class ColorIQ with ColorModelsMixin implements ColorSpacesIQ {
           json['alpha'] ?? 1.0,
         );
       case 'CmykColor':
-        return CmykColor(json['c'], json['m'], json['y'], json['k']);
+        return CmykColor.alt(json['c'], json['m'], json['y'], json['k']);
       case 'LabColor':
         return LabColor(json['l'], json['a'], json['b']);
       case 'XyzColor':

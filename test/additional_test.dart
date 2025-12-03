@@ -37,8 +37,8 @@ void main() {
       final OkLabColor oklab = color.toOkLab();
 
       expect(oklab.l, closeTo(1.0, 0.01));
-      expect(oklab.a, closeTo(0.0, 0.01));
-      expect(oklab.b, closeTo(0.0, 0.01));
+      expect(oklab.aLab, closeTo(0.0, 0.01));
+      expect(oklab.bLab, closeTo(0.0, 0.01));
     });
 
     test('RGB to OkLch conversion (Red)', () {
@@ -56,8 +56,8 @@ void main() {
       final HunterLabColor hunter = color.toHunterLab();
 
       expect(hunter.l, closeTo(100.0, 0.1));
-      expect(hunter.a, closeTo(0.0, 0.1));
-      expect(hunter.b, closeTo(0.0, 0.1));
+      expect(hunter.aLab, closeTo(0.0, 0.1));
+      expect(hunter.bLab, closeTo(0.0, 0.1));
     });
   });
 }

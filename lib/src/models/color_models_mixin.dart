@@ -1,13 +1,19 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
 import 'package:color_iq_utils/src/extensions/int_helpers.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 
 mixin ColorModelsMixin {
   /// Returns the 32-bit integer ID (ARGB) of this color.
   int get value;
+
   int get red => value.redInt;
   int get green => value.greenInt;
   int get blue => value.blueInt;
+  double get a => value.a2;
+  double get r => value.r2;
+  double get g => value.g2;
+  double get b => value.b2;
 
   /// The white point of the color space.
   ///
@@ -15,10 +21,20 @@ mixin ColorModelsMixin {
   /// See [kWhitePointD65] for the exact values.
   List<double> get whitePoint => kWhitePointD65;
 
+  /// The relative luminance of this color.
+  ///
+  /// The value is in a range of `0.0` for darkest black to `1.0` for lightest
+  /// white. This is a linear value, not perceptual.
+  double get luminance => computeLuminance(r, g, b);
+
   /// Converts this color the Cam16 instance from MaterialColorUtilities,
   /// used extensively for calculating distance
   Cam16 toCam16() => Cam16.fromInt(value);
 
+  /// Converts this color to HSL.
+  ///
+  /// The hue value is in the range of 0 to 360, and the saturation and
+  // lightness values are in the range of 0 to 1.
   HslColor toHslColor() => HslColor.fromInt(value);
 
   /// Converts this color to OkLab.

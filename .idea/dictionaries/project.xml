@@ -2,11 +2,13 @@
   <dictionary name="project">
     <words>
       <w>cielab</w>
+      <w>cielch</w>
       <w>deintensified</w>
       <w>deintensify</w>
       <w>lerp</w>
       <w>oklab</w>
       <w>oklch</w>
+      <w>rrggbbaa</w>
       <w>srgb</w>
     </words>
   </dictionary>

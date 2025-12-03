@@ -74,7 +74,8 @@ void main() {
 
       print('✓ Other models delegation (LabColor) test completed');
       print(
-        '  LabColor(${lab.l.toStringAsFixed(2)}, ${lab.a.toStringAsFixed(2)}, ${lab.b.toStringAsFixed(2)})',
+        '  LabColor(${lab.l.toStrTrimZeros(2)}, ' //
+        '${lab.aLab.toStringAsFixed(2)}, ${lab.bLab.toStringAsFixed(2)})',
       );
       print('  sRGB: $srgb');
     });

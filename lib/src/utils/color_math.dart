@@ -5,6 +5,10 @@ import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/extensions/int_helpers.dart';
 
+/// Add gamma correction to a linear RGB component.
+const double Function(double linearComponent) delinearize = linearToSrgb;
+const double Function(double linearComponent) gammaCorrection = linearToSrgb;
+
 // -------------------------------------------------------------------
 // ARGB & Component Extraction
 // -------------------------------------------------------------------
@@ -111,6 +115,30 @@ int floatToInt8Hex(
 // -------------------------------------------------------------------
 // sRGB & Linear RGB Conversions
 // -------------------------------------------------------------------
+/// Returns a brightness value between 0 for darkest and 1 for lightest.
+///
+/// Represents the relative luminance of the color. This value is computationally
+/// expensive to calculate.  Note that this uses a different cutoff
+/// than most other linearize functions
+///
+/// See <https://en.wikipedia.org/wiki/Relative_luminance>.
+double computeLuminance(final double r, final double g, final double b) {
+// assert(colorSpace != ColorSpace.extendedSRGB);
+// See <https://www.w3.org/TR/WCAG20/#relativeluminancedef>
+  final double R = linearizeColorComponentDart(r);
+  final double G = linearizeColorComponentDart(g);
+  final double B = linearizeColorComponentDart(b);
+  return 0.2126 * R + 0.7152 * G + 0.0722 * B;
+}
+
+// See <https://www.w3.org/TR/WCAG20/#relativeluminancedef>
+// This is Dart specific; it uses a different cutoff
+double linearizeColorComponentDart(final double component) {
+  if (component <= 0.03928) {
+    return component / 12.92;
+  }
+  return pow((component + 0.055) / 1.055, 2.4) as double;
+}
 
 /// Converts a normalized sRGB (gamma-encoded) double component [0.0 - 1.0]
 /// to a linear intensity sRGB double component [0.0 - 1.0].
@@ -124,10 +152,9 @@ double srgbToLinear(final double srgbComponent) {
   if (srgbComponent <= 0.04045) {
     // Linear segment: c / 12.92
     return srgbComponent / 12.92;
-  } else {
-    // Non-linear segment: ((c + 0.055) / 1.055) ^ 2.4
-    return pow((srgbComponent + 0.055) / 1.055, 2.4).toDouble();
   }
+  // Non-linear segment: ((c + 0.055) / 1.055) ^ 2.4
+  return pow((srgbComponent + 0.055) / 1.055, 2.4).toDouble();
 }
 
 /// Converts a linear intensity sRGB double component [0.0 - 1.0]
@@ -144,10 +171,6 @@ double linearToSrgb(final double linearComponent) {
     return (1.055 * pow(linearComponent, 1.0 / 2.4) - 0.055).toDouble();
   }
 }
-
-/// Add gamma correction to a linear RGB component.
-const double Function(double linearComponent) delinearize = linearToSrgb;
-const double Function(double linearComponent) gammaCorrection = linearToSrgb;
 
 /// Converts an sRGB color (with 8-bit integer components) to a list
 /// of linear RGB values (0.0-1.0).

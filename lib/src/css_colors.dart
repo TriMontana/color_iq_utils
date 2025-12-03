@@ -3,6 +3,7 @@ import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hsl_color.dart';
 import 'package:color_iq_utils/src/models/ok_lab_color.dart';
 import 'package:color_iq_utils/src/models/ok_lch_color.dart';
+import 'package:color_iq_utils/src/utils/hex_utils.dart';
 
 /// Supported CSS color spaces.
 enum CssColorSpace {
@@ -37,7 +38,7 @@ extension CssExtensions on ColorSpacesIQ {
     final String r = c.red.toRadixString(16).padLeft(2, '0');
     final String g = c.green.toRadixString(16).padLeft(2, '0');
     final String b = c.blue.toRadixString(16).padLeft(2, '0');
-    
+
     if (a == 255) {
       return '#$r$g$b';
     } else {
@@ -51,7 +52,9 @@ extension CssExtensions on ColorSpacesIQ {
     if (c.alpha == 255) {
       return 'rgb(${c.red}, ${c.green}, ${c.blue})';
     } else {
-      final String a = (c.alpha / 255.0).toStringAsFixed(2).replaceAll(RegExp(r'\.?0+$'), '');
+      final String a = (c.alpha / 255.0)
+          .toStringAsFixed(2)
+          .replaceAll(RegExp(r'\.?0+$'), '');
       return 'rgba(${c.red}, ${c.green}, ${c.blue}, $a)';
     }
   }
@@ -63,15 +66,18 @@ extension CssExtensions on ColorSpacesIQ {
     } else {
       hsl = toColor().toHsl();
     }
-    
+
     final String h = hsl.h.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
-    final String s = '${(hsl.s * 100).toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '')}%';
-    final String l = '${(hsl.l * 100).toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '')}%';
-    
+    final String s =
+        '${(hsl.s * 100).toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '')}%';
+    final String l =
+        '${(hsl.l * 100).toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '')}%';
+
     if (hsl.alpha >= 0.99) {
       return 'hsl($h, $s, $l)';
     } else {
-      final String a = hsl.alpha.toStringAsFixed(2).replaceAll(RegExp(r'\.?0+$'), '');
+      final String a =
+          hsl.alpha.toStringAsFixed(2).replaceAll(RegExp(r'\.?0+$'), '');
       return 'hsla($h, $s, $l, $a)';
     }
   }
@@ -84,14 +90,18 @@ extension CssExtensions on ColorSpacesIQ {
       oklab = toColor().toOkLab();
     }
 
-    final String l = oklab.l.toStringAsFixed(3).replaceAll(RegExp(r'\.?0+$'), '');
-    final String a = oklab.a.toStringAsFixed(3).replaceAll(RegExp(r'\.?0+$'), '');
-    final String b = oklab.b.toStringAsFixed(3).replaceAll(RegExp(r'\.?0+$'), '');
-    
+    final String l =
+        oklab.l.toStringAsFixed(3).replaceAll(RegExp(r'\.?0+$'), '');
+    final String a =
+        oklab.aLab.toStringAsFixed(3).replaceAll(RegExp(r'\.?0+$'), '');
+    final String b =
+        oklab.bLab.toStringAsFixed(3).replaceAll(RegExp(r'\.?0+$'), '');
+
     if (oklab.alpha >= 0.99) {
       return 'oklab($l $a $b)';
     } else {
-      final String alpha = oklab.alpha.toStringAsFixed(2).replaceAll(RegExp(r'\.?0+$'), '');
+      final String alpha =
+          oklab.alpha.toStringAsFixed(2).replaceAll(RegExp(r'\.?0+$'), '');
       return 'oklab($l $a $b / $alpha)';
     }
   }
@@ -104,14 +114,18 @@ extension CssExtensions on ColorSpacesIQ {
       oklch = toColor().toOkLch();
     }
 
-    final String l = oklch.l.toStringAsFixed(3).replaceAll(RegExp(r'\.?0+$'), '');
-    final String c = oklch.c.toStringAsFixed(3).replaceAll(RegExp(r'\.?0+$'), '');
-    final String h = oklch.h.toStringAsFixed(3).replaceAll(RegExp(r'\.?0+$'), '');
-    
+    final String l =
+        oklch.l.toStringAsFixed(3).replaceAll(RegExp(r'\.?0+$'), '');
+    final String c =
+        oklch.c.toStringAsFixed(3).replaceAll(RegExp(r'\.?0+$'), '');
+    final String h =
+        oklch.h.toStringAsFixed(3).replaceAll(RegExp(r'\.?0+$'), '');
+
     if (oklch.alpha >= 0.99) {
       return 'oklch($l $c $h)';
     } else {
-      final String alpha = oklch.alpha.toStringAsFixed(2).replaceAll(RegExp(r'\.?0+$'), '');
+      final String alpha =
+          oklch.alpha.toStringAsFixed(2).replaceAll(RegExp(r'\.?0+$'), '');
       return 'oklch($l $c $h / $alpha)';
     }
   }
@@ -123,9 +137,9 @@ class CssColor {
   /// Supports Hex, RGB, HSL, OKLAB, OKLCH.
   static ColorSpacesIQ fromCssString(final String cssString) {
     final String s = cssString.trim().toLowerCase();
-    
+
     if (s.startsWith('#')) {
-      return _parseHex(s);
+      return parseHex(s);
     } else if (s.startsWith('rgb')) {
       return _parseRgb(s);
     } else if (s.startsWith('hsl')) {
@@ -135,120 +149,106 @@ class CssColor {
     } else if (s.startsWith('oklch')) {
       return _parseOklch(s);
     }
-    
-    throw FormatException('Unsupported CSS color format: $cssString');
-  }
 
-  static ColorIQ _parseHex(String hex) {
-    hex = hex.substring(1);
-    if (hex.length == 3) {
-      hex = hex.split('').map((final String c) => '$c$c').join('');
-    }
-    
-    if (hex.length == 6) {
-      hex = 'FF$hex';
-      return ColorIQ(int.parse(hex, radix: 16));
-    }
-    
-    if (hex.length == 8) {
-      // CSS hex is RRGGBBAA, Dart Color is AARRGGBB
-      // So we need to move AA to the front.
-      // Input: RRGGBBAA
-      // Output: AARRGGBB
-      final String r = hex.substring(0, 2);
-      final String g = hex.substring(2, 4);
-      final String b = hex.substring(4, 6);
-      final String a = hex.substring(6, 8);
-      hex = '$a$r$g$b';
-      return ColorIQ(int.parse(hex, radix: 16));
-    }
-    
-    throw FormatException('Invalid hex color: #$hex');
+    throw FormatException('Unsupported CSS color format: $cssString');
   }
 
   static ColorIQ _parseRgb(final String s) {
     // rgb(r, g, b) or rgba(r, g, b, a) or rgb(r g b / a)
     final String content = s.substring(s.indexOf('(') + 1, s.lastIndexOf(')'));
-    final List<String> parts = content.split(RegExp(r'[,\s/]+')).where((final String p) => p.isNotEmpty).toList();
-    
+    final List<String> parts = content
+        .split(RegExp(r'[,\s/]+'))
+        .where((final String p) => p.isNotEmpty)
+        .toList();
+
     if (parts.length < 3) throw const FormatException('Invalid RGB string');
-    
+
     final int r = int.parse(parts[0]);
     final int g = int.parse(parts[1]);
     final int b = int.parse(parts[2]);
     double a = 1.0;
-    
+
     if (parts.length >= 4) {
       a = double.parse(parts[3]);
     }
-    
+
     return ColorIQ.fromARGB((a * 255).round(), r, g, b);
   }
 
   static HslColor _parseHsl(final String s) {
     // hsl(h, s%, l%)
     final String content = s.substring(s.indexOf('(') + 1, s.lastIndexOf(')'));
-    final List<String> parts = content.split(RegExp(r'[,\s/]+')).where((final String p) => p.isNotEmpty).toList();
-    
+    final List<String> parts = content
+        .split(RegExp(r'[,\s/]+'))
+        .where((final String p) => p.isNotEmpty)
+        .toList();
+
     if (parts.length < 3) throw const FormatException('Invalid HSL string');
-    
+
     final double h = double.parse(parts[0].replaceAll('deg', ''));
     final double sVal = double.parse(parts[1].replaceAll('%', '')) / 100.0;
     final double l = double.parse(parts[2].replaceAll('%', '')) / 100.0;
     double a = 1.0;
-    
+
     if (parts.length >= 4) {
-      a = double.parse(parts[3].replaceAll('%', '')); // Alpha can be percentage? Usually 0-1.
+      a = double.parse(parts[3]
+          .replaceAll('%', '')); // Alpha can be percentage? Usually 0-1.
       // If it has %, divide by 100.
       if (parts[3].contains('%')) {
-          a /= 100.0;
+        a /= 100.0;
       }
     }
-    
+
     return HslColor(h, sVal, l, a);
   }
 
   static OkLabColor _parseOklab(final String s) {
     // oklab(l a b / alpha)
     final String content = s.substring(s.indexOf('(') + 1, s.lastIndexOf(')'));
-    final List<String> parts = content.split(RegExp(r'[,\s/]+')).where((final String p) => p.isNotEmpty).toList();
-    
+    final List<String> parts = content
+        .split(RegExp(r'[,\s/]+'))
+        .where((final String p) => p.isNotEmpty)
+        .toList();
+
     if (parts.length < 3) throw const FormatException('Invalid OKLAB string');
-    
+
     double l = double.parse(parts[0].replaceAll('%', ''));
     if (parts[0].contains('%')) l /= 100.0; // L can be percentage
-    
+
     final double aVal = double.parse(parts[1]);
     final double b = double.parse(parts[2]);
     double alpha = 1.0;
-    
+
     if (parts.length >= 4) {
       alpha = double.parse(parts[3]);
       if (parts[3].contains('%')) alpha /= 100.0;
     }
-    
+
     return OkLabColor(l, aVal, b, alpha);
   }
 
   static OkLchColor _parseOklch(final String s) {
     // oklch(l c h / alpha)
     final String content = s.substring(s.indexOf('(') + 1, s.lastIndexOf(')'));
-    final List<String> parts = content.split(RegExp(r'[,\s/]+')).where((final String p) => p.isNotEmpty).toList();
-    
+    final List<String> parts = content
+        .split(RegExp(r'[,\s/]+'))
+        .where((final String p) => p.isNotEmpty)
+        .toList();
+
     if (parts.length < 3) throw const FormatException('Invalid OKLCH string');
-    
+
     double l = double.parse(parts[0].replaceAll('%', ''));
     if (parts[0].contains('%')) l /= 100.0;
-    
+
     final double c = double.parse(parts[1]);
     final double h = double.parse(parts[2].replaceAll('deg', ''));
     double alpha = 1.0;
-    
+
     if (parts.length >= 4) {
       alpha = double.parse(parts[3]);
       if (parts[3].contains('%')) alpha /= 100.0;
     }
-    
+
     return OkLchColor(l, c, h, alpha);
   }
 }

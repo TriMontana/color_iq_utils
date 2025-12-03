@@ -21,7 +21,7 @@ void main() {
     });
 
     test('CmykColor copyWith', () {
-      const CmykColor cmyk = CmykColor(0.1, 0.2, 0.3, 0.4);
+      final CmykColor cmyk = CmykColor.alt(0.1, 0.2, 0.3, 0.4);
       final CmykColor copy = cmyk.copyWith(c: 0.5, k: 0.0);
       expect(copy.c, 0.5);
       expect(copy.k, 0.0);
@@ -64,7 +64,7 @@ void main() {
     });
 
     test('CmykColor Monochromatic (Delegated)', () {
-      const CmykColor cmyk = CmykColor(0, 0, 0, 0); // White
+      final CmykColor cmyk = CmykColor.alt(0, 0, 0, 0); // White
       final List<ColorSpacesIQ> palette = cmyk.monochromatic;
       expect(palette.length, 5);
       expect(palette.first, isA<CmykColor>());

@@ -66,8 +66,8 @@ void main() {
 
       final LabColor fromJson = ColorIQ.fromJson(json) as LabColor;
       expect(fromJson.l, 50);
-      expect(fromJson.a, 10);
-      expect(fromJson.b, -20);
+      expect(fromJson.aLab, 10);
+      expect(fromJson.bLab, -20);
     });
 
     test('toJson and fromJson for XyzColor', () {
@@ -85,7 +85,7 @@ void main() {
     });
 
     test('toJson and fromJson for CmykColor', () {
-      const CmykColor cmyk = CmykColor(0.1, 0.2, 0.3, 0.4);
+      final CmykColor cmyk = CmykColor.alt(0.1, 0.2, 0.3, 0.4);
       final Map<String, dynamic> json = cmyk.toJson();
       expect(json['type'], 'CmykColor');
       expect(json['c'], 0.1);
