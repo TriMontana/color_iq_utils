@@ -2,13 +2,35 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/lch_color.dart';
+import 'package:material_color_utilities/hct/cam16.dart';
 
-class LabColor implements ColorSpacesIQ {
+/// Represents a color in the CIELAB color space.
+///
+/// The CIELAB color space (also known as CIE L*a*b* or Lab) is a color space
+/// specified by the International Commission on Illumination (CIE). It describes
+/// all the colors visible to the human eye and was created to serve as a
+/// device-independent model to be used as a reference.
+///
+/// The three coordinates of CIELAB represent the lightness of the color (L*),
+/// its position between red and green (a*), and its position between yellow
+/// and blue (b*).
+///
+/// - `l`: Lightness, from 0 (black) to 100 (white).
+/// - `a`: Green to red axis, where negative values indicate green and positive values indicate red.
+/// - `b`: Blue to yellow axis, where negative values indicate blue and positive values indicate yellow.
+class LabColor with ColorModelsMixin implements ColorSpacesIQ {
+  /// The lightness component (0-100).
   final double l;
+
+  /// The green-red component.
   final double a;
+
+  /// The blue-yellow component.
   final double b;
 
   const LabColor(this.l, this.a, this.b);
@@ -302,7 +324,7 @@ class LabColor implements ColorSpacesIQ {
   }
 
   @override
-  List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
+  List<double> get whitePoint => kWhitePointD65;
 
   @override
   Map<String, dynamic> toJson() {
@@ -311,5 +333,8 @@ class LabColor implements ColorSpacesIQ {
 
   @override
   String toString() =>
-      'LabColor(l: ${l.toStringAsFixed(2)}, a: ${a.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
+      'LabColor(l: ${l.toStrTrimZeros(3)}, a: ${a.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
+
+  @override
+  Cam16 toCam16() => Cam16.fromInt(value);
 }

@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('Darken Tests', () {
     test('ColorIQ darken', () {
-      const ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0); // Red
+      final ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0); // Red
       final ColorIQ darkened = color.darken(20);
       // Red HSL: 0, 1.0, 0.5. Darkened: 0, 1.0, 0.3
       final HslColor hsl = darkened.toHsl();

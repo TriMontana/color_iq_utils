@@ -22,7 +22,7 @@ void main() {
     });
 
     test('ColorIQ intensify delegates to HctColor', () {
-      const ColorIQ color = ColorIQ.fromARGB(
+      final ColorIQ color = ColorIQ.fromARGB(
         255,
         100,
         150,
@@ -42,7 +42,7 @@ void main() {
     });
 
     test('ColorIQ deintensify delegates to HctColor', () {
-      const ColorIQ color = ColorIQ.fromARGB(255, 100, 150, 200);
+      final ColorIQ color = ColorIQ.fromARGB(255, 100, 150, 200);
       final ColorIQ deintensified = color.deintensify(20);
 
       final HctColor originalHct = color.toHct();

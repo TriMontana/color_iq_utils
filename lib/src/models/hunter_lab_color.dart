@@ -2,10 +2,27 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:material_color_utilities/hct/cam16.dart';
 
-class HunterLabColor implements ColorSpacesIQ {
+/// A representation of a color in the Hunter Lab color space.
+///
+/// The Hunter Lab color space is a color space designed to be more perceptually
+/// uniform than the CIEXYZ color space. It was developed by Richard S. Hunter
+/// as a simpler alternative to CIE 1931 color space for many applications.
+///
+/// This model has three components:
+/// - `l`: Lightness, ranging from 0 (black) to 100 (diffuse white).
+/// - `a`: The green-red opponent axis. Negative values are green, positive values are red.
+/// - `b`: The blue-yellow opponent axis. Negative values are blue, positive values are yellow.
+///
+/// The `a` and `b` axes are theoretically unbounded but are practically
+/// limited by the gamut of real-world colors.
+///
+class HunterLabColor with ColorModelsMixin implements ColorSpacesIQ {
   final double l;
   final double a;
   final double b;
@@ -247,7 +264,7 @@ class HunterLabColor implements ColorSpacesIQ {
       toColor().isWithinGamut(gamut);
 
   @override
-  List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
+  List<double> get whitePoint => kWhitePointD65;
 
   @override
   Map<String, dynamic> toJson() {
@@ -256,5 +273,8 @@ class HunterLabColor implements ColorSpacesIQ {
 
   @override
   String toString() =>
-      'HunterLabColor(l: ${l.toStringAsFixed(2)}, a: ${a.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
+      'HunterLabColor(l: ${l.toStrTrimZeros(3)}, a: ${a.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
+
+  @override
+  Cam16 toCam16() => Cam16.fromInt(value);
 }

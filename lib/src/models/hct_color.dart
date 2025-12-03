@@ -4,6 +4,7 @@ import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
@@ -14,7 +15,7 @@ import 'package:material_color_utilities/utils/color_utils.dart';
 /// accurate color measurement system that can also accurately render what
 /// colors will appear as in different lighting environments.
 /// credit: Adapted from material_color_utilities
-class HctColor implements ColorSpacesIQ {
+class HctColor with ColorModelsMixin implements ColorSpacesIQ {
   late final double hue;
   late final double chroma;
   late final double tone;
@@ -196,8 +197,9 @@ class HctColor implements ColorSpacesIQ {
   HctColor lerp(final ColorSpacesIQ other, final double t) {
     final HctColor otherHct = other.toHct();
     final double newHue = lerpHue(hue, otherHct.hue, t);
-    final double newChroma = (chroma + (otherHct.chroma - chroma) * t);
-    final double newTone = (tone + (otherHct.tone - tone) * t);
+    final double newChroma =
+        (chroma + (otherHct.chroma - chroma) * t).clampChromaHct;
+    final double newTone = (tone + (otherHct.tone - tone) * t).clampToneHct;
     return HctColor.from(newHue, newChroma, newTone);
   }
 
@@ -244,7 +246,7 @@ class HctColor implements ColorSpacesIQ {
     final List<HctColor> results = <HctColor>[];
     for (int i = 0; i < 5; i++) {
       final double delta = (i - 2) * 10.0;
-      final double newTone = (tone + delta).clamp(0.0, 100.0);
+      final double newTone = (tone + delta).clampToneHct;
       results.add(HctColor.alt(hue, chroma, newTone));
     }
     return results;
@@ -318,24 +320,49 @@ class HctColor implements ColorSpacesIQ {
       toColor().tonesPalette().map((final ColorIQ c) => c.toHct()).toList();
 
   @override
-  List<HctColor> analogous({final int count = 5, final double offset = 30}) =>
-      toColor()
-          .analogous(count: count, offset: offset)
-          .map((final ColorIQ c) => c.toHct())
-          .toList();
+  List<HctColor> analogous({final int count = 5, final double offset = 30}) {
+    final List<HctColor> results = <HctColor>[];
+    final double step = (offset * 2) / (count - 1);
+    final double startHue = (hue - offset + 360) % 360;
+
+    for (int i = 0; i < count; i++) {
+      final double h = (startHue + step * i) % 360;
+      results.add(copyWith(hue: h));
+    }
+
+    return results;
+  }
 
   @override
-  List<HctColor> square() =>
-      toColor().square().map((final ColorIQ c) => c.toHct()).toList();
+  List<HctColor> square() {
+    final double hue2 = (hue + 90) % 360;
+    final double hue3 = (hue + 180) % 360;
+    final double hue4 = (hue + 270) % 360;
+
+    return <HctColor>[
+      this,
+      copyWith(hue: hue2),
+      copyWith(hue: hue3),
+      copyWith(hue: hue4),
+    ];
+  }
 
   @override
-  List<HctColor> tetrad({final double offset = 60}) => toColor()
-      .tetrad(offset: offset)
-      .map((final ColorIQ c) => c.toHct())
-      .toList();
+  List<HctColor> tetrad({final double offset = 60}) {
+    final double hue2 = (hue + offset) % 360;
+    final double hue3 = (hue + 180) % 360;
+    final double hue4 = (hue2 + 180) % 360;
+    return <HctColor>[
+      this,
+      copyWith(hue: hue2),
+      copyWith(hue: hue3),
+      copyWith(hue: hue4),
+    ];
+  }
 
   @override
-  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
+  double distanceTo(final ColorSpacesIQ other) =>
+      toCam16().distance(other.toCam16());
 
   @override
   double contrastWith(final ColorSpacesIQ other) =>
@@ -349,9 +376,6 @@ class HctColor implements ColorSpacesIQ {
       toColor().isWithinGamut(gamut);
 
   @override
-  List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
-
-  @override
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'type': 'HctColor',
@@ -363,5 +387,6 @@ class HctColor implements ColorSpacesIQ {
 
   @override
   String toString() =>
-      'HctColor(hue: ${hue.toStringAsFixed(2)}, chroma: ${chroma.toStringAsFixed(2)}, tone: ${tone.toStringAsFixed(2)})';
+      'HctColor(hue: ${hue.toStringAsFixed(2)}, ' //
+      'chroma: ${chroma.toStringAsFixed(2)}, tone: ${tone.toStringAsFixed(2)})';
 }

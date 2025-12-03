@@ -1,19 +1,86 @@
 import 'dart:math';
+
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/extensions/int_helpers.dart';
+import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
-import 'package:color_iq_utils/src/models/ok_lch_color.dart';
 import 'package:color_iq_utils/src/models/ok_hsl_color.dart';
 import 'package:color_iq_utils/src/models/ok_hsv_color.dart';
+import 'package:color_iq_utils/src/models/ok_lch_color.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 
-class OkLabColor implements ColorSpacesIQ {
+/// A representation of a color in the Oklab color space.
+///
+/// The Oklab color space is a perceptually uniform color space designed
+/// for tasks like color picking, color gradients, and image processing.
+/// It aims to represent colors in a way that aligns more closely with human
+/// perception of color differences.
+///
+/// [l] represents lightness (from 0 to 1, where 0 is black and 1 is white).
+/// [a] represents the green-red axis.
+/// [b] represents the blue-yellow axis.
+/// [alpha] represents the opacity (from 0.0 for transparent to 1.0 for opaque).
+class OkLabColor with ColorModelsMixin implements ColorSpacesIQ {
+  /// The lightness component of the color, ranging from 0.0 (black) to 1.0 (white).
   final double l;
+
+  /// The 'a' component of the color, representing the green-red axis.
   final double a;
+
+  /// The 'b' component of the color, representing the blue-yellow axis.
   final double b;
+
+  /// The alpha value (opacity) of the color, from 0.0 (transparent) to 1.0 (opaque).
   final double alpha;
 
+  /// Creates an [OkLabColor].
+  ///
+  /// - [l]: Lightness, must be between 0.0 and 1.0.
+  /// - [a]: Green-red component.
+  /// - [b]: Blue-yellow component.
+  /// - [alpha]: Opacity, defaults to 1.0 (fully opaque).
   const OkLabColor(this.l, this.a, this.b, [this.alpha = 1.0]);
+
+  /// Creates an [OkLabColor] from an ARGB integer.
+  ///
+  /// - [argb]: An integer representing the color in ARGB format.
+  factory OkLabColor.fromInt(final int argb) {
+    final double alpha = argb.a2;
+    double r = argb.r2;
+    double g = argb.g2;
+    double b = argb.b2;
+
+    // sRGB to Linear sRGB
+    r = srgbToLinear(r);
+    g = srgbToLinear(g);
+    b = srgbToLinear(b);
+
+    // Linear sRGB to Oklab
+    final double l = 0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b;
+    final double m = 0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b;
+    final double s = 0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b;
+
+    final double l_ = cbrt(l);
+    final double m_ = cbrt(m);
+    final double s_ = cbrt(s);
+
+    final double labL =
+        0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
+    final double labA =
+        1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
+    final double labB =
+        0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
+
+    return OkLabColor(labL, labA, labB, alpha);
+  }
+
+  /// Creates an [OkLabColor] from another [ColorSpacesIQ] instance.
+  /// This is a convenience factory that converts any color model that implements
+  /// [ColorSpacesIQ] into an [OkLabColor].
+  factory OkLabColor.from(final ColorSpacesIQ color) =>
+      OkLabColor.fromInt(color.value);
 
   @override
   ColorIQ toColor() {
@@ -31,11 +98,18 @@ class OkLabColor implements ColorSpacesIQ {
 
     r = (r > 0.0031308) ? (1.055 * pow(r, 1 / 2.4) - 0.055) : (12.92 * r);
     g = (g > 0.0031308) ? (1.055 * pow(g, 1 / 2.4) - 0.055) : (12.92 * g);
-    bVal = (bVal > 0.0031308) ? (1.055 * pow(bVal, 1 / 2.4) - 0.055) : (12.92 * bVal);
+    bVal = (bVal > 0.0031308)
+        ? (1.055 * pow(bVal, 1 / 2.4) - 0.055)
+        : (12.92 * bVal);
 
-    return ColorIQ.fromARGB((alpha * 255).round(), (r * 255).round().clamp(0, 255), (g * 255).round().clamp(0, 255), (bVal * 255).round().clamp(0, 255));
+    return ColorIQ.fromARGB(
+      (alpha * 255).round(),
+      (r * 255).round().clamp(0, 255),
+      (g * 255).round().clamp(0, 255),
+      (bVal * 255).round().clamp(0, 255),
+    );
   }
-  
+
   @override
   int get value => toColor().value;
 
@@ -46,25 +120,28 @@ class OkLabColor implements ColorSpacesIQ {
     if (h < 0) h += 360;
     return OkLchColor(l, c, h, alpha);
   }
-  
+
   OkHslColor toOkHsl() {
-      final OkLchColor lch = toOkLch();
-      double s = (lch.l == 0 || lch.l == 1) ? 0 : lch.c / 0.4; 
-      if (s > 1) s = 1;
-      return OkHslColor(lch.h, s, lch.l); // OkHslColor doesn't have alpha in constructor yet? Wait, I fixed it.
-      // Wait, OkHslColor constructor is (h, s, l, [alpha]).
-      // So I should pass alpha.
-  }
-  
-  OkHsvColor toOkHsv() {
-      final OkLchColor lch = toOkLch();
-      double v = lch.l + lch.c / 0.4;
-      if (v > 1) v = 1;
-      double s = (v == 0) ? 0 : (lch.c / 0.4) / v;
-      if (s > 1) s = 1;
-      return OkHsvColor(lch.h, s, v, alpha);
+    final OkLchColor lch = toOkLch();
+    double s = (lch.l == 0 || lch.l == 1) ? 0 : lch.c / 0.4;
+    if (s > 1) s = 1;
+    return OkHslColor(
+      lch.h,
+      s,
+      lch.l,
+    ); // OkHslColor doesn't have alpha in constructor yet? Wait, I fixed it.
+    // Wait, OkHslColor constructor is (h, s, l, [alpha]).
+    // So I should pass alpha.
   }
 
+  OkHsvColor toOkHsv() {
+    final OkLchColor lch = toOkLch();
+    double v = lch.l + lch.c / 0.4;
+    if (v > 1) v = 1;
+    double s = (v == 0) ? 0 : (lch.c / 0.4) / v;
+    if (s > 1) s = 1;
+    return OkHsvColor(lch.h, s, v, alpha);
+  }
 
   @override
   List<int> get srgb => toColor().srgb;
@@ -79,13 +156,16 @@ class OkLabColor implements ColorSpacesIQ {
   OkLabColor get grayscale => toColor().grayscale.toOkLab();
 
   @override
-  OkLabColor whiten([final double amount = 20]) => toColor().whiten(amount).toOkLab();
+  OkLabColor whiten([final double amount = 20]) =>
+      toColor().whiten(amount).toOkLab();
 
   @override
-  OkLabColor blacken([final double amount = 20]) => toColor().blacken(amount).toOkLab();
+  OkLabColor blacken([final double amount = 20]) =>
+      toColor().blacken(amount).toOkLab();
 
   @override
-  OkLabColor lerp(final ColorSpacesIQ other, final double t) => (toColor().lerp(other, t) as ColorIQ).toOkLab();
+  OkLabColor lerp(final ColorSpacesIQ other, final double t) =>
+      (toColor().lerp(other, t) as ColorIQ).toOkLab();
 
   @override
   OkLabColor lighten([final double amount = 20]) {
@@ -150,7 +230,12 @@ class OkLabColor implements ColorSpacesIQ {
   ColorTemperature get temperature => toColor().temperature;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  OkLabColor copyWith({final double? l, final double? a, final double? b, final double? alpha}) {
+  OkLabColor copyWith({
+    final double? l,
+    final double? a,
+    final double? b,
+    final double? alpha,
+  }) {
     return OkLabColor(
       l ?? this.l,
       a ?? this.a,
@@ -160,7 +245,9 @@ class OkLabColor implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((final ColorSpacesIQ c) => (c as ColorIQ).toOkLab()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+      .map((final ColorSpacesIQ c) => (c as ColorIQ).toOkLab())
+      .toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([final double? step]) {
@@ -197,52 +284,65 @@ class OkLabColor implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  OkLabColor blend(final ColorSpacesIQ other, [final double amount = 50]) => toColor().blend(other, amount).toOkLab();
+  OkLabColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
+      toColor().blend(other, amount).toOkLab();
 
   @override
-  OkLabColor opaquer([final double amount = 20]) => toColor().opaquer(amount).toOkLab();
+  OkLabColor opaquer([final double amount = 20]) =>
+      toColor().opaquer(amount).toOkLab();
 
   @override
-  OkLabColor adjustHue([final double amount = 20]) => toColor().adjustHue(amount).toOkLab();
+  OkLabColor adjustHue([final double amount = 20]) =>
+      toColor().adjustHue(amount).toOkLab();
 
   @override
   OkLabColor get complementary => toColor().complementary.toOkLab();
 
   @override
-  OkLabColor warmer([final double amount = 20]) => toColor().warmer(amount).toOkLab();
+  OkLabColor warmer([final double amount = 20]) =>
+      toColor().warmer(amount).toOkLab();
 
   @override
-  OkLabColor cooler([final double amount = 20]) => toColor().cooler(amount).toOkLab();
+  OkLabColor cooler([final double amount = 20]) =>
+      toColor().cooler(amount).toOkLab();
 
   @override
-  List<OkLabColor> generateBasicPalette() => toColor().generateBasicPalette().map((final ColorIQ c) => c.toOkLab()).toList();
+  List<OkLabColor> generateBasicPalette() => toColor()
+      .generateBasicPalette()
+      .map((final ColorIQ c) => c.toOkLab())
+      .toList();
 
   @override
-  List<OkLabColor> tonesPalette() => toColor().tonesPalette().map((final ColorIQ c) => c.toOkLab()).toList();
+  List<OkLabColor> tonesPalette() =>
+      toColor().tonesPalette().map((final ColorIQ c) => c.toOkLab()).toList();
 
   @override
-  List<OkLabColor> analogous({final int count = 5, final double offset = 30}) => toColor().analogous(count: count, offset: offset).map((final ColorIQ c) => c.toOkLab()).toList();
+  List<OkLabColor> analogous({final int count = 5, final double offset = 30}) =>
+      toColor()
+          .analogous(count: count, offset: offset)
+          .map((final ColorIQ c) => c.toOkLab())
+          .toList();
 
   @override
-  List<OkLabColor> square() => toColor().square().map((final ColorIQ c) => c.toOkLab()).toList();
+  List<OkLabColor> square() =>
+      toColor().square().map((final ColorIQ c) => c.toOkLab()).toList();
 
   @override
-  List<OkLabColor> tetrad({final double offset = 60}) => toColor().tetrad(offset: offset).map((final ColorIQ c) => c.toOkLab()).toList();
+  List<OkLabColor> tetrad({final double offset = 60}) => toColor()
+      .tetrad(offset: offset)
+      .map((final ColorIQ c) => c.toOkLab())
+      .toList();
 
   @override
-  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
-
-  @override
-  double contrastWith(final ColorSpacesIQ other) => toColor().contrastWith(other);
+  double contrastWith(final ColorSpacesIQ other) =>
+      toColor().contrastWith(other);
 
   @override
   ColorSlice closestColorSlice() => toColor().closestColorSlice();
 
   @override
-  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
-
-  @override
-  List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
+  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) =>
+      toColor().isWithinGamut(gamut);
 
   @override
   Map<String, dynamic> toJson() {
@@ -256,5 +356,7 @@ class OkLabColor implements ColorSpacesIQ {
   }
 
   @override
-  String toString() => 'OkLabColor(l: ${l.toStringAsFixed(2)}, a: ${a.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)}, alpha: ${alpha.toStringAsFixed(2)})';
+  String toString() =>
+      'OkLabColor(l: ${l.toStringAsFixed(2)}, '
+      'a: ${a.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)}, alpha: ${alpha.toStringAsFixed(2)})';
 }

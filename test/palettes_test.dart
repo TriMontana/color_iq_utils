@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('Palette Methods Tests', () {
     test('generateBasicPalette returns 7 colors', () {
-      const ColorIQ color = ColorIQ.fromARGB(255, 100, 150, 200);
+      final ColorIQ color = ColorIQ.fromARGB(255, 100, 150, 200);
       final List<ColorIQ> palette = color.generateBasicPalette();
       expect(palette.length, 7);
       expect(palette[3], equals(color)); // Base color
@@ -15,7 +15,7 @@ void main() {
     });
 
     test('tonesPalette returns 5 colors', () {
-      const ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0); // Red
+      final ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0); // Red
       final List<ColorIQ> palette = color.tonesPalette();
       expect(palette.length, 5);
       expect(palette[0], equals(color)); // Base color

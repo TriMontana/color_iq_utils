@@ -12,8 +12,8 @@ void main() {
   print('  HCT: ${yellow.toHct()}');
   print('  Slice: ${yellow.closestColorSlice().name}');
   print('  Desc: ${ColorDescriptor.describe(yellow)}');
-  
-  const ColorIQ lightGray = ColorIQ(0xFFD3D3D3);
+
+  final ColorIQ lightGray = ColorIQ(0xFFD3D3D3);
   print('LightGray (D3D3D3):');
   print('  HSL: ${lightGray.toHsl()}');
   print('  Desc: ${ColorDescriptor.describe(lightGray)}');

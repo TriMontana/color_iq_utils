@@ -1,11 +1,33 @@
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 
-class YuvColor implements ColorSpacesIQ {
+/// A representation of a color in the YUV color space.
+///
+/// YUV is a color encoding system typically used as part of a color image pipeline.
+/// It encodes a color image or video taking human perception into account,
+/// allowing reduced bandwidth for chrominance components, thereby typically
+/// enabling transmission errors or compression artifacts to be more efficiently
+/// masked by human perception than using a "direct" RGB-representation.
+///
+/// The Y component represents the luma, or brightness, and the U and V components
+/// are the chrominance (color) components.
+///
+/// [YuvColor] provides methods to convert to and from other color spaces,
+/// and to perform various color manipulations.
+class YuvColor with ColorModelsMixin implements ColorSpacesIQ {
+  /// The luma component (brightness).
+  ///
+  /// Ranges from 0.0 to 1.0.
   final double y;
+
+  /// The chrominance U component (blue projection).
   final double u;
+
+  /// The chrominance V component (red projection).
   final double v;
 
   const YuvColor(this.y, this.u, this.v);
@@ -15,12 +37,17 @@ class YuvColor implements ColorSpacesIQ {
     final double r = y + 1.13983 * v;
     final double g = y - 0.39465 * u - 0.58060 * v;
     final double b = y + 2.03211 * u;
-    return ColorIQ.fromARGB(255, (r * 255).round().clamp(0, 255), (g * 255).round().clamp(0, 255), (b * 255).round().clamp(0, 255));
+    return ColorIQ.fromARGB(
+      255,
+      (r * 255).round().clamp(0, 255),
+      (g * 255).round().clamp(0, 255),
+      (b * 255).round().clamp(0, 255),
+    );
   }
-  
+
   @override
   int get value => toColor().value;
-  
+
   @override
   YuvColor darken([final double amount = 20]) {
     return toColor().darken(amount).toYuv();
@@ -74,13 +101,16 @@ class YuvColor implements ColorSpacesIQ {
   YuvColor get grayscale => toColor().grayscale.toYuv();
 
   @override
-  YuvColor whiten([final double amount = 20]) => toColor().whiten(amount).toYuv();
+  YuvColor whiten([final double amount = 20]) =>
+      toColor().whiten(amount).toYuv();
 
   @override
-  YuvColor blacken([final double amount = 20]) => toColor().blacken(amount).toYuv();
+  YuvColor blacken([final double amount = 20]) =>
+      toColor().blacken(amount).toYuv();
 
   @override
-  YuvColor lerp(final ColorSpacesIQ other, final double t) => (toColor().lerp(other, t) as ColorIQ).toYuv();
+  YuvColor lerp(final ColorSpacesIQ other, final double t) =>
+      (toColor().lerp(other, t) as ColorIQ).toYuv();
 
   @override
   YuvColor lighten([final double amount = 20]) {
@@ -106,15 +136,13 @@ class YuvColor implements ColorSpacesIQ {
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   YuvColor copyWith({final double? y, final double? u, final double? v}) {
-    return YuvColor(
-      y ?? this.y,
-      u ?? this.u,
-      v ?? this.v,
-    );
+    return YuvColor(y ?? this.y, u ?? this.u, v ?? this.v);
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((final ColorSpacesIQ c) => (c as ColorIQ).toYuv()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+      .map((final ColorSpacesIQ c) => (c as ColorIQ).toYuv())
+      .toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([final double? step]) {
@@ -151,63 +179,79 @@ class YuvColor implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  YuvColor blend(final ColorSpacesIQ other, [final double amount = 50]) => toColor().blend(other, amount).toYuv();
+  YuvColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
+      toColor().blend(other, amount).toYuv();
 
   @override
-  YuvColor opaquer([final double amount = 20]) => toColor().opaquer(amount).toYuv();
+  YuvColor opaquer([final double amount = 20]) =>
+      toColor().opaquer(amount).toYuv();
 
   @override
-  YuvColor adjustHue([final double amount = 20]) => toColor().adjustHue(amount).toYuv();
+  YuvColor adjustHue([final double amount = 20]) =>
+      toColor().adjustHue(amount).toYuv();
 
   @override
   YuvColor get complementary => toColor().complementary.toYuv();
 
   @override
-  YuvColor warmer([final double amount = 20]) => toColor().warmer(amount).toYuv();
+  YuvColor warmer([final double amount = 20]) =>
+      toColor().warmer(amount).toYuv();
 
   @override
-  YuvColor cooler([final double amount = 20]) => toColor().cooler(amount).toYuv();
+  YuvColor cooler([final double amount = 20]) =>
+      toColor().cooler(amount).toYuv();
 
   @override
-  List<YuvColor> generateBasicPalette() => toColor().generateBasicPalette().map((final ColorIQ c) => c.toYuv()).toList();
+  List<YuvColor> generateBasicPalette() => toColor()
+      .generateBasicPalette()
+      .map((final ColorIQ c) => c.toYuv())
+      .toList();
 
   @override
-  List<YuvColor> tonesPalette() => toColor().tonesPalette().map((final ColorIQ c) => c.toYuv()).toList();
+  List<YuvColor> tonesPalette() =>
+      toColor().tonesPalette().map((final ColorIQ c) => c.toYuv()).toList();
 
   @override
-  List<YuvColor> analogous({final int count = 5, final double offset = 30}) => toColor().analogous(count: count, offset: offset).map((final ColorIQ c) => c.toYuv()).toList();
+  List<YuvColor> analogous({final int count = 5, final double offset = 30}) =>
+      toColor()
+          .analogous(count: count, offset: offset)
+          .map((final ColorIQ c) => c.toYuv())
+          .toList();
 
   @override
-  List<YuvColor> square() => toColor().square().map((final ColorIQ c) => c.toYuv()).toList();
+  List<YuvColor> square() =>
+      toColor().square().map((final ColorIQ c) => c.toYuv()).toList();
 
   @override
-  List<YuvColor> tetrad({final double offset = 60}) => toColor().tetrad(offset: offset).map((final ColorIQ c) => c.toYuv()).toList();
+  List<YuvColor> tetrad({final double offset = 60}) => toColor()
+      .tetrad(offset: offset)
+      .map((final ColorIQ c) => c.toYuv())
+      .toList();
 
   @override
-  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
-
-  @override
-  double contrastWith(final ColorSpacesIQ other) => toColor().contrastWith(other);
+  double contrastWith(final ColorSpacesIQ other) =>
+      toColor().contrastWith(other);
 
   @override
   ColorSlice closestColorSlice() => toColor().closestColorSlice();
 
   @override
-  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) =>
+      toColor().isWithinGamut(gamut);
 
   @override
-  List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
+  List<double> get whitePoint => kWhitePointD65;
 
   @override
   Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'type': 'YuvColor',
-      'y': y,
-      'u': u,
-      'v': v,
-    };
+    return <String, dynamic>{'type': 'YuvColor', 'y': y, 'u': u, 'v': v};
   }
 
   @override
-  String toString() => 'YuvColor(y: ${y.toStringAsFixed(2)}, u: ${u.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)})';
+  double distanceTo(final ColorSpacesIQ other) =>
+      toCam16().distance(other.toCam16());
+
+  @override
+  String toString() =>
+      'YuvColor(y: ${y.toStrTrimZeros(2)}, u: ${u.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)})';
 }

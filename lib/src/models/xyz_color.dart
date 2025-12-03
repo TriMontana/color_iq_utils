@@ -1,12 +1,28 @@
 import 'dart:math';
+
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/lab_color.dart';
 import 'package:color_iq_utils/src/models/luv_color.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 
-class XyzColor implements ColorSpacesIQ {
+/// The CIE 1931 XYZ color space. This color space is based on the CIE 1931 RGB color space,
+/// but it has been transformed so that all of its color matching functions are non-negative.
+/// The XYZ color space is also known as the CIE 1931 color space or the CIE XYZ color space.
+///
+/// The XYZ color space is a three-dimensional color space. The three dimensions are represented
+/// by the letters X, Y, and Z. The X dimension represents the amount of red light in a color,
+/// the Y dimension represents the amount of green light in a color, and the Z dimension
+/// represents the amount of blue light in a color.
+///
+/// The XYZ color space is a device-independent color space. This means that the colors in the
+/// XYZ color space will look the same regardless of the device that is used to display them.
+/// This is in contrast to device-dependent color spaces, such as the RGB color space, where
+/// the colors can vary depending on the device that is used to display them.
+class XyzColor with ColorModelsMixin implements ColorSpacesIQ {
   final double x;
   final double y;
   final double z;
@@ -23,13 +39,18 @@ class XyzColor implements ColorSpacesIQ {
     double g = xTemp * -0.9689 + yTemp * 1.8758 + zTemp * 0.0415;
     double b = xTemp * 0.0557 + yTemp * -0.2040 + zTemp * 1.0570;
 
-    r = (r > 0.0031308) ? (1.055 * pow(r, 1 / 2.4) - 0.055) : (12.92 * r);
-    g = (g > 0.0031308) ? (1.055 * pow(g, 1 / 2.4) - 0.055) : (12.92 * g);
-    b = (b > 0.0031308) ? (1.055 * pow(b, 1 / 2.4) - 0.055) : (12.92 * b);
+    r = gammaCorrection(r);
+    g = gammaCorrection(g);
+    b = gammaCorrection(b);
 
-    return ColorIQ.fromARGB(255, (r * 255).round().clamp(0, 255), (g * 255).round().clamp(0, 255), (b * 255).round().clamp(0, 255));
+    return ColorIQ.fromARGB(
+      255,
+      (r * 255).round().clamp(0, 255),
+      (g * 255).round().clamp(0, 255),
+      (b * 255).round().clamp(0, 255),
+    );
   }
-  
+
   @override
   int get value => toColor().value;
 
@@ -42,9 +63,15 @@ class XyzColor implements ColorSpacesIQ {
     double yTemp = y / refY;
     double zTemp = z / refZ;
 
-    xTemp = (xTemp > 0.008856) ? pow(xTemp, 1 / 3).toDouble() : (7.787 * xTemp) + (16 / 116);
-    yTemp = (yTemp > 0.008856) ? pow(yTemp, 1 / 3).toDouble() : (7.787 * yTemp) + (16 / 116);
-    zTemp = (zTemp > 0.008856) ? pow(zTemp, 1 / 3).toDouble() : (7.787 * zTemp) + (16 / 116);
+    xTemp = (xTemp > 0.008856)
+        ? pow(xTemp, 1 / 3).toDouble()
+        : (7.787 * xTemp) + (16 / 116);
+    yTemp = (yTemp > 0.008856)
+        ? pow(yTemp, 1 / 3).toDouble()
+        : (7.787 * yTemp) + (16 / 116);
+    zTemp = (zTemp > 0.008856)
+        ? pow(zTemp, 1 / 3).toDouble()
+        : (7.787 * zTemp) + (16 / 116);
 
     final double l = (116 * yTemp) - 16;
     final double a = 500 * (xTemp - yTemp);
@@ -65,12 +92,14 @@ class XyzColor implements ColorSpacesIQ {
     final double v = (9 * y) / (x + (15 * y) + (3 * z));
 
     double yTemp = y / 100.0;
-    yTemp = (yTemp > 0.008856) ? pow(yTemp, 1 / 3).toDouble() : (7.787 * yTemp) + (16 / 116);
+    yTemp = (yTemp > 0.008856)
+        ? pow(yTemp, 1 / 3).toDouble()
+        : (7.787 * yTemp) + (16 / 116);
 
     final double l = (116 * yTemp) - 16;
     double uOut = 13 * l * (u - refU);
     double vOut = 13 * l * (v - refV);
-    
+
     if (x + 15 * y + 3 * z == 0) {
       uOut = 0;
       vOut = 0;
@@ -92,10 +121,12 @@ class XyzColor implements ColorSpacesIQ {
   XyzColor get grayscale => toColor().grayscale.toXyz();
 
   @override
-  XyzColor whiten([final double amount = 20]) => toColor().whiten(amount).toXyz();
+  XyzColor whiten([final double amount = 20]) =>
+      toColor().whiten(amount).toXyz();
 
   @override
-  XyzColor blacken([final double amount = 20]) => toColor().blacken(amount).toXyz();
+  XyzColor blacken([final double amount = 20]) =>
+      toColor().blacken(amount).toXyz();
 
   @override
   XyzColor lighten([final double amount = 20]) {
@@ -143,7 +174,8 @@ class XyzColor implements ColorSpacesIQ {
   }
 
   @override
-  XyzColor lerp(final ColorSpacesIQ other, final double t) => (toColor().lerp(other, t) as ColorIQ).toXyz();
+  XyzColor lerp(final ColorSpacesIQ other, final double t) =>
+      (toColor().lerp(other, t) as ColorIQ).toXyz();
 
   @override
   HctColor toHct() => toColor().toHct();
@@ -164,15 +196,13 @@ class XyzColor implements ColorSpacesIQ {
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   XyzColor copyWith({final double? x, final double? y, final double? z}) {
-    return XyzColor(
-      x ?? this.x,
-      y ?? this.y,
-      z ?? this.z,
-    );
+    return XyzColor(x ?? this.x, y ?? this.y, z ?? this.z);
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((final ColorSpacesIQ c) => (c as ColorIQ).toXyz()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+      .map((final ColorSpacesIQ c) => (c as ColorIQ).toXyz())
+      .toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([final double? step]) {
@@ -209,43 +239,61 @@ class XyzColor implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  XyzColor blend(final ColorSpacesIQ other, [final double amount = 50]) => toColor().blend(other, amount).toXyz();
+  XyzColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
+      toColor().blend(other, amount).toXyz();
 
   @override
-  XyzColor opaquer([final double amount = 20]) => toColor().opaquer(amount).toXyz();
+  XyzColor opaquer([final double amount = 20]) =>
+      toColor().opaquer(amount).toXyz();
 
   @override
-  XyzColor adjustHue([final double amount = 20]) => toColor().adjustHue(amount).toXyz();
+  XyzColor adjustHue([final double amount = 20]) =>
+      toColor().adjustHue(amount).toXyz();
 
   @override
   XyzColor get complementary => toColor().complementary.toXyz();
 
   @override
-  XyzColor warmer([final double amount = 20]) => toColor().warmer(amount).toXyz();
+  XyzColor warmer([final double amount = 20]) =>
+      toColor().warmer(amount).toXyz();
 
   @override
-  XyzColor cooler([final double amount = 20]) => toColor().cooler(amount).toXyz();
+  XyzColor cooler([final double amount = 20]) =>
+      toColor().cooler(amount).toXyz();
 
   @override
-  List<XyzColor> generateBasicPalette() => toColor().generateBasicPalette().map((final ColorIQ c) => c.toXyz()).toList();
+  List<XyzColor> generateBasicPalette() => toColor()
+      .generateBasicPalette()
+      .map((final ColorIQ c) => c.toXyz())
+      .toList();
 
   @override
-  List<XyzColor> tonesPalette() => toColor().tonesPalette().map((final ColorIQ c) => c.toXyz()).toList();
+  List<XyzColor> tonesPalette() =>
+      toColor().tonesPalette().map((final ColorIQ c) => c.toXyz()).toList();
 
   @override
-  List<XyzColor> analogous({final int count = 5, final double offset = 30}) => toColor().analogous(count: count, offset: offset).map((final ColorIQ c) => c.toXyz()).toList();
+  List<XyzColor> analogous({final int count = 5, final double offset = 30}) =>
+      toColor()
+          .analogous(count: count, offset: offset)
+          .map((final ColorIQ c) => c.toXyz())
+          .toList();
 
   @override
-  List<XyzColor> square() => toColor().square().map((final ColorIQ c) => c.toXyz()).toList();
+  List<XyzColor> square() =>
+      toColor().square().map((final ColorIQ c) => c.toXyz()).toList();
 
   @override
-  List<XyzColor> tetrad({final double offset = 60}) => toColor().tetrad(offset: offset).map((final ColorIQ c) => c.toXyz()).toList();
+  List<XyzColor> tetrad({final double offset = 60}) => toColor()
+      .tetrad(offset: offset)
+      .map((final ColorIQ c) => c.toXyz())
+      .toList();
 
   @override
   double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
 
   @override
-  double contrastWith(final ColorSpacesIQ other) => toColor().contrastWith(other);
+  double contrastWith(final ColorSpacesIQ other) =>
+      toColor().contrastWith(other);
 
   @override
   ColorSlice closestColorSlice() => toColor().closestColorSlice();
@@ -268,9 +316,12 @@ class XyzColor implements ColorSpacesIQ {
       b = (b > 0.0031308) ? (1.055 * pow(b, 1 / 2.4) - 0.055) : (12.92 * b);
 
       const double epsilon = 0.0001;
-      return r >= -epsilon && r <= 1.0 + epsilon &&
-             g >= -epsilon && g <= 1.0 + epsilon &&
-             b >= -epsilon && b <= 1.0 + epsilon;
+      return r >= -epsilon &&
+          r <= 1.0 + epsilon &&
+          g >= -epsilon &&
+          g <= 1.0 + epsilon &&
+          b >= -epsilon &&
+          b <= 1.0 + epsilon;
     }
     return true;
   }
@@ -280,14 +331,10 @@ class XyzColor implements ColorSpacesIQ {
 
   @override
   Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'type': 'XyzColor',
-      'x': x,
-      'y': y,
-      'z': z,
-    };
+    return <String, dynamic>{'type': 'XyzColor', 'x': x, 'y': y, 'z': z};
   }
 
   @override
-  String toString() => 'XyzColor(x: ${x.toStringAsFixed(2)}, y: ${y.toStringAsFixed(2)}, z: ${z.toStringAsFixed(2)})';
+  String toString() =>
+      'XyzColor(x: ${x.toStringAsFixed(2)}, y: ${y.toStringAsFixed(2)}, z: ${z.toStringAsFixed(2)})';
 }

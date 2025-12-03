@@ -1,17 +1,17 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:color_iq_utils/src/constants.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('Gamut, WhitePoint, and JSON', () {
     test('isWithinGamut returns true for sRGB colors', () {
-      const ColorIQ color = ColorIQ(0xFF00FF00);
+      final ColorIQ color = ColorIQ(0xFF00FF00);
       expect(color.isWithinGamut(Gamut.sRGB), isTrue);
       expect(color.isWithinGamut(Gamut.displayP3), isTrue);
     });
 
     test('whitePoint returns D65 default', () {
-      const ColorIQ color = ColorIQ(0xFFFFFFFF);
-      final List<double> wp = color.whitePoint;
+      final List<double> wp = cWhite.whitePoint;
       expect(wp.length, 3);
       expect(wp[0], closeTo(95.047, 0.001));
       expect(wp[1], closeTo(100.0, 0.001));
@@ -19,7 +19,7 @@ void main() {
     });
 
     test('toJson and fromJson for ColorIQ', () {
-      const ColorIQ color = ColorIQ(0xFF123456);
+      final ColorIQ color = ColorIQ(0xFF123456);
       final Map<String, dynamic> json = color.toJson();
       expect(json['type'], 'ColorIQ');
       expect(json['value'], 0xFF123456);
@@ -99,7 +99,7 @@ void main() {
       expect(fromJson.y, 0.3);
       expect(fromJson.k, 0.4);
     });
-    
+
     test('toJson and fromJson for LchColor', () {
       const LchColor lch = LchColor(60, 30, 180);
       final Map<String, dynamic> json = lch.toJson();

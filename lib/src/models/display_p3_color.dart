@@ -1,10 +1,27 @@
 import 'dart:math';
+
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:material_color_utilities/hct/cam16.dart';
 
-class DisplayP3Color implements ColorSpacesIQ {
+/// A representation of a color in the Display P3 color space.
+///
+/// The Display P3 color space, developed by Apple Inc., offers a wider gamut
+/// than sRGB, particularly in the reds and greens. This makes it suitable for
+/// displaying rich, vibrant colors on compatible devices.
+///
+/// `DisplayP3Color` stores color values as `r`, `g`, and `b` components,
+/// each ranging from 0.0 to 1.0.
+///
+/// This class implements the `ColorSpacesIQ` interface, providing a rich set
+/// of methods for color manipulation, conversion, and analysis. It seamlessly
+/// integrates with other color models in the library, such as `ColorIQ` (sRGB)
+/// and `HctColor`, by converting to and from `ColorIQ` as an intermediary.
+///
+class DisplayP3Color with ColorModelsMixin implements ColorSpacesIQ {
   final double r;
   final double g;
   final double b;
@@ -13,33 +30,44 @@ class DisplayP3Color implements ColorSpacesIQ {
 
   @override
   ColorIQ toColor() {
-      // Gamma decoding (P3 to Linear)
-      final double rLin = (r > 0.04045) ? pow((r + 0.055) / 1.055, 2.4).toDouble() : (r / 12.92);
-      final double gLin = (g > 0.04045) ? pow((g + 0.055) / 1.055, 2.4).toDouble() : (g / 12.92);
-      final double bLin = (b > 0.04045) ? pow((b + 0.055) / 1.055, 2.4).toDouble() : (b / 12.92);
-      
-      // Display P3 Linear to XYZ (D65)
-      // Matrix inverse of the one used in conversion
-      final double x = rLin * 0.4865709 + gLin * 0.2656677 + bLin * 0.1982173;
-      final double y = rLin * 0.2289746 + gLin * 0.6917385 + bLin * 0.0792869;
-      final double z = rLin * 0.0000000 + gLin * 0.0451134 + bLin * 1.0439444;
-      
-      // XYZ (D65) to sRGB Linear
-      double rS = x * 3.2404542 + y * -1.5371385 + z * -0.4985314;
-      double gS = x * -0.9692660 + y * 1.8760108 + z * 0.0415560;
-      double bS = x * 0.0556434 + y * -0.2040259 + z * 1.0572252;
-      
-      // sRGB Linear to sRGB (Gamma encoded)
-      rS = (rS > 0.0031308) ? (1.055 * pow(rS, 1 / 2.4) - 0.055) : (12.92 * rS);
-      gS = (gS > 0.0031308) ? (1.055 * pow(gS, 1 / 2.4) - 0.055) : (12.92 * gS);
-      bS = (bS > 0.0031308) ? (1.055 * pow(bS, 1 / 2.4) - 0.055) : (12.92 * bS);
-      
-      return ColorIQ.fromARGB(255, (rS * 255).round().clamp(0, 255), (gS * 255).round().clamp(0, 255), (bS * 255).round().clamp(0, 255));
+    // Gamma decoding (P3 to Linear)
+    final double rLin = (r > 0.04045)
+        ? pow((r + 0.055) / 1.055, 2.4).toDouble()
+        : (r / 12.92);
+    final double gLin = (g > 0.04045)
+        ? pow((g + 0.055) / 1.055, 2.4).toDouble()
+        : (g / 12.92);
+    final double bLin = (b > 0.04045)
+        ? pow((b + 0.055) / 1.055, 2.4).toDouble()
+        : (b / 12.92);
+
+    // Display P3 Linear to XYZ (D65)
+    // Matrix inverse of the one used in conversion
+    final double x = rLin * 0.4865709 + gLin * 0.2656677 + bLin * 0.1982173;
+    final double y = rLin * 0.2289746 + gLin * 0.6917385 + bLin * 0.0792869;
+    final double z = rLin * 0.0000000 + gLin * 0.0451134 + bLin * 1.0439444;
+
+    // XYZ (D65) to sRGB Linear
+    double rS = x * 3.2404542 + y * -1.5371385 + z * -0.4985314;
+    double gS = x * -0.9692660 + y * 1.8760108 + z * 0.0415560;
+    double bS = x * 0.0556434 + y * -0.2040259 + z * 1.0572252;
+
+    // sRGB Linear to sRGB (Gamma encoded)
+    rS = (rS > 0.0031308) ? (1.055 * pow(rS, 1 / 2.4) - 0.055) : (12.92 * rS);
+    gS = (gS > 0.0031308) ? (1.055 * pow(gS, 1 / 2.4) - 0.055) : (12.92 * gS);
+    bS = (bS > 0.0031308) ? (1.055 * pow(bS, 1 / 2.4) - 0.055) : (12.92 * bS);
+
+    return ColorIQ.fromARGB(
+      255,
+      (rS * 255).round().clamp(0, 255),
+      (gS * 255).round().clamp(0, 255),
+      (bS * 255).round().clamp(0, 255),
+    );
   }
-  
+
   @override
   int get value => toColor().value;
-  
+
   @override
   DisplayP3Color darken([final double amount = 20]) {
     return toColor().darken(amount).toDisplayP3();
@@ -93,13 +121,16 @@ class DisplayP3Color implements ColorSpacesIQ {
   DisplayP3Color get grayscale => toColor().grayscale.toDisplayP3();
 
   @override
-  DisplayP3Color whiten([final double amount = 20]) => toColor().whiten(amount).toDisplayP3();
+  DisplayP3Color whiten([final double amount = 20]) =>
+      toColor().whiten(amount).toDisplayP3();
 
   @override
-  DisplayP3Color blacken([final double amount = 20]) => toColor().blacken(amount).toDisplayP3();
+  DisplayP3Color blacken([final double amount = 20]) =>
+      toColor().blacken(amount).toDisplayP3();
 
   @override
-  DisplayP3Color lerp(final ColorSpacesIQ other, final double t) => (toColor().lerp(other, t) as ColorIQ).toDisplayP3();
+  DisplayP3Color lerp(final ColorSpacesIQ other, final double t) =>
+      (toColor().lerp(other, t) as ColorIQ).toDisplayP3();
 
   @override
   DisplayP3Color lighten([final double amount = 20]) {
@@ -125,15 +156,13 @@ class DisplayP3Color implements ColorSpacesIQ {
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   DisplayP3Color copyWith({final double? r, final double? g, final double? b}) {
-    return DisplayP3Color(
-      r ?? this.r,
-      g ?? this.g,
-      b ?? this.b,
-    );
+    return DisplayP3Color(r ?? this.r, g ?? this.g, b ?? this.b);
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((final ColorSpacesIQ c) => (c as ColorIQ).toDisplayP3()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+      .map((final ColorSpacesIQ c) => (c as ColorIQ).toDisplayP3())
+      .toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([final double? step]) {
@@ -170,49 +199,72 @@ class DisplayP3Color implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  DisplayP3Color blend(final ColorSpacesIQ other, [final double amount = 50]) => toColor().blend(other, amount).toDisplayP3();
+  DisplayP3Color blend(final ColorSpacesIQ other, [final double amount = 50]) =>
+      toColor().blend(other, amount).toDisplayP3();
 
   @override
-  DisplayP3Color opaquer([final double amount = 20]) => toColor().opaquer(amount).toDisplayP3();
+  DisplayP3Color opaquer([final double amount = 20]) =>
+      toColor().opaquer(amount).toDisplayP3();
 
   @override
-  DisplayP3Color adjustHue([final double amount = 20]) => toColor().adjustHue(amount).toDisplayP3();
+  DisplayP3Color adjustHue([final double amount = 20]) =>
+      toColor().adjustHue(amount).toDisplayP3();
 
   @override
   DisplayP3Color get complementary => toColor().complementary.toDisplayP3();
 
   @override
-  DisplayP3Color warmer([final double amount = 20]) => toColor().warmer(amount).toDisplayP3();
+  DisplayP3Color warmer([final double amount = 20]) =>
+      toColor().warmer(amount).toDisplayP3();
 
   @override
-  DisplayP3Color cooler([final double amount = 20]) => toColor().cooler(amount).toDisplayP3();
+  DisplayP3Color cooler([final double amount = 20]) =>
+      toColor().cooler(amount).toDisplayP3();
 
   @override
-  List<DisplayP3Color> generateBasicPalette() => toColor().generateBasicPalette().map((final ColorIQ c) => c.toDisplayP3()).toList();
+  List<DisplayP3Color> generateBasicPalette() => toColor()
+      .generateBasicPalette()
+      .map((final ColorIQ c) => c.toDisplayP3())
+      .toList();
 
   @override
-  List<DisplayP3Color> tonesPalette() => toColor().tonesPalette().map((final ColorIQ c) => c.toDisplayP3()).toList();
+  List<DisplayP3Color> tonesPalette() => toColor()
+      .tonesPalette()
+      .map((final ColorIQ c) => c.toDisplayP3())
+      .toList();
 
   @override
-  List<DisplayP3Color> analogous({final int count = 5, final double offset = 30}) => toColor().analogous(count: count, offset: offset).map((final ColorIQ c) => c.toDisplayP3()).toList();
+  List<DisplayP3Color> analogous({
+    final int count = 5,
+    final double offset = 30,
+  }) => toColor()
+      .analogous(count: count, offset: offset)
+      .map((final ColorIQ c) => c.toDisplayP3())
+      .toList();
 
   @override
-  List<DisplayP3Color> square() => toColor().square().map((final ColorIQ c) => c.toDisplayP3()).toList();
+  List<DisplayP3Color> square() =>
+      toColor().square().map((final ColorIQ c) => c.toDisplayP3()).toList();
 
   @override
-  List<DisplayP3Color> tetrad({final double offset = 60}) => toColor().tetrad(offset: offset).map((final ColorIQ c) => c.toDisplayP3()).toList();
+  List<DisplayP3Color> tetrad({final double offset = 60}) => toColor()
+      .tetrad(offset: offset)
+      .map((final ColorIQ c) => c.toDisplayP3())
+      .toList();
 
   @override
   double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
 
   @override
-  double contrastWith(final ColorSpacesIQ other) => toColor().contrastWith(other);
+  double contrastWith(final ColorSpacesIQ other) =>
+      toColor().contrastWith(other);
 
   @override
   ColorSlice closestColorSlice() => toColor().closestColorSlice();
 
   @override
-  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) =>
+      toColor().isWithinGamut(gamut);
 
   @override
   List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
@@ -229,5 +281,12 @@ class DisplayP3Color implements ColorSpacesIQ {
   }
 
   @override
-  String toString() => 'DisplayP3Color(r: ${r.toStringAsFixed(4)}, g: ${g.toStringAsFixed(4)}, b: ${b.toStringAsFixed(4)}, opacity: ${transparency.toStringAsFixed(2)})';
+  String toString() =>
+      'DisplayP3Color(r: ${r.toStringAsFixed(4)}, ' //
+      'g: ${g.toStringAsFixed(4)}, ' //
+      'b: ${b.toStringAsFixed(4)}, ' //
+      'opacity: ${transparency.toStringAsFixed(2)})';
+
+  @override
+  Cam16 toCam16() => Cam16.fromInt(value);
 }

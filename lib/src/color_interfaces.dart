@@ -1,13 +1,22 @@
-import 'package:color_iq_utils/src/models/hct_color.dart';
-import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:color_iq_utils/src/color_wheels.dart';
-export 'color_wheels.dart';
-import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/color_blindness.dart';
+import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:material_color_utilities/hct/cam16.dart';
+
 export 'color_blindness.dart';
+export 'color_wheels.dart';
+
+/// The brightness of a color.
+enum Brightness { dark, light }
+
+/// Common color gamuts.
+enum Gamut { sRGB, displayP3, rec2020, adobeRgb, proPhotoRgb }
+
+/// CIE 1931 2° Standard Observer, D65 illuminant.
+///
+/// X, Y, Z tristimulus values of the white point.
+const List<double> kWhitePointD65 = <double>[95.047, 100.0, 108.883];
 
 /// A common interface for all color models.
-abstract class ColorSpacesIQ {
+abstract interface class ColorSpacesIQ {
   /// Returns the 32-bit integer ID (ARGB) of this color.
   int get value;
 
@@ -47,16 +56,28 @@ abstract class ColorSpacesIQ {
 
   /// Linearly interpolates between this color and [other]. [t] is 0.0-1.0.
   ColorSpacesIQ lerp(final ColorSpacesIQ other, final double t);
-  
+
   /// Adjusts the transparency of the color. [amount] is 0-100.
   ColorSpacesIQ adjustTransparency([final double amount = 20]);
-
 
   /// Converts the color to the standard ARGB [ColorIQ] format.
   ColorIQ toColor();
 
-  /// Converts this color to HCT.
+  /// Converts this color to HCTColor.
   HctColor toHct();
+
+  /// Converts this color to the CAM16 color space.
+  /// CAM16 is a color appearance model used for calculating perceptual
+  /// attributes like hue, chroma, and lightness.  Note: This uses
+  /// [Cam16] from MaterialColorUtilities (not Cam16Color), as it is frequently
+  /// used for distance computations
+  Cam16 toCam16();
+
+  /// Converts this color to HSL (Hue, Saturation, Lightness).
+  HslColor toHslColor();
+
+  /// Converts this color to the Oklab color space.
+  OkLabColor toOkLab();
 
   /// Creates a new instance of this color type from an HCT color.
   /// Intensifies the color by increasing chroma and slightly decreasing tone.
@@ -80,6 +101,10 @@ abstract class ColorSpacesIQ {
   /// Returns the color temperature (Warm or Cool).
   ColorTemperature get temperature;
 
+  /// Returns a monochromatic palette.
+  /// A monochromatic color scheme consists of variations of a single hue.
+  /// This method returns a list of 5 colors, including shades (darker) and
+  /// tints (lighter) of the base color.
   List<ColorSpacesIQ> get monochromatic;
 
   /// Returns a palette of 5 colors progressively lighter.
@@ -142,7 +167,10 @@ abstract class ColorSpacesIQ {
   /// Returns analogous colors.
   /// [count] can be 3 or 5.
   /// [offset] is the hue offset in degrees (default 30).
-  List<ColorSpacesIQ> analogous({final int count = 5, final double offset = 30});
+  List<ColorSpacesIQ> analogous({
+    final int count = 5,
+    final double offset = 30,
+  });
 
   /// Returns a square harmony palette (4 colors).
   /// Base, +90, +180, +270 degrees.
@@ -172,19 +200,4 @@ abstract class ColorSpacesIQ {
 
   /// Converts the color to a JSON map.
   Map<String, dynamic> toJson();
-}
-
-/// The brightness of a color.
-enum Brightness {
-  dark,
-  light,
-}
-
-/// Common color gamuts.
-enum Gamut {
-  sRGB,
-  displayP3,
-  rec2020,
-  adobeRgb,
-  proPhotoRgb,
 }

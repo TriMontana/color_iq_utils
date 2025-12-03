@@ -2,9 +2,48 @@ import 'dart:math';
 
 import 'package:color_iq_utils/color_iq_utils.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
+import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 
 /// Extension for integers
 extension IntHelperIQ on int {
+  String get toHexStr => '0x${toRadixString(16).toUpperCase().padLeft(8, '0')}';
+
+  // The structure of the 32-bit integer is: AARRGGBB
+  /// Shifts the Alpha byte 24 bits to the right, placing it in the lowest
+  /// 8 bits. The & 0xFF mask ensures only that byte remains.
+  int get alpha => ((this >> 24) & 0xFF);
+  int get alphaInt => (0xff000000 & this) >> 24;
+
+  /// Shifts the Red byte 16 bits to the right, placing it in the lowest
+  /// 8 bits. The & 0xFF mask ensures only that byte remains.
+  int get red => ((this >> 16) & 0xFF);
+  int get redInt => (0x00ff0000 & this) >> 16;
+
+  /// Shifts the Green byte 8 bits to the right, placing it in the lowest
+  /// 8 bits. The & 0xFF mask ensures only that byte remains.
+  int get green => ((this >> 8) & 0xFF);
+  int get greenInt => (0x0000ff00 & this) >> 8;
+
+  /// Shifts the Blue byte 0 bits to the right, placing it in the lowest
+  /// 8 bits. The & 0xFF mask ensures only that byte remains.
+  int get blue => (this & 0xFF);
+  int get blueInt => (0x000000ff & this) >> 0;
+
+  double get a => (alpha / kMax8bit).clamp0to1;
+  double get a2 => (((this >> 24) & 0xFF) / 255.0).clamp0to1;
+  double get alphaLinearized => srgbToLinear(a2);
+  double get r => (red / kMax8bit).clamp0to1;
+  double get r2 => (((this >> 16) & 0xFF) / 255.0).clamp0to1;
+  double get redLinearized => srgbToLinear(r2);
+  double get g => (green / kMax8bit).clamp0to1;
+  double get g2 => (((this >> 8) & 0xFF) / 255.0).clamp0to1;
+  double get greenLinearized => srgbToLinear(g2);
+  double get b => (blue / kMax8bit).clamp0to1;
+  double get b2 => ((this & 0xFF) / 255.0).clamp0to1;
+  double get blueLinearized => srgbToLinear(b2);
+
   /// Determines the closest [ColorFamily] for this color value.
   ///
   /// Compares the color against representative colors from each family
@@ -111,18 +150,18 @@ extension IntHelperIQ on int {
 
     // Representative colors for each family (using pure/typical colors)
     final Map<ColorFamily, ColorIQ> familyColors = <ColorFamily, ColorIQ>{
-      ColorFamily.red: const ColorIQ(0xFFFF0000),
-      ColorFamily.orange: const ColorIQ(0xFFFFA500),
-      ColorFamily.yellow: const ColorIQ(0xFFFFFF00),
-      ColorFamily.green: const ColorIQ(0xFF008000),
-      ColorFamily.cyan: const ColorIQ(0xFF00FFFF),
-      ColorFamily.blue: const ColorIQ(0xFF0000FF),
-      ColorFamily.purple: const ColorIQ(0xFF800080),
-      ColorFamily.pink: const ColorIQ(0xFFFFC0CB),
-      ColorFamily.brown: const ColorIQ(0xFFA52A2A),
-      ColorFamily.white: const ColorIQ(0xFFFFFFFF),
-      ColorFamily.gray: const ColorIQ(0xFF808080),
-      ColorFamily.black: const ColorIQ(0xFF000000),
+      ColorFamily.red: cRed,
+      ColorFamily.orange: ColorIQ(0xFFFFA500),
+      ColorFamily.yellow: ColorIQ(0xFFFFFF00),
+      ColorFamily.green: cGreen,
+      ColorFamily.cyan: ColorIQ(0xFF00FFFF),
+      ColorFamily.blue: ColorIQ(0xFF0000FF),
+      ColorFamily.purple: ColorIQ(0xFF800080),
+      ColorFamily.pink: ColorIQ(0xFFFFC0CB),
+      ColorFamily.brown: ColorIQ(0xFFA52A2A),
+      ColorFamily.white: cWhite,
+      ColorFamily.gray: cGray,
+      ColorFamily.black: cBlack,
     };
 
     // Find the family with minimum perceptual distance

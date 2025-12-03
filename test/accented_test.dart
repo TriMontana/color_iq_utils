@@ -13,7 +13,7 @@ void main() {
     });
 
     test('ColorIQ accented delegates to HctColor', () {
-      const ColorIQ color = ColorIQ.fromARGB(255, 100, 150, 200);
+      final ColorIQ color = ColorIQ.fromARGB(255, 100, 150, 200);
       final ColorIQ accented = color.accented(10);
 
       final HctColor hct = color.toHct();
@@ -33,7 +33,7 @@ void main() {
     });
 
     test('Accented works across different color models', () {
-      const ColorIQ rgb = ColorIQ.fromARGB(255, 100, 150, 200);
+      final ColorIQ rgb = ColorIQ.fromARGB(255, 100, 150, 200);
       final XyzColor xyz = rgb.toXyz();
       final LabColor lab = rgb.toLab();
       final LuvColor luv = rgb.toLuv();

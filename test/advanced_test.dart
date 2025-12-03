@@ -4,9 +4,9 @@ import 'package:test/test.dart';
 void main() {
   group('Advanced Color Conversion Tests', () {
     test('RGB to XYZ conversion (White)', () {
-      const ColorIQ color = ColorIQ.fromARGB(255, 255, 255, 255);
+      final ColorIQ color = ColorIQ.fromARGB(255, 255, 255, 255);
       final XyzColor xyz = color.toXyz();
-      
+
       // D65 White point
       expect(xyz.x, closeTo(95.047, 0.1));
       expect(xyz.y, closeTo(100.000, 0.1));
@@ -19,9 +19,9 @@ void main() {
     });
 
     test('RGB to Lab conversion (Red)', () {
-      const ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0);
+      final ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0);
       final LabColor lab = color.toLab();
-      
+
       // Approximate values for pure red in sRGB -> Lab (D65)
       // L=53.24, a=80.09, b=67.20
       expect(lab.l, closeTo(53.24, 0.5));
@@ -35,9 +35,9 @@ void main() {
     });
 
     test('RGB to Luv conversion (Green)', () {
-      const ColorIQ color = ColorIQ.fromARGB(255, 0, 255, 0);
+      final ColorIQ color = ColorIQ.fromARGB(255, 0, 255, 0);
       final LuvColor luv = color.toLuv();
-      
+
       // Approximate values for pure green in sRGB -> Luv (D65)
       // L=87.73, u=-83.07, v=107.39
       expect(luv.l, closeTo(87.73, 0.5));
@@ -51,13 +51,13 @@ void main() {
     });
 
     test('RGB to LCH conversion (Blue)', () {
-      const ColorIQ color = ColorIQ.fromARGB(255, 0, 0, 255);
+      final ColorIQ color = ColorIQ.fromARGB(255, 0, 0, 255);
       final LchColor lch = color.toLch();
-      
+
       // Blue Lab: L=32.30, a=79.18, b=-107.86
       // C = sqrt(79.18^2 + (-107.86)^2) = 133.8
       // H = atan2(-107.86, 79.18) = -53.7 deg -> 306.3 deg
-      
+
       expect(lch.l, closeTo(32.30, 0.5));
       expect(lch.c, closeTo(133.8, 0.5));
       expect(lch.h, closeTo(306.3, 0.5));
@@ -68,31 +68,31 @@ void main() {
       expect(backToColor.blue, 255);
       print('Tested RGB to LCH conversion and back successfully.');
     });
-    
+
     test('Black conversion', () {
-        const ColorIQ color = ColorIQ.fromARGB(255, 0, 0, 0);
-        
-        final XyzColor xyz = color.toXyz();
-        expect(xyz.x, 0);
-        expect(xyz.y, 0);
-        expect(xyz.z, 0);
-        
-        final LabColor lab = color.toLab();
-        expect(lab.l, 0);
-        expect(lab.a, 0);
-        expect(lab.b, 0);
-        
-        final LuvColor luv = color.toLuv();
-        expect(luv.l, 0);
-        expect(luv.u, 0);
-        expect(luv.v, 0);
-        
-        final LchColor lch = color.toLch();
-        expect(lch.l, 0);
-        expect(lch.c, 0);
-        // Hue is undefined for black/gray, but implementation might return 0 or something else.
-        // Our implementation: atan2(0,0) is 0.
-        expect(lch.h, 0);
+      final ColorIQ color = ColorIQ.fromARGB(255, 0, 0, 0);
+
+      final XyzColor xyz = color.toXyz();
+      expect(xyz.x, 0);
+      expect(xyz.y, 0);
+      expect(xyz.z, 0);
+
+      final LabColor lab = color.toLab();
+      expect(lab.l, 0);
+      expect(lab.a, 0);
+      expect(lab.b, 0);
+
+      final LuvColor luv = color.toLuv();
+      expect(luv.l, 0);
+      expect(luv.u, 0);
+      expect(luv.v, 0);
+
+      final LchColor lch = color.toLch();
+      expect(lch.l, 0);
+      expect(lch.c, 0);
+      // Hue is undefined for black/gray, but implementation might return 0 or something else.
+      // Our implementation: atan2(0,0) is 0.
+      expect(lch.h, 0);
     });
   });
 }

@@ -2,21 +2,43 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/xyz_color.dart';
 
-class LuvColor implements ColorSpacesIQ {
+/// A representation of a color in the CIE L*u*v* color space.
+///
+/// The CIE L*u*v* color space is a perceptually uniform color space that is
+/// particularly useful for calculating color differences. It is designed so
+/// that the same geometric distance in the color space corresponds to the same
+/// perceived color difference.
+///
+/// - `l`: Lightness, ranging from 0 (black) to 100 (white).
+/// - `u`: Position on the green-red axis. Negative values are greenish,
+///   positive values are reddish.
+/// - `v`: Position on the blue-yellow axis. Negative values are bluish,
+///   positive values are yellowish.
+class LuvColor with ColorModelsMixin implements ColorSpacesIQ {
+  /// The lightness component of the color.
+  ///
+  /// Ranges from 0 (black) to 100 (white).
   final double l;
+
+  /// The green-red component of the color.
   final double u;
+
+  /// The blue-yellow component of the color.
   final double v;
 
+  /// Creates a new `LuvColor`.
   const LuvColor(this.l, this.u, this.v);
 
   @override
   ColorIQ toColor() {
     if (l == 0) {
-      return const ColorIQ.fromARGB(255, 0, 0, 0);
+      return ColorIQ.fromARGB(255, 0, 0, 0);
     }
 
     const double refX = 95.047;
@@ -227,7 +249,8 @@ class LuvColor implements ColorSpacesIQ {
       .toList();
 
   @override
-  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
+  double distanceTo(final ColorSpacesIQ other) =>
+      toCam16().distance(other.toCam16());
 
   @override
   double contrastWith(final ColorSpacesIQ other) =>
@@ -241,14 +264,11 @@ class LuvColor implements ColorSpacesIQ {
       toColor().isWithinGamut(gamut);
 
   @override
-  List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
-
-  @override
   Map<String, dynamic> toJson() {
     return <String, dynamic>{'type': 'LuvColor', 'l': l, 'u': u, 'v': v};
   }
 
   @override
   String toString() =>
-      'LuvColor(l: ${l.toStringAsFixed(2)}, u: ${u.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)})';
+      'LuvColor(l: ${l.toStrTrimZeros(3)}, u: ${u.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)})';
 }

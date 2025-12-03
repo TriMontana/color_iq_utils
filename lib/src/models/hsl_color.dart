@@ -1,44 +1,103 @@
+import 'dart:math' as math;
 import 'dart:math';
+
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/extensions/int_helpers.dart';
+import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 
-class HslColor implements ColorSpacesIQ {
+class HslColor with ColorModelsMixin implements ColorSpacesIQ {
   final double h;
   final double s;
   final double l;
   final double alpha;
 
   const HslColor(this.h, this.s, this.l, [this.alpha = 1.0]);
+  //   const HSLColor.fromAHSL(this.alpha, this.hue, this.saturation, this.lightness)
+  //     : assert(alpha >= 0.0),
+  //       assert(alpha <= 1.0),
+  //       assert(hue >= 0.0),
+  //       assert(hue <= 360.0),
+  //       assert(saturation >= 0.0),
+  //       assert(saturation <= 1.0),
+  //       assert(lightness >= 0.0),
+  //       assert(lightness <= 1.0);
+
+  /// Creates an [HslColor] from an RGB [Color].
+  ///
+  /// This constructor does not necessarily round-trip with [toColor] because
+  /// of floating point imprecision.
+  factory HslColor.fromInt(final int color) {
+    final double red = color.r;
+    final double green = color.g;
+    final double blue = color.b;
+
+    final double max = math.max(red, math.max(green, blue));
+    final double min = math.min(red, math.min(green, blue));
+    final double delta = max - min;
+
+    final double alpha = color.a;
+    final double hue = getHue(red, green, blue, max, delta);
+    final double lightness = (max + min) / 2.0;
+    // Saturation can exceed 1.0 with rounding errors, so clamp it.
+    final double saturation = min == max
+        ? 0.0
+        : clampDouble(
+            delta / (1.0 - (2.0 * lightness - 1.0).abs()),
+            min: 0.0,
+            max: 1.0,
+          );
+    return HslColor(hue, saturation, lightness, alpha);
+  }
 
   @override
   ColorIQ toColor() {
-      final double c = (1 - (2 * l - 1).abs()) * s;
-      final double x = c * (1 - ((h / 60) % 2 - 1).abs());
-      final double m = l - c / 2;
-      
-      double r = 0, g = 0, b = 0;
-      if (h < 60) {
-          r = c; g = x; b = 0;
-      } else if (h < 120) {
-          r = x; g = c; b = 0;
-      } else if (h < 180) {
-          r = 0; g = c; b = x;
-      } else if (h < 240) {
-          r = 0; g = x; b = c;
-      } else if (h < 300) {
-          r = x; g = 0; b = c;
-      } else {
-          r = c; g = 0; b = x;
-      }
-      
-      return ColorIQ.fromARGB((alpha * 255).round(), ((r + m) * 255).round().clamp(0, 255), ((g + m) * 255).round().clamp(0, 255), ((b + m) * 255).round().clamp(0, 255));
+    final double c = (1 - (2 * l - 1).abs()) * s;
+    final double x = c * (1 - ((h / 60) % 2 - 1).abs());
+    final double m = l - c / 2;
+
+    double r = 0, g = 0, b = 0;
+    if (h < 60) {
+      r = c;
+      g = x;
+      b = 0;
+    } else if (h < 120) {
+      r = x;
+      g = c;
+      b = 0;
+    } else if (h < 180) {
+      r = 0;
+      g = c;
+      b = x;
+    } else if (h < 240) {
+      r = 0;
+      g = x;
+      b = c;
+    } else if (h < 300) {
+      r = x;
+      g = 0;
+      b = c;
+    } else {
+      r = c;
+      g = 0;
+      b = x;
+    }
+
+    return ColorIQ.fromARGB(
+      (alpha * 255).round(),
+      ((r + m) * 255).round().clamp(0, 255),
+      ((g + m) * 255).round().clamp(0, 255),
+      ((b + m) * 255).round().clamp(0, 255),
+    );
   }
-  
+
   @override
   int get value => toColor().value;
-  
+
   @override
   HslColor darken([final double amount = 20]) {
     return HslColor(h, s, max(0.0, l - amount / 100), alpha);
@@ -92,13 +151,16 @@ class HslColor implements ColorSpacesIQ {
   HslColor get grayscale => HslColor(h, 0.0, l, alpha);
 
   @override
-  HslColor whiten([final double amount = 20]) => toColor().whiten(amount).toHsl();
+  HslColor whiten([final double amount = 20]) =>
+      toColor().whiten(amount).toHsl();
 
   @override
-  HslColor blacken([final double amount = 20]) => toColor().blacken(amount).toHsl();
+  HslColor blacken([final double amount = 20]) =>
+      toColor().blacken(amount).toHsl();
 
   @override
-  HslColor lerp(final ColorSpacesIQ other, final double t) => (toColor().lerp(other, t) as ColorIQ).toHsl();
+  HslColor lerp(final ColorSpacesIQ other, final double t) =>
+      (toColor().lerp(other, t) as ColorIQ).toHsl();
 
   @override
   HslColor lighten([final double amount = 20]) {
@@ -131,13 +193,13 @@ class HslColor implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  HslColor copyWith({final double? h, final double? s, final double? l, final double? alpha}) {
-    return HslColor(
-      h ?? this.h,
-      s ?? this.s,
-      l ?? this.l,
-      alpha ?? this.alpha,
-    );
+  HslColor copyWith({
+    final double? h,
+    final double? s,
+    final double? l,
+    final double? alpha,
+  }) {
+    return HslColor(h ?? this.h, s ?? this.s, l ?? this.l, alpha ?? this.alpha);
   }
 
   @override
@@ -145,9 +207,9 @@ class HslColor implements ColorSpacesIQ {
     // Native implementation for HSL
     final List<HslColor> results = <HslColor>[];
     for (int i = 0; i < 5; i++) {
-        final double delta = (i - 2) * 0.1; // 10%
-        final double newL = (l + delta).clamp(0.0, 1.0);
-        results.add(HslColor(h, s, newL, alpha));
+      final double delta = (i - 2) * 0.1; // 10%
+      final double newL = (l + delta).clamp(0.0, 1.0);
+      results.add(HslColor(h, s, newL, alpha));
     }
     return results;
   }
@@ -205,52 +267,113 @@ class HslColor implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  HslColor blend(final ColorSpacesIQ other, [final double amount = 50]) => toColor().blend(other, amount).toHsl();
+  HslColor blend(final ColorSpacesIQ other, [final double amount = 50]) {
+    final HslColor target = other is HslColor ? other : other.toHslColor();
+    final double t = (amount / 100).clamp(0.0, 1.0).toDouble();
+
+    return HslColor(
+      lerpHueB(h, target.h, t),
+      clamp01(lerpDoubleB(s, target.s, t)),
+      clamp01(lerpDoubleB(l, target.l, t)),
+      clamp01(lerpDoubleB(alpha, target.alpha, t)),
+    );
+  }
 
   @override
-  HslColor opaquer([final double amount = 20]) => toColor().opaquer(amount).toHsl();
+  HslColor opaquer([final double amount = 20]) {
+    final double factor = (amount / 100).clamp(0.0, 1.0).toDouble();
+    return HslColor(h, s, l, clamp01(alpha + (1 - alpha) * factor));
+  }
 
   @override
-  HslColor adjustHue([final double amount = 20]) => toColor().adjustHue(amount).toHsl();
+  HslColor adjustHue([final double amount = 20]) =>
+      HslColor(_wrapHue(h + amount), s, l, alpha);
 
   @override
-  HslColor get complementary => toColor().complementary.toHsl();
+  HslColor get complementary => HslColor(_wrapHue(h + 180.0), s, l, alpha);
 
   @override
-  HslColor warmer([final double amount = 20]) => toColor().warmer(amount).toHsl();
+  HslColor warmer([final double amount = 20]) =>
+      HslColor(_wrapHue(h - amount), s, l, alpha);
 
   @override
-  HslColor cooler([final double amount = 20]) => toColor().cooler(amount).toHsl();
+  HslColor cooler([final double amount = 20]) =>
+      HslColor(_wrapHue(h + amount), s, l, alpha);
 
   @override
-  List<HslColor> generateBasicPalette() => toColor().generateBasicPalette().map((final ColorIQ c) => c.toHsl()).toList();
+  List<HslColor> generateBasicPalette() {
+    const List<double> saturationOffsets = <double>[-0.2, -0.1, 0.0, 0.1, 0.2];
+    const List<double> lightnessOffsets = <double>[-0.2, -0.1, 0.0, 0.1, 0.2];
+
+    return List<HslColor>.generate(saturationOffsets.length, (final int index) {
+      return HslColor(
+        h,
+        clamp01(s + saturationOffsets[index]),
+        clamp01(l + lightnessOffsets[index]),
+        alpha,
+      );
+    });
+  }
 
   @override
-  List<HslColor> tonesPalette() => toColor().tonesPalette().map((final ColorIQ c) => c.toHsl()).toList();
+  List<HslColor> tonesPalette() {
+    const List<double> toneOffsets = <double>[-0.3, -0.15, 0.0, 0.15, 0.3];
+    return toneOffsets
+        .map(
+          (final double delta) =>
+              HslColor(h, s, (l + delta).clamp(0.0, 1.0), alpha),
+        )
+        .toList();
+  }
 
   @override
-  List<HslColor> analogous({final int count = 5, final double offset = 30}) => toColor().analogous(count: count, offset: offset).map((final ColorIQ c) => c.toHsl()).toList();
+  List<HslColor> analogous({final int count = 5, final double offset = 30}) {
+    if (count <= 0) {
+      return <HslColor>[];
+    }
+    final List<HslColor> palette = <HslColor>[];
+    final double pivot = (count - 1) / 2;
+    for (int i = 0; i < count; i++) {
+      final double delta = (i - pivot) * offset;
+      palette.add(HslColor(_wrapHue(h + delta), s, l, alpha));
+    }
+    return palette;
+  }
 
   @override
-  List<HslColor> square() => toColor().square().map((final ColorIQ c) => c.toHsl()).toList();
+  List<HslColor> square() => List<HslColor>.generate(
+    4,
+    (final int index) => HslColor(_wrapHue(h + 90.0 * index), s, l, alpha),
+    growable: false,
+  );
 
   @override
-  List<HslColor> tetrad({final double offset = 60}) => toColor().tetrad(offset: offset).map((final ColorIQ c) => c.toHsl()).toList();
+  List<HslColor> tetrad({final double offset = 60}) => <HslColor>[
+    HslColor(h, s, l, alpha),
+    HslColor(_wrapHue(h + offset), s, l, alpha),
+    HslColor(_wrapHue(h + 180.0), s, l, alpha),
+    HslColor(_wrapHue(h + 180.0 + offset), s, l, alpha),
+  ];
+
+  double _wrapHue(final double hue) {
+    final double mod = hue % 360.0;
+    return mod < 0 ? mod + 360.0 : mod;
+  }
 
   @override
-  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
+  double distanceTo(final ColorSpacesIQ other) =>
+      toCam16().distance(other.toCam16());
 
   @override
-  double contrastWith(final ColorSpacesIQ other) => toColor().contrastWith(other);
+  double contrastWith(final ColorSpacesIQ other) =>
+      toColor().contrastWith(other);
 
   @override
   ColorSlice closestColorSlice() => toColor().closestColorSlice();
 
   @override
-  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
-
-  @override
-  List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
+  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) =>
+      toColor().isWithinGamut(gamut);
 
   @override
   Map<String, dynamic> toJson() {
@@ -264,5 +387,11 @@ class HslColor implements ColorSpacesIQ {
   }
 
   @override
-  String toString() => 'HslColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, l: ${l.toStringAsFixed(2)}, alpha: ${alpha.toStringAsFixed(2)})';
+  String toString() =>
+      'HslColor(h: ${h.toStrTrimZeros(3)}, '
+      's: ${s.toStringAsFixed(2)}, l: ${l.toStrTrimZeros(2)}, '
+      'alpha: ${alpha.toStringAsFixed(2)})';
+
+  @override
+  HslColor toHslColor() => this;
 }

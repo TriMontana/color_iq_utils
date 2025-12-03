@@ -1,15 +1,38 @@
 import 'dart:math';
+
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:material_color_utilities/hct/cam16.dart';
 
-class HspColor implements ColorSpacesIQ {
+/// A color model that represents color in terms of Hue, Saturation, and
+/// Perceived Brightness (HSP). HSP is designed to be more perceptually uniform
+/// than HSL and HSV, particularly in its brightness component.
+///
+/// The `h` (hue) component is a value between 0.0 and 1.0, representing the
+/// angle on the color wheel (0.0 for red, 1/3 for green, 2/3 for blue).
+/// The `s` (saturation) component is a value between 0.0 (grayscale) and 1.0 (fully saturated).
+/// The `p` (perceived brightness) component is also a value between 0.0 (black)
+/// and 1.0 (white).
+///
+/// This model is based on the HSP color model described by Darel Rex Finley.
+/// More details can be found at http://alienryderflex.com/hsp.html
+class HspColor with ColorModelsMixin implements ColorSpacesIQ {
+  /// The hue component of the color, ranging from 0.0 to 1.0.
   final double h;
+
+  /// The saturation component of the color, ranging from 0.0 to 1.0.
   final double s;
+
+  /// The perceived brightness component of the color, ranging from 0.0 to 1.0.
   final double p;
+
+  /// The alpha channel of the color, ranging from 0.0 (transparent) to 1.0 (opaque).
   final double alpha;
 
+  /// Creates a new `HspColor`.
   const HspColor(this.h, this.s, this.p, [this.alpha = 1.0]);
 
   @override
@@ -20,57 +43,176 @@ class HspColor implements ColorSpacesIQ {
     double g = 0.0;
     double b = 0.0;
     final double minOverMax = 1.0 - s;
-    
+
     if (minOverMax > 0.0) {
       double hLocal = h;
-      if ( hLocal < 1.0 / 6.0) {
-         hLocal = 6.0 * ( hLocal - 0.0 / 6.0); part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
-         b = p / sqrt(0.299 / minOverMax / minOverMax + 0.587 * part * part + 0.114);
-         r = (b) / minOverMax; g = (b) + hLocal * ((r) - (b));
-      } else if ( hLocal < 2.0 / 6.0) {
-         hLocal = 6.0 * (-hLocal + 2.0 / 6.0); part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
-         b = p / sqrt(0.587 / minOverMax / minOverMax + 0.299 * part * part + 0.114);
-         g = (b) / minOverMax; r = (b) + hLocal * ((g) - (b));
-      } else if ( hLocal < 3.0 / 6.0) {
-         hLocal = 6.0 * ( hLocal - 2.0 / 6.0); part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
-         r = p / sqrt(0.587 / minOverMax / minOverMax + 0.114 * part * part + 0.299);
-         g = (r) / minOverMax; b = (r) + hLocal * ((g) - (r));
-      } else if ( hLocal < 4.0 / 6.0) {
-         hLocal = 6.0 * (-hLocal + 4.0 / 6.0); part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
-         r = p / sqrt(0.114 / minOverMax / minOverMax + 0.587 * part * part + 0.299);
-         b = (r) / minOverMax; g = (r) + hLocal * ((b) - (r));
-      } else if ( hLocal < 5.0 / 6.0) {
-         hLocal = 6.0 * ( hLocal - 4.0 / 6.0); part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
-         g = p / sqrt(0.114 / minOverMax / minOverMax + 0.299 * part * part + 0.587);
-         b = (g) / minOverMax; r = (g) + hLocal * ((b) - (g));
+      if (hLocal < 1.0 / 6.0) {
+        hLocal = 6.0 * (hLocal - 0.0 / 6.0);
+        part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
+        b =
+            p /
+            sqrt(0.299 / minOverMax / minOverMax + 0.587 * part * part + 0.114);
+        r = (b) / minOverMax;
+        g = (b) + hLocal * ((r) - (b));
+      } else if (hLocal < 2.0 / 6.0) {
+        hLocal = 6.0 * (-hLocal + 2.0 / 6.0);
+        part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
+        b =
+            p /
+            sqrt(0.587 / minOverMax / minOverMax + 0.299 * part * part + 0.114);
+        g = (b) / minOverMax;
+        r = (b) + hLocal * ((g) - (b));
+      } else if (hLocal < 3.0 / 6.0) {
+        hLocal = 6.0 * (hLocal - 2.0 / 6.0);
+        part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
+        r =
+            p /
+            sqrt(0.587 / minOverMax / minOverMax + 0.114 * part * part + 0.299);
+        g = (r) / minOverMax;
+        b = (r) + hLocal * ((g) - (r));
+      } else if (hLocal < 4.0 / 6.0) {
+        hLocal = 6.0 * (-hLocal + 4.0 / 6.0);
+        part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
+        r =
+            p /
+            sqrt(0.114 / minOverMax / minOverMax + 0.587 * part * part + 0.299);
+        b = (r) / minOverMax;
+        g = (r) + hLocal * ((b) - (r));
+      } else if (hLocal < 5.0 / 6.0) {
+        hLocal = 6.0 * (hLocal - 4.0 / 6.0);
+        part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
+        g =
+            p /
+            sqrt(0.114 / minOverMax / minOverMax + 0.299 * part * part + 0.587);
+        b = (g) / minOverMax;
+        r = (g) + hLocal * ((b) - (g));
       } else {
-         hLocal = 6.0 * (-hLocal + 6.0 / 6.0); part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
-         g = p / sqrt(0.299 / minOverMax / minOverMax + 0.114 * part * part + 0.587);
-         r = (g) / minOverMax; b = (g) + hLocal * ((r) - (g));
+        hLocal = 6.0 * (-hLocal + 6.0 / 6.0);
+        part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
+        g =
+            p /
+            sqrt(0.299 / minOverMax / minOverMax + 0.114 * part * part + 0.587);
+        r = (g) / minOverMax;
+        b = (g) + hLocal * ((r) - (g));
       }
     } else {
       double hLocal = h;
-      if ( hLocal < 1.0 / 6.0) {
-         hLocal = 6.0 * ( hLocal - 0.0 / 6.0); r = sqrt(p * p / (0.299 + 0.587 * hLocal * hLocal + 0.114 * (1.0 - hLocal) * (1.0 - hLocal))); g = sqrt(p * p / (0.299 / hLocal / hLocal + 0.587 + 0.114 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0))); b = 0.0;
-      } else if ( hLocal < 2.0 / 6.0) {
-         hLocal = 6.0 * (-hLocal + 2.0 / 6.0); g = sqrt(p * p / (0.587 + 0.299 * hLocal * hLocal + 0.114 * (1.0 - hLocal) * (1.0 - hLocal))); r = sqrt(p * p / (0.587 / hLocal / hLocal + 0.299 + 0.114 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0))); b = 0.0;
-      } else if ( hLocal < 3.0 / 6.0) {
-         hLocal = 6.0 * ( hLocal - 2.0 / 6.0); g = sqrt(p * p / (0.587 + 0.114 * hLocal * hLocal + 0.299 * (1.0 - hLocal) * (1.0 - hLocal))); b = sqrt(p * p / (0.587 / hLocal / hLocal + 0.114 + 0.299 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0))); r = 0.0;
-      } else if ( hLocal < 4.0 / 6.0) {
-         hLocal = 6.0 * (-hLocal + 4.0 / 6.0); b = sqrt(p * p / (0.114 + 0.587 * hLocal * hLocal + 0.299 * (1.0 - hLocal) * (1.0 - hLocal))); g = sqrt(p * p / (0.114 / hLocal / hLocal + 0.587 + 0.299 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0))); r = 0.0;
-      } else if ( hLocal < 5.0 / 6.0) {
-         hLocal = 6.0 * ( hLocal - 4.0 / 6.0); b = sqrt(p * p / (0.114 + 0.299 * hLocal * hLocal + 0.587 * (1.0 - hLocal) * (1.0 - hLocal))); r = sqrt(p * p / (0.114 / hLocal / hLocal + 0.299 + 0.587 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0))); g = 0.0;
+      if (hLocal < 1.0 / 6.0) {
+        hLocal = 6.0 * (hLocal - 0.0 / 6.0);
+        r = sqrt(
+          p *
+              p /
+              (0.299 +
+                  0.587 * hLocal * hLocal +
+                  0.114 * (1.0 - hLocal) * (1.0 - hLocal)),
+        );
+        g = sqrt(
+          p *
+              p /
+              (0.299 / hLocal / hLocal +
+                  0.587 +
+                  0.114 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0)),
+        );
+        b = 0.0;
+      } else if (hLocal < 2.0 / 6.0) {
+        hLocal = 6.0 * (-hLocal + 2.0 / 6.0);
+        g = sqrt(
+          p *
+              p /
+              (0.587 +
+                  0.299 * hLocal * hLocal +
+                  0.114 * (1.0 - hLocal) * (1.0 - hLocal)),
+        );
+        r = sqrt(
+          p *
+              p /
+              (0.587 / hLocal / hLocal +
+                  0.299 +
+                  0.114 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0)),
+        );
+        b = 0.0;
+      } else if (hLocal < 3.0 / 6.0) {
+        hLocal = 6.0 * (hLocal - 2.0 / 6.0);
+        g = sqrt(
+          p *
+              p /
+              (0.587 +
+                  0.114 * hLocal * hLocal +
+                  0.299 * (1.0 - hLocal) * (1.0 - hLocal)),
+        );
+        b = sqrt(
+          p *
+              p /
+              (0.587 / hLocal / hLocal +
+                  0.114 +
+                  0.299 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0)),
+        );
+        r = 0.0;
+      } else if (hLocal < 4.0 / 6.0) {
+        hLocal = 6.0 * (-hLocal + 4.0 / 6.0);
+        b = sqrt(
+          p *
+              p /
+              (0.114 +
+                  0.587 * hLocal * hLocal +
+                  0.299 * (1.0 - hLocal) * (1.0 - hLocal)),
+        );
+        g = sqrt(
+          p *
+              p /
+              (0.114 / hLocal / hLocal +
+                  0.587 +
+                  0.299 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0)),
+        );
+        r = 0.0;
+      } else if (hLocal < 5.0 / 6.0) {
+        hLocal = 6.0 * (hLocal - 4.0 / 6.0);
+        b = sqrt(
+          p *
+              p /
+              (0.114 +
+                  0.299 * hLocal * hLocal +
+                  0.587 * (1.0 - hLocal) * (1.0 - hLocal)),
+        );
+        r = sqrt(
+          p *
+              p /
+              (0.114 / hLocal / hLocal +
+                  0.299 +
+                  0.587 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0)),
+        );
+        g = 0.0;
       } else {
-         hLocal = 6.0 * (-hLocal + 6.0 / 6.0); r = sqrt(p * p / (0.299 + 0.114 * hLocal * hLocal + 0.587 * (1.0 - hLocal) * (1.0 - hLocal))); b = sqrt(p * p / (0.299 / hLocal / hLocal + 0.114 + 0.587 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0))); g = 0.0;
+        hLocal = 6.0 * (-hLocal + 6.0 / 6.0);
+        r = sqrt(
+          p *
+              p /
+              (0.299 +
+                  0.114 * hLocal * hLocal +
+                  0.587 * (1.0 - hLocal) * (1.0 - hLocal)),
+        );
+        b = sqrt(
+          p *
+              p /
+              (0.299 / hLocal / hLocal +
+                  0.114 +
+                  0.587 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0)),
+        );
+        g = 0.0;
       }
     }
 
-    return ColorIQ.fromARGB((alpha * 255).round(), (r * 255).round().clamp(0, 255), (g * 255).round().clamp(0, 255), (b * 255).round().clamp(0, 255));
+    return ColorIQ.fromARGB(
+      (alpha * 255).round(),
+      (r * 255).round().clamp(0, 255),
+      (g * 255).round().clamp(0, 255),
+      (b * 255).round().clamp(0, 255),
+    );
   }
-  
+
   @override
   int get value => toColor().value;
-  
+
   @override
   HspColor darken([final double amount = 20]) {
     return toColor().darken(amount).toHsp();
@@ -129,13 +271,16 @@ class HspColor implements ColorSpacesIQ {
   HspColor get grayscale => toColor().grayscale.toHsp();
 
   @override
-  HspColor whiten([final double amount = 20]) => toColor().whiten(amount).toHsp();
+  HspColor whiten([final double amount = 20]) =>
+      toColor().whiten(amount).toHsp();
 
   @override
-  HspColor blacken([final double amount = 20]) => toColor().blacken(amount).toHsp();
+  HspColor blacken([final double amount = 20]) =>
+      toColor().blacken(amount).toHsp();
 
   @override
-  HspColor lerp(final ColorSpacesIQ other, final double t) => (toColor().lerp(other, t) as ColorIQ).toHsp();
+  HspColor lerp(final ColorSpacesIQ other, final double t) =>
+      (toColor().lerp(other, t) as ColorIQ).toHsp();
 
   @override
   HctColor toHct() => toColor().toHct();
@@ -155,17 +300,19 @@ class HspColor implements ColorSpacesIQ {
   ColorTemperature get temperature => toColor().temperature;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  HspColor copyWith({final double? h, final double? s, final double? p, final double? alpha}) {
-    return HspColor(
-      h ?? this.h,
-      s ?? this.s,
-      p ?? this.p,
-      alpha ?? this.alpha,
-    );
+  HspColor copyWith({
+    final double? h,
+    final double? s,
+    final double? p,
+    final double? alpha,
+  }) {
+    return HspColor(h ?? this.h, s ?? this.s, p ?? this.p, alpha ?? this.alpha);
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((final ColorSpacesIQ c) => (c as ColorIQ).toHsp()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+      .map((final ColorSpacesIQ c) => (c as ColorIQ).toHsp())
+      .toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([final double? step]) {
@@ -201,49 +348,68 @@ class HspColor implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  HspColor blend(final ColorSpacesIQ other, [final double amount = 50]) => toColor().blend(other, amount).toHsp();
+  HspColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
+      toColor().blend(other, amount).toHsp();
 
   @override
-  HspColor opaquer([final double amount = 20]) => toColor().opaquer(amount).toHsp();
+  HspColor opaquer([final double amount = 20]) =>
+      toColor().opaquer(amount).toHsp();
 
   @override
-  HspColor adjustHue([final double amount = 20]) => toColor().adjustHue(amount).toHsp();
+  HspColor adjustHue([final double amount = 20]) =>
+      toColor().adjustHue(amount).toHsp();
 
   @override
   HspColor get complementary => toColor().complementary.toHsp();
 
   @override
-  HspColor warmer([final double amount = 20]) => toColor().warmer(amount).toHsp();
+  HspColor warmer([final double amount = 20]) =>
+      toColor().warmer(amount).toHsp();
 
   @override
-  HspColor cooler([final double amount = 20]) => toColor().cooler(amount).toHsp();
+  HspColor cooler([final double amount = 20]) =>
+      toColor().cooler(amount).toHsp();
 
   @override
-  List<HspColor> generateBasicPalette() => toColor().generateBasicPalette().map((final ColorIQ c) => c.toHsp()).toList();
+  List<HspColor> generateBasicPalette() => toColor()
+      .generateBasicPalette()
+      .map((final ColorIQ c) => c.toHsp())
+      .toList();
 
   @override
-  List<HspColor> tonesPalette() => toColor().tonesPalette().map((final ColorIQ c) => c.toHsp()).toList();
+  List<HspColor> tonesPalette() =>
+      toColor().tonesPalette().map((final ColorIQ c) => c.toHsp()).toList();
 
   @override
-  List<HspColor> analogous({final int count = 5, final double offset = 30}) => toColor().analogous(count: count, offset: offset).map((final ColorIQ c) => c.toHsp()).toList();
+  List<HspColor> analogous({final int count = 5, final double offset = 30}) =>
+      toColor()
+          .analogous(count: count, offset: offset)
+          .map((final ColorIQ c) => c.toHsp())
+          .toList();
 
   @override
-  List<HspColor> square() => toColor().square().map((final ColorIQ c) => c.toHsp()).toList();
+  List<HspColor> square() =>
+      toColor().square().map((final ColorIQ c) => c.toHsp()).toList();
 
   @override
-  List<HspColor> tetrad({final double offset = 60}) => toColor().tetrad(offset: offset).map((final ColorIQ c) => c.toHsp()).toList();
+  List<HspColor> tetrad({final double offset = 60}) => toColor()
+      .tetrad(offset: offset)
+      .map((final ColorIQ c) => c.toHsp())
+      .toList();
 
   @override
   double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
 
   @override
-  double contrastWith(final ColorSpacesIQ other) => toColor().contrastWith(other);
+  double contrastWith(final ColorSpacesIQ other) =>
+      toColor().contrastWith(other);
 
   @override
   ColorSlice closestColorSlice() => toColor().closestColorSlice();
 
   @override
-  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) =>
+      toColor().isWithinGamut(gamut);
 
   @override
   List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
@@ -260,5 +426,9 @@ class HspColor implements ColorSpacesIQ {
   }
 
   @override
-  String toString() => 'HspColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, p: ${p.toStringAsFixed(2)}, alpha: ${alpha.toStringAsFixed(2)})';
+  String toString() =>
+      'HspColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, p: ${p.toStringAsFixed(2)}, alpha: ${alpha.toStringAsFixed(2)})';
+
+  @override
+  Cam16 toCam16() => Cam16.fromInt(value);
 }

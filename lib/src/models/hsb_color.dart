@@ -1,26 +1,42 @@
+import 'dart:math';
+
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/hsv_color.dart';
-import 'dart:math';
+import 'package:material_color_utilities/hct/cam16.dart';
 
-class HsbColor implements ColorSpacesIQ {
+/// A representation of a color in the HSB (Hue, Saturation, Brightness) color space.
+///
+/// HSB is often used in design and graphics applications. It's an alternative name for
+/// the HSV (Hue, Saturation, Value) color model, where Brightness corresponds to Value.
+///
+/// - `h` (Hue): The type of color, represented as an angle from 0 to 360 degrees.
+/// - `s` (Saturation): The intensity of the color, from 0 (grayscale) to 1 (fully saturated).
+/// - `b` (Brightness): The lightness of the color, from 0 (black) to 1 (full brightness).
+class HsbColor with ColorModelsMixin implements ColorSpacesIQ {
+  /// The hue component of the color, ranging from 0 to 360.
   final double h;
+
+  /// The saturation component of the color, ranging from 0.0 to 1.0.
   final double s;
+
+  /// The brightness component of the color, ranging from 0.0 to 1.0.
   final double b;
 
   const HsbColor(this.h, this.s, this.b);
 
   @override
   ColorIQ toColor() {
-      // HSB is the same as HSV, just B instead of V
-      return HsvColor(h, s, b).toColor();
+    // HSB is the same as HSV, just B instead of V
+    return HsvColor(h, s, b).toColor();
   }
 
   @override
   int get value => toColor().value;
-  
+
   @override
   HsbColor darken([final double amount = 20]) {
     return HsbColor(h, s, max(0.0, b - amount / 100));
@@ -74,13 +90,16 @@ class HsbColor implements ColorSpacesIQ {
   HsbColor get grayscale => toColor().grayscale.toHsb();
 
   @override
-  HsbColor whiten([final double amount = 20]) => toColor().whiten(amount).toHsb();
+  HsbColor whiten([final double amount = 20]) =>
+      toColor().whiten(amount).toHsb();
 
   @override
-  HsbColor blacken([final double amount = 20]) => toColor().blacken(amount).toHsb();
+  HsbColor blacken([final double amount = 20]) =>
+      toColor().blacken(amount).toHsb();
 
   @override
-  HsbColor lerp(final ColorSpacesIQ other, final double t) => (toColor().lerp(other, t) as ColorIQ).toHsb();
+  HsbColor lerp(final ColorSpacesIQ other, final double t) =>
+      (toColor().lerp(other, t) as ColorIQ).toHsb();
 
   @override
   HsbColor lighten([final double amount = 20]) {
@@ -114,15 +133,13 @@ class HsbColor implements ColorSpacesIQ {
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   HsbColor copyWith({final double? h, final double? s, final double? b}) {
-    return HsbColor(
-      h ?? this.h,
-      s ?? this.s,
-      b ?? this.b,
-    );
+    return HsbColor(h ?? this.h, s ?? this.s, b ?? this.b);
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((final ColorSpacesIQ c) => (c as ColorIQ).toHsb()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+      .map((final ColorSpacesIQ c) => (c as ColorIQ).toHsb())
+      .toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([final double? step]) {
@@ -159,49 +176,68 @@ class HsbColor implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  HsbColor blend(final ColorSpacesIQ other, [final double amount = 50]) => toColor().blend(other, amount).toHsb();
+  HsbColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
+      toColor().blend(other, amount).toHsb();
 
   @override
-  HsbColor opaquer([final double amount = 20]) => toColor().opaquer(amount).toHsb();
+  HsbColor opaquer([final double amount = 20]) =>
+      toColor().opaquer(amount).toHsb();
 
   @override
-  HsbColor adjustHue([final double amount = 20]) => toColor().adjustHue(amount).toHsb();
+  HsbColor adjustHue([final double amount = 20]) =>
+      toColor().adjustHue(amount).toHsb();
 
   @override
   HsbColor get complementary => toColor().complementary.toHsb();
 
   @override
-  HsbColor warmer([final double amount = 20]) => toColor().warmer(amount).toHsb();
+  HsbColor warmer([final double amount = 20]) =>
+      toColor().warmer(amount).toHsb();
 
   @override
-  HsbColor cooler([final double amount = 20]) => toColor().cooler(amount).toHsb();
+  HsbColor cooler([final double amount = 20]) =>
+      toColor().cooler(amount).toHsb();
 
   @override
-  List<HsbColor> generateBasicPalette() => toColor().generateBasicPalette().map((final ColorIQ c) => c.toHsb()).toList();
+  List<HsbColor> generateBasicPalette() => toColor()
+      .generateBasicPalette()
+      .map((final ColorIQ c) => c.toHsb())
+      .toList();
 
   @override
-  List<HsbColor> tonesPalette() => toColor().tonesPalette().map((final ColorIQ c) => c.toHsb()).toList();
+  List<HsbColor> tonesPalette() =>
+      toColor().tonesPalette().map((final ColorIQ c) => c.toHsb()).toList();
 
   @override
-  List<HsbColor> analogous({final int count = 5, final double offset = 30}) => toColor().analogous(count: count, offset: offset).map((final ColorIQ c) => c.toHsb()).toList();
+  List<HsbColor> analogous({final int count = 5, final double offset = 30}) =>
+      toColor()
+          .analogous(count: count, offset: offset)
+          .map((final ColorIQ c) => c.toHsb())
+          .toList();
 
   @override
-  List<HsbColor> square() => toColor().square().map((final ColorIQ c) => c.toHsb()).toList();
+  List<HsbColor> square() =>
+      toColor().square().map((final ColorIQ c) => c.toHsb()).toList();
 
   @override
-  List<HsbColor> tetrad({final double offset = 60}) => toColor().tetrad(offset: offset).map((final ColorIQ c) => c.toHsb()).toList();
+  List<HsbColor> tetrad({final double offset = 60}) => toColor()
+      .tetrad(offset: offset)
+      .map((final ColorIQ c) => c.toHsb())
+      .toList();
 
   @override
   double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
 
   @override
-  double contrastWith(final ColorSpacesIQ other) => toColor().contrastWith(other);
+  double contrastWith(final ColorSpacesIQ other) =>
+      toColor().contrastWith(other);
 
   @override
   ColorSlice closestColorSlice() => toColor().closestColorSlice();
 
   @override
-  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) =>
+      toColor().isWithinGamut(gamut);
 
   @override
   List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
@@ -218,5 +254,9 @@ class HsbColor implements ColorSpacesIQ {
   }
 
   @override
-  String toString() => 'HsbColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
+  String toString() =>
+      'HsbColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
+
+  @override
+  Cam16 toCam16() => Cam16.fromInt(value);
 }

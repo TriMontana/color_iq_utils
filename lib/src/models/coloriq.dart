@@ -3,8 +3,10 @@ import 'dart:math';
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/cam16_color.dart';
 import 'package:color_iq_utils/src/models/cmyk_color.dart';
+import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/display_p3_color.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/hsb_color.dart';
@@ -20,7 +22,6 @@ import 'package:color_iq_utils/src/models/luv_color.dart';
 import 'package:color_iq_utils/src/models/munsell_color.dart';
 import 'package:color_iq_utils/src/models/ok_hsl_color.dart';
 import 'package:color_iq_utils/src/models/ok_hsv_color.dart';
-import 'package:color_iq_utils/src/models/ok_lab_color.dart';
 import 'package:color_iq_utils/src/models/ok_lch_color.dart';
 import 'package:color_iq_utils/src/models/rec2020_color.dart';
 import 'package:color_iq_utils/src/models/xyz_color.dart';
@@ -28,35 +29,94 @@ import 'package:color_iq_utils/src/models/yiq_color.dart';
 import 'package:color_iq_utils/src/models/yuv_color.dart';
 import 'package:material_color_utilities/material_color_utilities.dart' as mcu;
 
-/// A color represented by red, green, blue, and alpha components.
-class ColorIQ implements ColorSpacesIQ {
+/// A versatile color representation class, `ColorIQ`, designed for advanced color
+/// manipulation and conversion.
+///
+/// `ColorIQ` serves as the primary entry point for working with colors in the
+/// sRGB space. It stores color information as a 32-bit integer, similar to
+/// Flutter's `Color` class, but extends functionality significantly. It provides
+/// direct access to ARGB components, both as 8-bit integers (0-255) and as
+/// normalized `double` values (0.0-1.0).
+///
+/// Through the `ColorModelsMixin` and `ColorSpacesIQ` interface, this class
+/// offers a rich set of methods for:
+/// - Converting to and from a wide array of color models (e.g., HSL, HSV, LAB, HCT, CMYK).
+/// - Performing color manipulations like lightening, darkening, saturation adjustments,
+///   and hue shifting.
+/// - Generating color palettes (monochromatic, analogous, etc.).
+/// - Simulating color blindness.
+/// - Calculating color properties like luminance, contrast, and perceptual distance.
+class ColorIQ with ColorModelsMixin implements ColorSpacesIQ {
   /// The 32-bit alpha-red-green-blue integer value.
   @override
   final int value;
 
   /// Construct a color from the lower 32 bits of an [int].
-  const ColorIQ(this.value);
+  ColorIQ(
+    this.value, {
+    final double? a,
+    final double? r,
+    final double? g,
+    final double? b,
+    final int? alpha,
+    final int? red,
+    final int? green,
+    final int? blue,
+  }) : a = a ?? ((value >> 24 & 0xFF) / 255).clamp0to1,
+       r = r ?? ((value >> 16 & 0xFF) / 255).clamp0to1,
+       g = g ?? ((value >> 8 & 0xFF) / 255).clamp0to1,
+       b = b ?? ((value & 0xFF) / 255).clamp0to1,
+       alpha = alpha ?? (value >> 24 & 0xFF),
+       red = red ?? (value >> 16 & 0xFF),
+       green = green ?? (value >> 8 & 0xFF),
+       blue = blue ?? (value & 0xFF);
+
+  final double a;
+  final int alpha;
+  final double r;
+  @override
+  final int red;
+  final double g;
+  @override
+  final int green;
+  final double b;
+  @override
+  final int blue;
 
   /// Construct a color from 4 integers, a, r, g, b.
-  const ColorIQ.fromARGB(final int a, final int r, final int g, final int b)
-    : value =
-          (((a & 0xff) << 24) |
-              ((r & 0xff) << 16) |
-              ((g & 0xff) << 8) |
-              ((b & 0xff) << 0)) &
-          0xFFFFFFFF;
+  ColorIQ.fromARGB(
+    this.alpha,
+    this.red,
+    this.green,
+    this.blue, {
+    final double? a,
+    final double? r,
+    final double? g,
+    final double? b,
+  }) : value =
+           (((alpha & 0xff) << 24) |
+               ((red & 0xff) << 16) |
+               ((green & 0xff) << 8) |
+               ((blue & 0xff) << 0)) &
+           0xFFFFFFFF,
+       a = a ?? (alpha / 255.0).clamp0to1,
+       r = r ?? (red / 255.0).clamp0to1,
+       g = g ?? (green / 255.0).clamp0to1,
+       b = b ?? (blue / 255.0).clamp0to1;
 
-  /// The alpha channel of this color in an 8-bit value.
-  int get alpha => (value >> 24) & 0xFF;
-
-  /// The red channel of this color in an 8-bit value.
-  int get red => (value >> 16) & 0xFF;
-
-  /// The green channel of this color in an 8-bit value.
-  int get green => (value >> 8) & 0xFF;
-
-  /// The blue channel of this color in an 8-bit value.
-  int get blue => value & 0xFF;
+  /// Construct a color from sRGB delinearized values a, r, g, b (0.0 to 1.0)
+  factory ColorIQ.fromSrgb(
+    final double a,
+    final double r,
+    final double g,
+    final double b,
+  ) {
+    final int alpha = (a.clamp(0.0, 1.0) * 255).round();
+    final int red = (r.clamp(0.0, 1.0) * 255).round();
+    final int green = (g.clamp(0.0, 1.0) * 255).round();
+    final int blue = (b.clamp(0.0, 1.0) * 255).round();
+    return ColorIQ.fromARGB(alpha, red, green, blue, a: a, r: r, g: g, b: b);
+  }
 
   /// Converts this color to CMYK.
   CmykColor toCmyk() {
@@ -160,32 +220,6 @@ class ColorIQ implements ColorSpacesIQ {
     final double v = 0.615 * r - 0.51499 * g - 0.10001 * b;
 
     return YuvColor(y, u, v);
-  }
-
-  /// Converts this color to OkLab.
-  OkLabColor toOkLab() {
-    double r = red / 255.0;
-    double g = green / 255.0;
-    double b = blue / 255.0;
-
-    r = (r > 0.04045) ? pow((r + 0.055) / 1.055, 2.4).toDouble() : (r / 12.92);
-    g = (g > 0.04045) ? pow((g + 0.055) / 1.055, 2.4).toDouble() : (g / 12.92);
-    b = (b > 0.04045) ? pow((b + 0.055) / 1.055, 2.4).toDouble() : (b / 12.92);
-
-    final double l = 0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b;
-    final double m = 0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b;
-    final double s = 0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b;
-
-    final double l_ = pow(l, 1 / 3).toDouble();
-    final double m_ = pow(m, 1 / 3).toDouble();
-    final double s_ = pow(s, 1 / 3).toDouble();
-
-    final double L = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
-    final double a = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
-    final double bVal =
-        0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
-
-    return OkLabColor(L, a, bVal);
   }
 
   /// Converts this color to OkLch.
@@ -336,7 +370,7 @@ class ColorIQ implements ColorSpacesIQ {
   }
 
   /// Converts this color to Cam16 (Material Color Utilities).
-  Cam16Color toCam16() {
+  Cam16Color toCam16Color() {
     final int argb = value;
     final mcu.Cam16 cam = mcu.Cam16.fromInt(argb);
     return Cam16Color(cam.hue, cam.chroma, cam.j, cam.m, cam.s, cam.q);
@@ -522,12 +556,12 @@ class ColorIQ implements ColorSpacesIQ {
 
   @override
   ColorIQ whiten([final double amount = 20]) {
-    return lerp(const ColorIQ(0xFFFFFFFF), amount / 100) as ColorIQ;
+    return lerp(cWhite, amount / 100) as ColorIQ;
   }
 
   @override
   ColorIQ blacken([final double amount = 20]) {
-    return lerp(const ColorIQ(0xFF000000), amount / 100) as ColorIQ;
+    return lerp(cBlack, amount / 100) as ColorIQ;
   }
 
   @override
@@ -738,7 +772,7 @@ class ColorIQ implements ColorSpacesIQ {
   @override
   List<ColorIQ> tonesPalette() {
     // Mix with gray (0xFF808080)
-    const ColorIQ gray = ColorIQ(0xFF808080);
+    final ColorIQ gray = ColorIQ(0xFF808080);
     return <ColorIQ>[
       this,
       lerp(gray, 0.15) as ColorIQ,
@@ -850,7 +884,7 @@ class ColorIQ implements ColorSpacesIQ {
   }
 
   @override
-  List<double> get whitePoint => <double>[95.047, 100.0, 108.883]; // D65
+  List<double> get whitePoint => kWhitePointD65; // D65
 
   @override
   Map<String, dynamic> toJson() {
@@ -899,4 +933,7 @@ class ColorIQ implements ColorSpacesIQ {
   @override
   String toString() =>
       'ColorIQ(0x${value.toRadixString(16).toUpperCase().padLeft(8, '0')})';
+
+  @override
+  mcu.Cam16 toCam16() => mcu.Cam16.fromInt(value);
 }

@@ -1,5 +1,5 @@
-import 'package:test/test.dart';
 import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:test/test.dart';
 
 void main() {
   group('Lighten Tests', () {
@@ -16,22 +16,22 @@ void main() {
     });
 
     test('ColorIQ lighten works via HSL conversion', () {
-      const ColorIQ color = ColorIQ.fromARGB(255, 100, 100, 100); // Grey
+      final ColorIQ color = ColorIQ.fromARGB(255, 100, 100, 100); // Grey
       final ColorIQ lightened = color.lighten(20);
-      
+
       // Original L approx 0.39 (100/255)
       // New L approx 0.59
       // 0.59 * 255 = 150
-      
+
       expect(lightened.red, greaterThan(100));
       expect(lightened.green, greaterThan(100));
       expect(lightened.blue, greaterThan(100));
     });
 
     test('LabColor lighten increases L', () {
-        const LabColor lab = LabColor(50, 0, 0);
-        final LabColor lightened = lab.lighten(20);
-        expect(lightened.l, closeTo(70, 0.001));
+      const LabColor lab = LabColor(50, 0, 0);
+      final LabColor lightened = lab.lighten(20);
+      expect(lightened.l, closeTo(70, 0.001));
     });
   });
 }

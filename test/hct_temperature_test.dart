@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('HCT and Temperature Tests', () {
     test('Color to HCT and back', () {
-      const ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0); // Red
+      final ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0); // Red
       final HctColor hct = color.toHct();
       expect(hct, isA<HctColor>());
       // Hue of red is roughly 27 (in HCT/CAM16) or 0 (in HSL).
@@ -20,7 +20,7 @@ void main() {
     });
 
     test('Transparency Adjustment', () {
-      const ColorIQ color = ColorIQ.fromARGB(255, 100, 150, 200);
+      final ColorIQ color = ColorIQ.fromARGB(255, 100, 150, 200);
       expect(color.transparency, 1.0);
 
       final ColorIQ transparent = color.adjustTransparency(
@@ -50,29 +50,29 @@ void main() {
     test('Color Temperature', () {
       // Warm colors
       expect(
-        const ColorIQ.fromARGB(255, 255, 0, 0).temperature,
+        ColorIQ.fromARGB(255, 255, 0, 0).temperature,
         ColorTemperature.warm,
       ); // Red
       expect(
-        const ColorIQ.fromARGB(255, 255, 165, 0).temperature,
+        ColorIQ.fromARGB(255, 255, 165, 0).temperature,
         ColorTemperature.warm,
       ); // Orange
       expect(
-        const ColorIQ.fromARGB(255, 255, 255, 0).temperature,
+        ColorIQ.fromARGB(255, 255, 255, 0).temperature,
         ColorTemperature.warm,
       ); // Yellow
 
       // Cool colors
       expect(
-        const ColorIQ.fromARGB(255, 0, 255, 0).temperature,
+        ColorIQ.fromARGB(255, 0, 255, 0).temperature,
         ColorTemperature.cool,
       ); // Green
       expect(
-        const ColorIQ.fromARGB(255, 0, 0, 255).temperature,
+        ColorIQ.fromARGB(255, 0, 0, 255).temperature,
         ColorTemperature.cool,
       ); // Blue
       expect(
-        const ColorIQ.fromARGB(255, 0, 255, 255).temperature,
+        ColorIQ.fromARGB(255, 0, 255, 255).temperature,
         ColorTemperature.cool,
       ); // Cyan
 
@@ -84,13 +84,13 @@ void main() {
       // "Cool: 90-270 (Green-Cyan-Blue-Purple)"
       // So Purple (300) is Warm.
       expect(
-        const ColorIQ.fromARGB(255, 128, 0, 128).temperature,
+        ColorIQ.fromARGB(255, 128, 0, 128).temperature,
         ColorTemperature.warm,
       );
 
       // Blue (240) -> Cool.
       expect(
-        const ColorIQ.fromARGB(255, 0, 0, 255).temperature,
+        ColorIQ.fromARGB(255, 0, 0, 255).temperature,
         ColorTemperature.cool,
       );
     });

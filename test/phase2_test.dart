@@ -4,13 +4,13 @@ import 'package:test/test.dart';
 void main() {
   group('Phase 2 Color Space Tests', () {
     test('ColorIQ implements ColorSpacesIQ', () {
-      const ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0);
+      final ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0);
       expect(color, isA<ColorSpacesIQ>());
       expect(color.value, 0xFFFF0000);
     });
 
     test('RGB to HSL conversion (Red)', () {
-      const ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0);
+      final ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0);
       final HslColor hsl = color.toHsl();
       expect(hsl.h, closeTo(0, 0.1));
       expect(hsl.s, closeTo(1.0, 0.1));
@@ -19,7 +19,7 @@ void main() {
     });
 
     test('RGB to HSV conversion (Green)', () {
-      const ColorIQ color = ColorIQ.fromARGB(255, 0, 255, 0);
+      final ColorIQ color = ColorIQ.fromARGB(255, 0, 255, 0);
       final HsvColor hsv = color.toHsv();
       expect(hsv.h, closeTo(120, 0.1));
       expect(hsv.s, closeTo(1.0, 0.1));
@@ -28,7 +28,7 @@ void main() {
     });
 
     test('RGB to HSB conversion (Blue)', () {
-      const ColorIQ color = ColorIQ.fromARGB(255, 0, 0, 255);
+      final ColorIQ color = ColorIQ.fromARGB(255, 0, 0, 255);
       final HsbColor hsb = color.toHsb();
       expect(hsb.h, closeTo(240, 0.1));
       expect(hsb.s, closeTo(1.0, 0.1));
@@ -37,7 +37,7 @@ void main() {
     });
 
     test('RGB to HWB conversion (Red)', () {
-      const ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0);
+      final ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0);
       final HwbColor hwb = color.toHwb();
       expect(hwb.h, closeTo(0, 0.1));
       expect(hwb.w, closeTo(0.0, 0.1));
@@ -46,33 +46,33 @@ void main() {
     });
 
     test('RGB to Hct conversion (Red)', () {
-      const ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0);
+      final ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0);
       final HctColor hct = color.toHct();
       // Hct hue for sRGB Red is approx 27-28 degrees (Cam16 hue)
-      expect(hct.hue, closeTo(27, 2.0)); 
+      expect(hct.hue, closeTo(27, 2.0));
       expect(hct.value, 0xFFFF0000);
     });
 
     test('RGB to Cam16 conversion (Red)', () {
-      const ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0);
-      final Cam16Color cam = color.toCam16();
+      final ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0);
+      final Cam16Color cam = color.toCam16Color();
       expect(cam.hue, closeTo(27, 2.0));
       expect(cam.value, 0xFFFF0000);
     });
 
     test('RGB to Display P3 conversion (Red)', () {
-      const ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0);
+      final ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0);
       final DisplayP3Color p3 = color.toDisplayP3();
       // sRGB Red (1,0,0) in P3 is approx (0.917, 0.200, 0.138)
       expect(p3.r, closeTo(0.917, 0.05));
       expect(p3.g, closeTo(0.200, 0.05));
       expect(p3.b, closeTo(0.138, 0.05));
       // Round trip check (should be close to original Red)
-      expect(p3.value, 0xFFFF0000); 
+      expect(p3.value, 0xFFFF0000);
     });
 
     test('RGB to Rec. 2020 conversion (Red)', () {
-      const ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0);
+      final ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0);
       final Rec2020Color rec2020 = color.toRec2020();
       // sRGB Red (1,0,0) in Rec2020 is approx (0.708, 0.292, 0.0) - wait, checking math
       // Actually sRGB gamut is smaller, so sRGB Red fits inside Rec2020.

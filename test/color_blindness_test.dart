@@ -4,16 +4,16 @@ import 'package:test/test.dart';
 void main() {
   group('Color Blindness Tests', () {
     test('Simulate Protanopia', () {
-      const ColorIQ red = ColorIQ.fromARGB(255, 255, 0, 0);
+      final ColorIQ red = ColorIQ.fromARGB(255, 255, 0, 0);
       final ColorIQ simulated = red.simulate(ColorBlindnessType.protanopia);
       // Red should look much darker/brownish in Protanopia
-      expect(simulated.red, lessThan(150)); 
+      expect(simulated.red, lessThan(150));
       expect(simulated.green, lessThan(150));
       expect(simulated.blue, lessThan(50));
     });
 
     test('Simulate Deuteranopia', () {
-      const ColorIQ green = ColorIQ.fromARGB(255, 0, 255, 0);
+      final ColorIQ green = ColorIQ.fromARGB(255, 0, 255, 0);
       final ColorIQ simulated = green.simulate(ColorBlindnessType.deuteranopia);
       // Green looks yellowish/brownish
       expect(simulated.red, greaterThan(150));
@@ -21,15 +21,17 @@ void main() {
     });
 
     test('Simulate Tritanopia', () {
-      const ColorIQ blue = ColorIQ.fromARGB(255, 0, 0, 255);
+      final ColorIQ blue = ColorIQ.fromARGB(255, 0, 0, 255);
       final ColorIQ simulated = blue.simulate(ColorBlindnessType.tritanopia);
       // Blue looks greenish/teal
       expect(simulated.green, greaterThan(50));
     });
 
     test('Simulate Achromatopsia', () {
-      const ColorIQ color = ColorIQ.fromARGB(255, 100, 150, 200);
-      final ColorIQ simulated = color.simulate(ColorBlindnessType.achromatopsia);
+      final ColorIQ color = ColorIQ.fromARGB(255, 100, 150, 200);
+      final ColorIQ simulated = color.simulate(
+        ColorBlindnessType.achromatopsia,
+      );
       // Should be grayscale (R=G=B)
       expect(simulated.red, equals(simulated.green));
       expect(simulated.green, equals(simulated.blue));
@@ -40,7 +42,10 @@ void main() {
       final HslColor simulated = hsl.simulate(ColorBlindnessType.protanopia);
       expect(simulated, isA<HslColor>());
       // Should match the ColorIQ simulation converted back to HSL
-      final HslColor expected = hsl.toColor().simulate(ColorBlindnessType.protanopia).toHsl();
+      final HslColor expected = hsl
+          .toColor()
+          .simulate(ColorBlindnessType.protanopia)
+          .toHsl();
       expect(simulated.h, closeTo(expected.h, 1.0));
       expect(simulated.s, closeTo(expected.s, 1.0));
       expect(simulated.l, closeTo(expected.l, 1.0));

@@ -1,34 +1,56 @@
 import 'dart:math';
+
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/ok_lch_color.dart';
+import 'package:material_color_utilities/hct/cam16.dart';
 
-
-class OkHslColor implements ColorSpacesIQ {
+/// A color model that represents colors using Hue, Saturation, and Lightness
+/// in the Oklab color space. OkHSL is designed to be more perceptually uniform
+/// than traditional HSL, meaning changes in its values correspond more closely
+/// to changes perceived by the human eye.
+///
+/// [h] (Hue) is the angle of the color on the color wheel, ranging from 0 to 360.
+/// [s] (Saturation) is the "purity" or "intensity" of the color, ranging from 0.0 (grayscale) to 1.0 (fully saturated).
+/// [l] (Lightness) is the perceived brightness of the color, ranging from 0.0 (black) to 1.0 (white).
+///
+/// Note: Conversion to and from `ColorIQ` (and other color spaces) is done
+/// via an approximate conversion to `OkLchColor`. This is because a direct
+/// mathematical formula for `OkHslColor` <-> `ColorIQ` is not as straightforward
+/// as for other models. The approximation is generally very good for most use cases.
+class OkHslColor with ColorModelsMixin implements ColorSpacesIQ {
+  /// The hue component of the color, ranging from 0 to 360.
   final double h;
+
+  /// The saturation component of the color, ranging from 0.0 to 1.0.
   final double s;
+
+  /// The lightness component of the color, ranging from 0.0 to 1.0.
   final double l;
 
+  /// Creates an `OkHslColor` instance.
   const OkHslColor(this.h, this.s, this.l);
 
   @override
   ColorIQ toColor() {
-      // Approximate conversion via OkLch
-      // s is roughly c/0.4 for s=1.
-      // l is roughly L.
-      
-      final double L = l;
-      final double C = s * 0.4; // Approximation
-      final double hue = h;
-      
-      return OkLchColor(L, C, hue).toColor();
+    // Approximate conversion via OkLch
+    // s is roughly c/0.4 for s=1.
+    // l is roughly L.
+
+    final double L = l;
+    final double C = s * 0.4; // Approximation
+    final double hue = h;
+
+    return OkLchColor(L, C, hue).toColor();
   }
-  
+
   @override
   int get value => toColor().value;
-  
+
   @override
   OkHslColor darken([final double amount = 20]) {
     return OkHslColor(h, s, max(0.0, l - amount / 100));
@@ -44,13 +66,16 @@ class OkHslColor implements ColorSpacesIQ {
   OkHslColor get grayscale => toColor().grayscale.toOkHsl();
 
   @override
-  OkHslColor whiten([final double amount = 20]) => toColor().whiten(amount).toOkHsl();
+  OkHslColor whiten([final double amount = 20]) =>
+      toColor().whiten(amount).toOkHsl();
 
   @override
-  OkHslColor blacken([final double amount = 20]) => toColor().blacken(amount).toOkHsl();
+  OkHslColor blacken([final double amount = 20]) =>
+      toColor().blacken(amount).toOkHsl();
 
   @override
-  OkHslColor lerp(final ColorSpacesIQ other, final double t) => (toColor().lerp(other, t) as ColorIQ).toOkHsl();
+  OkHslColor lerp(final ColorSpacesIQ other, final double t) =>
+      (toColor().lerp(other, t) as ColorIQ).toOkHsl();
 
   @override
   OkHslColor lighten([final double amount = 20]) {
@@ -114,15 +139,13 @@ class OkHslColor implements ColorSpacesIQ {
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   OkHslColor copyWith({final double? h, final double? s, final double? l}) {
-    return OkHslColor(
-      h ?? this.h,
-      s ?? this.s,
-      l ?? this.l,
-    );
+    return OkHslColor(h ?? this.h, s ?? this.s, l ?? this.l);
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic.map((final ColorSpacesIQ c) => (c as ColorIQ).toOkHsl()).toList();
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+      .map((final ColorSpacesIQ c) => (c as ColorIQ).toOkHsl())
+      .toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([final double? step]) {
@@ -159,53 +182,71 @@ class OkHslColor implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  OkHslColor blend(final ColorSpacesIQ other, [final double amount = 50]) => toColor().blend(other, amount).toOkHsl();
+  OkHslColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
+      toColor().blend(other, amount).toOkHsl();
 
   @override
-  OkHslColor opaquer([final double amount = 20]) => toColor().opaquer(amount).toOkHsl();
+  OkHslColor opaquer([final double amount = 20]) =>
+      toColor().opaquer(amount).toOkHsl();
 
   @override
   OkHslColor adjustHue([final double amount = 20]) {
-      double newHue = (h + amount) % 360;
-      if (newHue < 0) newHue += 360;
-      return OkHslColor(newHue, s, l);
+    double newHue = (h + amount) % 360;
+    if (newHue < 0) newHue += 360;
+    return OkHslColor(newHue, s, l);
   }
 
   @override
   OkHslColor get complementary => adjustHue(180);
 
   @override
-  OkHslColor warmer([final double amount = 20]) => toColor().warmer(amount).toOkHsl();
+  OkHslColor warmer([final double amount = 20]) =>
+      toColor().warmer(amount).toOkHsl();
 
   @override
-  OkHslColor cooler([final double amount = 20]) => toColor().cooler(amount).toOkHsl();
+  OkHslColor cooler([final double amount = 20]) =>
+      toColor().cooler(amount).toOkHsl();
 
   @override
-  List<OkHslColor> generateBasicPalette() => toColor().generateBasicPalette().map((final ColorIQ c) => c.toOkHsl()).toList();
+  List<OkHslColor> generateBasicPalette() => toColor()
+      .generateBasicPalette()
+      .map((final ColorIQ c) => c.toOkHsl())
+      .toList();
 
   @override
-  List<OkHslColor> tonesPalette() => toColor().tonesPalette().map((final ColorIQ c) => c.toOkHsl()).toList();
+  List<OkHslColor> tonesPalette() =>
+      toColor().tonesPalette().map((final ColorIQ c) => c.toOkHsl()).toList();
 
   @override
-  List<OkHslColor> analogous({final int count = 5, final double offset = 30}) => toColor().analogous(count: count, offset: offset).map((final ColorIQ c) => c.toOkHsl()).toList();
+  List<OkHslColor> analogous({final int count = 5, final double offset = 30}) =>
+      toColor()
+          .analogous(count: count, offset: offset)
+          .map((final ColorIQ c) => c.toOkHsl())
+          .toList();
 
   @override
-  List<OkHslColor> square() => toColor().square().map((final ColorIQ c) => c.toOkHsl()).toList();
+  List<OkHslColor> square() =>
+      toColor().square().map((final ColorIQ c) => c.toOkHsl()).toList();
 
   @override
-  List<OkHslColor> tetrad({final double offset = 60}) => toColor().tetrad(offset: offset).map((final ColorIQ c) => c.toOkHsl()).toList();
+  List<OkHslColor> tetrad({final double offset = 60}) => toColor()
+      .tetrad(offset: offset)
+      .map((final ColorIQ c) => c.toOkHsl())
+      .toList();
 
   @override
   double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
 
   @override
-  double contrastWith(final ColorSpacesIQ other) => toColor().contrastWith(other);
+  double contrastWith(final ColorSpacesIQ other) =>
+      toColor().contrastWith(other);
 
   @override
   ColorSlice closestColorSlice() => toColor().closestColorSlice();
 
   @override
-  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) => toColor().isWithinGamut(gamut);
+  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) =>
+      toColor().isWithinGamut(gamut);
 
   @override
   List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
@@ -222,5 +263,9 @@ class OkHslColor implements ColorSpacesIQ {
   }
 
   @override
-  String toString() => 'OkHslColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, l: ${l.toStringAsFixed(2)})';
+  String toString() =>
+      'OkHslColor(h: ${h.toStrTrimZeros(3)}, s: ${s.toStringAsFixed(2)}, l: ${l.toStringAsFixed(2)})';
+
+  @override
+  Cam16 toCam16() => Cam16.fromInt(value);
 }

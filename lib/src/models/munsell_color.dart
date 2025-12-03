@@ -2,12 +2,31 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:material_color_utilities/hct/cam16.dart';
 
-class MunsellColor implements ColorSpacesIQ {
+/// Represents a color in the Munsell color system.
+///
+/// The Munsell system models colors based on three properties:
+/// - **Hue**: The basic color (e.g., Red, Yellow, Green). Represented as a string like "5R".
+/// - **Value**: The lightness or darkness of the color, on a scale from 0 (black) to 10 (white).
+/// - **Chroma**: The color's purity or saturation, starting from 0 for neutral gray.
+///
+/// Note: Conversion from Munsell to other color spaces like RGB is complex and
+/// often requires lookup tables. This implementation provides an approximation.
+/// Many methods convert the `MunsellColor` to a `ColorIQ` object first to perform
+/// the operation, and then convert it back. This might lead to precision loss
+/// due to the approximate nature of the Munsell to RGB conversion.
+class MunsellColor with ColorModelsMixin implements ColorSpacesIQ {
+  /// The Munsell hue, represented as a string (e.g., "5R", "10GY").
   final String hue;
+
+  /// The Munsell value (lightness), ranging from 0 (black) to 10 (white).
   final double munsellValue;
+
+  /// The Munsell chroma (saturation), starting from 0 for neutral gray.
   final double chroma;
 
   const MunsellColor(this.hue, this.munsellValue, this.chroma);
@@ -272,4 +291,7 @@ class MunsellColor implements ColorSpacesIQ {
   @override
   String toString() =>
       'MunsellColor(hue: $hue, value: ${munsellValue.toStringAsFixed(2)}, chroma: ${chroma.toStringAsFixed(2)})';
+
+  @override
+  Cam16 toCam16() => Cam16.fromInt(value);
 }

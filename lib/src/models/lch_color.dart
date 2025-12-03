@@ -2,15 +2,35 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/lab_color.dart';
 
-class LchColor implements ColorSpacesIQ {
+/// A representation of a color in the CIE L*C*h° color space.
+///
+/// L*C*h° is a cylindrical representation of the CIE L*a*b* color space.
+/// It is designed to be more perceptually uniform and intuitive than other color models.
+///
+/// - **L (Lightness):** Represents the lightness of the color, ranging from 0 (black) to 100 (white).
+/// - **C (Chroma):** Represents the saturation or "purity" of the color. A value of 0 is grayscale,
+///   and higher values indicate a more vivid color.
+/// - **h (Hue):** Represents the hue angle, ranging from 0 to 360 degrees.
+///
+/// This class provides methods to convert to and from other color spaces,
+/// perform color manipulations, and generate color palettes.
+class LchColor with ColorModelsMixin implements ColorSpacesIQ {
+  /// The lightness component of the color (0-100).
   final double l;
+
+  /// The chroma (saturation) component of the color.
   final double c;
+
+  /// The hue component of the color in degrees (0-360).
   final double h;
 
+  /// Creates a new `LchColor`.
   const LchColor(this.l, this.c, this.h);
 
   LabColor toLab() {
@@ -225,14 +245,11 @@ class LchColor implements ColorSpacesIQ {
   }
 
   @override
-  List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
-
-  @override
   Map<String, dynamic> toJson() {
     return <String, dynamic>{'type': 'LchColor', 'l': l, 'c': c, 'h': h};
   }
 
   @override
   String toString() =>
-      'LchColor(l: ${l.toStringAsFixed(2)}, c: ${c.toStringAsFixed(2)}, h: ${h.toStringAsFixed(2)})';
+      'LchColor(l: ${l.toStrTrimZeros(2)}, c: ${c.toStringAsFixed(2)}, h: ${h.toStringAsFixed(2)})';
 }
