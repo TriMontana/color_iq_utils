@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
@@ -59,17 +61,17 @@ class HsbColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   HsbColor intensify([final double amount = 10]) {
-    return toColor().intensify(amount).toHsb();
+    return HsbColor(h, min(1.0, s + amount / 100), b);
   }
 
   @override
   HsbColor deintensify([final double amount = 10]) {
-    return toColor().deintensify(amount).toHsb();
+    return HsbColor(h, max(0.0, s - amount / 100), b);
   }
 
   @override
   HsbColor accented([final double amount = 15]) {
-    return toColor().accented(amount).toHsb();
+    return intensify(amount);
   }
 
   @override
@@ -90,16 +92,24 @@ class HsbColor with ColorModelsMixin implements ColorSpacesIQ {
   HsbColor get grayscale => toColor().grayscale.toHsb();
 
   @override
-  HsbColor whiten([final double amount = 20]) =>
-      toColor().whiten(amount).toHsb();
+  HsbColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
-  HsbColor blacken([final double amount = 20]) =>
-      toColor().blacken(amount).toHsb();
+  HsbColor blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
 
   @override
-  HsbColor lerp(final ColorSpacesIQ other, final double t) =>
-      (toColor().lerp(other, t) as ColorIQ).toHsb();
+  HsbColor lerp(final ColorSpacesIQ other, final double t) {
+    if (t == 0.0) return this;
+    final HsbColor otherHsb =
+        other is HsbColor ? other : other.toColor().toHsb();
+    if (t == 1.0) return otherHsb;
+
+    return HsbColor(
+      lerpHue(h, otherHsb.h, t),
+      lerpDouble(s, otherHsb.s, t),
+      lerpDouble(b, otherHsb.b, t),
+    );
+  }
 
   @override
   HsbColor lighten([final double amount = 20]) {
@@ -137,7 +147,8 @@ class HsbColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+  List<ColorSpacesIQ> get monochromatic => toColor()
+      .monochromatic
       .map((final ColorSpacesIQ c) => (c as ColorIQ).toHsb())
       .toList();
 

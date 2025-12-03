@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
@@ -50,9 +51,8 @@ class LuvColor with ColorModelsMixin implements ColorSpacesIQ {
     final double uPrime = u / (13 * l) + refU;
     final double vPrime = v / (13 * l) + refV;
 
-    final double y = l > 8
-        ? refY * pow((l + 16) / 116, 3).toDouble()
-        : refY * l / 903.3;
+    final double y =
+        l > 8 ? refY * pow((l + 16) / 116, 3).toDouble() : refY * l / 903.3;
 
     final double denominator = vPrime * 4;
     double x = 0;
@@ -81,16 +81,24 @@ class LuvColor with ColorModelsMixin implements ColorSpacesIQ {
   LuvColor get grayscale => toColor().grayscale.toLuv();
 
   @override
-  LuvColor whiten([final double amount = 20]) =>
-      toColor().whiten(amount).toLuv();
+  LuvColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
-  LuvColor blacken([final double amount = 20]) =>
-      toColor().blacken(amount).toLuv();
+  LuvColor blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
 
   @override
-  LuvColor lerp(final ColorSpacesIQ other, final double t) =>
-      (toColor().lerp(other, t) as ColorIQ).toLuv();
+  LuvColor lerp(final ColorSpacesIQ other, final double t) {
+    if (t == 0.0) return this;
+    final LuvColor otherLuv =
+        (other is LuvColor) ? other : other.toColor().toLuv();
+    if (t == 1.0) return otherLuv;
+
+    return LuvColor(
+      l + (otherLuv.l - l) * t,
+      u + (otherLuv.u - u) * t,
+      v + (otherLuv.v - v) * t,
+    );
+  }
 
   @override
   LuvColor darken([final double amount = 20]) {
@@ -160,7 +168,8 @@ class LuvColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+  List<ColorSpacesIQ> get monochromatic => toColor()
+      .monochromatic
       .map((final ColorSpacesIQ c) => (c as ColorIQ).toLuv())
       .toList();
 

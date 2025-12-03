@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
@@ -83,17 +85,17 @@ class MunsellColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   MunsellColor intensify([final double amount = 10]) {
-    return toColor().intensify(amount).toMunsell();
+    return saturate(amount);
   }
 
   @override
   MunsellColor deintensify([final double amount = 10]) {
-    return toColor().deintensify(amount).toMunsell();
+    return desaturate(amount);
   }
 
   @override
   MunsellColor accented([final double amount = 15]) {
-    return toColor().accented(amount).toMunsell();
+    return intensify(amount);
   }
 
   @override
@@ -132,16 +134,36 @@ class MunsellColor with ColorModelsMixin implements ColorSpacesIQ {
   MunsellColor get grayscale => toColor().grayscale.toMunsell();
 
   @override
-  MunsellColor whiten([final double amount = 20]) =>
-      toColor().whiten(amount).toMunsell();
+  MunsellColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
   MunsellColor blacken([final double amount = 20]) =>
-      toColor().blacken(amount).toMunsell();
+      lerp(cBlack, amount / 100);
 
   @override
-  MunsellColor lerp(final ColorSpacesIQ other, final double t) =>
-      (toColor().lerp(other, t) as ColorIQ).toMunsell();
+  MunsellColor lerp(final ColorSpacesIQ other, final double t) {
+    if (t == 0.0) return this;
+
+    // Convert other to Munsell or approximate
+    MunsellColor otherMunsell;
+    if (other is MunsellColor) {
+      otherMunsell = other;
+    } else if (other.isEqual(cWhite)) {
+      otherMunsell = const MunsellColor('N', 10.0, 0.0);
+    } else if (other.isEqual(cBlack)) {
+      otherMunsell = const MunsellColor('N', 0.0, 0.0);
+    } else {
+      otherMunsell = other.toColor().toMunsell();
+    }
+
+    if (t == 1.0) return otherMunsell;
+
+    return MunsellColor(
+      t < 0.5 ? hue : otherMunsell.hue,
+      lerpDouble(munsellValue, otherMunsell.munsellValue, t),
+      lerpDouble(chroma, otherMunsell.chroma, t),
+    );
+  }
 
   @override
   MunsellColor lighten([final double amount = 20]) {
@@ -187,7 +209,8 @@ class MunsellColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+  List<ColorSpacesIQ> get monochromatic => toColor()
+      .monochromatic
       .map((final ColorSpacesIQ c) => (c as ColorIQ).toMunsell())
       .toList();
 
@@ -245,10 +268,11 @@ class MunsellColor with ColorModelsMixin implements ColorSpacesIQ {
   List<MunsellColor> analogous({
     final int count = 5,
     final double offset = 30,
-  }) => toColor()
-      .analogous(count: count, offset: offset)
-      .map((final ColorIQ c) => c.toMunsell())
-      .toList();
+  }) =>
+      toColor()
+          .analogous(count: count, offset: offset)
+          .map((final ColorIQ c) => c.toMunsell())
+          .toList();
 
   @override
   List<MunsellColor> square() =>

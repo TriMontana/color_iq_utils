@@ -28,10 +28,10 @@ class OkLchColor with ColorModelsMixin implements ColorSpacesIQ {
   final double alpha;
 
   const OkLchColor(this.l, this.c, this.h, [this.alpha = 1.0])
-    : assert(l >= 0 && l <= 1, 'L must be between 0 and 1'),
-      assert(c >= 0, 'C must be non-negative'),
-      assert(h >= 0 && h <= 360, 'H must be between 0 and 360'),
-      assert(alpha >= 0 && alpha <= 1, 'Alpha must be between 0 and 1');
+      : assert(l >= 0 && l <= 1, 'L must be between 0 and 1'),
+        assert(c >= 0, 'C must be non-negative'),
+        assert(h >= 0 && h <= 360, 'H must be between 0 and 360'),
+        assert(alpha >= 0 && alpha <= 1, 'Alpha must be between 0 and 1');
 
   @override
   OkLabColor toOkLab() {
@@ -67,13 +67,37 @@ class OkLchColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   OkLchColor lerp(final ColorSpacesIQ other, final double t) {
-    final OkLchColor otherOkLch = other is OkLchColor
-        ? other
-        : other.toColor().toOkLch();
+    if (t == 0.0) return this;
+    final OkLchColor otherOkLch =
+        other is OkLchColor ? other : other.toColor().toOkLch();
+    if (t == 1.0) return otherOkLch;
+
+    double newHue = h;
+    final double thisC = c;
+    final double otherC = otherOkLch.c;
+
+    // Handle achromatic hues (if chroma is near zero, preserve the other hue)
+    // White has C ~ 0.0, but let's use a safe threshold.
+    const double kAchromaticThreshold = 0.02;
+    if (thisC < kAchromaticThreshold && otherC > kAchromaticThreshold) {
+      newHue = otherOkLch.h;
+    } else if (otherC < kAchromaticThreshold && thisC > kAchromaticThreshold) {
+      newHue = h;
+    } else if (thisC < kAchromaticThreshold && otherC < kAchromaticThreshold) {
+      newHue = h;
+    } else {
+      return OkLchColor(
+        lerpDouble(l, otherOkLch.l, t),
+        lerpDouble(c, otherOkLch.c, t),
+        lerpHue(h, otherOkLch.h, t),
+        lerpDouble(alpha, otherOkLch.alpha, t),
+      );
+    }
+
     return OkLchColor(
       lerpDouble(l, otherOkLch.l, t),
       lerpDouble(c, otherOkLch.c, t),
-      lerpHue(h, otherOkLch.h, t),
+      newHue,
       lerpDouble(alpha, otherOkLch.alpha, t),
     );
   }
@@ -154,7 +178,8 @@ class OkLchColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+  List<ColorSpacesIQ> get monochromatic => toColor()
+      .monochromatic
       .map((final ColorSpacesIQ c) => (c as ColorIQ).toOkLch())
       .toList();
 
@@ -201,46 +226,80 @@ class OkLchColor with ColorModelsMixin implements ColorSpacesIQ {
       toColor().opaquer(amount).toOkLch();
 
   @override
-  OkLchColor adjustHue([final double amount = 20]) =>
-      toColor().adjustHue(amount).toOkLch();
+  OkLchColor adjustHue([final double amount = 20]) {
+    return OkLchColor(l, c, (h + amount) % 360, alpha);
+  }
 
   @override
-  OkLchColor get complementary => toColor().complementary.toOkLch();
+  OkLchColor get complementary => adjustHue(180);
 
   @override
-  OkLchColor warmer([final double amount = 20]) =>
-      toColor().warmer(amount).toOkLch();
+  OkLchColor warmer([final double amount = 20]) {
+    const double targetHue = 30.0;
+    return OkLchColor(l, c, lerpHue(h, targetHue, amount / 100), alpha);
+  }
 
   @override
-  OkLchColor cooler([final double amount = 20]) =>
-      toColor().cooler(amount).toOkLch();
+  OkLchColor cooler([final double amount = 20]) {
+    const double targetHue = 210.0;
+    return OkLchColor(l, c, lerpHue(h, targetHue, amount / 100), alpha);
+  }
 
   @override
-  List<OkLchColor> generateBasicPalette() => toColor()
-      .generateBasicPalette()
-      .map((final ColorIQ c) => c.toOkLch())
-      .toList();
+  List<OkLchColor> generateBasicPalette() {
+    return <OkLchColor>[
+      this,
+      complementary,
+      adjustHue(120),
+      adjustHue(240),
+    ];
+  }
 
   @override
-  List<OkLchColor> tonesPalette() =>
-      toColor().tonesPalette().map((final ColorIQ c) => c.toOkLch()).toList();
+  List<OkLchColor> tonesPalette() {
+    return <OkLchColor>[
+      OkLchColor(0.95, c, h, alpha), // 50
+      OkLchColor(0.9, c, h, alpha), // 100
+      OkLchColor(0.8, c, h, alpha), // 200
+      OkLchColor(0.7, c, h, alpha), // 300
+      OkLchColor(0.6, c, h, alpha), // 400
+      OkLchColor(0.5, c, h, alpha), // 500
+      OkLchColor(0.4, c, h, alpha), // 600
+      OkLchColor(0.3, c, h, alpha), // 700
+      OkLchColor(0.2, c, h, alpha), // 800
+      OkLchColor(0.1, c, h, alpha), // 900
+    ];
+  }
 
   @override
-  List<OkLchColor> analogous({final int count = 5, final double offset = 30}) =>
-      toColor()
-          .analogous(count: count, offset: offset)
-          .map((final ColorIQ c) => c.toOkLch())
-          .toList();
+  List<OkLchColor> analogous({final int count = 5, final double offset = 30}) {
+    final List<OkLchColor> palette = <OkLchColor>[];
+    final double startHue = h - ((count - 1) / 2) * offset;
+    for (int i = 0; i < count; i++) {
+      palette.add(OkLchColor(l, c, (startHue + i * offset) % 360, alpha));
+    }
+    return palette;
+  }
 
   @override
-  List<OkLchColor> square() =>
-      toColor().square().map((final ColorIQ c) => c.toOkLch()).toList();
+  List<OkLchColor> square() {
+    return <OkLchColor>[
+      this,
+      adjustHue(90),
+      adjustHue(180),
+      adjustHue(270),
+    ];
+  }
 
   @override
-  List<OkLchColor> tetrad({final double offset = 60}) => toColor()
-      .tetrad(offset: offset)
-      .map((final ColorIQ c) => c.toOkLch())
-      .toList();
+  List<OkLchColor> tetrad({final double offset = 60}) {
+    return <OkLchColor>[
+      this,
+      adjustHue(offset),
+      adjustHue(180),
+      adjustHue(180 + offset),
+    ];
+  }
 
   @override
   double distanceTo(final ColorSpacesIQ other) =>
@@ -269,7 +328,6 @@ class OkLchColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  String toString() =>
-      'OkLchColor(l: ${l.toStrTrimZeros(3)}, ' //
+  String toString() => 'OkLchColor(l: ${l.toStrTrimZeros(3)}, ' //
       'c: ${c.toStringAsFixed(2)}, h: ${h.toStringAsFixed(2)}, alpha: ${alpha.toStringAsFixed(2)})';
 }

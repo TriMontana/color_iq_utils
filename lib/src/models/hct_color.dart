@@ -39,12 +39,12 @@ class HctColor with ColorModelsMixin implements ColorSpacesIQ {
   /// Primary constructor.
   /// credit: Adapted from material_color_utilities
   HctColor(this.hue, this.chroma, this.tone, this.argb)
-    : assert(tone >= kMinTone && tone <= kMaxTone, 'Invalid Tone: $tone'),
-      assert(
-        chroma >= kMinChroma && chroma <= kMaxChroma,
-        'Invalid Chroma: $chroma',
-      ),
-      assert(hue >= 0.0 && hue < kMaxTone, 'Invalid Hue: $hue');
+      : assert(tone >= kMinTone && tone <= kMaxTone, 'Invalid Tone: $tone'),
+        assert(
+          chroma >= kMinChroma && chroma <= kMaxChroma,
+          'Invalid Chroma: $chroma',
+        ),
+        assert(hue >= 0.0 && hue <= 360.0, 'Invalid Hue: $hue');
 
   HctColor.fromInt(
     int argb, {
@@ -186,12 +186,10 @@ class HctColor with ColorModelsMixin implements ColorSpacesIQ {
   HctColor get grayscale => toColor().grayscale.toHct();
 
   @override
-  HctColor whiten([final double amount = 20]) =>
-      toColor().whiten(amount).toHct();
+  HctColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
-  HctColor blacken([final double amount = 20]) =>
-      toColor().blacken(amount).toHct();
+  HctColor blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
 
   @override
   HctColor lerp(final ColorSpacesIQ other, final double t) {
@@ -386,7 +384,6 @@ class HctColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  String toString() =>
-      'HctColor(hue: ${hue.toStrTrimZeros(3)}, ' //
+  String toString() => 'HctColor(hue: ${hue.toStrTrimZeros(3)}, ' //
       'chroma: ${chroma.toStrTrimZeros(2)}, tone: ${tone.toStrTrimZeros(2)})';
 }

@@ -5,10 +5,11 @@ import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/extensions/int_helpers.dart';
+import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
 
 class HslColor with ColorModelsMixin implements ColorSpacesIQ {
   final double h;
@@ -120,17 +121,17 @@ class HslColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   HslColor intensify([final double amount = 10]) {
-    return toColor().intensify(amount).toHsl();
+    return HslColor(h, min(1.0, s + amount / 100), l, alpha);
   }
 
   @override
   HslColor deintensify([final double amount = 10]) {
-    return toColor().deintensify(amount).toHsl();
+    return HslColor(h, max(0.0, s - amount / 100), l, alpha);
   }
 
   @override
   HslColor accented([final double amount = 15]) {
-    return toColor().accented(amount).toHsl();
+    return intensify(amount);
   }
 
   @override
@@ -151,16 +152,25 @@ class HslColor with ColorModelsMixin implements ColorSpacesIQ {
   HslColor get grayscale => HslColor(h, 0.0, l, alpha);
 
   @override
-  HslColor whiten([final double amount = 20]) =>
-      toColor().whiten(amount).toHsl();
+  HslColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
-  HslColor blacken([final double amount = 20]) =>
-      toColor().blacken(amount).toHsl();
+  HslColor blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
 
   @override
-  HslColor lerp(final ColorSpacesIQ other, final double t) =>
-      (toColor().lerp(other, t) as ColorIQ).toHsl();
+  HslColor lerp(final ColorSpacesIQ other, final double t) {
+    if (t == 0.0) return this;
+    final HslColor otherHsl =
+        other is HslColor ? other : other.toColor().toHsl();
+    if (t == 1.0) return otherHsl;
+
+    return HslColor(
+      lerpHue(h, otherHsl.h, t),
+      lerpDouble(s, otherHsl.s, t),
+      lerpDouble(l, otherHsl.l, t),
+      lerpDouble(alpha, otherHsl.alpha, t),
+    );
+  }
 
   @override
   HslColor lighten([final double amount = 20]) {
@@ -342,18 +352,18 @@ class HslColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   List<HslColor> square() => List<HslColor>.generate(
-    4,
-    (final int index) => HslColor(_wrapHue(h + 90.0 * index), s, l, alpha),
-    growable: false,
-  );
+        4,
+        (final int index) => HslColor(_wrapHue(h + 90.0 * index), s, l, alpha),
+        growable: false,
+      );
 
   @override
   List<HslColor> tetrad({final double offset = 60}) => <HslColor>[
-    HslColor(h, s, l, alpha),
-    HslColor(_wrapHue(h + offset), s, l, alpha),
-    HslColor(_wrapHue(h + 180.0), s, l, alpha),
-    HslColor(_wrapHue(h + 180.0 + offset), s, l, alpha),
-  ];
+        HslColor(h, s, l, alpha),
+        HslColor(_wrapHue(h + offset), s, l, alpha),
+        HslColor(_wrapHue(h + 180.0), s, l, alpha),
+        HslColor(_wrapHue(h + 180.0 + offset), s, l, alpha),
+      ];
 
   double _wrapHue(final double hue) {
     final double mod = hue % 360.0;
@@ -387,8 +397,7 @@ class HslColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  String toString() =>
-      'HslColor(h: ${h.toStrTrimZeros(3)}, '
+  String toString() => 'HslColor(h: ${h.toStrTrimZeros(3)}, '
       's: ${s.toStringAsFixed(2)}, l: ${l.toStrTrimZeros(2)}, '
       'alpha: ${alpha.toStringAsFixed(2)})';
 

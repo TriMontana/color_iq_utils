@@ -76,17 +76,17 @@ class YuvColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   YuvColor intensify([final double amount = 10]) {
-    return toColor().intensify(amount).toYuv();
+    return saturate(amount);
   }
 
   @override
   YuvColor deintensify([final double amount = 10]) {
-    return toColor().deintensify(amount).toYuv();
+    return desaturate(amount);
   }
 
   @override
   YuvColor accented([final double amount = 15]) {
-    return toColor().accented(amount).toYuv();
+    return intensify(amount);
   }
 
   @override
@@ -114,9 +114,11 @@ class YuvColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   YuvColor lerp(final ColorSpacesIQ other, final double t) {
-    final YuvColor otherYuv = other is YuvColor
-        ? other
-        : other.toColor().toYuv();
+    if (t == 0.0) return this;
+    final YuvColor otherYuv =
+        other is YuvColor ? other : other.toColor().toYuv();
+    if (t == 1.0) return otherYuv;
+
     return YuvColor(
       lerpDouble(y, otherYuv.y, t),
       lerpDouble(u, otherYuv.u, t),
@@ -152,7 +154,8 @@ class YuvColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+  List<ColorSpacesIQ> get monochromatic => toColor()
+      .monochromatic
       .map((final ColorSpacesIQ c) => (c as ColorIQ).toYuv())
       .toList();
 

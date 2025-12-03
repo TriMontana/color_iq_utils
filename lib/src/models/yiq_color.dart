@@ -1,6 +1,8 @@
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
@@ -59,27 +61,29 @@ class YiqColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   YiqColor saturate([final double amount = 25]) {
-    return toColor().saturate(amount).toYiq();
+    final double scale = 1.0 + (amount / 100.0);
+    return YiqColor(y, i * scale, q * scale);
   }
 
   @override
   YiqColor desaturate([final double amount = 25]) {
-    return toColor().desaturate(amount).toYiq();
+    final double scale = 1.0 - (amount / 100.0);
+    return YiqColor(y, i * scale, q * scale);
   }
 
   @override
   YiqColor intensify([final double amount = 10]) {
-    return toColor().intensify(amount).toYiq();
+    return saturate(amount);
   }
 
   @override
   YiqColor deintensify([final double amount = 10]) {
-    return toColor().deintensify(amount).toYiq();
+    return desaturate(amount);
   }
 
   @override
   YiqColor accented([final double amount = 15]) {
-    return toColor().accented(amount).toYiq();
+    return intensify(amount);
   }
 
   @override
@@ -100,16 +104,24 @@ class YiqColor with ColorModelsMixin implements ColorSpacesIQ {
   YiqColor get grayscale => toColor().grayscale.toYiq();
 
   @override
-  YiqColor whiten([final double amount = 20]) =>
-      toColor().whiten(amount).toYiq();
+  YiqColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
-  YiqColor blacken([final double amount = 20]) =>
-      toColor().blacken(amount).toYiq();
+  YiqColor blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
 
   @override
-  YiqColor lerp(final ColorSpacesIQ other, final double t) =>
-      (toColor().lerp(other, t) as ColorIQ).toYiq();
+  YiqColor lerp(final ColorSpacesIQ other, final double t) {
+    if (t == 0.0) return this;
+    final YiqColor otherYiq =
+        other is YiqColor ? other : other.toColor().toYiq();
+    if (t == 1.0) return otherYiq;
+
+    return YiqColor(
+      lerpDouble(y, otherYiq.y, t),
+      lerpDouble(i, otherYiq.i, t),
+      lerpDouble(q, otherYiq.q, t),
+    );
+  }
 
   @override
   YiqColor lighten([final double amount = 20]) {
@@ -139,7 +151,8 @@ class YiqColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+  List<ColorSpacesIQ> get monochromatic => toColor()
+      .monochromatic
       .map((final ColorSpacesIQ c) => (c as ColorIQ).toYiq())
       .toList();
 

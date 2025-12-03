@@ -44,6 +44,20 @@ extension IntHelperIQ on int {
   double get b2 => ((this & 0xFF) / 255.0).clamp0to1;
   double get blueLinearized => srgbToLinear(b2);
 
+  int assertRange0to255([final String? message]) {
+    if (this < 0 || this > 255) {
+      throw ArgumentError(message ?? 'Value must be between 0 and 255--$this');
+    }
+    return this;
+  }
+
+  int assertRange0to100int([final String? message]) {
+    if (this < 0 || this > 100) {
+      throw ArgumentError(message ?? 'Value must be between 0 and 100--$this');
+    }
+    return this;
+  }
+
   /// Determines the closest [ColorFamily] for this color value.
   ///
   /// Compares the color against representative colors from each family
@@ -63,19 +77,19 @@ extension IntHelperIQ on int {
     // Representative colors for each family (using pure/typical colors)
     final Map<ColorFamily, (int, int, int)> familyColors =
         <ColorFamily, (int, int, int)>{
-          ColorFamily.red: (255, 0, 0),
-          ColorFamily.orange: (255, 165, 0),
-          ColorFamily.yellow: (255, 255, 0),
-          ColorFamily.green: (0, 128, 0),
-          ColorFamily.cyan: (0, 255, 255),
-          ColorFamily.blue: (0, 0, 255),
-          ColorFamily.purple: (128, 0, 128),
-          ColorFamily.pink: (255, 192, 203),
-          ColorFamily.brown: (165, 42, 42),
-          ColorFamily.white: (255, 255, 255),
-          ColorFamily.gray: (128, 128, 128),
-          ColorFamily.black: (0, 0, 0),
-        };
+      ColorFamily.red: (255, 0, 0),
+      ColorFamily.orange: (255, 165, 0),
+      ColorFamily.yellow: (255, 255, 0),
+      ColorFamily.green: (0, 128, 0),
+      ColorFamily.cyan: (0, 255, 255),
+      ColorFamily.blue: (0, 0, 255),
+      ColorFamily.purple: (128, 0, 128),
+      ColorFamily.pink: (255, 192, 203),
+      ColorFamily.brown: (165, 42, 42),
+      ColorFamily.white: (255, 255, 255),
+      ColorFamily.gray: (128, 128, 128),
+      ColorFamily.black: (0, 0, 0),
+    };
 
     // Find the family with minimum distance
     ColorFamily? closestFamily;

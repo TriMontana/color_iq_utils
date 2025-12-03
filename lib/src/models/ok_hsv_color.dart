@@ -126,9 +126,8 @@ class OkHsvColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   OkHsvColor lerp(final ColorSpacesIQ other, final double t) {
-    final OkHsvColor otherOkHsv = other is OkHsvColor
-        ? other
-        : other.toColor().toOkHsv();
+    final OkHsvColor otherOkHsv =
+        other is OkHsvColor ? other : other.toColor().toOkHsv();
     return OkHsvColor(
       lerpHue(hue, otherOkHsv.hue, t),
       lerpDouble(saturation, otherOkHsv.saturation, t),
@@ -150,14 +149,20 @@ class OkHsvColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   OkHsvColor adjustTransparency([final double amount = 20]) {
-    return toColor().adjustTransparency(amount).toOkHsv();
+    return copyWith(alpha: (alpha * (1 - amount / 100)).clamp(0.0, 1.0));
   }
 
   @override
-  double get transparency => toColor().transparency;
+  double get transparency => alpha;
 
   @override
-  ColorTemperature get temperature => toColor().temperature;
+  ColorTemperature get temperature {
+    if (hue >= 90 && hue < 270) {
+      return ColorTemperature.cool;
+    } else {
+      return ColorTemperature.warm;
+    }
+  }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   OkHsvColor copyWith({
@@ -295,18 +300,18 @@ class OkHsvColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   List<OkHsvColor> generateBasicPalette() => <OkHsvColor>[
-    darken(40),
-    darken(20),
-    this,
-    lighten(20),
-    lighten(40),
-  ];
+        darken(40),
+        darken(20),
+        this,
+        lighten(20),
+        lighten(40),
+      ];
 
   @override
   List<OkHsvColor> tonesPalette() => List<OkHsvColor>.generate(
-    6,
-    (final int index) => copyWith(v: _clamp01(index / 5)),
-  );
+        6,
+        (final int index) => copyWith(v: _clamp01(index / 5)),
+      );
 
   @override
   List<OkHsvColor> analogous({final int count = 5, final double offset = 30}) {
@@ -322,17 +327,17 @@ class OkHsvColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   List<OkHsvColor> square() => List<OkHsvColor>.generate(
-    4,
-    (final int index) => _withHueShift(index * 90),
-  );
+        4,
+        (final int index) => _withHueShift(index * 90),
+      );
 
   @override
   List<OkHsvColor> tetrad({final double offset = 60}) => <OkHsvColor>[
-    this,
-    _withHueShift(offset),
-    _withHueShift(180),
-    _withHueShift(180 + offset),
-  ];
+        this,
+        _withHueShift(offset),
+        _withHueShift(180),
+        _withHueShift(180 + offset),
+      ];
   @override
   double distanceTo(final ColorSpacesIQ other) =>
       toCam16().distance(other.toCam16());
@@ -360,7 +365,6 @@ class OkHsvColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  String toString() =>
-      'OkHsvColor(h: ${hue.toStrTrimZeros(3)}, ' //
+  String toString() => 'OkHsvColor(h: ${hue.toStrTrimZeros(3)}, ' //
       's: ${saturation.toStringAsFixed(2)}, v: ${val.toStringAsFixed(2)})';
 }

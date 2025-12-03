@@ -1,6 +1,10 @@
+import 'dart:math';
+
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
@@ -68,27 +72,46 @@ class HwbColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   HwbColor saturate([final double amount = 25]) {
-    return toColor().saturate(amount).toHwb();
+    // Saturation in HWB is 1 - w - b.
+    // To saturate, we decrease w and b.
+    // Let's scale them down.
+    final double scale = 1.0 - (amount / 100.0);
+    return HwbColor(h, w * scale, b * scale, alpha);
   }
 
   @override
   HwbColor desaturate([final double amount = 25]) {
-    return toColor().desaturate(amount).toHwb();
+    // To desaturate, we move towards gray.
+    // Gray has w + b = 1.
+    // We can lerp towards a gray version of this color.
+    // A simple gray version preserves lightness.
+    // For HWB, middle gray is 0.5, 0.5.
+    // Or we can just increase w and b?
+    // Let's use lerp to a grayscale target.
+    // Ideally we'd find the grayscale color with same lightness.
+    // But for simplicity and standard behavior, let's lerp to a neutral gray
+    // or just increase w and b.
+    // Let's try increasing w and b to fill the gap to 1.0.
+    final double gap = 1.0 - w - b;
+    if (gap <= 0) return this;
+
+    final double add = gap * (amount / 100.0) * 0.5;
+    return HwbColor(h, w + add, b + add, alpha);
   }
 
   @override
   HwbColor intensify([final double amount = 10]) {
-    return toColor().intensify(amount).toHwb();
+    return saturate(amount);
   }
 
   @override
   HwbColor deintensify([final double amount = 10]) {
-    return toColor().deintensify(amount).toHwb();
+    return desaturate(amount);
   }
 
   @override
   HwbColor accented([final double amount = 15]) {
-    return toColor().accented(amount).toHwb();
+    return intensify(amount);
   }
 
   @override
@@ -109,16 +132,25 @@ class HwbColor with ColorModelsMixin implements ColorSpacesIQ {
   HwbColor get grayscale => toColor().grayscale.toHwb();
 
   @override
-  HwbColor whiten([final double amount = 20]) =>
-      toColor().whiten(amount).toHwb();
+  HwbColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
-  HwbColor blacken([final double amount = 20]) =>
-      toColor().blacken(amount).toHwb();
+  HwbColor blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
 
   @override
-  HwbColor lerp(final ColorSpacesIQ other, final double t) =>
-      (toColor().lerp(other, t) as ColorIQ).toHwb();
+  HwbColor lerp(final ColorSpacesIQ other, final double t) {
+    if (t == 0.0) return this;
+    final HwbColor otherHwb =
+        other is HwbColor ? other : other.toColor().toHwb();
+    if (t == 1.0) return otherHwb;
+
+    return HwbColor(
+      lerpHue(h, otherHwb.h, t),
+      lerpDouble(w, otherHwb.w, t),
+      lerpDouble(b, otherHwb.b, t),
+      lerpDouble(alpha, otherHwb.alpha, t),
+    );
+  }
 
   @override
   HwbColor lighten([final double amount = 20]) {
@@ -161,28 +193,48 @@ class HwbColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
-      .map((final ColorSpacesIQ c) => (c as ColorIQ).toHwb())
-      .toList();
+  List<ColorSpacesIQ> get monochromatic => <ColorSpacesIQ>[
+        blacken(20),
+        blacken(10),
+        this,
+        whiten(10),
+        whiten(20),
+      ];
 
   @override
   List<ColorSpacesIQ> lighterPalette([final double? step]) {
-    return toColor()
-        .lighterPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toHwb())
-        .toList();
+    final double s = step ?? 10.0;
+    return <ColorSpacesIQ>[
+      whiten(s),
+      whiten(s * 2),
+      whiten(s * 3),
+      whiten(s * 4),
+      whiten(s * 5),
+    ];
   }
 
   @override
   List<ColorSpacesIQ> darkerPalette([final double? step]) {
-    return toColor()
-        .darkerPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toHwb())
-        .toList();
+    final double s = step ?? 10.0;
+    return <ColorSpacesIQ>[
+      blacken(s),
+      blacken(s * 2),
+      blacken(s * 3),
+      blacken(s * 4),
+      blacken(s * 5),
+    ];
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as ColorIQ).toHwb();
+  ColorSpacesIQ get random {
+    final Random rng = Random();
+    final double h = rng.nextDouble() * 360;
+    final double w = rng.nextDouble();
+    // b must be <= 1 - w to be valid HWB, but constructor handles normalization if needed.
+    // However, generating valid HWB is better.
+    final double b = rng.nextDouble() * (1.0 - w);
+    return HwbColor(h, w, b);
+  }
 
   @override
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);

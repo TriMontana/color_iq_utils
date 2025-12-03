@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
@@ -96,12 +98,10 @@ class LabColor with ColorModelsMixin implements ColorSpacesIQ {
   LabColor get grayscale => toColor().grayscale.toLab();
 
   @override
-  LabColor whiten([final double amount = 20]) =>
-      toColor().whiten(amount).toLab();
+  LabColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
-  LabColor blacken([final double amount = 20]) =>
-      toColor().blacken(amount).toLab();
+  LabColor blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
 
   @override
   LabColor lighten([final double amount = 20]) {
@@ -149,8 +149,18 @@ class LabColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  LabColor lerp(final ColorSpacesIQ other, final double t) =>
-      (toColor().lerp(other, t) as ColorIQ).toLab();
+  LabColor lerp(final ColorSpacesIQ other, final double t) {
+    if (t == 0.0) return this;
+    final LabColor otherLab =
+        other is LabColor ? other : other.toColor().toLab();
+    if (t == 1.0) return otherLab;
+
+    return LabColor(
+      lerpDouble(l, otherLab.l, t),
+      lerpDouble(a, otherLab.a, t),
+      lerpDouble(b, otherLab.b, t),
+    );
+  }
 
   @override
   HctColor toHct() => toColor().toHct();
@@ -175,7 +185,8 @@ class LabColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+  List<ColorSpacesIQ> get monochromatic => toColor()
+      .monochromatic
       .map((final ColorSpacesIQ c) => (c as ColorIQ).toLab())
       .toList();
 

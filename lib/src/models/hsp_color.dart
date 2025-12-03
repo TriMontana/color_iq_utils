@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
@@ -49,48 +51,42 @@ class HspColor with ColorModelsMixin implements ColorSpacesIQ {
       if (hLocal < 1.0 / 6.0) {
         hLocal = 6.0 * (hLocal - 0.0 / 6.0);
         part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
-        b =
-            p /
+        b = p /
             sqrt(0.299 / minOverMax / minOverMax + 0.587 * part * part + 0.114);
         r = (b) / minOverMax;
         g = (b) + hLocal * ((r) - (b));
       } else if (hLocal < 2.0 / 6.0) {
         hLocal = 6.0 * (-hLocal + 2.0 / 6.0);
         part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
-        b =
-            p /
+        b = p /
             sqrt(0.587 / minOverMax / minOverMax + 0.299 * part * part + 0.114);
         g = (b) / minOverMax;
         r = (b) + hLocal * ((g) - (b));
       } else if (hLocal < 3.0 / 6.0) {
         hLocal = 6.0 * (hLocal - 2.0 / 6.0);
         part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
-        r =
-            p /
+        r = p /
             sqrt(0.587 / minOverMax / minOverMax + 0.114 * part * part + 0.299);
         g = (r) / minOverMax;
         b = (r) + hLocal * ((g) - (r));
       } else if (hLocal < 4.0 / 6.0) {
         hLocal = 6.0 * (-hLocal + 4.0 / 6.0);
         part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
-        r =
-            p /
+        r = p /
             sqrt(0.114 / minOverMax / minOverMax + 0.587 * part * part + 0.299);
         b = (r) / minOverMax;
         g = (r) + hLocal * ((b) - (r));
       } else if (hLocal < 5.0 / 6.0) {
         hLocal = 6.0 * (hLocal - 4.0 / 6.0);
         part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
-        g =
-            p /
+        g = p /
             sqrt(0.114 / minOverMax / minOverMax + 0.299 * part * part + 0.587);
         b = (g) / minOverMax;
         r = (g) + hLocal * ((b) - (g));
       } else {
         hLocal = 6.0 * (-hLocal + 6.0 / 6.0);
         part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
-        g =
-            p /
+        g = p /
             sqrt(0.299 / minOverMax / minOverMax + 0.114 * part * part + 0.587);
         r = (g) / minOverMax;
         b = (g) + hLocal * ((r) - (g));
@@ -240,17 +236,17 @@ class HspColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   HspColor intensify([final double amount = 10]) {
-    return toColor().intensify(amount).toHsp();
+    return HspColor(h, min(1.0, s + amount / 100), p, alpha);
   }
 
   @override
   HspColor deintensify([final double amount = 10]) {
-    return toColor().deintensify(amount).toHsp();
+    return HspColor(h, max(0.0, s - amount / 100), p, alpha);
   }
 
   @override
   HspColor accented([final double amount = 15]) {
-    return toColor().accented(amount).toHsp();
+    return intensify(amount);
   }
 
   @override
@@ -271,16 +267,25 @@ class HspColor with ColorModelsMixin implements ColorSpacesIQ {
   HspColor get grayscale => toColor().grayscale.toHsp();
 
   @override
-  HspColor whiten([final double amount = 20]) =>
-      toColor().whiten(amount).toHsp();
+  HspColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
-  HspColor blacken([final double amount = 20]) =>
-      toColor().blacken(amount).toHsp();
+  HspColor blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
 
   @override
-  HspColor lerp(final ColorSpacesIQ other, final double t) =>
-      (toColor().lerp(other, t) as ColorIQ).toHsp();
+  HspColor lerp(final ColorSpacesIQ other, final double t) {
+    if (t == 0.0) return this;
+    final HspColor otherHsp =
+        other is HspColor ? other : other.toColor().toHsp();
+    if (t == 1.0) return otherHsp;
+
+    return HspColor(
+      lerpHue(h, otherHsp.h, t),
+      lerpDouble(s, otherHsp.s, t),
+      lerpDouble(p, otherHsp.p, t),
+      lerpDouble(alpha, otherHsp.alpha, t),
+    );
+  }
 
   @override
   HctColor toHct() => toColor().toHct();
@@ -310,7 +315,8 @@ class HspColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+  List<ColorSpacesIQ> get monochromatic => toColor()
+      .monochromatic
       .map((final ColorSpacesIQ c) => (c as ColorIQ).toHsp())
       .toList();
 

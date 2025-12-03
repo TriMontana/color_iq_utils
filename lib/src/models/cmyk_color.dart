@@ -1,5 +1,8 @@
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+
+import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
@@ -95,16 +98,25 @@ class CmykColor with ColorModelsMixin implements ColorSpacesIQ {
   CmykColor get grayscale => toColor().grayscale.toCmyk();
 
   @override
-  CmykColor whiten([final double amount = 20]) =>
-      toColor().whiten(amount).toCmyk();
+  CmykColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
-  CmykColor blacken([final double amount = 20]) =>
-      toColor().blacken(amount).toCmyk();
+  CmykColor blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
 
   @override
-  CmykColor lerp(final ColorSpacesIQ other, final double t) =>
-      (toColor().lerp(other, t) as ColorIQ).toCmyk();
+  CmykColor lerp(final ColorSpacesIQ other, final double t) {
+    if (t == 0.0) return this;
+    final CmykColor otherCmyk =
+        other is CmykColor ? other : other.toColor().toCmyk();
+    if (t == 1.0) return otherCmyk;
+
+    return CmykColor(
+      lerpDouble(c, otherCmyk.c, t),
+      lerpDouble(m, otherCmyk.m, t),
+      lerpDouble(y, otherCmyk.y, t),
+      lerpDouble(k, otherCmyk.k, t),
+    );
+  }
 
   @override
   HctColor toHct() => HctColor.fromInt(value);
@@ -151,33 +163,34 @@ class CmykColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   List<ColorSpacesIQ> lighterPalette([final double? step]) {
-    // Step is interpreted as a fraction in \[0, 1\]; default if null
-    final double s = (step ?? 0.1).clamp(0.0, 1.0);
-    if (s == 0.0) {
-      return <ColorSpacesIQ>[this];
+    final List<CmykColor> results = <CmykColor>[];
+    double delta;
+    if (step != null) {
+      delta = step;
+    } else {
+      delta = 10.0; // Default step 10%
     }
 
-    final List<ColorSpacesIQ> result = <ColorSpacesIQ>[];
-    double currentK = k;
-
-    // Decrease K until we hit 0, adding lighter colors
-    while (currentK > 0.0) {
-      currentK = (currentK - s).clamp(0.0, 1.0);
-      result.add(CmykColor(c, m, y, currentK));
-      if (currentK == 0.0) {
-        break;
-      }
+    for (int i = 1; i <= 5; i++) {
+      results.add(whiten(delta * i));
     }
-
-    return result;
+    return results;
   }
 
   @override
   List<ColorSpacesIQ> darkerPalette([final double? step]) {
-    return toColor()
-        .darkerPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toCmyk())
-        .toList();
+    final List<CmykColor> results = <CmykColor>[];
+    double delta;
+    if (step != null) {
+      delta = step;
+    } else {
+      delta = 10.0; // Default step 10%
+    }
+
+    for (int i = 1; i <= 5; i++) {
+      results.add(blacken(delta * i));
+    }
+    return results;
   }
 
   @override
@@ -291,8 +304,7 @@ class CmykColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  String toString() =>
-      'CmykColor(c: ${c.toStringAsFixed(2)}, ' //
+  String toString() => 'CmykColor(c: ${c.toStringAsFixed(2)}, ' //
       'm: ${m.toStringAsFixed(2)}, ' //
       'y: ${y.toStringAsFixed(2)}, k: ${k.toStringAsFixed(2)})';
 

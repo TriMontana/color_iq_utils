@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:color_iq_utils/color_iq_utils.dart';
 import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/extensions/int_helpers.dart';
 
 // -------------------------------------------------------------------
 // ARGB & Component Extraction
@@ -33,14 +34,16 @@ int blueFromArgb(final int argb) {
 }
 
 /// Returns whether a color in ARGB format is opaque.
-bool isOpaque(final int argb) {
-  return alphaFromArgb(argb) >= 255;
-}
+bool isOpaque(final int argb) => alphaFromArgb(argb) >= 255;
 
 /// Converts a color from RGB components to ARGB format.
-/// CREDIT: MaterialColorUtilities
-int argbFromRgb(final int red, final int green, final int blue) {
-  return 255 << 24 | (red & 255) << 16 | (green & 255) << 8 | blue & 255;
+int argbFromRgb(final int red, final int green, final int blue,
+    [final int alpha = 255]) {
+  red.assertRange0to255('argbFromRgba:   red');
+  green.assertRange0to255('argbFromRgba: green');
+  blue.assertRange0to255('argbFromRgba: blue');
+  alpha.assertRange0to255('argbFromRgba: alpha');
+  return (alpha << 24) | (red << 16) | (green << 8) | blue;
 }
 
 // -------------------------------------------------------------------
@@ -55,6 +58,10 @@ int rgbToHexID({
   required final int blue,
   final int alpha = 255,
 }) {
+  red.assertRange0to255('rgbToHexID:   red');
+  green.assertRange0to255('rgbToHexID: green');
+  blue.assertRange0to255('rgbToHexID: blue');
+  alpha.assertRange0to255('rgbToHexID: alpha');
   // Compose ARGB 32-bit integer: (alpha << 24) | (red << 16) | (green << 8) | blue
   final int hexVal = (alpha << 24) | (red << 16) | (green << 8) | blue;
   return (hexVal & 0xFFFFFFFF);

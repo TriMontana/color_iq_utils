@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
@@ -112,16 +114,25 @@ class Rec2020Color with ColorModelsMixin implements ColorSpacesIQ {
   Rec2020Color get grayscale => toColor().grayscale.toRec2020();
 
   @override
-  Rec2020Color whiten([final double amount = 20]) =>
-      toColor().whiten(amount).toRec2020();
+  Rec2020Color whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
   Rec2020Color blacken([final double amount = 20]) =>
-      toColor().blacken(amount).toRec2020();
+      lerp(cBlack, amount / 100);
 
   @override
-  Rec2020Color lerp(final ColorSpacesIQ other, final double t) =>
-      (toColor().lerp(other, t) as ColorIQ).toRec2020();
+  Rec2020Color lerp(final ColorSpacesIQ other, final double t) {
+    if (t == 0.0) return this;
+    final Rec2020Color otherRec =
+        other is Rec2020Color ? other : other.toColor().toRec2020();
+    if (t == 1.0) return otherRec;
+
+    return Rec2020Color(
+      lerpDouble(r, otherRec.r, t),
+      lerpDouble(g, otherRec.g, t),
+      lerpDouble(b, otherRec.b, t),
+    );
+  }
 
   @override
   Rec2020Color lighten([final double amount = 20]) {
@@ -153,24 +164,41 @@ class Rec2020Color with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+  List<ColorSpacesIQ> get monochromatic => toColor()
+      .monochromatic
       .map((final ColorSpacesIQ c) => (c as ColorIQ).toRec2020())
       .toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([final double? step]) {
-    return toColor()
-        .lighterPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toRec2020())
-        .toList();
+    final List<Rec2020Color> results = <Rec2020Color>[];
+    double delta;
+    if (step != null) {
+      delta = step;
+    } else {
+      delta = 10.0; // Default step 10%
+    }
+
+    for (int i = 1; i <= 5; i++) {
+      results.add(whiten(delta * i));
+    }
+    return results;
   }
 
   @override
   List<ColorSpacesIQ> darkerPalette([final double? step]) {
-    return toColor()
-        .darkerPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toRec2020())
-        .toList();
+    final List<Rec2020Color> results = <Rec2020Color>[];
+    double delta;
+    if (step != null) {
+      delta = step;
+    } else {
+      delta = 10.0; // Default step 10%
+    }
+
+    for (int i = 1; i <= 5; i++) {
+      results.add(blacken(delta * i));
+    }
+    return results;
   }
 
   @override
@@ -228,10 +256,11 @@ class Rec2020Color with ColorModelsMixin implements ColorSpacesIQ {
   List<Rec2020Color> analogous({
     final int count = 5,
     final double offset = 30,
-  }) => toColor()
-      .analogous(count: count, offset: offset)
-      .map((final ColorIQ c) => c.toRec2020())
-      .toList();
+  }) =>
+      toColor()
+          .analogous(count: count, offset: offset)
+          .map((final ColorIQ c) => c.toRec2020())
+          .toList();
 
   @override
   List<Rec2020Color> square() =>
@@ -272,8 +301,7 @@ class Rec2020Color with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  String toString() =>
-      'Rec2020Color(r: ${r.toStrTrimZeros(4)}, ' //
+  String toString() => 'Rec2020Color(r: ${r.toStrTrimZeros(4)}, ' //
       'g: ${g.toStringAsFixed(4)}, '
       'b: ${b.toStringAsFixed(4)}, opacity: ${opacity.toStringAsFixed(2)})';
 }

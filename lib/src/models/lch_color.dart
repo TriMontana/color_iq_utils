@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
@@ -86,16 +87,56 @@ class LchColor with ColorModelsMixin implements ColorSpacesIQ {
   LchColor get grayscale => toColor().grayscale.toLch();
 
   @override
-  LchColor whiten([final double amount = 20]) =>
-      toColor().whiten(amount).toLch();
+  LchColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
-  LchColor blacken([final double amount = 20]) =>
-      toColor().blacken(amount).toLch();
+  LchColor blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
 
   @override
-  LchColor lerp(final ColorSpacesIQ other, final double t) =>
-      (toColor().lerp(other, t) as ColorIQ).toLch();
+  LchColor lerp(final ColorSpacesIQ other, final double t) {
+    if (t == 0.0) return this;
+
+    final LchColor otherLch =
+        (other is LchColor) ? other : other.toColor().toLch();
+
+    if (t == 1.0) return otherLch;
+
+    double newHue = h;
+    final double thisC = c;
+    final double otherC = otherLch.c;
+
+    // Handle achromatic hues (if chroma is near zero, preserve the other hue)
+    // White has C ~ 0.011, so we need a higher threshold than 1e-4.
+    const double kAchromaticThreshold = 0.05;
+    if (thisC < kAchromaticThreshold && otherC > kAchromaticThreshold) {
+      newHue = otherLch.h;
+    } else if (otherC < kAchromaticThreshold && thisC > kAchromaticThreshold) {
+      newHue = h;
+    } else if (thisC < kAchromaticThreshold && otherC < kAchromaticThreshold) {
+      newHue = h; // Both achromatic, keep current or 0
+    } else {
+      // Shortest path interpolation for hue
+      final double diff = otherLch.h - h;
+      if (diff.abs() <= 180) {
+        newHue += diff * t;
+      } else {
+        if (diff > 0) {
+          newHue += (diff - 360) * t;
+        } else {
+          newHue += (diff + 360) * t;
+        }
+      }
+    }
+
+    newHue %= 360;
+    if (newHue < 0) newHue += 360;
+
+    return LchColor(
+      l + (otherLch.l - l) * t,
+      thisC + (otherC - thisC) * t,
+      newHue,
+    );
+  }
 
   @override
   int get value => toColor().value;
@@ -138,7 +179,8 @@ class LchColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+  List<ColorSpacesIQ> get monochromatic => toColor()
+      .monochromatic
       .map((final ColorSpacesIQ c) => (c as ColorIQ).toLch())
       .toList();
 

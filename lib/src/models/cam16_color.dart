@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
@@ -68,17 +70,17 @@ class Cam16Color with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   Cam16Color intensify([final double amount = 10]) {
-    return toColor().intensify(amount).toCam16Color();
+    return Cam16Color(hue, chroma, j, q, m, min(100, s + amount), alpha);
   }
 
   @override
   Cam16Color deintensify([final double amount = 10]) {
-    return toColor().deintensify(amount).toCam16Color();
+    return Cam16Color(hue, chroma, j, q, m, max(0, s - amount), alpha);
   }
 
   @override
   Cam16Color accented([final double amount = 15]) {
-    return toColor().accented(amount).toCam16Color();
+    return intensify(amount);
   }
 
   @override
@@ -99,16 +101,40 @@ class Cam16Color with ColorModelsMixin implements ColorSpacesIQ {
   Cam16Color get grayscale => toColor().grayscale.toCam16Color();
 
   @override
-  Cam16Color whiten([final double amount = 20]) =>
-      toColor().whiten(amount).toCam16Color();
+  Cam16Color whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
-  Cam16Color blacken([final double amount = 20]) =>
-      toColor().blacken(amount).toCam16Color();
+  Cam16Color blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
 
   @override
-  Cam16Color lerp(final ColorSpacesIQ other, final double t) =>
-      (toColor().lerp(other, t) as ColorIQ).toCam16Color();
+  Cam16Color lerp(final ColorSpacesIQ other, final double t) {
+    if (t == 0.0) return this;
+    final Cam16Color otherCam16 =
+        other is Cam16Color ? other : other.toColor().toCam16Color();
+    if (t == 1.0) return otherCam16;
+
+    // Shortest path interpolation for hue
+    double h1 = hue;
+    double h2 = otherCam16.hue;
+    final double diff = h2 - h1;
+    if (diff.abs() > 180) {
+      if (h2 > h1) {
+        h1 += 360;
+      } else {
+        h2 += 360;
+      }
+    }
+
+    return Cam16Color(
+      (lerpDouble(h1, h2, t) % 360 + 360) % 360,
+      lerpDouble(chroma, otherCam16.chroma, t),
+      lerpDouble(j, otherCam16.j, t),
+      lerpDouble(q, otherCam16.q, t),
+      lerpDouble(m, otherCam16.m, t),
+      lerpDouble(s, otherCam16.s, t),
+      lerpDouble(alpha, otherCam16.alpha, t),
+    );
+  }
 
   @override
   Cam16Color lighten([final double amount = 20]) {
@@ -159,7 +185,8 @@ class Cam16Color with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+  List<ColorSpacesIQ> get monochromatic => toColor()
+      .monochromatic
       .map((final ColorSpacesIQ c) => (c as ColorIQ).toCam16Color())
       .toList();
 
@@ -306,8 +333,7 @@ class Cam16Color with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  String toString() =>
-      'Cam16Color(hue: ${hue.toStringAsFixed(2)}, ' //
+  String toString() => 'Cam16Color(hue: ${hue.toStringAsFixed(2)}, ' //
       'chroma: ${chroma.toStringAsFixed(2)}, ' //
       'j: ${j.toStringAsFixed(2)}, ' //
       'alpha: ${alpha.toStringAsFixed(2)})';

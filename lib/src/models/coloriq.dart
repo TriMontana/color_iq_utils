@@ -4,6 +4,7 @@ import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/extensions/int_helpers.dart';
 import 'package:color_iq_utils/src/models/cam16_color.dart';
 import 'package:color_iq_utils/src/models/cmyk_color.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
@@ -27,6 +28,7 @@ import 'package:color_iq_utils/src/models/rec2020_color.dart';
 import 'package:color_iq_utils/src/models/xyz_color.dart';
 import 'package:color_iq_utils/src/models/yiq_color.dart';
 import 'package:color_iq_utils/src/models/yuv_color.dart';
+import 'package:color_iq_utils/src/utils/color_spaces.dart';
 import 'package:material_color_utilities/material_color_utilities.dart' as mcu;
 
 /// A versatile color representation class, `ColorIQ`, designed for advanced color
@@ -51,6 +53,9 @@ class ColorIQ with ColorModelsMixin implements ColorSpacesIQ {
   @override
   final int value;
 
+  /// The color space of this color.
+  final ColorSpace colorSpace;
+
   /// Construct a color from the lower 32 bits of an [int].
   ColorIQ(
     this.value, {
@@ -62,26 +67,27 @@ class ColorIQ with ColorModelsMixin implements ColorSpacesIQ {
     final int? red,
     final int? green,
     final int? blue,
-  }) : a = a ?? ((value >> 24 & 0xFF) / 255).clamp0to1,
-       r = r ?? ((value >> 16 & 0xFF) / 255).clamp0to1,
-       g = g ?? ((value >> 8 & 0xFF) / 255).clamp0to1,
-       b = b ?? ((value & 0xFF) / 255).clamp0to1,
-       alpha = alpha ?? (value >> 24 & 0xFF),
-       red = red ?? (value >> 16 & 0xFF),
-       green = green ?? (value >> 8 & 0xFF),
-       blue = blue ?? (value & 0xFF);
+    this.colorSpace = ColorSpace.sRGB,
+  })  : a = a ?? ((value >> 24 & 0xFF) / 255).clamp0to1,
+        r = r ?? ((value >> 16 & 0xFF) / 255).clamp0to1,
+        g = g ?? ((value >> 8 & 0xFF) / 255).clamp0to1,
+        b = b ?? ((value & 0xFF) / 255).clamp0to1,
+        alpha = alpha ?? (value >> 24 & 0xFF),
+        red = red ?? (value >> 16 & 0xFF),
+        green = green ?? (value >> 8 & 0xFF),
+        blue = blue ?? (value & 0xFF);
 
   final double a;
   final int alpha;
-  final double r;
   @override
   final int red;
-  final double g;
+  final double r;
   @override
   final int green;
-  final double b;
+  final double g;
   @override
   final int blue;
+  final double b;
 
   /// Construct a color from 4 integers, a, r, g, b.
   ColorIQ.fromARGB(
@@ -93,29 +99,61 @@ class ColorIQ with ColorModelsMixin implements ColorSpacesIQ {
     final double? r,
     final double? g,
     final double? b,
-  }) : value =
-           (((alpha & 0xff) << 24) |
-               ((red & 0xff) << 16) |
-               ((green & 0xff) << 8) |
-               ((blue & 0xff) << 0)) &
-           0xFFFFFFFF,
-       a = a ?? (alpha / 255.0).clamp0to1,
-       r = r ?? (red / 255.0).clamp0to1,
-       g = g ?? (green / 255.0).clamp0to1,
-       b = b ?? (blue / 255.0).clamp0to1;
+    this.colorSpace = ColorSpace.sRGB,
+  })  : assert(red >= 0 && red <= 255, 'Invalid Red 0-255 value: $red'),
+        assert(green >= 0 && green <= 255, 'Invalid Green 0-255 value: $green'),
+        assert(blue >= 0 && blue <= 255, 'Invalid Blue 0-255 value: $blue'),
+        assert(alpha >= 0 && alpha <= 255, 'Invalid Alpha 0-255 value: $alpha'),
+        value = (((alpha & 0xff) << 24) |
+                ((red & 0xff) << 16) |
+                ((green & 0xff) << 8) |
+                ((blue & 0xff) << 0)) &
+            0xFFFFFFFF,
+        a = a != null ? a.assertRange0to1() : (alpha / 255.0).clamp0to1,
+        r = r != null ? r.assertRange0to1() : (red / 255.0).clamp0to1,
+        g = g != null ? g.assertRange0to1() : (green / 255.0).clamp0to1,
+        b = b != null ? b.assertRange0to1() : (blue / 255.0).clamp0to1;
 
   /// Construct a color from sRGB delinearized values a, r, g, b (0.0 to 1.0)
   factory ColorIQ.fromSrgb(
     final double a,
     final double r,
     final double g,
-    final double b,
-  ) {
-    final int alpha = (a.clamp(0.0, 1.0) * 255).round();
-    final int red = (r.clamp(0.0, 1.0) * 255).round();
-    final int green = (g.clamp(0.0, 1.0) * 255).round();
-    final int blue = (b.clamp(0.0, 1.0) * 255).round();
-    return ColorIQ.fromARGB(alpha, red, green, blue, a: a, r: r, g: g, b: b);
+    final double b, {
+    int? alphaInt,
+    int? redInt,
+    int? greenInt,
+    int? blueInt,
+    int? argb,
+    final ColorSpace colorSpace = ColorSpace.sRGB,
+  }) {
+    a.assertRange0to1();
+    r.assertRange0to1();
+    g.assertRange0to1();
+    b.assertRange0to1();
+    redInt = redInt != null
+        ? redInt.assertRange0to255()
+        : (r * 255).roundAndClamp0to255int();
+    greenInt = greenInt != null
+        ? greenInt.assertRange0to255()
+        : (g * 255).roundAndClamp0to255int();
+    blueInt = blueInt != null
+        ? blueInt.assertRange0to255()
+        : (b * 255).roundAndClamp0to255int();
+    alphaInt = alphaInt != null
+        ? alphaInt.assertRange0to255()
+        : (a * 255).roundAndClamp0to255int();
+    argb ??= (alphaInt << 24) | (redInt << 16) | (greenInt << 8) | blueInt;
+    return ColorIQ(argb,
+        alpha: alphaInt,
+        red: redInt,
+        green: greenInt,
+        blue: blueInt,
+        colorSpace: colorSpace,
+        a: a,
+        r: r,
+        g: g,
+        b: b);
   }
 
   /// Converts this color to CMYK.
@@ -365,8 +403,7 @@ class ColorIQ with ColorModelsMixin implements ColorSpacesIQ {
   /// Converts this color to Hct (Material Color Utilities).
   @override
   HctColor toHct() {
-    final int argb = value;
-    return HctColor.fromInt(argb);
+    return HctColor.fromInt(value);
   }
 
   /// Converts this color to Cam16 (Material Color Utilities).
@@ -402,15 +439,12 @@ class ColorIQ with ColorModelsMixin implements ColorSpacesIQ {
     double bP3 = x * 0.0358458 + y * -0.0761723 + z * 0.9568845;
 
     // Gamma correction (Transfer function) for Display P3 is sRGB curve.
-    rP3 = (rP3 > 0.0031308)
-        ? (1.055 * pow(rP3, 1 / 2.4) - 0.055)
-        : (12.92 * rP3);
-    gP3 = (gP3 > 0.0031308)
-        ? (1.055 * pow(gP3, 1 / 2.4) - 0.055)
-        : (12.92 * gP3);
-    bP3 = (bP3 > 0.0031308)
-        ? (1.055 * pow(bP3, 1 / 2.4) - 0.055)
-        : (12.92 * bP3);
+    rP3 =
+        (rP3 > 0.0031308) ? (1.055 * pow(rP3, 1 / 2.4) - 0.055) : (12.92 * rP3);
+    gP3 =
+        (gP3 > 0.0031308) ? (1.055 * pow(gP3, 1 / 2.4) - 0.055) : (12.92 * gP3);
+    bP3 =
+        (bP3 > 0.0031308) ? (1.055 * pow(bP3, 1 / 2.4) - 0.055) : (12.92 * bP3);
 
     return DisplayP3Color(rP3, gP3, bP3);
   }

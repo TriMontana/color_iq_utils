@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/int_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
@@ -156,16 +157,25 @@ class OkLabColor with ColorModelsMixin implements ColorSpacesIQ {
   OkLabColor get grayscale => toColor().grayscale.toOkLab();
 
   @override
-  OkLabColor whiten([final double amount = 20]) =>
-      toColor().whiten(amount).toOkLab();
+  OkLabColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
-  OkLabColor blacken([final double amount = 20]) =>
-      toColor().blacken(amount).toOkLab();
+  OkLabColor blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
 
   @override
-  OkLabColor lerp(final ColorSpacesIQ other, final double t) =>
-      (toColor().lerp(other, t) as ColorIQ).toOkLab();
+  OkLabColor lerp(final ColorSpacesIQ other, final double t) {
+    if (t == 0.0) return this;
+    final OkLabColor otherLab =
+        other is OkLabColor ? other : other.toColor().toOkLab();
+    if (t == 1.0) return otherLab;
+
+    return OkLabColor(
+      lerpDouble(l, otherLab.l, t),
+      lerpDouble(a, otherLab.a, t),
+      lerpDouble(b, otherLab.b, t),
+      lerpDouble(alpha, otherLab.alpha, t),
+    );
+  }
 
   @override
   OkLabColor lighten([final double amount = 20]) {
@@ -245,7 +255,8 @@ class OkLabColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+  List<ColorSpacesIQ> get monochromatic => toColor()
+      .monochromatic
       .map((final ColorSpacesIQ c) => (c as ColorIQ).toOkLab())
       .toList();
 
@@ -356,7 +367,6 @@ class OkLabColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  String toString() =>
-      'OkLabColor(l: ${l.toStringAsFixed(2)}, '
+  String toString() => 'OkLabColor(l: ${l.toStringAsFixed(2)}, '
       'a: ${a.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)}, alpha: ${alpha.toStringAsFixed(2)})';
 }

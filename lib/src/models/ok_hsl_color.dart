@@ -138,17 +138,17 @@ class OkHslColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   OkHslColor intensify([final double amount = 10]) {
-    return toColor().intensify(amount).toOkHsl();
+    return saturate(amount);
   }
 
   @override
   OkHslColor deintensify([final double amount = 10]) {
-    return toColor().deintensify(amount).toOkHsl();
+    return desaturate(amount);
   }
 
   @override
   OkHslColor accented([final double amount = 15]) {
-    return toColor().accented(amount).toOkHsl();
+    return intensify(amount);
   }
 
   @override

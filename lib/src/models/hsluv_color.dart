@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
@@ -67,19 +69,27 @@ class HsluvColor with ColorModelsMixin implements ColorSpacesIQ {
   HsluvColor get inverted => toColor().inverted.toHsluv();
 
   @override
-  HsluvColor get grayscale => toColor().grayscale.toHsluv();
+  HsluvColor get grayscale => HsluvColor(h, 0, l);
 
   @override
-  HsluvColor whiten([final double amount = 20]) =>
-      toColor().whiten(amount).toHsluv();
+  HsluvColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
-  HsluvColor blacken([final double amount = 20]) =>
-      toColor().blacken(amount).toHsluv();
+  HsluvColor blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
 
   @override
-  HsluvColor lerp(final ColorSpacesIQ other, final double t) =>
-      (toColor().lerp(other, t) as ColorIQ).toHsluv();
+  HsluvColor lerp(final ColorSpacesIQ other, final double t) {
+    if (t == 0.0) return this;
+    final HsluvColor otherHsluv =
+        other is HsluvColor ? other : other.toColor().toHsluv();
+    if (t == 1.0) return otherHsluv;
+
+    return HsluvColor(
+      lerpHue(h, otherHsluv.h, t),
+      lerpDouble(s, otherHsluv.s, t),
+      lerpDouble(l, otherHsluv.l, t),
+    );
+  }
 
   @override
   HsluvColor lighten([final double amount = 20]) {
@@ -147,7 +157,8 @@ class HsluvColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+  List<ColorSpacesIQ> get monochromatic => toColor()
+      .monochromatic
       .map((final ColorSpacesIQ c) => (c as ColorIQ).toHsluv())
       .toList();
 

@@ -95,9 +95,11 @@ class HsvColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   HsvColor lerp(final ColorSpacesIQ other, final double t) {
-    final HsvColor otherHsv = other is HsvColor
-        ? other
-        : other.toColor().toHsv();
+    if (t == 0.0) return this;
+    final HsvColor otherHsv =
+        other is HsvColor ? other : other.toColor().toHsv();
+    if (t == 1.0) return otherHsv;
+
     return HsvColor(
       lerpHue(h, otherHsv.h, t),
       lerpDouble(s, otherHsv.s, t),
@@ -128,17 +130,18 @@ class HsvColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   HsvColor intensify([final double amount = 10]) {
-    return toColor().intensify(amount).toHsv();
+    return HsvColor(h, min(1.0, s + amount / 100), v, alpha);
   }
 
   @override
   HsvColor deintensify([final double amount = 10]) {
-    return toColor().deintensify(amount).toHsv();
+    return HsvColor(h, max(0.0, s - amount / 100), v, alpha);
   }
 
   @override
   HsvColor accented([final double amount = 15]) {
-    return toColor().accented(amount).toHsv();
+    // Accented usually means more saturated.
+    return intensify(amount);
   }
 
   @override
@@ -185,7 +188,8 @@ class HsvColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+  List<ColorSpacesIQ> get monochromatic => toColor()
+      .monochromatic
       .map((final ColorSpacesIQ c) => (c as ColorIQ).toHsv())
       .toList();
 
@@ -296,8 +300,7 @@ class HsvColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  String toString() =>
-      'HsvColor(h: ${h.toStrTrimZeros(3)}, ' //
+  String toString() => 'HsvColor(h: ${h.toStrTrimZeros(3)}, ' //
       's: ${s.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)}, a: ${alpha.toStringAsFixed(2)})';
 
   @override

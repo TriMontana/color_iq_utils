@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
@@ -72,27 +74,29 @@ class HunterLabColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   HunterLabColor saturate([final double amount = 25]) {
-    return toColor().saturate(amount).toHunterLab();
+    final double scale = 1.0 + (amount / 100.0);
+    return HunterLabColor(l, a * scale, b * scale);
   }
 
   @override
   HunterLabColor desaturate([final double amount = 25]) {
-    return toColor().desaturate(amount).toHunterLab();
+    final double scale = 1.0 - (amount / 100.0);
+    return HunterLabColor(l, a * scale, b * scale);
   }
 
   @override
   HunterLabColor intensify([final double amount = 10]) {
-    return toColor().intensify(amount).toHunterLab();
+    return saturate(amount);
   }
 
   @override
   HunterLabColor deintensify([final double amount = 10]) {
-    return toColor().deintensify(amount).toHunterLab();
+    return desaturate(amount);
   }
 
   @override
   HunterLabColor accented([final double amount = 15]) {
-    return toColor().accented(amount).toHunterLab();
+    return intensify(amount);
   }
 
   @override
@@ -114,15 +118,25 @@ class HunterLabColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   HunterLabColor whiten([final double amount = 20]) =>
-      toColor().whiten(amount).toHunterLab();
+      lerp(cWhite, amount / 100);
 
   @override
   HunterLabColor blacken([final double amount = 20]) =>
-      toColor().blacken(amount).toHunterLab();
+      lerp(cBlack, amount / 100);
 
   @override
-  HunterLabColor lerp(final ColorSpacesIQ other, final double t) =>
-      (toColor().lerp(other, t) as ColorIQ).toHunterLab();
+  HunterLabColor lerp(final ColorSpacesIQ other, final double t) {
+    if (t == 0.0) return this;
+    final HunterLabColor otherLab =
+        other is HunterLabColor ? other : other.toColor().toHunterLab();
+    if (t == 1.0) return otherLab;
+
+    return HunterLabColor(
+      lerpDouble(l, otherLab.l, t),
+      lerpDouble(a, otherLab.a, t),
+      lerpDouble(b, otherLab.b, t),
+    );
+  }
 
   @override
   HunterLabColor lighten([final double amount = 20]) {
@@ -157,7 +171,8 @@ class HunterLabColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+  List<ColorSpacesIQ> get monochromatic => toColor()
+      .monochromatic
       .map((final ColorSpacesIQ c) => (c as ColorIQ).toHunterLab())
       .toList();
 
@@ -234,10 +249,11 @@ class HunterLabColor with ColorModelsMixin implements ColorSpacesIQ {
   List<HunterLabColor> analogous({
     final int count = 5,
     final double offset = 30,
-  }) => toColor()
-      .analogous(count: count, offset: offset)
-      .map((final ColorIQ c) => c.toHunterLab())
-      .toList();
+  }) =>
+      toColor()
+          .analogous(count: count, offset: offset)
+          .map((final ColorIQ c) => c.toHunterLab())
+          .toList();
 
   @override
   List<HunterLabColor> square() =>
