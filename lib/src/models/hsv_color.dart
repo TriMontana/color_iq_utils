@@ -3,9 +3,11 @@ import 'dart:math';
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 
 /// A representation of a color in the HSV (Hue, Saturation, Value) color space.
 ///
@@ -86,20 +88,27 @@ class HsvColor with ColorModelsMixin implements ColorSpacesIQ {
   HsvColor get grayscale => toColor().grayscale.toHsv();
 
   @override
-  HsvColor whiten([final double amount = 20]) =>
-      toColor().whiten(amount).toHsv();
+  HsvColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
-  HsvColor blacken([final double amount = 20]) =>
-      toColor().blacken(amount).toHsv();
+  HsvColor blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
 
   @override
-  HsvColor lerp(final ColorSpacesIQ other, final double t) =>
-      (toColor().lerp(other, t) as ColorIQ).toHsv();
+  HsvColor lerp(final ColorSpacesIQ other, final double t) {
+    final HsvColor otherHsv = other is HsvColor
+        ? other
+        : other.toColor().toHsv();
+    return HsvColor(
+      lerpHue(h, otherHsv.h, t),
+      lerpDouble(s, otherHsv.s, t),
+      lerpDouble(v, otherHsv.v, t),
+      lerpDouble(alpha, otherHsv.alpha, t),
+    );
+  }
 
   @override
   HsvColor lighten([final double amount = 20]) {
-    return toColor().lighten(amount).toHsv();
+    return HsvColor(h, s, min(1.0, v + amount / 100), alpha);
   }
 
   @override

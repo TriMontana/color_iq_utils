@@ -3,10 +3,12 @@ import 'dart:math';
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/ok_lab_color.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 
 /// A color model that represents colors in the Oklch color space.
 ///
@@ -55,19 +57,26 @@ class OkLchColor with ColorModelsMixin implements ColorSpacesIQ {
   OkLchColor get inverted => toColor().inverted.toOkLch();
 
   @override
-  OkLchColor get grayscale => toColor().grayscale.toOkLch();
+  OkLchColor get grayscale => OkLchColor(l, 0.0, h, alpha);
 
   @override
-  OkLchColor whiten([final double amount = 20]) =>
-      toColor().whiten(amount).toOkLch();
+  OkLchColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
-  OkLchColor blacken([final double amount = 20]) =>
-      toColor().blacken(amount).toOkLch();
+  OkLchColor blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
 
   @override
-  OkLchColor lerp(final ColorSpacesIQ other, final double t) =>
-      (toColor().lerp(other, t) as ColorIQ).toOkLch();
+  OkLchColor lerp(final ColorSpacesIQ other, final double t) {
+    final OkLchColor otherOkLch = other is OkLchColor
+        ? other
+        : other.toColor().toOkLch();
+    return OkLchColor(
+      lerpDouble(l, otherOkLch.l, t),
+      lerpDouble(c, otherOkLch.c, t),
+      lerpHue(h, otherOkLch.h, t),
+      lerpDouble(alpha, otherOkLch.alpha, t),
+    );
+  }
 
   @override
   OkLchColor lighten([final double amount = 20]) {

@@ -7,6 +7,19 @@ import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:material_color_utilities/material_color_utilities.dart' as mcu;
 
+/// A color in the CAM16 color space.
+///
+/// CAM16 is a color appearance model that provides a more accurate representation
+/// of how colors appear to the human eye compared to simpler models like RGB or HSL.
+/// It separates color into dimensions that correlate with human perception:
+/// - Hue (h): The type of color (red, green, blue, etc.).
+/// - Chroma (C): The colorfulness of the color relative to the brightness of a similarly illuminated white.
+/// - Lightness (J): The brightness of the color relative to the brightness of a similarly illuminated white.
+/// - Brightness (Q): The absolute brightness of the color.
+/// - Colorfulness (M): The absolute colorfulness of the color.
+/// - Saturation (s): The colorfulness of the color relative to its own brightness.
+///
+/// This class is immutable.
 class Cam16Color with ColorModelsMixin implements ColorSpacesIQ {
   final double hue;
   final double chroma;
@@ -28,21 +41,7 @@ class Cam16Color with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   ColorIQ toColor() {
-    // This is complex, usually requires viewing conditions.
-    // MCU library has Cam16.
-    // We can use MCU to convert back to Int.
-    // But MCU Cam16 doesn't have direct toInt().
-    // It has toXyzInViewingConditions.
-    // For simplicity, we might convert to Hct first if possible?
-    // Hct is based on Cam16.
-    // Hct.from(hue, chroma, tone) -> tone is Lightness (J-like but not exactly J).
-    // Let's assume we can use Hct as a bridge if J ~ Tone.
-    // Or we can use the Cam16 class from MCU if we can construct it.
-    // mcu.Cam16.fromJch(j, c, h);
-    final mcu.Cam16 cam16 = mcu.Cam16.fromJch(j, chroma, hue);
-    final int argb = cam16.toInt();
-    // Restore alpha
-    return ColorIQ(argb).copyWith(a: (alpha * 255).round());
+    return ColorIQ(value);
   }
 
   @override

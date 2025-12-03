@@ -1,9 +1,13 @@
+import 'dart:math';
+
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 
 /// A representation of a color in the YUV color space.
 ///
@@ -50,22 +54,24 @@ class YuvColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   YuvColor darken([final double amount = 20]) {
-    return toColor().darken(amount).toYuv();
+    return YuvColor(max(0.0, y - amount / 100), u, v);
   }
 
   @override
   YuvColor brighten([final double amount = 20]) {
-    return toColor().brighten(amount).toYuv();
+    return YuvColor(min(1.0, y + amount / 100), u, v);
   }
 
   @override
   YuvColor saturate([final double amount = 25]) {
-    return toColor().saturate(amount).toYuv();
+    final double factor = 1 + (amount / 100);
+    return YuvColor(y, u * factor, v * factor);
   }
 
   @override
   YuvColor desaturate([final double amount = 25]) {
-    return toColor().desaturate(amount).toYuv();
+    final double factor = max(0.0, 1 - (amount / 100));
+    return YuvColor(y, u * factor, v * factor);
   }
 
   @override
@@ -101,20 +107,26 @@ class YuvColor with ColorModelsMixin implements ColorSpacesIQ {
   YuvColor get grayscale => toColor().grayscale.toYuv();
 
   @override
-  YuvColor whiten([final double amount = 20]) =>
-      toColor().whiten(amount).toYuv();
+  YuvColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
-  YuvColor blacken([final double amount = 20]) =>
-      toColor().blacken(amount).toYuv();
+  YuvColor blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
 
   @override
-  YuvColor lerp(final ColorSpacesIQ other, final double t) =>
-      (toColor().lerp(other, t) as ColorIQ).toYuv();
+  YuvColor lerp(final ColorSpacesIQ other, final double t) {
+    final YuvColor otherYuv = other is YuvColor
+        ? other
+        : other.toColor().toYuv();
+    return YuvColor(
+      lerpDouble(y, otherYuv.y, t),
+      lerpDouble(u, otherYuv.u, t),
+      lerpDouble(v, otherYuv.v, t),
+    );
+  }
 
   @override
   YuvColor lighten([final double amount = 20]) {
-    return toColor().lighten(amount).toYuv();
+    return YuvColor(min(1.0, y + amount / 100), u, v);
   }
 
   @override

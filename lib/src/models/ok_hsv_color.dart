@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
@@ -72,17 +73,32 @@ class OkHsvColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   OkHsvColor intensify([final double amount = 10]) {
-    return toColor().intensify(amount).toOkHsv();
+    return OkHsvColor(
+      hue,
+      min(1.0, saturation + amount / 100),
+      max(0.0, val - (amount / 200)),
+      alpha,
+    );
   }
 
   @override
   OkHsvColor deintensify([final double amount = 10]) {
-    return toColor().deintensify(amount).toOkHsv();
+    return OkHsvColor(
+      hue,
+      max(0.0, saturation - amount / 100),
+      min(1.0, val + (amount / 200)),
+      alpha,
+    );
   }
 
   @override
   OkHsvColor accented([final double amount = 15]) {
-    return toColor().accented(amount).toOkHsv();
+    return OkHsvColor(
+      hue,
+      min(1.0, saturation + amount / 100),
+      min(1.0, val + (amount / 200)),
+      alpha,
+    );
   }
 
   @override
@@ -103,16 +119,23 @@ class OkHsvColor with ColorModelsMixin implements ColorSpacesIQ {
   OkHsvColor get grayscale => toColor().grayscale.toOkHsv();
 
   @override
-  OkHsvColor whiten([final double amount = 20]) =>
-      toColor().whiten(amount).toOkHsv();
+  OkHsvColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
-  OkHsvColor blacken([final double amount = 20]) =>
-      toColor().blacken(amount).toOkHsv();
+  OkHsvColor blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
 
   @override
-  OkHsvColor lerp(final ColorSpacesIQ other, final double t) =>
-      (toColor().lerp(other, t) as ColorIQ).toOkHsv();
+  OkHsvColor lerp(final ColorSpacesIQ other, final double t) {
+    final OkHsvColor otherOkHsv = other is OkHsvColor
+        ? other
+        : other.toColor().toOkHsv();
+    return OkHsvColor(
+      lerpHue(hue, otherOkHsv.hue, t),
+      lerpDouble(saturation, otherOkHsv.saturation, t),
+      lerpDouble(val, otherOkHsv.val, t),
+      lerpDouble(alpha, otherOkHsv.alpha, t),
+    );
+  }
 
   @override
   OkHsvColor lighten([final double amount = 20]) {
@@ -152,28 +175,50 @@ class OkHsvColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
-      .map((final ColorSpacesIQ c) => (c as ColorIQ).toOkHsv())
-      .toList();
+  List<ColorSpacesIQ> get monochromatic {
+    final List<OkHsvColor> results = <OkHsvColor>[];
+    for (int i = 0; i < 5; i++) {
+      final double delta = (i - 2) * 0.1;
+      final double newVal = (val + delta).clamp(0.0, 1.0);
+      results.add(OkHsvColor(hue, saturation, newVal, alpha));
+    }
+    return results;
+  }
 
   @override
   List<ColorSpacesIQ> lighterPalette([final double? step]) {
-    return toColor()
-        .lighterPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toOkHsv())
-        .toList();
+    final double s = step ?? 10.0;
+    return <OkHsvColor>[
+      lighten(s),
+      lighten(s * 2),
+      lighten(s * 3),
+      lighten(s * 4),
+      lighten(s * 5),
+    ];
   }
 
   @override
   List<ColorSpacesIQ> darkerPalette([final double? step]) {
-    return toColor()
-        .darkerPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toOkHsv())
-        .toList();
+    final double s = step ?? 10.0;
+    return <OkHsvColor>[
+      darken(s),
+      darken(s * 2),
+      darken(s * 3),
+      darken(s * 4),
+      darken(s * 5),
+    ];
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as ColorIQ).toOkHsv();
+  ColorSpacesIQ get random {
+    final Random rng = Random();
+    return OkHsvColor(
+      rng.nextDouble() * 360.0,
+      rng.nextDouble(),
+      rng.nextDouble(),
+      1.0,
+    );
+  }
 
   @override
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);

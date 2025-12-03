@@ -7,6 +7,10 @@ import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 // -------------------------------------------------------------------
 // ARGB & Component Extraction
 // -------------------------------------------------------------------
+/// Returns the alpha, red, green, and blue components of a color in ARGB format.
+List<int> argbToComponents(final int argb) {
+  return <int>[argb >> 24 & 255, argb >> 16 & 255, argb >> 8 & 255, argb & 255];
+}
 
 /// Returns the alpha component of a color in ARGB format.
 int alphaFromArgb(final int argb) {
@@ -312,8 +316,8 @@ double lerpHueB(final double start, final double end, final double t) {
 /// Throws an assertion error if [t] is outside the range `[0, 1]`,
 /// or if [a] or [b] are non-finite.
 double lerpDouble(final double a, final double b, final double t) {
-  assert(a.isNaN, 'Cannot interpolate between Invalid Numbers');
-  assert(b.isNaN, 'Cannot interpolate between Invalid Numbers');
+  assert(!a.isNaN, 'Cannot interpolate between Invalid Numbers');
+  assert(!b.isNaN, 'Cannot interpolate between Invalid Numbers');
   if (a == b) {
     return a.toDouble();
   }

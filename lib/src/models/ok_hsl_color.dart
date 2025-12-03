@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
@@ -66,16 +67,54 @@ class OkHslColor with ColorModelsMixin implements ColorSpacesIQ {
   OkHslColor get grayscale => toColor().grayscale.toOkHsl();
 
   @override
-  OkHslColor whiten([final double amount = 20]) =>
-      toColor().whiten(amount).toOkHsl();
+  OkHslColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
-  OkHslColor blacken([final double amount = 20]) =>
-      toColor().blacken(amount).toOkHsl();
+  OkHslColor blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
 
   @override
-  OkHslColor lerp(final ColorSpacesIQ other, final double t) =>
-      (toColor().lerp(other, t) as ColorIQ).toOkHsl();
+  OkHslColor lerp(final ColorSpacesIQ other, final double t) {
+    if (t == 0.0) return this;
+
+    final OkHslColor otherOkHsl =
+        (other is OkHslColor) ? other : other.toColor().toOkHsl();
+
+    if (t == 1.0) return otherOkHsl;
+
+    double newHue = h;
+    final double thisS = s;
+    final double otherS = otherOkHsl.s;
+
+    // Handle achromatic hues (if saturation is near zero, preserve the other hue)
+    if (thisS < 1e-4 && otherS > 1e-4) {
+      newHue = otherOkHsl.h;
+    } else if (otherS < 1e-4 && thisS > 1e-4) {
+      newHue = h;
+    } else if (thisS < 1e-4 && otherS < 1e-4) {
+      newHue = h; // Both achromatic, keep current or 0
+    } else {
+      // Shortest path interpolation for hue
+      final double diff = otherOkHsl.h - h;
+      if (diff.abs() <= 180) {
+        newHue += diff * t;
+      } else {
+        if (diff > 0) {
+          newHue += (diff - 360) * t;
+        } else {
+          newHue += (diff + 360) * t;
+        }
+      }
+    }
+
+    newHue %= 360;
+    if (newHue < 0) newHue += 360;
+
+    return OkHslColor(
+      newHue,
+      thisS + (otherS - thisS) * t,
+      l + (otherOkHsl.l - l) * t,
+    );
+  }
 
   @override
   OkHslColor lighten([final double amount = 20]) {
@@ -143,7 +182,8 @@ class OkHslColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+  List<ColorSpacesIQ> get monochromatic => toColor()
+      .monochromatic
       .map((final ColorSpacesIQ c) => (c as ColorIQ).toOkHsl())
       .toList();
 

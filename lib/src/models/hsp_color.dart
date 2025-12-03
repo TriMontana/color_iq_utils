@@ -215,17 +215,17 @@ class HspColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   HspColor darken([final double amount = 20]) {
-    return toColor().darken(amount).toHsp();
+    return HspColor(h, s, max(0.0, p - amount / 100), alpha);
   }
 
   @override
   HspColor brighten([final double amount = 20]) {
-    return toColor().brighten(amount).toHsp();
+    return HspColor(h, s, min(1.0, p + amount / 100), alpha);
   }
 
   @override
   HspColor lighten([final double amount = 20]) {
-    return toColor().lighten(amount).toHsp();
+    return HspColor(h, s, min(1.0, p + amount / 100), alpha);
   }
 
   @override
