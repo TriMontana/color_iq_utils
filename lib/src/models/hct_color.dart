@@ -387,6 +387,6 @@ class HctColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   String toString() =>
-      'HctColor(hue: ${hue.toStringAsFixed(2)}, ' //
-      'chroma: ${chroma.toStringAsFixed(2)}, tone: ${tone.toStringAsFixed(2)})';
+      'HctColor(hue: ${hue.toStrTrimZeros(3)}, ' //
+      'chroma: ${chroma.toStrTrimZeros(2)}, tone: ${tone.toStrTrimZeros(2)})';
 }
