@@ -3,11 +3,10 @@ import 'dart:math';
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/utils/color_math.dart';
-import 'package:material_color_utilities/hct/cam16.dart';
 
 /// A representation of a color in the Display P3 color space.
 ///
@@ -31,28 +30,48 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
   @override
   final double b;
 
-  const DisplayP3Color(this.r, this.g, this.b);
+  const DisplayP3Color(this.r, this.g, this.b, {required final int hexId})
+      : super(hexId);
+
+  DisplayP3Color.alt(this.r, this.g, this.b, {final int? hexId})
+      : super(hexId ?? DisplayP3Color.toHexId(r, g, b));
 
   /// Creates a 32-bit integer ARGB value from Display P3 components.
-  ///
-  /// [r], [g], and [b] are double values ranging from 0.0 to 1.0.
-  /// This method performs the conversion from Display P3 to sRGB before encoding
-  /// into the final ARGB integer, clamping values to ensure they are valid.
-  /// An alpha value of 255 (fully opaque) is used.
-  static int toHex(final double r, final double g, final double b) {
-    // Create a temporary DisplayP3Color instance and convert it to sRGB ColorIQ.
-    final ColorIQ srgbColor = const DisplayP3Color(r, g, b).toColor();
-    // Use the value from the converted sRGB color.
-    // The .value getter already returns the 32-bit ARGB integer.
-    // It includes clamping and rounding of RGB components.
-    return srgbColor.value;
+  static int toHexId(final double r, final double g, final double b) {
+    // Gamma decoding (P3 to Linear), Linearize
+    final double rLin = srgbToLinear(r);
+    final double gLin =
+        (g > 0.04045) ? pow((g + 0.055) / 1.055, 2.4).toDouble() : (g / 12.92);
+    final double bLin =
+        (b > 0.04045) ? pow((b + 0.055) / 1.055, 2.4).toDouble() : (b / 12.92);
+
+    // Display P3 Linear to XYZ (D65)
+    final double x = rLin * 0.4865709 + gLin * 0.2656677 + bLin * 0.1982173;
+    final double y = rLin * 0.2289746 + gLin * 0.6917385 + bLin * 0.0792869;
+    final double z = rLin * 0.0000000 + gLin * 0.0451134 + bLin * 1.0439444;
+
+    // XYZ (D65) to sRGB Linear
+    double rS = x * 3.2404542 + y * -1.5371385 + z * -0.4985314;
+    double gS = x * -0.9692660 + y * 1.8760108 + z * 0.0415560;
+    double bS = x * 0.0556434 + y * -0.2040259 + z * 1.0572252;
+
+    // sRGB Linear to sRGB (Gamma encoded)
+    rS = (rS > 0.0031308) ? (1.055 * pow(rS, 1 / 2.4) - 0.055) : (12.92 * rS);
+    gS = (gS > 0.0031308) ? (1.055 * pow(gS, 1 / 2.4) - 0.055) : (12.92 * gS);
+    bS = (bS > 0.0031308) ? (1.055 * pow(bS, 1 / 2.4) - 0.055) : (12.92 * bS);
+
+    const int a = 0xFF;
+    final int r8 = (rS * 255).round().clamp(0, 255);
+    final int g8 = (gS * 255).round().clamp(0, 255);
+    final int b8 = (bS * 255).round().clamp(0, 255);
+
+    return (a << 24) | (r8 << 16) | (g8 << 8) | b8;
   }
 
   @override
   ColorIQ toColor() {
     // Gamma decoding (P3 to Linear)
-    final double rLin =
-        (r > 0.04045) ? pow((r + 0.055) / 1.055, 2.4).toDouble() : (r / 12.92);
+    final double rLin = srgbToLinear(r);
     final double gLin =
         (g > 0.04045) ? pow((g + 0.055) / 1.055, 2.4).toDouble() : (g / 12.92);
     final double bLin =
@@ -81,9 +100,6 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
       (bS * 255).round().clamp(0, 255),
     );
   }
-
-  @override
-  int get value => toColor().value;
 
   @override
   DisplayP3Color darken([final double amount = 20]) {
@@ -126,12 +142,6 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  List<int> get srgb => toColor().srgb;
-
-  @override
-  List<double> get linearSrgb => toColor().linearSrgb;
-
-  @override
   DisplayP3Color get inverted => toColor().inverted.toDisplayP3();
 
   @override
@@ -150,9 +160,11 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
     if (t == 0.0) return this;
     final DisplayP3Color otherP3 =
         other is DisplayP3Color ? other : other.toColor().toDisplayP3();
-    if (t == 1.0) return otherP3;
+    if (t == 1.0) {
+      return otherP3;
+    }
 
-    return DisplayP3Color(
+    return DisplayP3Color.alt(
       lerpDouble(r, otherP3.r, t),
       lerpDouble(g, otherP3.g, t),
       lerpDouble(b, otherP3.b, t),
@@ -163,12 +175,6 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
   DisplayP3Color lighten([final double amount = 20]) {
     return toColor().lighten(amount).toDisplayP3();
   }
-
-  @override
-  HctColor toHct() => toColor().toHct();
-
-  @override
-  DisplayP3Color fromHct(final HctColor hct) => hct.toColor().toDisplayP3();
 
   @override
   DisplayP3Color adjustTransparency([final double amount = 20]) {
@@ -183,7 +189,7 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   DisplayP3Color copyWith({final double? r, final double? g, final double? b}) {
-    return DisplayP3Color(r ?? this.r, g ?? this.g, b ?? this.b);
+    return DisplayP3Color.alt(r ?? this.r, g ?? this.g, b ?? this.b);
   }
 
   @override
@@ -229,12 +235,6 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
-
-  @override
-  double get luminance => toColor().luminance;
-
-  @override
-  Brightness get brightness => toColor().brightness;
 
   @override
   bool get isDark => brightness == Brightness.dark;
@@ -298,9 +298,6 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
       .toList();
 
   @override
-  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
-
-  @override
   double contrastWith(final ColorSpacesIQ other) =>
       toColor().contrastWith(other);
 
@@ -327,10 +324,7 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   String toString() => 'DisplayP3Color(r: ${r.toStringAsFixed(4)}, ' //
-      'g: ${g.toStringAsFixed(4)}, ' //
+      'g: ${g.toStrTrimZeros(4)}, ' //
       'b: ${b.toStringAsFixed(4)}, ' //
       'opacity: ${transparency.toStringAsFixed(2)})';
-
-  @override
-  Cam16 toCam16() => Cam16.fromInt(value);
 }

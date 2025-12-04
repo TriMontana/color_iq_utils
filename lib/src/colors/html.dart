@@ -104,7 +104,7 @@ enum HTML {
   lightSlateGrey(0xFF778899, 'Light SlateGrey', ColorFamily.gray),
   lightSteelBlue(0xFFB0C4DE, 'Light SteelBlue', ColorFamily.blue),
   lightYellow(0xFFFFFFE0, 'Light Yellow', ColorFamily.yellow),
-  lime(0xFF00FF00, 'Lime', ColorFamily.green),
+  lime(hxLime, 'Lime', ColorFamily.green),
   limeGreen(0xFF32CD32, 'Lime Green', ColorFamily.green),
   linen(0xFFFAF0E6, 'Linen', ColorFamily.white),
   magenta(0xFFFF00FF, kMagenta, ColorFamily.purple),

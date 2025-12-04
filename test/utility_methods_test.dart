@@ -49,7 +49,7 @@ void main() {
     });
 
     test('HslColor grayscale optimization', () {
-      const HslColor hsl = HslColor(120, 1.0, 0.5); // Green
+      final HslColor hsl = HslColor.alt(120, 1.0, 0.5); // Green
       final HslColor gray = hsl.grayscale;
       expect(gray.s, 0.0);
       expect(gray.h, 120);

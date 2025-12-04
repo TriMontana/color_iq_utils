@@ -111,12 +111,6 @@ class YiqColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  List<int> get srgb => toColor().srgb;
-
-  @override
-  List<double> get linearSrgb => toColor().linearSrgb;
-
-  @override
   YiqColor get inverted => toColor().inverted.toYiq();
 
   @override
@@ -146,9 +140,6 @@ class YiqColor extends ColorSpacesIQ with ColorModelsMixin {
   YiqColor lighten([final double amount = 20]) {
     return toColor().lighten(amount).toYiq();
   }
-
-  @override
-  HctColor toHct() => toColor().toHct();
 
   @override
   YiqColor fromHct(final HctColor hct) => hct.toColor().toYiq();

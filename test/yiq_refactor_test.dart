@@ -1,4 +1,5 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:color_iq_utils/src/constants.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -18,8 +19,8 @@ void main() {
     });
 
     test('lerp interpolates correctly', () {
-      final YiqColor start = YiqColor.alt(0.0, 0.0, 0.0); // Black
-      const YiqColor end = YiqColor(1.0, 0.0, 0.0); // White
+      const YiqColor start = yiqBlack; // Black
+      final YiqColor end = YiqColor.alt(1.0, 0.0, 0.0); // White
       final YiqColor mid = start.lerp(end, 0.5);
 
       expect(mid.y, closeTo(0.5, 0.01));
@@ -28,7 +29,7 @@ void main() {
     });
 
     test('saturate increases chrominance', () {
-      const YiqColor color = YiqColor(0.5, 0.1, 0.1);
+      final YiqColor color = YiqColor.alt(0.5, 0.1, 0.1);
       final YiqColor saturated = color.saturate(50);
 
       expect(saturated.i.abs(), greaterThan(color.i.abs()));

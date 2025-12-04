@@ -1,4 +1,5 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:color_iq_utils/src/constants.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -12,7 +13,7 @@ void main() {
     });
 
     test('blacken decreases value and desaturates', () {
-      final HsvColor color = HsvColor.alt(0, 1.0, 1.0); // Red
+      const HsvColor color = kHsvRed; // Red
       final HsvColor blackened = color.blacken(50);
 
       expect(blackened.v, lessThan(color.v));
@@ -24,8 +25,8 @@ void main() {
     });
 
     test('lerp interpolates correctly', () {
-      const HsvColor start = HsvColor(0, 1.0, 1.0); // Red
-      const HsvColor end = HsvColor(120, 1.0, 1.0); // Green
+      const HsvColor start = kHsvRed; // Red
+      const HsvColor end = hsvGreen; // Green
       final HsvColor mid = start.lerp(end, 0.5);
 
       expect(mid.h, closeTo(60, 0.1)); // Yellow
@@ -34,14 +35,14 @@ void main() {
     });
 
     test('intensify increases saturation', () {
-      const HsvColor color = HsvColor(0, 0.5, 1.0);
+      final HsvColor color = HsvColor.alt(0, 0.5, 1.0);
       final HsvColor intensified = color.intensify(20);
 
       expect(intensified.s, closeTo(0.7, 0.01));
     });
 
     test('deintensify decreases saturation', () {
-      const HsvColor color = HsvColor(0, 0.5, 1.0);
+      final HsvColor color = HsvColor.alt(0, 0.5, 1.0);
       final HsvColor deintensified = color.deintensify(20);
 
       expect(deintensified.s, closeTo(0.3, 0.01));

@@ -27,32 +27,20 @@ class XyzColor extends ColorSpacesIQ with ColorModelsMixin {
   final double y;
   final double z;
 
-  const XyzColor(this.x, this.y, this.z);
-
-  @override
-  ColorIQ toColor() {
-    final double xTemp = x / 100;
-    final double yTemp = y / 100;
-    final double zTemp = z / 100;
-
-    double r = xTemp * 3.2406 + yTemp * -1.5372 + zTemp * -0.4986;
-    double g = xTemp * -0.9689 + yTemp * 1.8758 + zTemp * 0.0415;
-    double b = xTemp * 0.0557 + yTemp * -0.2040 + zTemp * 1.0570;
-
-    r = gammaCorrection(r);
-    g = gammaCorrection(g);
-    b = gammaCorrection(b);
-
-    return ColorIQ.fromARGB(
-      255,
-      (r * 255).round().clamp(0, 255),
-      (g * 255).round().clamp(0, 255),
-      (b * 255).round().clamp(0, 255),
-    );
+  const XyzColor(this.x, this.y, this.z, {required final int hexId})
+      : super(hexId);
+  XyzColor.alt(this.x, this.y, this.z, {final int? hexId})
+      : super(hexId ?? argbFromXyz(x, y, z));
+  factory XyzColor.fromInt(final int hexId) {
+    final List<double> lst = xyzFromArgb(hexId);
+    return XyzColor(lst[0], lst[1], lst[2], hexId: hexId);
   }
 
-  @override
-  int get value => toColor().value;
+  static ColorIQ xyzToColor(final double x, final double y, final double z) {
+    argbFromXyz(x, y, z);
+
+    return ColorIQ.fromInt();
+  }
 
   LabColor toLab() {
     const double refX = 95.047;
@@ -77,9 +65,10 @@ class XyzColor extends ColorSpacesIQ with ColorModelsMixin {
     final double a = 500 * (xTemp - yTemp);
     final double b = 200 * (yTemp - zTemp);
 
-    return LabColor(l, a, b);
+    return LabColor.alt(l, a, b);
   }
 
+  @override
   LuvColor toLuv() {
     const double refX = 95.047;
     const double refY = 100.000;
@@ -105,14 +94,8 @@ class XyzColor extends ColorSpacesIQ with ColorModelsMixin {
       vOut = 0;
     }
 
-    return LuvColor(l, uOut, vOut);
+    return LuvColor.alt(l, uOut, vOut);
   }
-
-  @override
-  List<int> get srgb => toColor().srgb;
-
-  @override
-  List<double> get linearSrgb => toColor().linearSrgb;
 
   @override
   XyzColor get inverted => toColor().inverted.toXyz();
@@ -178,7 +161,7 @@ class XyzColor extends ColorSpacesIQ with ColorModelsMixin {
       (toColor().lerp(other, t) as ColorIQ).toXyz();
 
   @override
-  HctColor toHct() => toColor().toHct();
+  HctColor toHct() => HctColor.fromInt(value);
 
   @override
   XyzColor fromHct(final HctColor hct) => hct.toColor().toXyz();
@@ -196,7 +179,7 @@ class XyzColor extends ColorSpacesIQ with ColorModelsMixin {
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   XyzColor copyWith({final double? x, final double? y, final double? z}) {
-    return XyzColor(x ?? this.x, y ?? this.y, z ?? this.z);
+    return XyzColor.alt(x ?? this.x, y ?? this.y, z ?? this.z);
   }
 
   @override
@@ -226,9 +209,6 @@ class XyzColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
-
-  @override
-  double get luminance => toColor().luminance;
 
   @override
   Brightness get brightness => toColor().brightness;

@@ -4,7 +4,8 @@ import 'package:test/test.dart';
 void main() {
   group('DisplayP3Color Refactor Tests', () {
     test('whiten increases RGB values', () {
-      const DisplayP3Color color = DisplayP3Color(0.5, 0.0, 0.0); // Dark Red
+      final DisplayP3Color color =
+          DisplayP3Color.alt(0.5, 0.0, 0.0); // Dark Red
       final DisplayP3Color whitened = color.whiten(50);
 
       expect(whitened.r, greaterThan(color.r));
@@ -13,7 +14,8 @@ void main() {
     });
 
     test('blacken decreases RGB values', () {
-      const DisplayP3Color color = DisplayP3Color(1.0, 0.5, 0.5); // Light Red
+      final DisplayP3Color color =
+          DisplayP3Color.alt(1.0, 0.5, 0.5); // Light Red
       final DisplayP3Color blackened = color.blacken(50);
 
       expect(blackened.r, lessThan(color.r));
@@ -22,8 +24,8 @@ void main() {
     });
 
     test('lerp interpolates correctly', () {
-      const DisplayP3Color start = DisplayP3Color(0.0, 0.0, 0.0); // Black
-      const DisplayP3Color end = DisplayP3Color(1.0, 1.0, 1.0); // White
+      final DisplayP3Color start = DisplayP3Color.alt(0.0, 0.0, 0.0); // Black
+      final DisplayP3Color end = DisplayP3Color.alt(1.0, 1.0, 1.0); // White
       final DisplayP3Color mid = start.lerp(end, 0.5);
 
       expect(mid.r, closeTo(0.5, 0.01));
@@ -32,7 +34,7 @@ void main() {
     });
 
     test('lighterPalette generates lighter colors', () {
-      const DisplayP3Color color = DisplayP3Color(0.5, 0.0, 0.0);
+      final DisplayP3Color color = DisplayP3Color.alt(0.5, 0.0, 0.0);
       final List<ColorSpacesIQ> palette = color.lighterPalette(10);
 
       expect(palette.length, 5);
@@ -45,7 +47,7 @@ void main() {
     });
 
     test('darkerPalette generates darker colors', () {
-      const DisplayP3Color color = DisplayP3Color(0.5, 0.0, 0.0);
+      final DisplayP3Color color = DisplayP3Color.alt(0.5, 0.0, 0.0);
       final List<ColorSpacesIQ> palette = color.darkerPalette(10);
 
       expect(palette.length, 5);

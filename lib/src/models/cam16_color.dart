@@ -87,12 +87,6 @@ class Cam16Color with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<int> get srgb => toColor().srgb;
-
-  @override
-  List<double> get linearSrgb => toColor().linearSrgb;
-
-  @override
   Cam16Color get inverted => toColor().inverted.toCam16Color();
 
   @override
@@ -144,8 +138,7 @@ class Cam16Color with ColorModelsMixin implements ColorSpacesIQ {
     return toColor().brighten(amount).toCam16Color();
   }
 
-  @override
-  HctColor toHct() => toColor().toHct();
+
 
   @override
   Cam16Color fromHct(final HctColor hct) => hct.toColor().toCam16Color();

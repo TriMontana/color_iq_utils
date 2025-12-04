@@ -199,7 +199,7 @@ class CssColor {
       }
     }
 
-    return HslColor(h, sVal, l, a);
+    return HslColor.alt(h, sVal, l, a);
   }
 
   static OkLabColor _parseOklab(final String s) {

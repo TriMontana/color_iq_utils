@@ -1,10 +1,11 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:color_iq_utils/src/constants.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('Darken Tests', () {
     test('ColorIQ darken', () {
-      final ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0); // Red
+      final ColorIQ color = cRed; // Red
       final ColorIQ darkened = color.darken(20);
       // Red HSL: 0, 1.0, 0.5. Darkened: 0, 1.0, 0.3
       final HslColor hsl = darkened.toHsl();
@@ -13,7 +14,7 @@ void main() {
     });
 
     test('LabColor darken', () {
-      const LabColor lab = LabColor(50, 20, 30);
+      final LabColor lab = LabColor.alt(50, 20, 30);
       final LabColor darkened = lab.darken(20);
       expect(darkened.l, closeTo(30, 0.01));
       expect(darkened.aLab, closeTo(20, 0.01));
@@ -22,14 +23,14 @@ void main() {
     });
 
     test('HslColor darken', () {
-      const HslColor hsl = HslColor(100, 0.5, 0.5);
+      final HslColor hsl = HslColor.alt(100, 0.5, 0.5);
       final HslColor darkened = hsl.darken(20);
       expect(darkened.l, closeTo(0.3, 0.01));
       print('HslColor darken: $darkened');
     });
 
     test('HsvColor darken', () {
-      const HsvColor hsv = HsvColor(100, 0.5, 0.5);
+      final HsvColor hsv = HsvColor.alt(100, 0.5, 0.5);
       final HsvColor darkened = hsv.darken(20);
       expect(darkened.v, closeTo(0.3, 0.01));
       print('HsvColor darken: $darkened');
@@ -50,7 +51,7 @@ void main() {
     });
 
     test('Darken clamping', () {
-      const HslColor hsl = HslColor(0, 0, 0.1);
+      final HslColor hsl = HslColor.alt(0, 0, 0.1);
       final HslColor darkened = hsl.darken(20);
       expect(darkened.l, 0.0);
       print('Darken clamping: $darkened');

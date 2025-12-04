@@ -9,7 +9,6 @@ import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/lch_color.dart';
 import 'package:color_iq_utils/src/utils/color_math.dart';
-import 'package:material_color_utilities/hct/cam16.dart';
 
 /// Represents a color in the CIELAB color space.
 ///
@@ -25,7 +24,7 @@ import 'package:material_color_utilities/hct/cam16.dart';
 /// - `l`: Lightness, from 0 (black) to 100 (white).
 /// - `a`: Green to red axis, where negative values indicate green and positive values indicate red.
 /// - `b`: Blue to yellow axis, where negative values indicate blue and positive values indicate yellow.
-class LabColor with ColorModelsMixin implements ColorSpacesIQ {
+class LabColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The lightness component (0-100).
   final double l;
 
@@ -35,7 +34,10 @@ class LabColor with ColorModelsMixin implements ColorSpacesIQ {
   /// The blue-yellow component.
   final double bLab;
 
-  const LabColor(this.l, this.aLab, this.bLab);
+  const LabColor(this.l, this.aLab, this.bLab, {required final int hexId})
+      : super(hexId);
+  LabColor.alt(this.l, this.aLab, this.bLab, {final int? hexId})
+      : super(hexId ?? LabColor.toHexId(l, aLab, bLab));
 
   /// Creates a 32-bit ARGB hex value from CIE-LAB components.
   ///
@@ -47,7 +49,7 @@ class LabColor with ColorModelsMixin implements ColorSpacesIQ {
   /// - [bLab]: Blue to yellow axis.
   ///
   /// Returns an integer representing the ARGB color.
-  static int toHex(final double l, final double aLab, final double bLab) {
+  static int toHexId(final double l, final double aLab, final double bLab) {
     final double y = (l + 16) / 116;
     final double x = aLab / 500 + y;
     final double z = y - bLab / 200;
@@ -122,14 +124,11 @@ class LabColor with ColorModelsMixin implements ColorSpacesIQ {
     final double c = sqrt(aLab * aLab + bLab * bLab);
     double h = atan2(bLab, aLab);
     h = h * 180 / pi;
-    if (h < 0) h += 360;
-    return LchColor(l, c, h);
+    if (h < 0) {
+      h += 360;
+    }
+    return LchColor.alt(l, c, h);
   }
-
-  @override
-  List<int> get srgb => toColor().srgb;
-  @override
-  List<double> get linearSrgb => toColor().linearSrgb;
 
   @override
   LabColor get inverted => toColor().inverted.toLab();
@@ -145,7 +144,7 @@ class LabColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   LabColor lighten([final double amount = 20]) {
-    return LabColor(min(100, l + amount), aLab, bLab);
+    return LabColor.alt(min(100, l + amount), aLab, bLab);
   }
 
   @override
@@ -155,7 +154,7 @@ class LabColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   LabColor darken([final double amount = 20]) {
-    return LabColor(max(0, l - amount), aLab, bLab);
+    return LabColor.alt(max(0, l - amount), aLab, bLab);
   }
 
   @override
@@ -193,9 +192,11 @@ class LabColor with ColorModelsMixin implements ColorSpacesIQ {
     if (t == 0.0) return this;
     final LabColor otherLab =
         other is LabColor ? other : other.toColor().toLab();
-    if (t == 1.0) return otherLab;
+    if (t == 1.0) {
+      return otherLab;
+    }
 
-    return LabColor(
+    return LabColor.alt(
       lerpDouble(l, otherLab.l, t),
       lerpDouble(aLab, otherLab.aLab, t),
       lerpDouble(bLab, otherLab.bLab, t),
@@ -221,7 +222,7 @@ class LabColor with ColorModelsMixin implements ColorSpacesIQ {
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   LabColor copyWith({final double? l, final double? a, final double? b}) {
-    return LabColor(l ?? this.l, a ?? aLab, b ?? bLab);
+    return LabColor.alt(l ?? this.l, a ?? aLab, b ?? bLab);
   }
 
   @override
@@ -251,9 +252,6 @@ class LabColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
-
-  @override
-  double get luminance => toColor().luminance;
 
   @override
   Brightness get brightness => toColor().brightness;
@@ -375,9 +373,6 @@ class LabColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<double> get whitePoint => kWhitePointD65;
-
-  @override
   Map<String, dynamic> toJson() {
     return <String, dynamic>{'type': 'LabColor', 'l': l, 'a': aLab, 'b': bLab};
   }
@@ -385,8 +380,5 @@ class LabColor with ColorModelsMixin implements ColorSpacesIQ {
   @override
   String toString() =>
       'LabColor(l: ${l.toStrTrimZeros(3)}, a: ${aLab.toStringAsFixed(2)}, ' //
-      'b: ${bLab.toStringAsFixed(2)})';
-
-  @override
-  Cam16 toCam16() => Cam16.fromInt(value);
+      'b: ${bLab.toStrTrimZeros(3)})';
 }

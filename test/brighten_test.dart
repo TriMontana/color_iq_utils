@@ -16,7 +16,7 @@ void main() {
     });
 
     test('HsvColor.brighten increases Value', () {
-      const HsvColor color = HsvColor(0, 1.0, 0.5); // Dark Red
+      final HsvColor color = HsvColor.alt(0, 1.0, 0.5); // Dark Red
       final HsvColor brightened = color.brighten(20);
 
       expect(brightened.v, closeTo(0.7, 0.01));

@@ -21,7 +21,7 @@ import 'package:material_color_utilities/hct/cam16.dart';
 /// Many methods convert the `MunsellColor` to a `ColorIQ` object first to perform
 /// the operation, and then convert it back. This might lead to precision loss
 /// due to the approximate nature of the Munsell to RGB conversion.
-class MunsellColor with ColorModelsMixin implements ColorSpacesIQ {
+class MunsellColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The Munsell hue, represented as a string (e.g., "5R", "10GY").
   final String hue;
 
@@ -31,7 +31,12 @@ class MunsellColor with ColorModelsMixin implements ColorSpacesIQ {
   /// The Munsell chroma (saturation), starting from 0 for neutral gray.
   final double chroma;
 
-  const MunsellColor(this.hue, this.munsellValue, this.chroma);
+  const MunsellColor(this.hue, this.munsellValue, this.chroma,
+      {required final int hexId})
+      : super(hexId);
+
+  MunsellColor.alt(this.hue, this.munsellValue, this.chroma, {final int? hexId})
+      : super(hexId ?? MunsellColor.toHexId(hue, munsellValue, chroma));
 
   /// Creates a 32-bit hex ID from the Munsell properties.
   ///
@@ -128,9 +133,6 @@ class MunsellColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<int> get srgb => toColor().srgb;
-
-  @override
   MunsellColor adjustHue([final double amount = 20]) =>
       toColor().adjustHue(amount).toMunsell();
 
@@ -147,9 +149,6 @@ class MunsellColor with ColorModelsMixin implements ColorSpacesIQ {
   @override
   MunsellColor opaquer([final double amount = 20]) =>
       toColor().opaquer(amount).toMunsell();
-
-  @override
-  List<double> get linearSrgb => toColor().linearSrgb;
 
   @override
   MunsellColor get inverted => toColor().inverted.toMunsell();
@@ -175,14 +174,14 @@ class MunsellColor with ColorModelsMixin implements ColorSpacesIQ {
     } else if (other.isEqual(cWhite)) {
       otherMunsell = const MunsellColor('N', 10.0, 0.0);
     } else if (other.isEqual(cBlack)) {
-      otherMunsell = const MunsellColor('N', 0.0, 0.0);
+      otherMunsell = MunsellColor.alt('N', 0.0, 0.0);
     } else {
       otherMunsell = other.toColor().toMunsell();
     }
 
     if (t == 1.0) return otherMunsell;
 
-    return MunsellColor(
+    return MunsellColor.alt(
       t < 0.5 ? hue : otherMunsell.hue,
       lerpDouble(munsellValue, otherMunsell.munsellValue, t),
       lerpDouble(chroma, otherMunsell.chroma, t),
@@ -192,15 +191,12 @@ class MunsellColor with ColorModelsMixin implements ColorSpacesIQ {
   @override
   MunsellColor lighten([final double amount = 20]) {
     // Increase Value
-    return MunsellColor(
+    return MunsellColor.alt(
       hue,
       (munsellValue + (amount / 10)).clamp(0.0, 10.0),
       chroma,
     );
   }
-
-  @override
-  HctColor toHct() => toColor().toHct();
 
   @override
   MunsellColor fromHct(final HctColor hct) => hct.toColor().toMunsell();

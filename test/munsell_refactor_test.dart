@@ -11,7 +11,7 @@ void main() {
     });
 
     test('blacken decreases value', () {
-      const MunsellColor color = MunsellColor('5R', 5.0, 10.0);
+      final MunsellColor color = MunsellColor.alt('5R', 5.0, 10.0);
       final MunsellColor blackened = color.blacken(50);
 
       expect(blackened.munsellValue, lessThan(color.munsellValue));
@@ -19,7 +19,7 @@ void main() {
 
     test('lerp interpolates correctly', () {
       const MunsellColor start = MunsellColor('5R', 0.0, 0.0); // Black-ish
-      const MunsellColor end = MunsellColor('5R', 10.0, 0.0); // White-ish
+      final MunsellColor end = MunsellColor.alt('5R', 10.0, 0.0); // White-ish
       final MunsellColor mid = start.lerp(end, 0.5);
 
       expect(mid.munsellValue, closeTo(5.0, 0.01));
@@ -33,7 +33,7 @@ void main() {
     });
 
     test('deintensify decreases chroma', () {
-      const MunsellColor color = MunsellColor('5R', 5.0, 10.0);
+      final MunsellColor color = MunsellColor.alt('5R', 5.0, 10.0);
       final MunsellColor deintensified = color.deintensify(10);
 
       expect(deintensified.chroma, lessThan(color.chroma));

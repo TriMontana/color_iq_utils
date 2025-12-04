@@ -4,22 +4,22 @@ import 'package:test/test.dart';
 void main() {
   group('LabColor Refactor Tests', () {
     test('whiten increases lightness', () {
-      const LabColor color = LabColor(50.0, 0.0, 0.0); // Gray
+      final LabColor color = LabColor.alt(50.0, 0.0, 0.0); // Gray
       final LabColor whitened = color.whiten(50);
 
       expect(whitened.l, greaterThan(color.l));
     });
 
     test('blacken decreases lightness', () {
-      const LabColor color = LabColor(50.0, 0.0, 0.0); // Gray
+      final LabColor color = LabColor.alt(50.0, 0.0, 0.0); // Gray
       final LabColor blackened = color.blacken(50);
 
       expect(blackened.l, lessThan(color.l));
     });
 
     test('lerp interpolates correctly', () {
-      const LabColor start = LabColor(0.0, 0.0, 0.0); // Black
-      const LabColor end = LabColor(100.0, 0.0, 0.0); // White
+      final LabColor start = LabColor.alt(0.0, 0.0, 0.0); // Black
+      final LabColor end = LabColor.alt(100.0, 0.0, 0.0); // White
       final LabColor mid = start.lerp(end, 0.5);
 
       expect(mid.l, closeTo(50.0, 0.01));

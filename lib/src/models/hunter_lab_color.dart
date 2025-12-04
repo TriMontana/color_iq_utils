@@ -139,12 +139,6 @@ class HunterLabColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<int> get srgb => toColor().srgb;
-
-  @override
-  List<double> get linearSrgb => toColor().linearSrgb;
-
-  @override
   HunterLabColor get inverted => toColor().inverted.toHunterLab();
 
   @override
@@ -181,9 +175,6 @@ class HunterLabColor with ColorModelsMixin implements ColorSpacesIQ {
   HunterLabColor brighten([final double amount = 20]) {
     return toColor().brighten(amount).toHunterLab();
   }
-
-  @override
-  HctColor toHct() => toColor().toHct();
 
   @override
   HunterLabColor fromHct(final HctColor hct) => hct.toColor().toHunterLab();

@@ -77,8 +77,7 @@ class HctColor with ColorModelsMixin implements ColorSpacesIQ {
   CmykColor toCMYK() => CmykColor.fromInt(argb);
 
   /// Returns the ARGB integer representation of this color.
-  @override
-  int get value => argb;
+  int toInt() => argb;
 
   /// Decreases the [tone] of this color by the given [amount].
   /// The resulting color will be darker.
@@ -190,12 +189,6 @@ class HctColor with ColorModelsMixin implements ColorSpacesIQ {
   HctColor simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toHct();
   }
-
-  @override
-  List<int> get srgb => toColor().srgb;
-
-  @override
-  List<double> get linearSrgb => toColor().linearSrgb;
 
   @override
   HctColor get inverted => toColor().inverted.toHct();

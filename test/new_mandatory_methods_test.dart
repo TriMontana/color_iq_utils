@@ -1,6 +1,7 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
 import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -11,7 +12,7 @@ void main() {
       expect(random, isA<ColorIQ>());
       expect(random.value, isNot(0xFF000000)); // Unlikely to be black again
 
-      const HslColor hsl = HslColor(0, 0, 0);
+      final HslColor hsl = HslColor.alt(0, 0, 0);
       final HslColor randomHsl = hsl.random as HslColor;
       expect(randomHsl, isA<HslColor>());
 
@@ -50,14 +51,14 @@ void main() {
       // Red luminance: 0.2126
       expect(cRed.luminance, closeTo(0.2126, 0.01));
 
-      const HslColor hslWhite = HslColor(0, 0, 1.0);
+      final HslColor hslWhite = HslColor.alt(0, 0, 1.0);
       expect(hslWhite.luminance, closeTo(1.0, 0.01));
 
       print('✓ Luminance test completed');
       print('  White luminance: ${cWhite.luminance.toStringAsFixed(4)}');
       print('  Black luminance: ${cBlack.luminance.toStringAsFixed(4)}');
       print('  Red luminance: ${cRed.luminance.toStrTrimZeros(4)}');
-      print('  HSL White luminance: ${hslWhite.luminance.toStringAsFixed(4)}');
+      print('  HSL White luminance: ${hslWhite.luminance.toStrTrimZeros(4)}');
     });
 
     test('Brightness', () {

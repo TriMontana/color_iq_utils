@@ -5,7 +5,6 @@ import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/hsv_color.dart';
 import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
@@ -18,7 +17,7 @@ import 'package:material_color_utilities/hct/cam16.dart';
 /// - `h` (Hue): The type of color, represented as an angle from 0 to 360 degrees.
 /// - `s` (Saturation): The intensity of the color, from 0 (grayscale) to 1 (fully saturated).
 /// - `b` (Brightness): The lightness of the color, from 0 (black) to 1 (full brightness).
-class HsbColor with ColorModelsMixin implements ColorSpacesIQ {
+class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The hue component of the color, ranging from 0 to 360.
   final double h;
 
@@ -29,7 +28,10 @@ class HsbColor with ColorModelsMixin implements ColorSpacesIQ {
   @override
   final double b;
 
-  const HsbColor(this.h, this.s, this.b);
+  const HsbColor(this.h, this.s, this.b, {required final int hexId})
+      : super(hexId);
+  HsbColor.alt(this.h, this.s, this.b, {final int? hexId})
+      : super(hexId ?? HsbColor.argbFromHsb(h, s, b));
 
   /// Creates a 32-bit ARGB hex value from HSB components.
   ///
@@ -104,12 +106,12 @@ class HsbColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   HsbColor desaturate([final double amount = 25]) {
-    return HsbColor(h, max(0.0, s - amount / 100), b);
+    return HsbColor.alt(h, max(0.0, s - amount / 100), b);
   }
 
   @override
   HsbColor intensify([final double amount = 10]) {
-    return HsbColor(h, min(1.0, s + amount / 100), b);
+    return HsbColor.alt(h, min(1.0, s + amount / 100), b);
   }
 
   @override
@@ -126,12 +128,6 @@ class HsbColor with ColorModelsMixin implements ColorSpacesIQ {
   HsbColor simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toHsb();
   }
-
-  @override
-  List<int> get srgb => toColor().srgb;
-
-  @override
-  List<double> get linearSrgb => toColor().linearSrgb;
 
   @override
   HsbColor get inverted => toColor().inverted.toHsb();
@@ -165,12 +161,6 @@ class HsbColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  HctColor toHct() => toColor().toHct();
-
-  @override
-  HsbColor fromHct(final HctColor hct) => hct.toColor().toHsb();
-
-  @override
   HsbColor adjustTransparency([final double amount = 20]) {
     return toColor().adjustTransparency(amount).toHsb();
   }
@@ -191,7 +181,7 @@ class HsbColor with ColorModelsMixin implements ColorSpacesIQ {
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   HsbColor copyWith({final double? h, final double? s, final double? b}) {
-    return HsbColor(h ?? this.h, s ?? this.s, b ?? this.b);
+    return HsbColor.alt(h ?? this.h, s ?? this.s, b ?? this.b);
   }
 
   @override

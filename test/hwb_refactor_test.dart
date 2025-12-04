@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('HwbColor Refactor Tests', () {
     test('whiten increases whiteness', () {
-      const HwbColor color = HwbColor(0, 0, 0); // Red (pure)
+      final HwbColor color = HwbColor.alt(0, 0, 0); // Red (pure)
       final HwbColor whitened = color.whiten(50);
 
       expect(whitened.w, greaterThan(color.w));

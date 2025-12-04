@@ -8,6 +8,7 @@ import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/lab_color.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 
 /// A representation of a color in the CIE L*C*h° color space.
 ///
@@ -21,7 +22,7 @@ import 'package:color_iq_utils/src/models/lab_color.dart';
 ///
 /// This class provides methods to convert to and from other color spaces,
 /// perform color manipulations, and generate color palettes.
-class LchColor with ColorModelsMixin implements ColorSpacesIQ {
+class LchColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The lightness component of the color (0-100).
   final double l;
 
@@ -32,19 +33,24 @@ class LchColor with ColorModelsMixin implements ColorSpacesIQ {
   final double h;
 
   /// Creates a new `LchColor`.
-  const LchColor(this.l, this.c, this.h);
+  const LchColor(this.l, this.c, this.h, {required final int hexId})
+      : super(hexId);
+  LchColor.alt(this.l, this.c, this.h, {final int? hexId})
+      : super(hexId ?? LchColor.toHexId(l, c, h));
 
   /// A stand-alone static method to create a 32-bit hexID/ARGB from l, c, h.
-  static int toHex(final double l, final double c, final double h) {
-    // It will be converted to Lab, then to XYZ and finally to sRGB.
-    return LchColor(l, c, h).toColor().value;
+  static int toHexId(final double l, final double c, final double h) {
+    final double hRad = h * pi / 180.0;
+    final double a = c * cos(hRad);
+    final double b = c * sin(hRad);
+    return LabColor.alt(l, a, b).toColor().value;
   }
 
   LabColor toLab() {
     final double hRad = h * pi / 180;
     final double a = c * cos(hRad);
     final double b = c * sin(hRad);
-    return LabColor(l, a, b);
+    return LabColor.alt(l, a, b);
   }
 
   @override
@@ -52,12 +58,12 @@ class LchColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   LchColor saturate([final double amount = 25]) {
-    return LchColor(l, c + amount, h);
+    return LchColor.alt(l, c + amount, h);
   }
 
   @override
   LchColor desaturate([final double amount = 25]) {
-    return LchColor(l, max(0, c - amount), h);
+    return LchColor.alt(l, max(0, c - amount), h);
   }
 
   @override
@@ -79,12 +85,6 @@ class LchColor with ColorModelsMixin implements ColorSpacesIQ {
   LchColor simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toLch();
   }
-
-  @override
-  List<int> get srgb => toColor().srgb;
-
-  @override
-  List<double> get linearSrgb => toColor().linearSrgb;
 
   @override
   LchColor get inverted => toColor().inverted.toLch();
@@ -149,12 +149,12 @@ class LchColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   LchColor darken([final double amount = 20]) {
-    return LchColor(max(0.0, l - amount), c, h);
+    return LchColor.alt(max(0.0, l - amount), c, h);
   }
 
   @override
   LchColor lighten([final double amount = 20]) {
-    return LchColor(min(100.0, l + amount), c, h);
+    return LchColor.alt(min(100.0, l + amount), c, h);
   }
 
   @override
@@ -163,7 +163,7 @@ class LchColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  HctColor toHct() => toColor().toHct();
+  HctColor toHct() => HctColor.fromInt(value);
 
   @override
   LchColor fromHct(final HctColor hct) => hct.toColor().toLch();
@@ -181,7 +181,7 @@ class LchColor with ColorModelsMixin implements ColorSpacesIQ {
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   LchColor copyWith({final double? l, final double? c, final double? h}) {
-    return LchColor(l ?? this.l, c ?? this.c, h ?? this.h);
+    return LchColor.alt(l ?? this.l, c ?? this.c, h ?? this.h);
   }
 
   @override
@@ -211,18 +211,6 @@ class LchColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
-
-  @override
-  double get luminance => toColor().luminance;
-
-  @override
-  Brightness get brightness => toColor().brightness;
-
-  @override
-  bool get isDark => brightness == Brightness.dark;
-
-  @override
-  bool get isLight => brightness == Brightness.light;
 
   @override
   LchColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
@@ -298,6 +286,6 @@ class LchColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  String toString() =>
-      'LchColor(l: ${l.toStrTrimZeros(2)}, c: ${c.toStringAsFixed(2)}, h: ${h.toStringAsFixed(2)})';
+  String toString() => 'LchColor(l: ${l.toStrTrimZeros(2)}, ' //
+      'c: ${c.toStringAsFixed(2)}, h: ${h.toStringAsFixed(2)})';
 }

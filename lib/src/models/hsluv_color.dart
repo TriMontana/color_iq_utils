@@ -79,9 +79,6 @@ class HsluvColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<double> get linearSrgb => toColor().linearSrgb;
-
-  @override
   HsluvColor get inverted => toColor().inverted.toHsluv();
 
   @override
@@ -146,9 +143,6 @@ class HsluvColor with ColorModelsMixin implements ColorSpacesIQ {
   HsluvColor simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toHsluv();
   }
-
-  @override
-  List<int> get srgb => toColor().srgb;
 
   @override
   HctColor toHct() => toColor().toHct();

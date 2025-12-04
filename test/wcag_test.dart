@@ -39,10 +39,7 @@ void main() {
     });
 
     test('Extension works on other models', () {
-      const HslColor hslBlack = HslColor(0, 0, 0);
-      const HslColor hslWhite = HslColor(0, 0, 1.0);
-
-      expect(hslWhite.meetsWcag(hslBlack), isTrue);
+      expect(kHslWhite.meetsWcag(kHslBlack), isTrue);
     });
   });
 }

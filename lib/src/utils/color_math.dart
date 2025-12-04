@@ -5,9 +5,16 @@ import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/extensions/int_helpers.dart';
 
-/// Add gamma correction to a linear RGB component.
+/// Add gamma correction to a linear RGB component, aka delinear or delinearized
 const double Function(double linearComponent) delinearize = linearToSrgb;
 const double Function(double linearComponent) gammaCorrection = linearToSrgb;
+const double Function(double srgbComponent) linearize = srgbToLinear;
+
+/// The brightness of a color.
+enum Brightness { dark, light }
+
+/// Common color gamuts.
+enum Gamut { sRGB, displayP3, rec2020, adobeRgb, proPhotoRgb }
 
 // -------------------------------------------------------------------
 // ARGB & Component Extraction
@@ -125,10 +132,17 @@ int floatToInt8Hex(
 double computeLuminance(final double r, final double g, final double b) {
 // assert(colorSpace != ColorSpace.extendedSRGB);
 // See <https://www.w3.org/TR/WCAG20/#relativeluminancedef>
-  final double R = linearizeColorComponentDart(r);
-  final double G = linearizeColorComponentDart(g);
-  final double B = linearizeColorComponentDart(b);
+  final double R =
+      linearizeColorComponentDart(r.assertRange0to1('computeLuminance-r'));
+  final double G =
+      linearizeColorComponentDart(g.assertRange0to1('computeLuminance-g'));
+  final double B =
+      linearizeColorComponentDart(b.assertRange0to1('computeLuminance-b'));
   return 0.2126 * R + 0.7152 * G + 0.0722 * B;
+}
+
+double computeLuminanceViaInts(final int red, final int green, final int blue) {
+  return computeLuminance(red.normalized, green.normalized, blue.normalized);
 }
 
 // See <https://www.w3.org/TR/WCAG20/#relativeluminancedef>
@@ -480,4 +494,115 @@ ColorIQ colorFromHue(
     ((green + match) * 0xFF).round(),
     ((blue + match) * 0xFF).round(),
   );
+}
+
+/// CIE 1931 2° Standard Observer, D65 illuminant.
+///
+/// X, Y, Z tristimulus values of the white point.
+const List<double> kWhitePointD65 = <double>[95.047, 100.0, 108.883];
+
+/// Multiplies a 1x3 row vector with a 3x3 matrix.
+List<double> matrixMultiply(
+    final List<double> row, final List<List<double>> matrix) {
+  final double a =
+      row[0] * matrix[0][0] + row[1] * matrix[0][1] + row[2] * matrix[0][2];
+  final double b =
+      row[0] * matrix[1][0] + row[1] * matrix[1][1] + row[2] * matrix[1][2];
+  final double c =
+      row[0] * matrix[2][0] + row[1] * matrix[2][1] + row[2] * matrix[2][2];
+  return <double>[a, b, c];
+}
+
+// CREDIT: Material Color Utilities
+const List<List<double>> srgbToXyzMatrix = <List<double>>[
+  <double>[0.41233895, 0.35762064, 0.18051042],
+  <double>[0.2126, 0.7152, 0.0722],
+  <double>[0.01932141, 0.11916382, 0.95034478],
+];
+
+// CREDIT: Material Color Utilities
+const List<List<double>> xyzToSrgbMatrix = <List<double>>[
+  <double>[3.2413774792388685, -1.5376652402851851, -0.49885366846268053],
+  <double>[-0.9691452513005321, 1.8758853451067872, 0.04156585616912061],
+  <double>[0.05562093689691305, -0.20395524564742123, 1.0571799111220335],
+];
+
+/// Converts a color from ARGB to XYZ;
+/// Generates a 32-bit hexId from the given x, y, and z values.
+/// CREDIT: Material Color Utilities
+int argbFromXyz(final double x, final double y, final double z) {
+  const List<List<double>> matrix = xyzToSrgbMatrix;
+  final double linearR = matrix[0][0] * x + matrix[0][1] * y + matrix[0][2] * z;
+  final double linearG = matrix[1][0] * x + matrix[1][1] * y + matrix[1][2] * z;
+  final double linearB = matrix[2][0] * x + matrix[2][1] * y + matrix[2][2] * z;
+  final int r = delinearized(linearR);
+  final int g = delinearized(linearG);
+  final int b = delinearized(linearB);
+  return argbFromRgb(r, g, b);
+}
+
+/// Converts a color from XYZ to ARGB.
+/// CREDIT: Material Color Utilities
+List<double> xyzFromArgb(final int argb) {
+  final double r = linearized(redFromArgb(argb));
+  final double g = linearized(greenFromArgb(argb));
+  final double b = linearized(blueFromArgb(argb));
+  return matrixMultiply(<double>[r, g, b], srgbToXyzMatrix);
+}
+
+/// Converts a color represented in Lab color space into an ARGB
+/// integer.
+/// CREDIT: Material Color Utilities
+int argbFromLab(final double l, final double a, final double b) {
+  final double fy = (l + 16.0) / 116.0;
+  final double fx = a / 500.0 + fy;
+  final double fz = fy - b / 200.0;
+  final double xNormalized = labInvf(fx);
+  final double yNormalized = labInvf(fy);
+  final double zNormalized = labInvf(fz);
+  final double x = xNormalized * kWhitePointD65[0];
+  final double y = yNormalized * kWhitePointD65[1];
+  final double z = zNormalized * kWhitePointD65[2];
+  return argbFromXyz(x, y, z);
+}
+
+/// A helper function for converting from CIELAB to CIEXYZ.
+/// This is part of the CIELAB color space definition, used to transform
+/// normalized tristimulus values (X/Xn, Y/Yn, Z/Zn) before calculating
+/// L*, a*, and b* values.
+///
+/// [t] is a normalized tristimulus value (e.g., Y/Yn).
+///
+/// Returns the transformed value.
+/// CREDIT: Material Color Utilities
+/// See also:
+///  * [labInvf], the inverse of this function.
+double labF(final double t) {
+  if (t > kEpsilon) {
+    // if t > ε, returns t^(1/3)
+    return pow(t, 1.0 / 3.0).toDouble();
+  } else {
+    // if t <= ε, returns (κ * t + 16) / 116
+    return (kKappa * t + 16) / 116;
+  }
+}
+
+/// The inverse of the [labF] function. Used for converting CIELAB
+/// back to CIEXYZ.
+///
+/// [ft] is the transformed value from the [labF] function.
+///
+/// Returns the original normalized tristimulus value.
+/// CREDIT: Material Color Utilities
+/// See also:
+///  * [labF], the function this inverts.
+double labInvf(final double ft) {
+  final double ft3 = ft * ft * ft;
+  if (ft3 > kEpsilon) {
+    // if ft^3 > ε, the inverse is simply ft^3
+    return ft3;
+  } else {
+    // if ft^3 <= ε, the inverse is (116 * ft - 16) / κ
+    return (116 * ft - 16) / kKappa;
+  }
 }

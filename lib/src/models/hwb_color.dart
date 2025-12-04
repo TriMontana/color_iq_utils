@@ -26,7 +26,7 @@ import 'package:material_color_utilities/hct/cam16.dart';
 ///
 /// This class provides methods to convert HWB colors to other color spaces,
 /// perform color manipulations (like darkening, saturating), and generate color palettes.
-class HwbColor with ColorModelsMixin implements ColorSpacesIQ {
+class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The hue component of the color, ranging from 0 to 360.
   final double h;
 
@@ -40,7 +40,11 @@ class HwbColor with ColorModelsMixin implements ColorSpacesIQ {
   /// The alpha (transparency) component of the color, ranging from 0.0 to 1.0.
   final double alpha;
 
-  const HwbColor(this.h, this.w, this.b, [this.alpha = 1.0]);
+  const HwbColor(this.h, this.w, this.b,
+      {this.alpha = 1.0, required final int hexId})
+      : super(hexId);
+  HwbColor.alt(this.h, this.w, this.b, {this.alpha = 1.0, final int? hexId})
+      : super(hexId ?? HwbColor.hwbToHex(h, w, b, alpha));
 
   /// Creates a 32-bit hex ID (ARGB) from HWB values.
   ///
@@ -61,7 +65,7 @@ class HwbColor with ColorModelsMixin implements ColorSpacesIQ {
     final double v = 1 - bNorm;
     final double s = (v == 0) ? 0 : 1 - wNorm / v;
 
-    return HsvColor.hsvToHex(h, s, v, alpha);
+    return HsvColor.alt(h, s, v, alpha: alpha).value;
   }
 
   @override
@@ -77,7 +81,7 @@ class HwbColor with ColorModelsMixin implements ColorSpacesIQ {
     final double v = 1 - bNorm;
     final double s = (v == 0) ? 0 : 1 - wNorm / v;
 
-    return HsvColor(h, s, v, alpha).toColor();
+    return HsvColor.alt(h, s, v, alpha: alpha).toColor();
   }
 
   @override
@@ -99,7 +103,7 @@ class HwbColor with ColorModelsMixin implements ColorSpacesIQ {
     // To saturate, we decrease w and b.
     // Let's scale them down.
     final double scale = 1.0 - (amount / 100.0);
-    return HwbColor(h, w * scale, b * scale, alpha);
+    return HwbColor.alt(h, w * scale, b * scale, alpha: alpha);
   }
 
   @override
@@ -119,7 +123,7 @@ class HwbColor with ColorModelsMixin implements ColorSpacesIQ {
     if (gap <= 0) return this;
 
     final double add = gap * (amount / 100.0) * 0.5;
-    return HwbColor(h, w + add, b + add, alpha);
+    return HwbColor.alt(h, w + add, b + add, alpha: alpha);
   }
 
   @override
@@ -143,12 +147,6 @@ class HwbColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<int> get srgb => toColor().srgb;
-
-  @override
-  List<double> get linearSrgb => toColor().linearSrgb;
-
-  @override
   HwbColor get inverted => toColor().inverted.toHwb();
 
   @override
@@ -167,11 +165,11 @@ class HwbColor with ColorModelsMixin implements ColorSpacesIQ {
         other is HwbColor ? other : other.toColor().toHwb();
     if (t == 1.0) return otherHwb;
 
-    return HwbColor(
+    return HwbColor.alt(
       lerpHue(h, otherHwb.h, t),
       lerpDouble(w, otherHwb.w, t),
       lerpDouble(b, otherHwb.b, t),
-      lerpDouble(alpha, otherHwb.alpha, t),
+      alpha: lerpDouble(alpha, otherHwb.alpha, t),
     );
   }
 

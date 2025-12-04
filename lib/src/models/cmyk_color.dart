@@ -176,12 +176,6 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  List<int> get srgb => toColor().srgb;
-
-  @override
-  List<double> get linearSrgb => toColor().linearSrgb;
-
-  @override
   CmykColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
@@ -218,9 +212,6 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
         (g.round().clamp(0, 255) << 8) |
         b.round().clamp(0, 255);
   }
-
-  @override
-  HctColor toHct() => HctColor.fromInt(value);
 
   @override
   CmykColor fromHct(final HctColor hct) => CmykColor.fromColorSpacesIQ(hct);

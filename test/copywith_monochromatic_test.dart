@@ -13,7 +13,7 @@ void main() {
     });
 
     test('HslColor copyWith', () {
-      const HslColor hsl = HslColor(180, 0.5, 0.5);
+      final HslColor hsl = HslColor.alt(180, 0.5, 0.5);
       final HslColor copy = hsl.copyWith(h: 90, l: 0.8);
       expect(copy.h, 90);
       expect(copy.l, 0.8);
@@ -55,7 +55,7 @@ void main() {
     });
 
     test('HslColor Monochromatic (Native)', () {
-      const HslColor hsl = HslColor(120, 1.0, 0.5); // Green
+      final HslColor hsl = HslColor.alt(120, 1.0, 0.5); // Green
       final List<ColorSpacesIQ> palette = hsl.monochromatic;
       expect(palette.length, 5);
       expect((palette[2] as HslColor).l, 0.5);

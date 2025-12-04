@@ -15,6 +15,19 @@ mixin ColorModelsMixin {
   double get r => value.r2;
   double get g => value.g2;
   double get b => value.b2;
+  double get redLinearized => value.redLinearized;
+  double get greenLinearized => value.greenLinearized;
+  double get blueLinearized => value.blueLinearized;
+  double get alphaLinearized => value.alphaLinearized;
+
+  List<int> get argb255Ints =>
+      <int>[alphaInt, value.redInt, value.greenInt, value.blueInt];
+  List<int> get rgba255Ints =>
+      <int>[value.redInt, value.greenInt, value.blueInt, value.alphaInt];
+  List<int> get rgb255Ints =>
+      <int>[value.redInt, value.greenInt, value.blueInt];
+  List<double> get rgbaLinearized =>
+      <double>[redLinearized, greenLinearized, blueLinearized, alphaLinearized];
 
   /// The white point of the color space.
   ///
@@ -30,16 +43,53 @@ mixin ColorModelsMixin {
 
   /// Converts this color the Cam16 instance from MaterialColorUtilities,
   /// used extensively for calculating distance
-  Cam16 toCam16() => Cam16.fromInt(value);
+  Cam16 toCam16() {
+    if (this is Cam16) {
+      return this as Cam16;
+    }
+    // Convert to Cam16 (MaterialColorUtilities)
+    return Cam16.fromInt(value);
+  }
 
   /// Converts this color to HSL.
   ///
   /// The hue value is in the range of 0 to 360, and the saturation and
   // lightness values are in the range of 0 to 1.
-  HslColor toHslColor() => HslColor.fromInt(value);
+  HslColor toHslColor() {
+    if (this is HslColor) {
+      return this as HslColor;
+    }
+    return HslColor.fromInt(value);
+  }
 
   /// Converts this color to OkLab.
-  OkLabColor toOkLab() => OkLabColor.fromInt(value);
+  OkLabColor toOkLab() {
+    if (this is OkLabColor) {
+      return this as OkLabColor;
+    }
+    return OkLabColor.fromInt(value);
+  }
+
+  CmykColor toCmyk() {
+    if (this is CmykColor) {
+      return this as CmykColor;
+    }
+    return CmykColor.fromInt(value);
+  }
+
+  HctColor toHctColor() {
+    if (this is HctColor) {
+      return this as HctColor;
+    }
+    return HctColor.fromInt(value);
+  }
+
+  LuvColor toLuv() {
+    if (this is LuvColor) {
+      return this as LuvColor;
+    }
+    return LuvColor.fromInt(value);
+  }
 
   /// A measure of the perceptual difference between two colors.
   ///

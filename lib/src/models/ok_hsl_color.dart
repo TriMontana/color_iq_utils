@@ -8,6 +8,7 @@ import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/ok_lch_color.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 
 /// A color model that represents colors using Hue, Saturation, and Lightness
@@ -23,7 +24,7 @@ import 'package:material_color_utilities/hct/cam16.dart';
 /// via an approximate conversion to `OkLchColor`. This is because a direct
 /// mathematical formula for `OkHslColor` <-> `ColorIQ` is not as straightforward
 /// as for other models. The approximation is generally very good for most use cases.
-class OkHslColor with ColorModelsMixin implements ColorSpacesIQ {
+class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The hue component of the color, ranging from 0 to 360.
   final double h;
 
@@ -34,7 +35,31 @@ class OkHslColor with ColorModelsMixin implements ColorSpacesIQ {
   final double l;
 
   /// Creates an `OkHslColor` instance.
-  const OkHslColor(this.h, this.s, this.l);
+  const OkHslColor(this.h, this.s, this.l, {required final int hexId})
+      : super(hexId);
+  OkHslColor.alt(this.h, this.s, this.l, {final int? hexId})
+      : super(hexId ?? OkHslColor.hexIdFromHsl(h, s, l));
+
+  /// Creates a 32-bit integer ARGB representation of an OKHSL color.
+  ///
+  /// This is a stand-alone static method that converts OKHSL values to a `ColorIQ`
+  /// object and then extracts its 32-bit integer `hexId`. This is useful for
+  /// creating the `hexId` required by the constructor without first creating
+  /// an intermediate `OkLchColor` object.
+  ///
+  /// - [h]: Hue, from 0 to 360.
+  /// - [s]: Saturation, from 0.0 to 1.0.
+  /// - [l]: Lightness, from 0.0 to 1.0.
+  ///
+  /// Returns the 32-bit ARGB hex value.
+  static int hexIdFromHsl(final double h, final double s, final double l) {
+    // Approximate conversion via OkLch
+    final double L = l;
+    final double C = s * 0.4; // Approximation
+    final double hue = h;
+
+    return OkLchColor(L, C, hue).toColor().value;
+  }
 
   @override
   ColorIQ toColor() {
@@ -50,15 +75,9 @@ class OkHslColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  int get value => toColor().value;
-
-  @override
   OkHslColor darken([final double amount = 20]) {
     return OkHslColor(h, s, max(0.0, l - amount / 100));
   }
-
-  @override
-  List<double> get linearSrgb => toColor().linearSrgb;
 
   @override
   OkHslColor get inverted => toColor().inverted.toOkHsl();
@@ -109,7 +128,7 @@ class OkHslColor with ColorModelsMixin implements ColorSpacesIQ {
     newHue %= 360;
     if (newHue < 0) newHue += 360;
 
-    return OkHslColor(
+    return OkHslColor.alt(
       newHue,
       thisS + (otherS - thisS) * t,
       l + (otherOkHsl.l - l) * t,
@@ -118,7 +137,7 @@ class OkHslColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   OkHslColor lighten([final double amount = 20]) {
-    return OkHslColor(h, s, min(1.0, l + amount / 100));
+    return OkHslColor.alt(h, s, min(1.0, l + amount / 100));
   }
 
   @override
@@ -128,12 +147,12 @@ class OkHslColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   OkHslColor saturate([final double amount = 25]) {
-    return OkHslColor(h, min(1.0, s + amount / 100), l);
+    return OkHslColor.alt(h, min(1.0, s + amount / 100), l);
   }
 
   @override
   OkHslColor desaturate([final double amount = 25]) {
-    return OkHslColor(h, max(0.0, s - amount / 100), l);
+    return OkHslColor.alt(h, max(0.0, s - amount / 100), l);
   }
 
   @override
@@ -156,11 +175,7 @@ class OkHslColor with ColorModelsMixin implements ColorSpacesIQ {
     return toColor().simulate(type).toOkHsl();
   }
 
-  @override
-  List<int> get srgb => toColor().srgb;
 
-  @override
-  HctColor toHct() => toColor().toHct();
 
   @override
   OkHslColor fromHct(final HctColor hct) => hct.toColor().toOkHsl();
@@ -210,18 +225,6 @@ class OkHslColor with ColorModelsMixin implements ColorSpacesIQ {
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
 
   @override
-  double get luminance => toColor().luminance;
-
-  @override
-  Brightness get brightness => toColor().brightness;
-
-  @override
-  bool get isDark => brightness == Brightness.dark;
-
-  @override
-  bool get isLight => brightness == Brightness.light;
-
-  @override
   OkHslColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
       toColor().blend(other, amount).toOkHsl();
 
@@ -233,7 +236,7 @@ class OkHslColor with ColorModelsMixin implements ColorSpacesIQ {
   OkHslColor adjustHue([final double amount = 20]) {
     double newHue = (h + amount) % 360;
     if (newHue < 0) newHue += 360;
-    return OkHslColor(newHue, s, l);
+    return OkHslColor.alt(newHue, s, l);
   }
 
   @override

@@ -122,12 +122,6 @@ class Rec2020Color with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<int> get srgb => toColor().srgb;
-
-  @override
-  List<double> get linearSrgb => toColor().linearSrgb;
-
-  @override
   Rec2020Color get inverted => toColor().inverted.toRec2020();
 
   @override
@@ -159,8 +153,7 @@ class Rec2020Color with ColorModelsMixin implements ColorSpacesIQ {
     return toColor().lighten(amount).toRec2020();
   }
 
-  @override
-  HctColor toHct() => HctColor.fromInt(value);
+
 
   @override
   Rec2020Color fromHct(final HctColor hct) => hct.toColor().toRec2020();

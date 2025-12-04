@@ -22,14 +22,69 @@ import 'package:color_iq_utils/src/utils/color_math.dart';
 /// * `saturation`: The saturation of the color (0-1).
 /// * `val`: The value (brightness) of the color (0-1).
 /// * `alpha`: The alpha (transparency) of the color (0-1).
-class OkHsvColor with ColorModelsMixin implements ColorSpacesIQ {
+class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
   final double hue;
   final double saturation;
   // Renamed from value to val to avoid conflict with ColorSpacesIQ.value
   final double val;
   final double alpha;
 
-  const OkHsvColor(this.hue, this.saturation, this.val, [this.alpha = 1.0]);
+  const OkHsvColor(this.hue, this.saturation, this.val,
+      {this.alpha = 1.0, required final int hexId})
+      : super(hexId);
+
+  OkHsvColor.alt(this.hue, this.saturation, this.val,
+      {this.alpha = 1.0, final int? hexId})
+      : super(hexId ?? OkHsvColor.computeHexId(hue, saturation, val, alpha));
+
+  // OkHsvColor.alt(
+  // this.hue,
+  // this.saturation,
+  // this.hue,
+  // saturation,
+  // max(0.0, val - amount / 100),
+  // alpha: alpha,
+  // hexId: OkHsvColor.computeHexId(hue, saturation, max(0.0, val - amount / 100), alpha),
+  // )
+
+  /// Generates a 32-bit ARGB hex ID from OkHsv values.
+  static int computeHexId(final double hue, final double saturation,
+      final double val, final double alpha) {
+    // Convert OkHsv to OkLab
+    final double c = saturation * val * 0.4;
+    final double l = val * (1 - saturation);
+    final double hRad = hue * pi / 180;
+    final double a = c * cos(hRad);
+    final double b = c * sin(hRad);
+
+    // Convert OkLab to linear RGB
+    final double l_ = l + 0.3963377774 * a + 0.2158037573 * b;
+    final double m_ = l - 0.1055613458 * a - 0.0638541728 * b;
+    final double s_ = l - 0.0894841775 * a - 1.2914855480 * b;
+
+    final double l3 = l_ * l_ * l_;
+    final double m3 = m_ * m_ * m_;
+    final double s3 = s_ * s_ * s_;
+
+    double r = 4.0767416621 * l3 - 3.3077115913 * m3 + 0.2309699292 * s3;
+    double g = -1.2684380046 * l3 + 2.6097574011 * m3 - 0.3413193965 * s3;
+    double blue = -0.0041960863 * l3 - 0.7034186147 * m3 + 1.7076147010 * s3;
+
+    // Gamma correction (sRGB)
+    r = (r > 0.0031308) ? (1.055 * pow(r, 1.0 / 2.4) - 0.055) : (12.92 * r);
+    g = (g > 0.0031308) ? (1.055 * pow(g, 1.0 / 2.4) - 0.055) : (12.92 * g);
+    blue = (blue > 0.0031308)
+        ? (1.055 * pow(blue, 1.0 / 2.4) - 0.055)
+        : (12.92 * blue);
+
+    // Clamp and convert to 0-255
+    final int rInt = (r.clamp(0.0, 1.0) * 255).round();
+    final int gInt = (g.clamp(0.0, 1.0) * 255).round();
+    final int bInt = (blue.clamp(0.0, 1.0) * 255).round();
+    final int aInt = (alpha.clamp(0.0, 1.0) * 255).round();
+
+    return (aInt << 24) | (rInt << 16) | (gInt << 8) | bInt;
+  }
 
   @override
   OkLabColor toOkLab() {
@@ -49,55 +104,56 @@ class OkHsvColor with ColorModelsMixin implements ColorSpacesIQ {
   ColorIQ toColor() => toOkLab().toColor();
 
   @override
-  int get value => toColor().value;
-
-  @override
   OkHsvColor darken([final double amount = 20]) {
-    return OkHsvColor(hue, saturation, max(0.0, val - amount / 100), alpha);
+    return OkHsvColor.alt(hue, saturation, max(0.0, val - amount / 100),
+        alpha: alpha);
   }
 
   @override
   OkHsvColor brighten([final double amount = 20]) {
-    return OkHsvColor(hue, saturation, min(1.0, val + amount / 100), alpha);
+    return OkHsvColor.alt(hue, saturation, min(1.0, val + amount / 100),
+        alpha: alpha);
   }
 
   @override
   OkHsvColor saturate([final double amount = 25]) {
-    return OkHsvColor(hue, min(1.0, saturation + amount / 100), val, alpha);
+    return OkHsvColor.alt(hue, min(1.0, saturation + amount / 100), val,
+        alpha: alpha);
   }
 
   @override
   OkHsvColor desaturate([final double amount = 25]) {
-    return OkHsvColor(hue, max(0.0, saturation - amount / 100), val, alpha);
+    return OkHsvColor.alt(hue, max(0.0, saturation - amount / 100), val,
+        alpha: alpha);
   }
 
   @override
   OkHsvColor intensify([final double amount = 10]) {
-    return OkHsvColor(
+    return OkHsvColor.alt(
       hue,
       min(1.0, saturation + amount / 100),
       max(0.0, val - (amount / 200)),
-      alpha,
+      alpha: alpha,
     );
   }
 
   @override
   OkHsvColor deintensify([final double amount = 10]) {
-    return OkHsvColor(
+    return OkHsvColor.alt(
       hue,
       max(0.0, saturation - amount / 100),
       min(1.0, val + (amount / 200)),
-      alpha,
+      alpha: alpha,
     );
   }
 
   @override
   OkHsvColor accented([final double amount = 15]) {
-    return OkHsvColor(
+    return OkHsvColor.alt(
       hue,
       min(1.0, saturation + amount / 100),
       min(1.0, val + (amount / 200)),
-      alpha,
+      alpha: alpha,
     );
   }
 
@@ -105,12 +161,6 @@ class OkHsvColor with ColorModelsMixin implements ColorSpacesIQ {
   OkHsvColor simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toOkHsv();
   }
-
-  @override
-  List<int> get srgb => toColor().srgb;
-
-  @override
-  List<double> get linearSrgb => toColor().linearSrgb;
 
   @override
   OkHsvColor get inverted => toColor().inverted.toOkHsv();
@@ -171,11 +221,11 @@ class OkHsvColor with ColorModelsMixin implements ColorSpacesIQ {
     final double? v,
     final double? alpha,
   }) {
-    return OkHsvColor(
+    return OkHsvColor.alt(
       hue ?? this.hue,
       saturation ?? this.saturation,
       v ?? val,
-      alpha ?? this.alpha,
+      alpha: alpha ?? this.alpha,
     );
   }
 
@@ -217,11 +267,11 @@ class OkHsvColor with ColorModelsMixin implements ColorSpacesIQ {
   @override
   ColorSpacesIQ get random {
     final Random rng = Random();
-    return OkHsvColor(
+    return OkHsvColor.alt(
       rng.nextDouble() * 360.0,
       rng.nextDouble(),
       rng.nextDouble(),
-      1.0,
+      alpha: 1.0,
     );
   }
 
@@ -273,11 +323,11 @@ class OkHsvColor with ColorModelsMixin implements ColorSpacesIQ {
     );
     final double blendedValue = _clamp01(val + (target.val - val) * t);
     final double blendedAlpha = _clamp01(alpha + (target.alpha - alpha) * t);
-    return OkHsvColor(
+    return OkHsvColor.alt(
       blendedHue,
       blendedSaturation,
       blendedValue,
-      blendedAlpha,
+      alpha: blendedAlpha,
     );
   }
 

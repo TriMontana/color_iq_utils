@@ -16,6 +16,7 @@ extension IntHelperIQ on int {
   /// It masks the integer to ensure it's treated as an 8-bit value,
   /// then divides by 255.0 to scale it to the 0.0-1.0 range.
   double get normalized => ((this & 0xFF) / 255.0).clamp0to1;
+  double get factored => normalized;
   // The structure of the 32-bit integer is: AARRGGBB
   /// Shifts the Alpha byte 24 bits to the right, placing it in the lowest
   /// 8 bits. The & 0xFF mask ensures only that byte remains.

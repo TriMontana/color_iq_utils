@@ -1,4 +1,5 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:color_iq_utils/src/constants.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -23,7 +24,7 @@ void main() {
     });
 
     test('toCssString HSL', () {
-      const HslColor c = HslColor(0, 1.0, 0.5); // Red
+      const HslColor c = kHslRed; // Red
       expect(
         c.toCssString(space: CssColorSpace.hsl),
         equals('hsl(0, 100%, 50%)'),

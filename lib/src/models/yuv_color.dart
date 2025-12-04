@@ -4,6 +4,7 @@ import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/extensions/int_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
@@ -36,12 +37,27 @@ class YuvColor extends ColorSpacesIQ with ColorModelsMixin {
 
   const YuvColor(this.y, this.u, this.v, {required final int val}) : super(val);
   YuvColor.alt(this.y, this.u, this.v, {final int? val})
-      : super(val ?? YuvColor.toHex(y, u, v));
+      : super(val ?? YuvColor.toHexId(y, u, v));
+
+  /// Creates a [YuvColor] instance from a 32-bit hex value.
+  factory YuvColor.fromHexId(final int hex) {
+    final int green = (hex >> 8) & 0xFF;
+    final int blue = hex & 0xFF;
+
+    final double r = hex.r;
+    final double g = green / 255.0;
+    final double b = blue / 255.0;
+
+    final double y = 0.299 * r + 0.587 * g + 0.114 * b;
+    return YuvColor(y, -0.14713 * r - 0.28886 * g + 0.436 * b,
+        0.615 * r - 0.51499 * g - 0.10001 * b,
+        val: hex);
+  }
 
   /// Creates a 32-bit ARGB hex value from [y], [u], and [v] components.
   ///
   /// The alpha value is set to 255 (fully opaque).
-  static int toHex(final double y, final double u, final double v) {
+  static int toHexId(final double y, final double u, final double v) {
     final double r = y + 1.13983 * v;
     final double g = y - 0.39465 * u - 0.58060 * v;
     final double b = y + 2.03211 * u;
@@ -112,12 +128,6 @@ class YuvColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  List<int> get srgb => toColor().srgb;
-
-  @override
-  List<double> get linearSrgb => toColor().linearSrgb;
-
-  @override
   YuvColor get inverted => toColor().inverted.toYuv();
 
   @override
@@ -136,7 +146,7 @@ class YuvColor extends ColorSpacesIQ with ColorModelsMixin {
         other is YuvColor ? other : other.toColor().toYuv();
     if (t == 1.0) return otherYuv;
 
-    return YuvColor(
+    return YuvColor.alt(
       lerpDouble(y, otherYuv.y, t),
       lerpDouble(u, otherYuv.u, t),
       lerpDouble(v, otherYuv.v, t),
@@ -149,10 +159,7 @@ class YuvColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  HctColor toHct() => toColor().toHct();
-
-  @override
-  YuvColor fromHct(final HctColor hct) => hct.toColor().toYuv();
+  YuvColor fromHct(final HctColor hct) => YuvColor.fromHexId(hct.toInt());
 
   @override
   YuvColor adjustTransparency([final double amount = 20]) {

@@ -16,7 +16,7 @@ void main() {
       final ColorIQ color = ColorIQ.fromARGB(255, 100, 150, 200);
       final ColorIQ accented = color.accented(10);
 
-      final HctColor hct = color.toHct();
+      final HctColor hct = HctColor.fromInt(color.value);
       final HctColor expectedHct = hct.accented(10);
       final ColorIQ expectedColor = expectedHct.toColor();
 

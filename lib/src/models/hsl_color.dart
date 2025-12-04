@@ -143,11 +143,8 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  int get value => toColor().value;
-
-  @override
   HslColor darken([final double amount = 20]) {
-    return HslColor(h, s, max(0.0, l - amount / 100), alpha);
+    return HslColor.alt(h, s, max(0.0, l - amount / 100), alpha: alpha);
   }
 
   @override
@@ -157,7 +154,7 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   HslColor saturate([final double amount = 25]) {
-    return HslColor(h, min(1.0, s + amount / 100), l, alpha);
+    return HslColor.alt(h, min(1.0, s + amount / 100), l, alpha: alpha);
   }
 
   @override
@@ -167,12 +164,12 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   HslColor intensify([final double amount = 10]) {
-    return HslColor(h, min(1.0, s + amount / 100), l, alpha);
+    return HslColor.alt(h, min(1.0, s + amount / 100), l, alpha: alpha);
   }
 
   @override
   HslColor deintensify([final double amount = 10]) {
-    return HslColor.alt(h, max(0.0, s - amount / 100), l, alpha);
+    return HslColor.alt(h, max(0.0, s - amount / 100), l, alpha: alpha);
   }
 
   @override
@@ -184,12 +181,6 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
   HslColor simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toHsl();
   }
-
-  @override
-  List<int> get srgb => toColor().srgb;
-
-  @override
-  List<double> get linearSrgb => toColor().linearSrgb;
 
   @override
   HslColor get inverted => flipHue();
@@ -227,10 +218,7 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  HctColor toHct() => toColor().toHct();
-
-  @override
-  HslColor fromHct(final HctColor hct) => hct.toColor().toHsl();
+  HslColor fromHct(final HctColor hct) => HslColor.fromInt(hct.toInt());
 
   @override
   HslColor adjustTransparency([final double amount = 20]) {
@@ -258,7 +246,8 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
     final double? l,
     final double? alpha,
   }) {
-    return HslColor(h ?? this.h, s ?? this.s, l ?? this.l, alpha ?? this.alpha);
+    return HslColor.alt(h ?? this.h, s ?? this.s, l ?? this.l,
+        alpha: alpha ?? this.alpha);
   }
 
   @override
@@ -268,7 +257,7 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
     for (int i = 0; i < 5; i++) {
       final double delta = (i - 2) * 0.1; // 10%
       final double newL = (l + delta).clamp(0.0, 1.0);
-      results.add(HslColor(h, s, newL, alpha));
+      results.add(HslColor.alt(h, s, newL, alpha: alpha));
     }
     return results;
   }
@@ -314,9 +303,6 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
 
   @override
-  Brightness get brightness => toColor().brightness;
-
-  @override
   bool get isDark => brightness == Brightness.dark;
 
   @override
@@ -327,11 +313,11 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
     final HslColor target = other is HslColor ? other : other.toHslColor();
     final double t = (amount / 100).clamp(0.0, 1.0).toDouble();
 
-    return HslColor(
+    return HslColor.alt(
       lerpHueB(h, target.h, t),
       clamp01(lerpDoubleB(s, target.s, t)),
       clamp01(lerpDoubleB(l, target.l, t)),
-      clamp01(lerpDoubleB(alpha, target.alpha, t)),
+      alpha: clamp01(lerpDoubleB(alpha, target.alpha, t)),
     );
   }
 
@@ -343,18 +329,19 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   HslColor adjustHue([final double amount = 20]) =>
-      HslColor(_wrapHue(h + amount), s, l, alpha);
+      HslColor.alt(_wrapHue(h + amount), s, l, alpha: alpha);
 
   @override
-  HslColor get complementary => HslColor(_wrapHue(h + 180.0), s, l, alpha);
+  HslColor get complementary =>
+      HslColor.alt(_wrapHue(h + 180.0), s, l, alpha: alpha);
 
   @override
   HslColor warmer([final double amount = 20]) =>
-      HslColor(_wrapHue(h - amount), s, l, alpha);
+      HslColor.alt(_wrapHue(h - amount), s, l, alpha: alpha);
 
   @override
   HslColor cooler([final double amount = 20]) =>
-      HslColor(_wrapHue(h + amount), s, l, alpha);
+      HslColor.alt(_wrapHue(h + amount), s, l, alpha: alpha);
 
   @override
   List<HslColor> generateBasicPalette() {
@@ -377,7 +364,7 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
     return toneOffsets
         .map(
           (final double delta) =>
-              HslColor(h, s, (l + delta).clamp(0.0, 1.0), alpha),
+              HslColor.alt(h, s, (l + delta).clamp(0.0, 1.0), alpha: alpha),
         )
         .toList();
   }
@@ -391,7 +378,7 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
     final double pivot = (count - 1) / 2;
     for (int i = 0; i < count; i++) {
       final double delta = (i - pivot) * offset;
-      palette.add(HslColor(_wrapHue(h + delta), s, l, alpha));
+      palette.add(HslColor.alt(_wrapHue(h + delta), s, l, alpha: alpha));
     }
     return palette;
   }
@@ -399,15 +386,16 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   List<HslColor> square() => List<HslColor>.generate(
         4,
-        (final int index) => HslColor(_wrapHue(h + 90.0 * index), s, l, alpha),
+        (final int index) =>
+            HslColor.alt(_wrapHue(h + 90.0 * index), s, l, alpha: alpha),
         growable: false,
       );
 
   @override
   List<HslColor> tetrad({final double offset = 60}) => <HslColor>[
-        HslColor(h, s, l, alpha),
+        HslColor.alt(h, s, l, alpha: alpha),
         HslColor.alt(_wrapHue(h + offset), s, l, alpha: alpha),
-        HslColor(_wrapHue(h + 180.0), s, l, alpha),
+        HslColor.alt(_wrapHue(h + 180.0), s, l, alpha: alpha),
         HslColor(_wrapHue(h + 180.0 + offset), s, l, alpha),
       ];
 
@@ -440,7 +428,8 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   String toString() => 'HslColor(h: ${h.toStrTrimZeros(3)}, '
-      's: ${s.toStringAsFixed(2)}, l: ${l.toStrTrimZeros(2)}, '
+      's: ${s.toStrTrimZeros(3)}, ' //
+      'l: ${l.toStrTrimZeros(2)}, '
       'alpha: ${alpha.toStringAsFixed(2)})';
 
   @override

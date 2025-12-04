@@ -1,10 +1,11 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:color_iq_utils/src/constants.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('Lighter and Darker Palette Tests', () {
     test('HslColor Lighter Palette (Default Steps)', () {
-      const HslColor hsl = HslColor(0, 1.0, 0.5); // Red
+      final HslColor hsl = HslColor.alt(0, 1.0, 0.5); // Red
       final List<ColorSpacesIQ> palette = hsl.lighterPalette();
       expect(palette.length, 5);
 
@@ -24,7 +25,7 @@ void main() {
     });
 
     test('HslColor Darker Palette (Default Steps)', () {
-      const HslColor hsl = HslColor(0, 1.0, 0.5); // Red
+      const HslColor hsl = kHslRed; // Red
       final List<ColorSpacesIQ> palette = hsl.darkerPalette();
       expect(palette.length, 5);
 
@@ -59,7 +60,7 @@ void main() {
     });
 
     test('CmykColor Darker Palette (Delegated)', () {
-      final CmykColor cmyk = CmykColor.alt(0, 0, 0, 0); // White
+      const CmykColor cmyk = cmykWhite; // White
       final List<ColorSpacesIQ> palette = cmyk.darkerPalette();
       expect(palette.length, 5);
       expect(palette.first, isA<CmykColor>());

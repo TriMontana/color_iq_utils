@@ -181,12 +181,6 @@ class OkLabColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<int> get srgb => toColor().srgb;
-
-  @override
-  List<double> get linearSrgb => toColor().linearSrgb;
-
-  @override
   OkLabColor get inverted => toColor().inverted.toOkLab();
 
   @override
@@ -257,9 +251,6 @@ class OkLabColor with ColorModelsMixin implements ColorSpacesIQ {
   OkLabColor simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toOkLab();
   }
-
-  @override
-  HctColor toHct() => toColor().toHct();
 
   @override
   OkLabColor fromHct(final HctColor hct) => hct.toColor().toOkLab();

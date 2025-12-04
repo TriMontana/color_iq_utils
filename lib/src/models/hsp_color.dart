@@ -402,12 +402,6 @@ class HspColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<int> get srgb => toColor().srgb;
-
-  @override
-  List<double> get linearSrgb => toColor().linearSrgb;
-
-  @override
   HspColor get inverted => toColor().inverted.toHsp();
 
   @override

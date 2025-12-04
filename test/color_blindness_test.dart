@@ -1,4 +1,5 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:color_iq_utils/src/constants.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -38,14 +39,12 @@ void main() {
     });
 
     test('Delegation works for other models', () {
-      const HslColor hsl = HslColor(0, 100, 50); // Red
+      const HslColor hsl = kHslRed; // Red
       final HslColor simulated = hsl.simulate(ColorBlindnessType.protanopia);
       expect(simulated, isA<HslColor>());
       // Should match the ColorIQ simulation converted back to HSL
-      final HslColor expected = hsl
-          .toColor()
-          .simulate(ColorBlindnessType.protanopia)
-          .toHsl();
+      final HslColor expected =
+          hsl.toColor().simulate(ColorBlindnessType.protanopia).toHsl();
       expect(simulated.h, closeTo(expected.h, 1.0));
       expect(simulated.s, closeTo(expected.s, 1.0));
       expect(simulated.l, closeTo(expected.l, 1.0));

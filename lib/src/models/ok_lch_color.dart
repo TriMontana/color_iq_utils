@@ -154,12 +154,6 @@ class OkLchColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<int> get srgb => toColor().srgb;
-
-  @override
-  HctColor toHct() => toColor().toHct();
-
-  @override
   OkLchColor fromHct(final HctColor hct) => hct.toColor().toOkLch();
 
   @override

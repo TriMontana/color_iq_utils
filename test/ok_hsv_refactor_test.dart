@@ -16,7 +16,7 @@ void main() {
     });
 
     test('temperature returns correct value', () {
-      const OkHsvColor warm = OkHsvColor(30.0, 1.0, 1.0);
+      final OkHsvColor warm = OkHsvColor.alt(30.0, 1.0, 1.0);
       const OkHsvColor cool = OkHsvColor(210.0, 1.0, 1.0);
 
       expect(warm.temperature, ColorTemperature.warm);
@@ -36,14 +36,14 @@ void main() {
     });
 
     test('lerp interpolates correctly', () {
-      const OkHsvColor start = OkHsvColor(0.0, 0.0, 0.0);
-      const OkHsvColor end = OkHsvColor(0.0, 0.0, 1.0);
+      final OkHsvColor start = OkHsvColor.alt(0.0, 0.0, 0.0);
+      final OkHsvColor end = OkHsvColor.alt(0.0, 0.0, 1.0);
       final OkHsvColor mid = start.lerp(end, 0.5);
       expect(mid.val, closeTo(0.5, 0.01));
     });
 
     test('intensify increases saturation', () {
-      const OkHsvColor color = OkHsvColor(0.0, 0.5, 0.5);
+      final OkHsvColor color = OkHsvColor.alt(0.0, 0.5, 0.5);
       final OkHsvColor intensified = color.intensify(10);
       expect(intensified.saturation, greaterThan(color.saturation));
     });

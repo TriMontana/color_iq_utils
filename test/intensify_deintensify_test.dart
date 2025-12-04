@@ -53,7 +53,7 @@ void main() {
     });
 
     test('LabColor intensify delegates correctly', () {
-      const LabColor lab = LabColor(50, 20, 20);
+      final LabColor lab = LabColor.alt(50, 20, 20);
       final LabColor intensified = lab.intensify(10);
 
       // Check if it's different
@@ -65,7 +65,7 @@ void main() {
     });
 
     test('HslColor intensify delegates correctly', () {
-      const HslColor hsl = HslColor(120, 0.5, 0.5);
+      final HslColor hsl = HslColor.alt(120, 0.5, 0.5);
       final HslColor intensified = hsl.intensify(10);
       expect(intensified, isA<HslColor>());
       // Saturation should likely increase

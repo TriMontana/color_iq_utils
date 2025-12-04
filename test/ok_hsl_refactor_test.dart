@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('OkHslColor Refactor Tests', () {
     test('whiten increases lightness and desaturates', () {
-      const OkHslColor color = OkHslColor(0, 1.0, 0.5); // Red
+      final OkHslColor color = OkHslColor.alt(0, 1.0, 0.5); // Red
       final OkHslColor whitened = color.whiten(50);
 
       expect(whitened.l, greaterThan(color.l));

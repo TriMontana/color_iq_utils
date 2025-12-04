@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('LchColor Refactor Tests', () {
     test('whiten increases lightness and desaturates', () {
-      const LchColor color = LchColor(50, 100, 0); // Red-ish
+      final LchColor color = LchColor.alt(50, 100, 0); // Red-ish
       final LchColor whitened = color.whiten(50);
 
       expect(whitened.l, greaterThan(color.l));
@@ -21,7 +21,7 @@ void main() {
     });
 
     test('blacken decreases lightness and desaturates', () {
-      const LchColor color = LchColor(50, 100, 0); // Red-ish
+      final LchColor color = LchColor.alt(50, 100, 0); // Red-ish
       final LchColor blackened = color.blacken(50);
 
       expect(blackened.l, lessThan(color.l));
@@ -30,8 +30,8 @@ void main() {
     });
 
     test('lerp interpolates correctly', () {
-      const LchColor start = LchColor(50, 100, 0); // Red-ish
-      const LchColor end = LchColor(50, 100, 120); // Green-ish
+      final LchColor start = LchColor.alt(50, 100, 0); // Red-ish
+      final LchColor end = LchColor.alt(50, 100, 120); // Green-ish
       final LchColor mid = start.lerp(end, 0.5);
 
       expect(mid.l, closeTo(50, 0.1));
@@ -40,16 +40,16 @@ void main() {
     });
 
     test('lerp handles hue wrapping', () {
-      const LchColor start = LchColor(50, 100, 350);
-      const LchColor end = LchColor(50, 100, 10);
+      final LchColor start = LchColor.alt(50, 100, 350);
+      final LchColor end = LchColor.alt(50, 100, 10);
       final LchColor mid = start.lerp(end, 0.5);
 
       expect(mid.h, closeTo(0, 0.1) /* or 360 */);
     });
 
     test('lerp handles achromatic colors', () {
-      const LchColor color = LchColor(50, 100, 120);
-      const LchColor gray = LchColor(50, 0, 0); // Hue doesn't matter
+      final LchColor color = LchColor.alt(50, 100, 120);
+      final LchColor gray = LchColor.alt(50, 0, 0); // Hue doesn't matter
 
       final LchColor mid = color.lerp(gray, 0.5);
       expect(mid.h, closeTo(120, 0.1)); // Should preserve color hue

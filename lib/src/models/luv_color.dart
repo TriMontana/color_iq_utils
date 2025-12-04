@@ -8,6 +8,7 @@ import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/xyz_color.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 
 /// A representation of a color in the CIE L*u*v* color space.
 ///
@@ -21,7 +22,7 @@ import 'package:color_iq_utils/src/models/xyz_color.dart';
 ///   positive values are reddish.
 /// - `v`: Position on the blue-yellow axis. Negative values are bluish,
 ///   positive values are yellowish.
-class LuvColor with ColorModelsMixin implements ColorSpacesIQ {
+class LuvColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The lightness component of the color.
   ///
   /// Ranges from 0 (black) to 100 (white).
@@ -34,7 +35,10 @@ class LuvColor with ColorModelsMixin implements ColorSpacesIQ {
   final double v;
 
   /// Creates a new `LuvColor`.
-  const LuvColor(this.l, this.u, this.v);
+  const LuvColor(this.l, this.u, this.v, {required final int hexId})
+      : super(hexId);
+  LuvColor.alt(this.l, this.u, this.v, {final int? hexId})
+      : super(hexId ?? LuvColor.toHexId(l, u, v));
 
   /// Creates a 32-bit hex ARGB value from L, u, v components.
   ///
@@ -46,9 +50,9 @@ class LuvColor with ColorModelsMixin implements ColorSpacesIQ {
   /// [v] The blue-yellow component.
   ///
   /// Returns an integer representing the color in ARGB format.
-  static int toHex(final double l, final double u, final double v) {
+  static int toHexId(final double l, final double u, final double v) {
     if (l == 0) {
-      return 0xFF000000; // Black
+      return hxBlack; // 0xFF000000; // Black
     }
 
     const double refX = 95.047;
@@ -71,7 +75,7 @@ class LuvColor with ColorModelsMixin implements ColorSpacesIQ {
       z = (9 * y / vPrime - x - 15 * y) / 3;
     }
 
-    return XyzColor.toHex(x, y, z);
+    return XyzColor.alt(x, y, z).value;
   }
 
   @override
@@ -100,17 +104,8 @@ class LuvColor with ColorModelsMixin implements ColorSpacesIQ {
       z = (9 * y / vPrime - x - 15 * y) / 3;
     }
 
-    return XyzColor(x, y, z).toColor();
+    return XyzColor.alt(x, y, z).toColor();
   }
-
-  @override
-  int get value => toColor().value;
-
-  @override
-  List<int> get srgb => toColor().srgb;
-
-  @override
-  List<double> get linearSrgb => toColor().linearSrgb;
 
   @override
   LuvColor get inverted => toColor().inverted.toLuv();
@@ -126,12 +121,14 @@ class LuvColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   LuvColor lerp(final ColorSpacesIQ other, final double t) {
-    if (t == 0.0) return this;
+    if (t == 0.0) {
+      return this;
+    }
     final LuvColor otherLuv =
         (other is LuvColor) ? other : other.toColor().toLuv();
     if (t == 1.0) return otherLuv;
 
-    return LuvColor(
+    return LuvColor.alt(
       l + (otherLuv.l - l) * t,
       u + (otherLuv.u - u) * t,
       v + (otherLuv.v - v) * t,
@@ -140,7 +137,7 @@ class LuvColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   LuvColor darken([final double amount = 20]) {
-    return LuvColor(max(0, l - amount), u, v);
+    return LuvColor.alt(max(0, l - amount), u, v);
   }
 
   @override
@@ -180,7 +177,7 @@ class LuvColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   LuvColor lighten([final double amount = 20]) {
-    return LuvColor(min(100, l + amount), u, v);
+    return LuvColor.alt(min(100, l + amount), u, v);
   }
 
   @override
@@ -202,7 +199,7 @@ class LuvColor with ColorModelsMixin implements ColorSpacesIQ {
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   LuvColor copyWith({final double? l, final double? u, final double? v}) {
-    return LuvColor(l ?? this.l, u ?? this.u, v ?? this.v);
+    return LuvColor.alt(l ?? this.l, u ?? this.u, v ?? this.v);
   }
 
   @override
@@ -232,18 +229,6 @@ class LuvColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
-
-  @override
-  double get luminance => toColor().luminance;
-
-  @override
-  Brightness get brightness => toColor().brightness;
-
-  @override
-  bool get isDark => brightness == Brightness.dark;
-
-  @override
-  bool get isLight => brightness == Brightness.light;
 
   @override
   LuvColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>

@@ -1,11 +1,17 @@
 <component name="ProjectDictionaryState">
   <dictionary name="project">
     <words>
+      <w>cbrt</w>
       <w>cielab</w>
       <w>cielch</w>
       <w>deintensified</w>
       <w>deintensify</w>
+      <w>eotf</w>
+      <w>hsluv</w>
+      <w>invf</w>
       <w>lerp</w>
+      <w>linrgb</w>
+      <w>oetf</w>
       <w>oklab</w>
       <w>oklch</w>
       <w>rrggbbaa</w>

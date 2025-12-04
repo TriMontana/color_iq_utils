@@ -1,11 +1,12 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
 import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('Gamut, WhitePoint, and JSON', () {
     test('isWithinGamut returns true for sRGB colors', () {
-      final ColorIQ color = ColorIQ(0xFF00FF00);
+      final ColorIQ color = cLime;
       expect(color.isWithinGamut(Gamut.sRGB), isTrue);
       expect(color.isWithinGamut(Gamut.displayP3), isTrue);
     });
@@ -29,7 +30,7 @@ void main() {
     });
 
     test('toJson and fromJson for HsvColor', () {
-      final HsvColor hsv = HsvColor(120, 0.5, 0.8);
+      final HsvColor hsv = HsvColor.alt(120, 0.5, 0.8);
       final Map<String, dynamic> json = hsv.toJson();
       expect(json['type'], 'HsvColor');
       expect(json['hue'], 120);
@@ -43,7 +44,7 @@ void main() {
     });
 
     test('toJson and fromJson for HslColor', () {
-      const HslColor hsl = HslColor(240, 0.6, 0.4);
+      final HslColor hsl = HslColor.alt(240, 0.6, 0.4);
       final Map<String, dynamic> json = hsl.toJson();
       expect(json['type'], 'HslColor');
       expect(json['hue'], 240);
@@ -57,7 +58,7 @@ void main() {
     });
 
     test('toJson and fromJson for LabColor', () {
-      const LabColor lab = LabColor(50, 10, -20);
+      final LabColor lab = LabColor.alt(50, 10, -20);
       final Map<String, dynamic> json = lab.toJson();
       expect(json['type'], 'LabColor');
       expect(json['l'], 50);
@@ -71,7 +72,7 @@ void main() {
     });
 
     test('toJson and fromJson for XyzColor', () {
-      const XyzColor xyz = XyzColor(20, 30, 40);
+      final XyzColor xyz = XyzColor.alt(20, 30, 40);
       final Map<String, dynamic> json = xyz.toJson();
       expect(json['type'], 'XyzColor');
       expect(json['x'], 20);
@@ -101,7 +102,7 @@ void main() {
     });
 
     test('toJson and fromJson for LchColor', () {
-      const LchColor lch = LchColor(60, 30, 180);
+      final LchColor lch = LchColor.alt(60, 30, 180);
       final Map<String, dynamic> json = lch.toJson();
       expect(json['type'], 'LchColor');
       expect(json['l'], 60);
@@ -124,7 +125,7 @@ void main() {
     });
 
     test('DisplayP3Color toJson', () {
-      const DisplayP3Color p3 = DisplayP3Color(0.4, 0.5, 0.6);
+      final DisplayP3Color p3 = DisplayP3Color.alt(0.4, 0.5, 0.6);
       final Map<String, dynamic> json = p3.toJson();
       expect(json['type'], 'DisplayP3Color');
       expect(json['r'], 0.4);

@@ -1,50 +1,89 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:color_iq_utils/src/extensions/int_helpers.dart';
 import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 
 export 'color_blindness.dart';
 export 'color_wheels.dart';
 
-/// The brightness of a color.
-enum Brightness { dark, light }
-
-/// Common color gamuts.
-enum Gamut { sRGB, displayP3, rec2020, adobeRgb, proPhotoRgb }
-
-/// CIE 1931 2° Standard Observer, D65 illuminant.
-///
-/// X, Y, Z tristimulus values of the white point.
-const List<double> kWhitePointD65 = <double>[95.047, 100.0, 108.883];
-
 /// A common parent class and interface for all color models.
 abstract class ColorSpacesIQ {
   /// Returns the 32-bit integer ID (ARGB) of this color.
   /// The 32-bit alpha-red-green-blue integer value.
   final int value;
+  final double a;
   final double r;
   final double g;
   final double b;
+  final int redInt;
+  final double? lrv;
 
   /// Constructs a color from an integer.
   const ColorSpacesIQ(this.value,
-      {final double? r, final double? g, final double? b})
-      : r = r ?? (value >> 16 & 0xFF) / 255.0,
+      {final double? a,
+      final double? r,
+      final double? g,
+      final double? b,
+      this.lrv,
+      final int? redIntVal})
+      : a = a ?? (value >> 24 & 0xFF) / 255.0,
+        r = r ?? (value >> 16 & 0xFF) / 255.0,
         g = g ?? (value >> 8 & 0xFF) / 255.0,
-        b = b ?? (value & 0xFF) / 255.0;
-  const ColorSpacesIQ.alt(
-      {required this.value, final double? r, final double? g, final double? b})
-      : r = r ?? (value >> 16 & 0xFF) / 255.0,
+        b = b ?? (value & 0xFF) / 255.0,
+        redInt = redIntVal ?? (value >> 16 & 0xFF);
+  const ColorSpacesIQ.alt({
+    required this.value,
+    final double? a,
+    final double? r,
+    final double? g,
+    final double? b,
+    this.lrv,
+    final int? redIntVal,
+  })  : a = a ?? (value >> 24 & 0xFF) / 255.0,
+        r = r ?? (value >> 16 & 0xFF) / 255.0,
         g = g ?? (value >> 8 & 0xFF) / 255.0,
-        b = b ?? (value & 0xFF) / 255.0;
+        b = b ?? (value & 0xFF) / 255.0,
+        redInt = redIntVal ?? (value >> 16 & 0xFF);
 
+  double get alphaLinearized => linearizeColorComponentDart(a);
   double get redLinearized => linearizeColorComponentDart(r);
   double get greenLinearized => linearizeColorComponentDart(g);
   double get blueLinearized => linearizeColorComponentDart(b);
 
-  double toLRV() {
-    return 0.2126 * redLinearized +
-        0.7152 * greenLinearized +
-        0.0722 * blueLinearized;
+  List<int> get argb255Ints =>
+      <int>[value.alphaInt, redInt, value.greenInt, value.blueInt];
+  List<int> get rgba255Ints =>
+      <int>[redInt, value.greenInt, value.blueInt, value.alphaInt];
+  List<int> get rgb255Ints => <int>[redInt, value.greenInt, value.blueInt];
+  List<double> get rgbaLinearized =>
+      <double>[redLinearized, greenLinearized, blueLinearized, alphaLinearized];
+
+  /// Returns the relative luminance of this color (0.0 - 1.0).
+  double get toLRV =>
+      lrv ??
+      (0.2126 * redLinearized +
+          0.7152 * greenLinearized +
+          0.0722 * blueLinearized);
+
+  /// Returns the brightness of this color (light or dark).
+  Brightness get brightness {
+    // Based on ThemeData.estimateBrightnessForColor
+    final double relativeLuminance = toLRV;
+    const double kThreshold = 0.15;
+    if ((relativeLuminance + 0.05) * (relativeLuminance + 0.05) > kThreshold) {
+      return Brightness.light;
+    }
+    return Brightness.dark;
+  }
+
+  /// Returns true if the color is dark.
+  bool get isDark => brightness == Brightness.dark;
+
+  /// Returns true if the color is light.
+  bool get isLight => brightness == Brightness.light;
+
+  int toGrayscale({final GrayscaleMethod method = GrayscaleMethod.luma}) {
+    return GrayscaleConverter.toGrayscale(value, method: method);
   }
 
   /// Lightens the color by the given [amount] (0-100).
@@ -62,12 +101,6 @@ abstract class ColorSpacesIQ {
 
   /// Desaturates the color by the given [amount] (0-100).
   ColorSpacesIQ desaturate([final double amount = 25]);
-
-  /// Returns the sRGB components (0-255).
-  List<int> get srgb;
-
-  /// Returns the linear sRGB components (0.0-1.0).
-  List<double> get linearSrgb;
 
   /// Returns the inverted color.
   ColorSpacesIQ get inverted;
@@ -91,7 +124,9 @@ abstract class ColorSpacesIQ {
   ColorIQ toColor();
 
   /// Converts this color to HCTColor.
-  HctColor toHct();
+  HctColor toHctColor();
+
+  ColorSpacesIQ fromHct(final HctColor hct);
 
   /// Converts this color to the CAM16 color space.
   /// CAM16 is a color appearance model used for calculating perceptual
@@ -116,8 +151,6 @@ abstract class ColorSpacesIQ {
   /// Creates an accented version of this color.
   /// Increases chroma and brightness to make the color stand out.
   ColorSpacesIQ accented([final double amount = 15]);
-
-  ColorSpacesIQ fromHct(final HctColor hct);
 
   /// Simulates color blindness on this color.
   ColorSpacesIQ simulate(final ColorBlindnessType type);
@@ -148,12 +181,6 @@ abstract class ColorSpacesIQ {
   /// Compares this color with another color.
   bool isEqual(final ColorSpacesIQ other);
 
-  /// Returns the brightness of this color (light or dark).
-  Brightness get brightness;
-
-  /// Returns the relative luminance of this color (0.0 - 1.0).
-  double get luminance;
-
   /// Blends this color with [other] by the given [amount] (0-100).
   /// Default is 50%.
   ColorSpacesIQ blend(final ColorSpacesIQ other, [final double amount = 50]);
@@ -168,12 +195,6 @@ abstract class ColorSpacesIQ {
 
   /// Returns the complementary color.
   ColorSpacesIQ get complementary;
-
-  /// Returns true if the color is dark.
-  bool get isDark => brightness == Brightness.dark;
-
-  /// Returns true if the color is light.
-  bool get isLight => brightness == Brightness.light;
 
   /// Makes the color warmer (shifts hue towards red/orange) by the given [amount] (0-100).
   /// Default is 20%.

@@ -125,7 +125,7 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   HsvColor darken([final double amount = 20]) {
-    return HsvColor(h, s, max(0.0, v - amount / 100), alpha);
+    return HsvColor.alt(h, s, max(0.0, v - amount / 100), alpha: alpha);
   }
 
   @override
@@ -148,19 +148,21 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
     if (t == 0.0) return this;
     final HsvColor otherHsv =
         other is HsvColor ? other : other.toColor().toHsv();
-    if (t == 1.0) return otherHsv;
+    if (t == 1.0) {
+      return otherHsv;
+    }
 
-    return HsvColor(
+    return HsvColor.alt(
       lerpHue(h, otherHsv.h, t),
       lerpDouble(s, otherHsv.s, t),
       lerpDouble(v, otherHsv.v, t),
-      lerpDouble(alpha, otherHsv.alpha, t),
+      alpha: lerpDouble(alpha, otherHsv.alpha, t),
     );
   }
 
   @override
   HsvColor lighten([final double amount = 20]) {
-    return HsvColor(h, s, min(1.0, v + amount / 100), alpha);
+    return HsvColor.alt(h, s, min(1.0, v + amount / 100), alpha: alpha);
   }
 
   @override
@@ -200,12 +202,6 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  List<int> get srgb => toColor().srgb;
-
-  @override
-  HctColor toHct() => toColor().toHct();
-
-  @override
   HsvColor fromHct(final HctColor hct) => hct.toColor().toHsv();
 
   @override
@@ -234,7 +230,8 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
     final double? v,
     final double? alpha,
   }) {
-    return HsvColor(h ?? this.h, s ?? this.s, v ?? this.v, alpha ?? this.alpha);
+    return HsvColor.alt(h ?? this.h, s ?? this.s, v ?? this.v,
+        alpha: alpha ?? this.alpha);
   }
 
   @override
