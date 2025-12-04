@@ -1,11 +1,11 @@
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/constants.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
+import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 
 /// A class representing a color in the YIQ color space.
 ///
@@ -19,7 +19,7 @@ import 'package:color_iq_utils/src/models/hct_color.dart';
 ///
 /// This class provides methods to convert from and to other color spaces,
 /// as well as to manipulate the color.
-class YiqColor with ColorModelsMixin implements ColorSpacesIQ {
+class YiqColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The luma component.
   final double y;
 
@@ -30,7 +30,26 @@ class YiqColor with ColorModelsMixin implements ColorSpacesIQ {
   final double q;
 
   /// Creates a new `YiqColor`.
-  const YiqColor(this.y, this.i, this.q);
+  const YiqColor(this.y, this.i, this.q, {required final int val}) : super(val);
+  YiqColor.alt(this.y, this.i, this.q, {final int? val})
+      : super(val ?? YiqColor.argbFromYiq(y, i, q));
+
+  /// Creates a 32-bit hex ARGB value from YIQ components.
+  ///
+  /// [y] - The luma component (0.0 to 1.0).
+  /// [i] - The in-phase chrominance component (-0.5957 to 0.5957).
+  /// [q] - The quadrature chrominance component (-0.5226 to 0.5226).
+  static int argbFromYiq(final double y, final double i, final double q) {
+    final double r = y + 0.956 * i + 0.621 * q;
+    final double g = y - 0.272 * i - 0.647 * q;
+    final double b = y - 1.106 * i + 1.703 * q;
+
+    final int red = (r * 255).round().clamp(0, 255);
+    final int green = (g * 255).round().clamp(0, 255);
+    final int blue = (b * 255).round().clamp(0, 255);
+
+    return (255 << 24) | (red << 16) | (green << 8) | blue;
+  }
 
   @override
   ColorIQ toColor() {
@@ -62,13 +81,13 @@ class YiqColor with ColorModelsMixin implements ColorSpacesIQ {
   @override
   YiqColor saturate([final double amount = 25]) {
     final double scale = 1.0 + (amount / 100.0);
-    return YiqColor(y, i * scale, q * scale);
+    return YiqColor.alt(y, i * scale, q * scale);
   }
 
   @override
   YiqColor desaturate([final double amount = 25]) {
     final double scale = 1.0 - (amount / 100.0);
-    return YiqColor(y, i * scale, q * scale);
+    return YiqColor.alt(y, i * scale, q * scale);
   }
 
   @override
@@ -116,7 +135,7 @@ class YiqColor with ColorModelsMixin implements ColorSpacesIQ {
         other is YiqColor ? other : other.toColor().toYiq();
     if (t == 1.0) return otherYiq;
 
-    return YiqColor(
+    return YiqColor.alt(
       lerpDouble(y, otherYiq.y, t),
       lerpDouble(i, otherYiq.i, t),
       lerpDouble(q, otherYiq.q, t),
@@ -147,7 +166,7 @@ class YiqColor with ColorModelsMixin implements ColorSpacesIQ {
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   YiqColor copyWith({final double? y, final double? i, final double? q}) {
-    return YiqColor(y ?? this.y, i ?? this.i, q ?? this.q);
+    return YiqColor.alt(y ?? this.y, i ?? this.i, q ?? this.q);
   }
 
   @override

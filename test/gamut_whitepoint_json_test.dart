@@ -29,7 +29,7 @@ void main() {
     });
 
     test('toJson and fromJson for HsvColor', () {
-      const HsvColor hsv = HsvColor(120, 0.5, 0.8);
+      final HsvColor hsv = HsvColor(120, 0.5, 0.8);
       final Map<String, dynamic> json = hsv.toJson();
       expect(json['type'], 'HsvColor');
       expect(json['hue'], 120);

@@ -23,7 +23,7 @@ import 'package:material_color_utilities/hct/cam16.dart';
 /// integrates with other color models in the library, such as `ColorIQ` (sRGB)
 /// and `HctColor`, by converting to and from `ColorIQ` as an intermediary.
 ///
-class DisplayP3Color with ColorModelsMixin implements ColorSpacesIQ {
+class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
   @override
   final double r;
   @override
@@ -32,6 +32,21 @@ class DisplayP3Color with ColorModelsMixin implements ColorSpacesIQ {
   final double b;
 
   const DisplayP3Color(this.r, this.g, this.b);
+
+  /// Creates a 32-bit integer ARGB value from Display P3 components.
+  ///
+  /// [r], [g], and [b] are double values ranging from 0.0 to 1.0.
+  /// This method performs the conversion from Display P3 to sRGB before encoding
+  /// into the final ARGB integer, clamping values to ensure they are valid.
+  /// An alpha value of 255 (fully opaque) is used.
+  static int toHex(final double r, final double g, final double b) {
+    // Create a temporary DisplayP3Color instance and convert it to sRGB ColorIQ.
+    final ColorIQ srgbColor = const DisplayP3Color(r, g, b).toColor();
+    // Use the value from the converted sRGB color.
+    // The .value getter already returns the 32-bit ARGB integer.
+    // It includes clamping and rounding of RGB components.
+    return srgbColor.value;
+  }
 
   @override
   ColorIQ toColor() {

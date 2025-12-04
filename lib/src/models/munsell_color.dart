@@ -3,10 +3,10 @@ import 'dart:math';
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/constants.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 
 /// Represents a color in the Munsell color system.
@@ -32,6 +32,30 @@ class MunsellColor with ColorModelsMixin implements ColorSpacesIQ {
   final double chroma;
 
   const MunsellColor(this.hue, this.munsellValue, this.chroma);
+
+  /// Creates a 32-bit hex ID from the Munsell properties.
+  ///
+  /// This method generates a reproducible ARGB integer value based on the
+  /// Munsell color's components. It's intended for use as a unique identifier
+  /// rather than a visually accurate color representation, as a direct Munsell
+  /// to ARGB conversion is complex.
+  ///
+  /// - **Alpha**: Always 255 (fully opaque).
+  /// - **Red**: Derived from the hash code of the `hue` string.
+  /// - **Green**: Derived from `munsellValue`.
+  /// - **Blue**: Derived from `chroma`.
+  static int toHexId(
+      final String hue, final double value, final double chroma) {
+    const int alpha = 255;
+    // Hue hash provides a consistent integer for the string.
+    final int red = hue.hashCode % 256;
+    // Value (0-10) and Chroma (0-50+) are scaled to fit in 0-255.
+    final int green = (value * 25.5).round().clamp(0, 255);
+    final int blue = (chroma * 5)
+        .round()
+        .clamp(0, 255); // Chroma can go high, scale it down.
+    return (alpha << 24) | (red << 16) | (green << 8) | blue;
+  }
 
   @override
   ColorIQ toColor() {

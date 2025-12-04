@@ -3,21 +3,23 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/extensions/int_helpers.dart';
-import 'package:color_iq_utils/src/constants.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 
-class HslColor with ColorModelsMixin implements ColorSpacesIQ {
+class HslColor extends ColorSpacesIQ with ColorModelsMixin {
   final double h;
   final double s;
   final double l;
   final double alpha;
 
-  const HslColor(this.h, this.s, this.l, [this.alpha = 1.0]);
+  const HslColor(this.h, this.s, this.l,
+      {this.alpha = 1.0, required final int hexId})
+      : super(hexId);
   //   const HSLColor.fromAHSL(this.alpha, this.hue, this.saturation, this.lightness)
   //     : assert(alpha >= 0.0),
   //       assert(alpha <= 1.0),
@@ -27,6 +29,9 @@ class HslColor with ColorModelsMixin implements ColorSpacesIQ {
   //       assert(saturation <= 1.0),
   //       assert(lightness >= 0.0),
   //       assert(lightness <= 1.0);
+
+  HslColor.alt(this.h, this.s, this.l, {this.alpha = 1.0, final int? hexId})
+      : super(hexId ?? HslColor.toHex(h, s, l, alpha));
 
   /// Creates an [HslColor] from an RGB [Color].
   ///
@@ -52,7 +57,7 @@ class HslColor with ColorModelsMixin implements ColorSpacesIQ {
             min: 0.0,
             max: 1.0,
           );
-    return HslColor(hue, saturation, lightness, alpha);
+    return HslColor.alt(hue, saturation, lightness, alpha: alpha);
   }
 
   @override
@@ -96,6 +101,47 @@ class HslColor with ColorModelsMixin implements ColorSpacesIQ {
     );
   }
 
+  /// Creates a 32-bit ARGB hex value from HSL values.
+  ///
+  /// [h] is in the range of 0.0-360.0.
+  /// [s] is in the range of 0.0-1.0.
+  /// [l] is in the range of 0.0-1.0.
+  /// [alpha] is in the range of 0.0-1.0.
+  static int toHex(
+      final double h, final double s, final double l, final double alpha) {
+    final double c = (1 - (2 * l - 1).abs()) * s;
+    final double x = c * (1 - ((h / 60) % 2 - 1).abs());
+    final double m = l - c / 2;
+
+    double r = 0, g = 0, b = 0;
+    if (h < 60) {
+      r = c;
+      g = x;
+    } else if (h < 120) {
+      r = x;
+      g = c;
+    } else if (h < 180) {
+      g = c;
+      b = x;
+    } else if (h < 240) {
+      g = x;
+      b = c;
+    } else if (h < 300) {
+      r = x;
+      b = c;
+    } else {
+      r = c;
+      b = x;
+    }
+
+    return ColorIQ.fromARGB(
+      (alpha * 255).round(),
+      ((r + m) * 255).round().clamp(0, 255),
+      ((g + m) * 255).round().clamp(0, 255),
+      ((b + m) * 255).round().clamp(0, 255),
+    ).value;
+  }
+
   @override
   int get value => toColor().value;
 
@@ -116,7 +162,7 @@ class HslColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   HslColor desaturate([final double amount = 25]) {
-    return HslColor(h, max(0.0, s - amount / 100), l, alpha);
+    return HslColor.alt(h, max(0.0, s - amount / 100), l, alpha: alpha);
   }
 
   @override
@@ -126,7 +172,7 @@ class HslColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   HslColor deintensify([final double amount = 10]) {
-    return HslColor(h, max(0.0, s - amount / 100), l, alpha);
+    return HslColor.alt(h, max(0.0, s - amount / 100), l, alpha);
   }
 
   @override
@@ -146,10 +192,13 @@ class HslColor with ColorModelsMixin implements ColorSpacesIQ {
   List<double> get linearSrgb => toColor().linearSrgb;
 
   @override
-  HslColor get inverted => toColor().inverted.toHsl();
+  HslColor get inverted => flipHue();
+
+  /// Flip the hue by 180 degrees.
+  HslColor flipHue() => HslColor.alt(_wrapHue(h + 180), s, l, alpha: alpha);
 
   @override
-  HslColor get grayscale => HslColor(h, 0.0, l, alpha);
+  HslColor get grayscale => HslColor.alt(h, 0.0, l, alpha: alpha);
 
   @override
   HslColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
@@ -164,17 +213,17 @@ class HslColor with ColorModelsMixin implements ColorSpacesIQ {
         other is HslColor ? other : other.toColor().toHsl();
     if (t == 1.0) return otherHsl;
 
-    return HslColor(
+    return HslColor.alt(
       lerpHue(h, otherHsl.h, t),
       lerpDouble(s, otherHsl.s, t),
       lerpDouble(l, otherHsl.l, t),
-      lerpDouble(alpha, otherHsl.alpha, t),
+      alpha: lerpDouble(alpha, otherHsl.alpha, t),
     );
   }
 
   @override
   HslColor lighten([final double amount = 20]) {
-    return HslColor(h, s, min(1.0, l + amount / 100), alpha);
+    return HslColor.alt(h, s, min(1.0, l + amount / 100), alpha: alpha);
   }
 
   @override
@@ -236,7 +285,7 @@ class HslColor with ColorModelsMixin implements ColorSpacesIQ {
 
     for (int i = 1; i <= 5; i++) {
       final double newL = (l + delta * i).clamp(0.0, 1.0);
-      results.add(HslColor(h, s, newL, alpha));
+      results.add(HslColor.alt(h, s, newL, alpha: alpha));
     }
     return results;
   }
@@ -265,9 +314,6 @@ class HslColor with ColorModelsMixin implements ColorSpacesIQ {
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
 
   @override
-  double get luminance => toColor().luminance;
-
-  @override
   Brightness get brightness => toColor().brightness;
 
   @override
@@ -292,7 +338,7 @@ class HslColor with ColorModelsMixin implements ColorSpacesIQ {
   @override
   HslColor opaquer([final double amount = 20]) {
     final double factor = (amount / 100).clamp(0.0, 1.0).toDouble();
-    return HslColor(h, s, l, clamp01(alpha + (1 - alpha) * factor));
+    return HslColor.alt(h, s, l, alpha: clamp01(alpha + (1 - alpha) * factor));
   }
 
   @override
@@ -316,11 +362,11 @@ class HslColor with ColorModelsMixin implements ColorSpacesIQ {
     const List<double> lightnessOffsets = <double>[-0.2, -0.1, 0.0, 0.1, 0.2];
 
     return List<HslColor>.generate(saturationOffsets.length, (final int index) {
-      return HslColor(
+      return HslColor.alt(
         h,
         clamp01(s + saturationOffsets[index]),
         clamp01(l + lightnessOffsets[index]),
-        alpha,
+        alpha: alpha,
       );
     });
   }
@@ -360,7 +406,7 @@ class HslColor with ColorModelsMixin implements ColorSpacesIQ {
   @override
   List<HslColor> tetrad({final double offset = 60}) => <HslColor>[
         HslColor(h, s, l, alpha),
-        HslColor(_wrapHue(h + offset), s, l, alpha),
+        HslColor.alt(_wrapHue(h + offset), s, l, alpha: alpha),
         HslColor(_wrapHue(h + 180.0), s, l, alpha),
         HslColor(_wrapHue(h + 180.0 + offset), s, l, alpha),
       ];
@@ -369,10 +415,6 @@ class HslColor with ColorModelsMixin implements ColorSpacesIQ {
     final double mod = hue % 360.0;
     return mod < 0 ? mod + 360.0 : mod;
   }
-
-  @override
-  double distanceTo(final ColorSpacesIQ other) =>
-      toCam16().distance(other.toCam16());
 
   @override
   double contrastWith(final ColorSpacesIQ other) =>

@@ -3,10 +3,10 @@ import 'dart:math';
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/constants.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:material_color_utilities/material_color_utilities.dart' as mcu;
 
 /// A color in the CAM16 color space.
@@ -49,9 +49,7 @@ class Cam16Color with ColorModelsMixin implements ColorSpacesIQ {
   @override
   int get value => toColor().value;
 
-  mcu.Cam16 get toMcuCam16 {
-    return mcu.Cam16.fromInt(value);
-  }
+  mcu.Cam16 get toMcuCam16 => mcu.Cam16.fromInt(value);
 
   @override
   Cam16Color darken([final double amount = 20]) {

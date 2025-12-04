@@ -34,6 +34,12 @@ class LchColor with ColorModelsMixin implements ColorSpacesIQ {
   /// Creates a new `LchColor`.
   const LchColor(this.l, this.c, this.h);
 
+  /// A stand-alone static method to create a 32-bit hexID/ARGB from l, c, h.
+  static int toHex(final double l, final double c, final double h) {
+    // It will be converted to Lab, then to XYZ and finally to sRGB.
+    return LchColor(l, c, h).toColor().value;
+  }
+
   LabColor toLab() {
     final double hRad = h * pi / 180;
     final double a = c * cos(hRad);

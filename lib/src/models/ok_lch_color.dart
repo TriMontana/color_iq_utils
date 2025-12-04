@@ -2,8 +2,8 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
@@ -32,6 +32,17 @@ class OkLchColor with ColorModelsMixin implements ColorSpacesIQ {
         assert(c >= 0, 'C must be non-negative'),
         assert(h >= 0 && h <= 360, 'H must be between 0 and 360'),
         assert(alpha >= 0 && alpha <= 1, 'Alpha must be between 0 and 1');
+
+  /// Creates a 32-bit ARGB hex value from Oklch values.
+  ///
+  /// This is a stand-alone static method that converts Oklch color
+  /// components directly to an integer representation of an ARGB color.
+  static int toHex(
+      final double l, final double c, final double h, final double alpha) {
+    final double hRad = h * pi / 180;
+    final OkLabColor okLab = OkLabColor(l, c * cos(hRad), c * sin(hRad), alpha);
+    return okLab.toColor().value;
+  }
 
   @override
   OkLabColor toOkLab() {

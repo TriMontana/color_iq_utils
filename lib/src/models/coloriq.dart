@@ -29,6 +29,7 @@ import 'package:color_iq_utils/src/models/xyz_color.dart';
 import 'package:color_iq_utils/src/models/yiq_color.dart';
 import 'package:color_iq_utils/src/models/yuv_color.dart';
 import 'package:color_iq_utils/src/utils/color_spaces.dart';
+import 'package:color_iq_utils/src/utils/hex_utils.dart';
 import 'package:material_color_utilities/material_color_utilities.dart' as mcu;
 
 /// A versatile color representation class, `ColorIQ`, designed for advanced color
@@ -168,6 +169,11 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
         r: r,
         g: g,
         b: b);
+  }
+
+  /// Accepts hex like "#RRGGBB" or "RRGGBB" or "AARRGGBB".
+  factory ColorIQ.fromHexStr(final String hex) {
+    return parseHex(hex);
   }
 
   /// Converts this color to XYZ.

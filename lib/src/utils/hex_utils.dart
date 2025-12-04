@@ -1,7 +1,8 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
 
 ColorIQ parseHex(String hex) {
-  hex = hex.substring(1);
+  hex = hex.replaceAll('#', '').toUpperCase();
+  // hex = hex.substring(1);
   if (hex.length == 3) {
     hex = hex.split('').map((final String c) => '$c$c').join('');
   }

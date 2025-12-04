@@ -1,4 +1,5 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 
 export 'color_blindness.dart';
@@ -36,7 +37,15 @@ abstract class ColorSpacesIQ {
         g = g ?? (value >> 8 & 0xFF) / 255.0,
         b = b ?? (value & 0xFF) / 255.0;
 
-  // double get a => (value >> 24 & 0xFF) / 255.0;
+  double get redLinearized => linearizeColorComponentDart(r);
+  double get greenLinearized => linearizeColorComponentDart(g);
+  double get blueLinearized => linearizeColorComponentDart(b);
+
+  double toLRV() {
+    return 0.2126 * redLinearized +
+        0.7152 * greenLinearized +
+        0.0722 * blueLinearized;
+  }
 
   /// Lightens the color by the given [amount] (0-100).
   ColorSpacesIQ lighten([final double amount = 20]);

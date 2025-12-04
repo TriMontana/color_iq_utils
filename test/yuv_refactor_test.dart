@@ -36,7 +36,7 @@ void main() {
     });
 
     test('desaturate decreases chrominance', () {
-      const YuvColor color = YuvColor(0.5, 0.1, 0.1);
+      final YuvColor color = YuvColor.alt(0.5, 0.1, 0.1);
       final YuvColor desaturated = color.desaturate(50);
 
       expect(desaturated.u.abs(), lessThan(color.u.abs()));

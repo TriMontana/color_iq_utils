@@ -37,6 +37,46 @@ class LabColor with ColorModelsMixin implements ColorSpacesIQ {
 
   const LabColor(this.l, this.aLab, this.bLab);
 
+  /// Creates a 32-bit ARGB hex value from CIE-LAB components.
+  ///
+  /// This is a stand-alone static method that performs the conversion from
+  /// LAB to sRGB and then packs it into a 32-bit integer.
+  ///
+  /// - [l]: Lightness, from 0 (black) to 100 (white).
+  /// - [aLab]: Green to red axis.
+  /// - [bLab]: Blue to yellow axis.
+  ///
+  /// Returns an integer representing the ARGB color.
+  static int toHex(final double l, final double aLab, final double bLab) {
+    final double y = (l + 16) / 116;
+    final double x = aLab / 500 + y;
+    final double z = y - bLab / 200;
+
+    final double x3 = x * x * x;
+    final double y3 = y * y * y;
+    final double z3 = z * z * z;
+
+    const double xn = 95.047;
+    const double yn = 100.0;
+    const double zn = 108.883;
+
+    final double r = xn * ((x3 > 0.008856) ? x3 : ((x - 16 / 116) / 7.787));
+    final double g = yn * ((y3 > 0.008856) ? y3 : ((y - 16 / 116) / 7.787));
+    final double bVal = zn * ((z3 > 0.008856) ? z3 : ((z - 16 / 116) / 7.787));
+
+    double rL = (r * 3.2406 + g * -1.5372 + bVal * -0.4986) / 100;
+    double gL = (r * -0.9689 + g * 1.8758 + bVal * 0.0415) / 100;
+    double bL = (r * 0.0557 + g * -0.2040 + bVal * 1.0570) / 100;
+
+    rL = (rL > 0.0031308) ? (1.055 * pow(rL, 1 / 2.4) - 0.055) : (12.92 * rL);
+    gL = (gL > 0.0031308) ? (1.055 * pow(gL, 1 / 2.4) - 0.055) : (12.92 * gL);
+    bL = (bL > 0.0031308) ? (1.055 * pow(bL, 1 / 2.4) - 0.055) : (12.92 * bL);
+    return (255 << 24) |
+        ((rL * 255).round().clamp(0, 255) << 16) |
+        ((gL * 255).round().clamp(0, 255) << 8) |
+        (bL * 255).round().clamp(0, 255);
+  }
+
   @override
   ColorIQ toColor() {
     final double y = (l + 16) / 116;

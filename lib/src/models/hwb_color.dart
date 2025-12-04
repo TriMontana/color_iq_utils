@@ -42,6 +42,28 @@ class HwbColor with ColorModelsMixin implements ColorSpacesIQ {
 
   const HwbColor(this.h, this.w, this.b, [this.alpha = 1.0]);
 
+  /// Creates a 32-bit hex ID (ARGB) from HWB values.
+  ///
+  /// This is a utility method for creating a color value directly from HWB
+  /// components without instantiating an `HwbColor` object.
+  static int hwbToHex(final double h, final double w, final double b,
+      [final double alpha = 1.0]) {
+    // This is an inline conversion, avoiding creating intermediate color objects.
+    // It mirrors the logic in toColor() -> Hsv.toColor() -> Rgb.toColor().
+    double wNorm = w;
+    double bNorm = b;
+    final double ratio = w + b;
+    if (ratio > 1) {
+      wNorm /= ratio;
+      bNorm /= ratio;
+    }
+
+    final double v = 1 - bNorm;
+    final double s = (v == 0) ? 0 : 1 - wNorm / v;
+
+    return HsvColor.hsvToHex(h, s, v, alpha);
+  }
+
   @override
   ColorIQ toColor() {
     final double ratio = w + b;

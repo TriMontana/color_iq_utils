@@ -36,6 +36,44 @@ class LuvColor with ColorModelsMixin implements ColorSpacesIQ {
   /// Creates a new `LuvColor`.
   const LuvColor(this.l, this.u, this.v);
 
+  /// Creates a 32-bit hex ARGB value from L, u, v components.
+  ///
+  /// This is a stand-alone static method that converts CIE L*u*v* color
+  /// components directly to an ARGB integer value.
+  ///
+  /// [l] The lightness component (0-100).
+  /// [u] The green-red component.
+  /// [v] The blue-yellow component.
+  ///
+  /// Returns an integer representing the color in ARGB format.
+  static int toHex(final double l, final double u, final double v) {
+    if (l == 0) {
+      return 0xFF000000; // Black
+    }
+
+    const double refX = 95.047;
+    const double refY = 100.0;
+    const double refZ = 108.883;
+    const double refU = (4 * refX) / (refX + (15 * refY) + (3 * refZ));
+    const double refV = (9 * refY) / (refX + (15 * refY) + (3 * refZ));
+
+    final double uPrime = u / (13 * l) + refU;
+    final double vPrime = v / (13 * l) + refV;
+
+    final double y =
+        l > 8 ? refY * pow((l + 16) / 116, 3).toDouble() : refY * l / 903.3;
+
+    final double denominator = vPrime * 4;
+    double x = 0;
+    double z = 0;
+    if (denominator != 0) {
+      x = (9 * y * uPrime) / denominator;
+      z = (9 * y / vPrime - x - 15 * y) / 3;
+    }
+
+    return XyzColor.toHex(x, y, z);
+  }
+
   @override
   ColorIQ toColor() {
     if (l == 0) {

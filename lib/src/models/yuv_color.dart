@@ -22,7 +22,7 @@ import 'package:color_iq_utils/src/utils/color_math.dart';
 ///
 /// [YuvColor] provides methods to convert to and from other color spaces,
 /// and to perform various color manipulations.
-class YuvColor with ColorModelsMixin implements ColorSpacesIQ {
+class YuvColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The luma component (brightness).
   ///
   /// Ranges from 0.0 to 1.0.
@@ -34,7 +34,24 @@ class YuvColor with ColorModelsMixin implements ColorSpacesIQ {
   /// The chrominance V component (red projection).
   final double v;
 
-  const YuvColor(this.y, this.u, this.v);
+  const YuvColor(this.y, this.u, this.v, {required final int val}) : super(val);
+  YuvColor.alt(this.y, this.u, this.v, {final int? val})
+      : super(val ?? YuvColor.toHex(y, u, v));
+
+  /// Creates a 32-bit ARGB hex value from [y], [u], and [v] components.
+  ///
+  /// The alpha value is set to 255 (fully opaque).
+  static int toHex(final double y, final double u, final double v) {
+    final double r = y + 1.13983 * v;
+    final double g = y - 0.39465 * u - 0.58060 * v;
+    final double b = y + 2.03211 * u;
+
+    final int red = (r * 255).round().clamp(0, 255);
+    final int green = (g * 255).round().clamp(0, 255);
+    final int blue = (b * 255).round().clamp(0, 255);
+
+    return (255 << 24) | (red << 16) | (green << 8) | blue;
+  }
 
   @override
   ColorIQ toColor() {
@@ -54,24 +71,24 @@ class YuvColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   YuvColor darken([final double amount = 20]) {
-    return YuvColor(max(0.0, y - amount / 100), u, v);
+    return YuvColor.alt(max(0.0, y - amount / 100), u, v);
   }
 
   @override
   YuvColor brighten([final double amount = 20]) {
-    return YuvColor(min(1.0, y + amount / 100), u, v);
+    return YuvColor.alt(min(1.0, y + amount / 100), u, v);
   }
 
   @override
   YuvColor saturate([final double amount = 25]) {
     final double factor = 1 + (amount / 100);
-    return YuvColor(y, u * factor, v * factor);
+    return YuvColor.alt(y, u * factor, v * factor);
   }
 
   @override
   YuvColor desaturate([final double amount = 25]) {
     final double factor = max(0.0, 1 - (amount / 100));
-    return YuvColor(y, u * factor, v * factor);
+    return YuvColor.alt(y, u * factor, v * factor);
   }
 
   @override
@@ -128,7 +145,7 @@ class YuvColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   YuvColor lighten([final double amount = 20]) {
-    return YuvColor(min(1.0, y + amount / 100), u, v);
+    return YuvColor.alt(min(1.0, y + amount / 100), u, v);
   }
 
   @override
@@ -150,7 +167,7 @@ class YuvColor with ColorModelsMixin implements ColorSpacesIQ {
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   YuvColor copyWith({final double? y, final double? u, final double? v}) {
-    return YuvColor(y ?? this.y, u ?? this.u, v ?? this.v);
+    return YuvColor.alt(y ?? this.y, u ?? this.u, v ?? this.v);
   }
 
   @override
@@ -180,9 +197,6 @@ class YuvColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
-
-  @override
-  double get luminance => toColor().luminance;
 
   @override
   Brightness get brightness => toColor().brightness;
@@ -255,18 +269,11 @@ class YuvColor with ColorModelsMixin implements ColorSpacesIQ {
       toColor().isWithinGamut(gamut);
 
   @override
-  List<double> get whitePoint => kWhitePointD65;
-
-  @override
   Map<String, dynamic> toJson() {
     return <String, dynamic>{'type': 'YuvColor', 'y': y, 'u': u, 'v': v};
   }
 
   @override
-  double distanceTo(final ColorSpacesIQ other) =>
-      toCam16().distance(other.toCam16());
-
-  @override
-  String toString() =>
-      'YuvColor(y: ${y.toStrTrimZeros(2)}, u: ${u.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)})';
+  String toString() => 'YuvColor(y: ${y.toStrTrimZeros(2)}, ' //
+      'u: ${u.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)})';
 }

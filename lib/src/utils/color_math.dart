@@ -133,11 +133,11 @@ double computeLuminance(final double r, final double g, final double b) {
 
 // See <https://www.w3.org/TR/WCAG20/#relativeluminancedef>
 // This is Dart specific; it uses a different cutoff
-double linearizeColorComponentDart(final double component) {
-  if (component <= 0.03928) {
-    return component / 12.92;
+double linearizeColorComponentDart(final double srgbComponent) {
+  if (srgbComponent <= 0.03928) {
+    return srgbComponent / 12.92;
   }
-  return pow((component + 0.055) / 1.055, 2.4) as double;
+  return pow((srgbComponent + 0.055) / 1.055, 2.4) as double;
 }
 
 /// Converts a normalized sRGB (gamma-encoded) double component [0.0 - 1.0]

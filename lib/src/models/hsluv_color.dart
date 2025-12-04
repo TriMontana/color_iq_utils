@@ -2,12 +2,12 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/constants.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
+import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 
 /// A representation of color in the HSLuv color space.
 ///
@@ -30,6 +30,22 @@ class HsluvColor with ColorModelsMixin implements ColorSpacesIQ {
   final double l;
 
   const HsluvColor(this.h, this.s, this.l);
+
+  /// Creates a 32-bit ARGB hex value from HSLuv components.
+  ///
+  /// This method converts the HSLuv color to sRGB and then packs it into a
+  /// 32-bit integer. The alpha component is always set to 255 (fully opaque).
+  static int toHex(
+      {required final double h,
+      required final double s,
+      required final double l}) {
+    // Create a temporary HsluvColor instance to use the toColor() conversion.
+    final HsluvColor hsluv = HsluvColor(h, s, l);
+    // Convert to ColorIQ which holds the ARGB value.
+    final ColorIQ color = hsluv.toColor();
+    // Return the 32-bit integer value.
+    return color.value;
+  }
 
   @override
   ColorIQ toColor() {

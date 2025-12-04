@@ -4,21 +4,21 @@ import 'package:test/test.dart';
 void main() {
   group('YiqColor Refactor Tests', () {
     test('whiten increases brightness', () {
-      const YiqColor color = YiqColor(0.5, 0.0, 0.0); // Gray
+      final YiqColor color = YiqColor.alt(0.5, 0.0, 0.0); // Gray
       final YiqColor whitened = color.whiten(50);
 
       expect(whitened.y, greaterThan(color.y));
     });
 
     test('blacken decreases brightness', () {
-      const YiqColor color = YiqColor(0.5, 0.0, 0.0); // Gray
+      final YiqColor color = YiqColor.alt(0.5, 0.0, 0.0); // Gray
       final YiqColor blackened = color.blacken(50);
 
       expect(blackened.y, lessThan(color.y));
     });
 
     test('lerp interpolates correctly', () {
-      const YiqColor start = YiqColor(0.0, 0.0, 0.0); // Black
+      final YiqColor start = YiqColor.alt(0.0, 0.0, 0.0); // Black
       const YiqColor end = YiqColor(1.0, 0.0, 0.0); // White
       final YiqColor mid = start.lerp(end, 0.5);
 
@@ -36,7 +36,7 @@ void main() {
     });
 
     test('desaturate decreases chrominance', () {
-      const YiqColor color = YiqColor(0.5, 0.1, 0.1);
+      final YiqColor color = YiqColor.alt(0.5, 0.1, 0.1);
       final YiqColor desaturated = color.desaturate(50);
 
       expect(desaturated.i.abs(), lessThan(color.i.abs()));

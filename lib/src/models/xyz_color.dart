@@ -22,7 +22,7 @@ import 'package:color_iq_utils/src/utils/color_math.dart';
 /// XYZ color space will look the same regardless of the device that is used to display them.
 /// This is in contrast to device-dependent color spaces, such as the RGB color space, where
 /// the colors can vary depending on the device that is used to display them.
-class XyzColor with ColorModelsMixin implements ColorSpacesIQ {
+class XyzColor extends ColorSpacesIQ with ColorModelsMixin {
   final double x;
   final double y;
   final double z;
@@ -200,7 +200,8 @@ class XyzColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic
+  List<ColorSpacesIQ> get monochromatic => toColor()
+      .monochromatic
       .map((final ColorSpacesIQ c) => (c as ColorIQ).toXyz())
       .toList();
 

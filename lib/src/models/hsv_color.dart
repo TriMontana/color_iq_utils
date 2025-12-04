@@ -2,8 +2,8 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
@@ -21,13 +21,63 @@ import 'package:color_iq_utils/src/utils/color_math.dart';
 /// and to perform various color manipulations like adjusting brightness,
 /// saturation, and finding harmonies.
 ///
-class HsvColor with ColorModelsMixin implements ColorSpacesIQ {
+class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
   final double h;
   final double s;
   final double v;
   final double alpha;
 
-  const HsvColor(this.h, this.s, this.v, [this.alpha = 1.0]);
+  const HsvColor(this.h, this.s, this.v,
+      {this.alpha = 1.0, required final int hexId})
+      : super(hexId);
+  HsvColor.alt(this.h, this.s, this.v, {this.alpha = 1.0, final int? hexId})
+      : super(hexId ?? HsvColor.toHexId(h, s, v, alpha));
+
+  /// Creates a 32-bit integer ARGB value from HSV components.
+  ///
+  /// [h] is the hue, specified as a value between 0 and 360.
+  /// [s] is the saturation, specified as a value between 0.0 and 1.0.
+  /// [v] is the value, specified as a value between 0.0 and 1.0.
+  /// [alpha] is the alpha channel, specified as a value between 0.0 and 1.0.
+  static int toHexId(final double h, final double s, final double v,
+      [final double alpha = 1.0]) {
+    final double c = v * s;
+    final double x = c * (1 - ((h / 60) % 2 - 1).abs());
+    final double m = v - c;
+
+    double r = 0, g = 0, b = 0;
+    if (h < 60) {
+      r = c;
+      g = x;
+      b = 0;
+    } else if (h < 120) {
+      r = x;
+      g = c;
+      b = 0;
+    } else if (h < 180) {
+      r = 0;
+      g = c;
+      b = x;
+    } else if (h < 240) {
+      r = 0;
+      g = x;
+      b = c;
+    } else if (h < 300) {
+      r = x;
+      g = 0;
+      b = c;
+    } else {
+      r = c;
+      g = 0;
+      b = x;
+    }
+
+    final int argb = ((alpha * 255).round() << 24) |
+        (((r + m) * 255).round().clamp(0, 255) << 16) |
+        (((g + m) * 255).round().clamp(0, 255) << 8) |
+        ((b + m) * 255).round().clamp(0, 255);
+    return argb;
+  }
 
   @override
   ColorIQ toColor() {
@@ -125,12 +175,12 @@ class HsvColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   HsvColor desaturate([final double amount = 25]) {
-    return HsvColor(h, max(0.0, s - amount / 100), v, alpha);
+    return HsvColor.alt(h, max(0.0, s - amount / 100), v, alpha: alpha);
   }
 
   @override
   HsvColor intensify([final double amount = 10]) {
-    return HsvColor(h, min(1.0, s + amount / 100), v, alpha);
+    return HsvColor.alt(h, min(1.0, s + amount / 100), v, alpha: alpha);
   }
 
   @override

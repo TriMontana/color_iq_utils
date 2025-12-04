@@ -30,6 +30,41 @@ class HunterLabColor with ColorModelsMixin implements ColorSpacesIQ {
 
   const HunterLabColor(this.l, this.aLab, this.bLab);
 
+  /// A stand-alone static method to create a 32-bit hexID/ARGB from l, aLab, bLab.
+  static int toARGB(final double l, final double aLab, final double bLab) {
+    // Using D65 reference values to match sRGB/XYZ white point
+    const double xn = 95.047;
+    const double yn = 100.0;
+    const double zn = 108.883;
+
+    final double y = pow(l / 100.0, 2) * yn;
+    final double x = (aLab / 175.0 * (l / 100.0) + y / yn) * xn;
+    final double z = (y / yn - bLab / 70.0 * (l / 100.0)) * zn;
+
+    final double xTemp = x / 100;
+    final double yTemp = y / 100;
+    final double zTemp = z / 100;
+
+    double r = xTemp * 3.2406 + yTemp * -1.5372 + zTemp * -0.4986;
+    double g = xTemp * -0.9689 + yTemp * 1.8758 + zTemp * 0.0415;
+    double bVal = xTemp * 0.0557 + yTemp * -0.2040 + zTemp * 1.0570;
+
+    r = (r > 0.0031308) ? (1.055 * pow(r, 1 / 2.4) - 0.055) : (12.92 * r);
+    g = (g > 0.0031308) ? (1.055 * pow(g, 1 / 2.4) - 0.055) : (12.92 * g);
+    bVal = (bVal > 0.0031308)
+        ? (1.055 * pow(bVal, 1 / 2.4) - 0.055)
+        : (12.92 * bVal);
+
+    final int red = (r * 255).round().clamp(0, 255);
+    final int green = (g * 255).round().clamp(0, 255);
+    final int blue = (bVal * 255).round().clamp(0, 255);
+
+    return (255 << 24) | // Alpha
+        (red << 16) | // Red
+        (green << 8) | // Green
+        blue; // Blue
+  }
+
   @override
   ColorIQ toColor() {
     // Using D65 reference values to match sRGB/XYZ white point

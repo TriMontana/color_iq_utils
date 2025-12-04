@@ -70,7 +70,7 @@ void main() {
     });
 
     test('lerp interpolates correctly', () {
-      const YuvColor color1 = YuvColor(0.0, 0.0, 0.0);
+      final YuvColor color1 = YuvColor.alt(0.0, 0.0, 0.0);
       const YuvColor color2 = YuvColor(1.0, 1.0, 1.0);
       final YuvColor lerped = color1.lerp(color2, 0.5);
       expect(lerped.y, closeTo(0.5, 0.001));

@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('HsvColor Refactor Tests', () {
     test('whiten increases value and desaturates', () {
-      const HsvColor color = HsvColor(0, 1.0, 0.5); // Dark Red
+      final HsvColor color = HsvColor.alt(0, 1.0, 0.5); // Dark Red
       final HsvColor whitened = color.whiten(50);
 
       expect(whitened.v, greaterThan(color.v));
@@ -12,7 +12,7 @@ void main() {
     });
 
     test('blacken decreases value and desaturates', () {
-      const HsvColor color = HsvColor(0, 1.0, 1.0); // Red
+      final HsvColor color = HsvColor.alt(0, 1.0, 1.0); // Red
       final HsvColor blackened = color.blacken(50);
 
       expect(blackened.v, lessThan(color.v));

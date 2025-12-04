@@ -31,6 +31,53 @@ class HsbColor with ColorModelsMixin implements ColorSpacesIQ {
 
   const HsbColor(this.h, this.s, this.b);
 
+  /// Creates a 32-bit ARGB hex value from HSB components.
+  ///
+  /// `h` is hue (0-360), `s` is saturation (0-1), and `b` is brightness (0-1).
+  /// An optional `alpha` (0-255) can be provided. Defaults to 255 (opaque).
+  static int argbFromHsb(double h, double s, double b,
+      [final int alpha = 255]) {
+    h = h.clamp(0, 360);
+    s = s.clamp(0.0, 1.0);
+    b = b.clamp(0.0, 1.0);
+
+    final double c = b * s;
+    final double hPrime = h / 60.0;
+    final double x = c * (1 - (hPrime % 2 - 1).abs());
+    final double m = b - c;
+
+    double r, g, bTemp;
+    if (hPrime < 1) {
+      r = c;
+      g = x;
+      bTemp = 0;
+    } else if (hPrime < 2) {
+      r = x;
+      g = c;
+      bTemp = 0;
+    } else if (hPrime < 3) {
+      r = 0;
+      g = c;
+      bTemp = x;
+    } else if (hPrime < 4) {
+      r = 0;
+      g = x;
+      bTemp = c;
+    } else if (hPrime < 5) {
+      r = x;
+      g = 0;
+      bTemp = c;
+    } else {
+      r = c;
+      g = 0;
+      bTemp = x;
+    }
+    return (alpha.clamp(0, 255) << 24) |
+        (((r + m) * 255).round() << 16) |
+        (((g + m) * 255).round() << 8) |
+        ((bTemp + m) * 255).round();
+  }
+
   @override
   ColorIQ toColor() {
     // HSB is the same as HSV, just B instead of V

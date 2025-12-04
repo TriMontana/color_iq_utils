@@ -26,6 +26,23 @@ class Rec2020Color with ColorModelsMixin implements ColorSpacesIQ {
 
   const Rec2020Color(this.r, this.g, this.b);
 
+  /// Creates a 32-bit hex ARGB value from the properties of this class.
+  ///
+  /// This is a convenience method that converts the Rec. 2020 color
+  /// to a [ColorIQ] instance and then returns its integer `value`.
+  /// It can be used in contexts where a Rec2020Color object needs to be
+  /// represented as a standard 32-bit color value.
+  ///
+  /// The `alpha` value is always 255 (fully opaque).
+  ///
+  /// Returns the 32-bit ARGB hex value.
+  static int toHex(final Rec2020Color color) {
+    // This is essentially a stand-alone version of the `toColor().value` logic.
+    // It's implemented by calling the instance method `toColor()` and getting its value.
+    // The heavy lifting of color space conversion is done within `toColor()`.
+    return color.toColor().value;
+  }
+
   @override
   ColorIQ toColor() {
     // Rec. 2020 decoding (Gamma to Linear)

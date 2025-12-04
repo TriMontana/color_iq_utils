@@ -7,6 +7,7 @@ mixin ColorModelsMixin {
   /// Returns the 32-bit integer ID (ARGB) of this color.
   int get value;
 
+  int get alphaInt => value.alphaInt;
   int get red => value.redInt;
   int get green => value.greenInt;
   int get blue => value.blueInt;

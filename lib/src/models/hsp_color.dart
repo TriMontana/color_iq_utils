@@ -3,10 +3,10 @@ import 'dart:math';
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/constants.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 
 /// A color model that represents color in terms of Hue, Saturation, and
@@ -36,6 +36,153 @@ class HspColor with ColorModelsMixin implements ColorSpacesIQ {
 
   /// Creates a new `HspColor`.
   const HspColor(this.h, this.s, this.p, [this.alpha = 1.0]);
+
+  /// Creates a 32-bit hex ID/ARGB from this class's properties.
+  /// This is a standalone static method for conversion.
+  static int toHex(final double h, final double s, final double p,
+      [final double alpha = 1.0]) {
+    // http://alienryderflex.com/hsp.html
+    double part = 0.0;
+    double r = 0.0;
+    double g = 0.0;
+    double b = 0.0;
+    final double minOverMax = 1.0 - s;
+
+    if (minOverMax > 0.0) {
+      double hLocal = h;
+      if (hLocal < 1.0 / 6.0) {
+        hLocal = 6.0 * (hLocal - 0.0 / 6.0);
+        part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
+        b = p /
+            sqrt(0.299 / minOverMax / minOverMax + 0.587 * part * part + 0.114);
+        r = (b) / minOverMax;
+        g = (b) + hLocal * ((r) - (b));
+      } else if (hLocal < 2.0 / 6.0) {
+        hLocal = 6.0 * (-hLocal + 2.0 / 6.0);
+        part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
+        b = p /
+            sqrt(0.587 / minOverMax / minOverMax + 0.299 * part * part + 0.114);
+        g = (b) / minOverMax;
+        r = (b) + hLocal * ((g) - (b));
+      } else if (hLocal < 3.0 / 6.0) {
+        hLocal = 6.0 * (hLocal - 2.0 / 6.0);
+        part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
+        r = p /
+            sqrt(0.587 / minOverMax / minOverMax + 0.114 * part * part + 0.299);
+        g = (r) / minOverMax;
+        b = (r) + hLocal * ((g) - (r));
+      } else if (hLocal < 4.0 / 6.0) {
+        hLocal = 6.0 * (-hLocal + 4.0 / 6.0);
+        part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
+        r = p /
+            sqrt(0.114 / minOverMax / minOverMax + 0.587 * part * part + 0.299);
+        b = (r) / minOverMax;
+        g = (r) + hLocal * ((b) - (r));
+      } else if (hLocal < 5.0 / 6.0) {
+        hLocal = 6.0 * (hLocal - 4.0 / 6.0);
+        part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
+        g = p /
+            sqrt(0.114 / minOverMax / minOverMax + 0.299 * part * part + 0.587);
+        b = (g) / minOverMax;
+        r = (g) + hLocal * ((b) - (g));
+      } else {
+        hLocal = 6.0 * (-hLocal + 6.0 / 6.0);
+        part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
+        g = p /
+            sqrt(0.299 / minOverMax / minOverMax + 0.114 * part * part + 0.587);
+        r = (g) / minOverMax;
+        b = (g) + hLocal * ((r) - (g));
+      }
+    } else {
+      double hLocal = h;
+      if (hLocal < 1.0 / 6.0) {
+        hLocal = 6.0 * (hLocal - 0.0 / 6.0);
+        r = sqrt(p *
+            p /
+            (0.299 +
+                0.587 * hLocal * hLocal +
+                0.114 * (1.0 - hLocal) * (1.0 - hLocal)));
+        g = sqrt(p *
+            p /
+            (0.299 / hLocal / hLocal +
+                0.587 +
+                0.114 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0)));
+        b = 0.0;
+      } else if (hLocal < 2.0 / 6.0) {
+        hLocal = 6.0 * (-hLocal + 2.0 / 6.0);
+        g = sqrt(p *
+            p /
+            (0.587 +
+                0.299 * hLocal * hLocal +
+                0.114 * (1.0 - hLocal) * (1.0 - hLocal)));
+        r = sqrt(p *
+            p /
+            (0.587 / hLocal / hLocal +
+                0.299 +
+                0.114 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0)));
+        b = 0.0;
+      } else if (hLocal < 3.0 / 6.0) {
+        hLocal = 6.0 * (hLocal - 2.0 / 6.0);
+        g = sqrt(p *
+            p /
+            (0.587 +
+                0.114 * hLocal * hLocal +
+                0.299 * (1.0 - hLocal) * (1.0 - hLocal)));
+        b = sqrt(p *
+            p /
+            (0.587 / hLocal / hLocal +
+                0.114 +
+                0.299 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0)));
+        r = 0.0;
+      } else if (hLocal < 4.0 / 6.0) {
+        hLocal = 6.0 * (-hLocal + 4.0 / 6.0);
+        b = sqrt(p *
+            p /
+            (0.114 +
+                0.587 * hLocal * hLocal +
+                0.299 * (1.0 - hLocal) * (1.0 - hLocal)));
+        g = sqrt(p *
+            p /
+            (0.114 / hLocal / hLocal +
+                0.587 +
+                0.299 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0)));
+        r = 0.0;
+      } else if (hLocal < 5.0 / 6.0) {
+        hLocal = 6.0 * (hLocal - 4.0 / 6.0);
+        b = sqrt(p *
+            p /
+            (0.114 +
+                0.299 * hLocal * hLocal +
+                0.587 * (1.0 - hLocal) * (1.0 - hLocal)));
+        r = sqrt(p *
+            p /
+            (0.114 / hLocal / hLocal +
+                0.299 +
+                0.587 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0)));
+        g = 0.0;
+      } else {
+        hLocal = 6.0 * (-hLocal + 6.0 / 6.0);
+        r = sqrt(p *
+            p /
+            (0.299 +
+                0.114 * hLocal * hLocal +
+                0.587 * (1.0 - hLocal) * (1.0 - hLocal)));
+        b = sqrt(p *
+            p /
+            (0.299 / hLocal / hLocal +
+                0.114 +
+                0.587 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0)));
+        g = 0.0;
+      }
+    }
+
+    final int alphaInt = (alpha * 255).round();
+    final int redInt = (r * 255).round().clamp(0, 255);
+    final int greenInt = (g * 255).round().clamp(0, 255);
+    final int blueInt = (b * 255).round().clamp(0, 255);
+
+    return (alphaInt << 24) | (redInt << 16) | (greenInt << 8) | blueInt;
+  }
 
   @override
   ColorIQ toColor() {
