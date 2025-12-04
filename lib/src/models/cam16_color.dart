@@ -2,7 +2,8 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
+import 'package:color_iq_utils/src/extensions/int_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
@@ -21,8 +22,7 @@ import 'package:material_color_utilities/material_color_utilities.dart' as mcu;
 /// - Colorfulness (M): The absolute colorfulness of the color.
 /// - Saturation (s): The colorfulness of the color relative to its own brightness.
 ///
-/// This class is immutable.
-class Cam16Color with ColorModelsMixin implements ColorSpacesIQ {
+class Cam16Color extends ColorSpacesIQ with ColorModelsMixin {
   final double hue;
   final double chroma;
   final double j;
@@ -31,49 +31,54 @@ class Cam16Color with ColorModelsMixin implements ColorSpacesIQ {
   final double s;
   final double alpha;
 
-  const Cam16Color(
-    this.hue,
-    this.chroma,
-    this.j,
-    this.q,
-    this.m,
-    this.s, [
-    this.alpha = 1.0,
-  ]);
+  const Cam16Color(this.hue, this.chroma, this.j, this.q, this.m, this.s,
+      {this.alpha = 1.0, required final int hexId})
+      : super(hexId);
+
+  Cam16Color.alt(this.hue, this.chroma, this.j, this.q, this.m, this.s,
+      {this.alpha = 1.0, final int? hexId})
+      : super(hexId ?? mcu.Cam16.fromJch(j, chroma, hue).toInt());
+
+  static Cam16Color fromInt(final int hexId) {
+    final mcu.Cam16 c1 = mcu.Cam16.fromInt(hexId);
+    return Cam16Color(c1.hue, c1.chroma, c1.j, c1.q, c1.m, c1.s,
+        alpha: hexId.a2, hexId: hexId);
+  }
 
   @override
   ColorIQ toColor() {
     return ColorIQ(value);
   }
 
-  @override
-  int get value => toColor().value;
-
   mcu.Cam16 get toMcuCam16 => mcu.Cam16.fromInt(value);
 
   @override
   Cam16Color darken([final double amount = 20]) {
-    return Cam16Color(hue, chroma, max(0, j - amount), q, m, s, alpha);
+    return Cam16Color.alt(hue, chroma, max(0, j - amount), q, m, s,
+        alpha: alpha);
   }
 
   @override
   Cam16Color saturate([final double amount = 25]) {
-    return Cam16Color(hue, chroma + amount, j, q, m, s, alpha);
+    return Cam16Color.alt(hue, chroma + amount, j, q, m, s, alpha: alpha);
   }
 
   @override
   Cam16Color desaturate([final double amount = 25]) {
-    return Cam16Color(hue, max(0, chroma - amount), j, q, m, s, alpha);
+    return Cam16Color.alt(hue, max(0, chroma - amount), j, q, m, s,
+        alpha: alpha);
   }
 
   @override
   Cam16Color intensify([final double amount = 10]) {
-    return Cam16Color(hue, chroma, j, q, m, min(100, s + amount), alpha);
+    return Cam16Color.alt(hue, chroma, j, q, m, min(100, s + amount),
+        alpha: alpha);
   }
 
   @override
   Cam16Color deintensify([final double amount = 10]) {
-    return Cam16Color(hue, chroma, j, q, m, max(0, s - amount), alpha);
+    return Cam16Color.alt(hue, chroma, j, q, m, max(0, s - amount),
+        alpha: alpha);
   }
 
   @override
@@ -117,28 +122,27 @@ class Cam16Color with ColorModelsMixin implements ColorSpacesIQ {
       }
     }
 
-    return Cam16Color(
+    return Cam16Color.alt(
       (lerpDouble(h1, h2, t) % 360 + 360) % 360,
       lerpDouble(chroma, otherCam16.chroma, t),
       lerpDouble(j, otherCam16.j, t),
       lerpDouble(q, otherCam16.q, t),
       lerpDouble(m, otherCam16.m, t),
       lerpDouble(s, otherCam16.s, t),
-      lerpDouble(alpha, otherCam16.alpha, t),
+      alpha: lerpDouble(alpha, otherCam16.alpha, t),
     );
   }
 
   @override
   Cam16Color lighten([final double amount = 20]) {
-    return Cam16Color(hue, chroma, min(100, j + amount), q, m, s, alpha);
+    return Cam16Color.alt(hue, chroma, min(100, j + amount), q, m, s,
+        alpha: alpha);
   }
 
   @override
   Cam16Color brighten([final double amount = 20]) {
     return toColor().brighten(amount).toCam16Color();
   }
-
-
 
   @override
   Cam16Color fromHct(final HctColor hct) => hct.toColor().toCam16Color();
@@ -164,14 +168,14 @@ class Cam16Color with ColorModelsMixin implements ColorSpacesIQ {
     final double? s,
     final double? alpha,
   }) {
-    return Cam16Color(
+    return Cam16Color.alt(
       hue ?? this.hue,
       chroma ?? this.chroma,
       j ?? this.j,
       q ?? this.q,
       m ?? this.m,
       s ?? this.s,
-      alpha ?? this.alpha,
+      alpha: alpha ?? this.alpha,
     );
   }
 
@@ -205,9 +209,6 @@ class Cam16Color with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   double get luminance => toColor().luminance;
-
-  @override
-  Brightness get brightness => toColor().brightness;
 
   @override
   bool get isDark => brightness == Brightness.dark;

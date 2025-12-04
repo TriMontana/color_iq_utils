@@ -1,5 +1,5 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -32,7 +32,7 @@ void main() {
     });
 
     test('toCssString OKLAB', () {
-      const OkLabColor c = OkLabColor(0.5, 0.1, -0.1);
+      final OkLabColor c = OkLabColor.alt(0.5, 0.1, -0.1);
       expect(
         c.toCssString(space: CssColorSpace.oklab),
         equals('oklab(0.5 0.1 -0.1)'),

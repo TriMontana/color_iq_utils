@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
@@ -23,12 +23,16 @@ import 'package:color_iq_utils/src/utils/color_math.dart';
 /// The `a` and `b` axes are theoretically unbounded but are practically
 /// limited by the gamut of real-world colors.
 ///
-class HunterLabColor with ColorModelsMixin implements ColorSpacesIQ {
+class HunterLabColor extends ColorSpacesIQ with ColorModelsMixin {
   final double l;
   final double aLab;
   final double bLab;
 
-  const HunterLabColor(this.l, this.aLab, this.bLab);
+  const HunterLabColor(this.l, this.aLab, this.bLab, {required final int hexId})
+      : super(hexId);
+
+  HunterLabColor.alt(this.l, this.aLab, this.bLab, {final int? hexId})
+      : super(hexId ?? toARGB(l, aLab, bLab));
 
   /// A stand-alone static method to create a 32-bit hexID/ARGB from l, aLab, bLab.
   static int toARGB(final double l, final double aLab, final double bLab) {
@@ -103,19 +107,19 @@ class HunterLabColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   HunterLabColor darken([final double amount = 20]) {
-    return HunterLabColor(max(0, l - amount), aLab, bLab);
+    return HunterLabColor.alt(max(0, l - amount), aLab, bLab);
   }
 
   @override
   HunterLabColor saturate([final double amount = 25]) {
     final double scale = 1.0 + (amount / 100.0);
-    return HunterLabColor(l, aLab * scale, bLab * scale);
+    return HunterLabColor.alt(l, aLab * scale, bLab * scale);
   }
 
   @override
   HunterLabColor desaturate([final double amount = 25]) {
     final double scale = 1.0 - (amount / 100.0);
-    return HunterLabColor(l, aLab * scale, bLab * scale);
+    return HunterLabColor.alt(l, aLab * scale, bLab * scale);
   }
 
   @override
@@ -159,7 +163,7 @@ class HunterLabColor with ColorModelsMixin implements ColorSpacesIQ {
         other is HunterLabColor ? other : other.toColor().toHunterLab();
     if (t == 1.0) return otherLab;
 
-    return HunterLabColor(
+    return HunterLabColor.alt(
       lerpDouble(l, otherLab.l, t),
       lerpDouble(aLab, otherLab.aLab, t),
       lerpDouble(bLab, otherLab.bLab, t),
@@ -168,12 +172,12 @@ class HunterLabColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   HunterLabColor lighten([final double amount = 20]) {
-    return HunterLabColor(min(100, l + amount), aLab, bLab);
+    return HunterLabColor.alt(min(100, l + amount), aLab, bLab);
   }
 
   @override
   HunterLabColor brighten([final double amount = 20]) {
-    return toColor().brighten(amount).toHunterLab();
+    return HunterLabColor.alt(l, max(100, aLab + amount), bLab);
   }
 
   @override
@@ -191,8 +195,9 @@ class HunterLabColor with ColorModelsMixin implements ColorSpacesIQ {
   ColorTemperature get temperature => toColor().temperature;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  HunterLabColor copyWith({final double? l, final double? a, final double? b}) {
-    return HunterLabColor(l ?? this.l, a ?? aLab, b ?? bLab);
+  HunterLabColor copyWith(
+      {final double? lStar, final double? aStar, final double? bStar}) {
+    return HunterLabColor.alt(lStar ?? l, aStar ?? aLab, bStar ?? bLab);
   }
 
   @override

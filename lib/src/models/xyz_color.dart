@@ -36,36 +36,33 @@ class XyzColor extends ColorSpacesIQ with ColorModelsMixin {
     return XyzColor(lst[0], lst[1], lst[2], hexId: hexId);
   }
 
-  static ColorIQ xyzToColor(final double x, final double y, final double z) {
-    argbFromXyz(x, y, z);
+  /// Converts this color to XYZ.
+  static XyzColor xyxFromRgb(final int red, final int green, final int blue) =>
+      xyxFromRgbLinearized(
+          linearized(red), linearized(green), linearized(blue));
 
-    return ColorIQ.fromInt();
+  /// Converts this color to XYZ.
+  static XyzColor xyxFromRgbLinearized(final double redLinearized,
+      final double greenLinearized, final double blueLinearized) {
+    final List<double> lst = matrixMultiply(
+        <double>[redLinearized, greenLinearized, blueLinearized],
+        srgbToXyzMatrix);
+    return XyzColor(lst[0], lst[1], lst[2],
+        hexId: argbFromXyz(lst[0], lst[1], lst[2]));
+  }
+
+  static ColorIQ xyzToColor(final double x, final double y, final double z) {
+    return ColorIQ(argbFromXyz(x, y, z));
+  }
+
+  static int xyzToHexId(final double x, final double y, final double z) {
+    return argbFromXyz(x, y, z);
   }
 
   LabColor toLab() {
-    const double refX = 95.047;
-    const double refY = 100.000;
-    const double refZ = 108.883;
-
-    double xTemp = x / refX;
-    double yTemp = y / refY;
-    double zTemp = z / refZ;
-
-    xTemp = (xTemp > 0.008856)
-        ? pow(xTemp, 1 / 3).toDouble()
-        : (7.787 * xTemp) + (16 / 116);
-    yTemp = (yTemp > 0.008856)
-        ? pow(yTemp, 1 / 3).toDouble()
-        : (7.787 * yTemp) + (16 / 116);
-    zTemp = (zTemp > 0.008856)
-        ? pow(zTemp, 1 / 3).toDouble()
-        : (7.787 * zTemp) + (16 / 116);
-
-    final double l = (116 * yTemp) - 16;
-    final double a = 500 * (xTemp - yTemp);
-    final double b = 200 * (yTemp - zTemp);
-
-    return LabColor.alt(l, a, b);
+    final List<double> lst = labFromXYZ(x, y, z);
+    return LabColor(lst[0], lst[1], lst[2],
+        hexId: argbFromLab(lst[0], lst[1], lst[2]));
   }
 
   @override
@@ -159,9 +156,6 @@ class XyzColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   XyzColor lerp(final ColorSpacesIQ other, final double t) =>
       (toColor().lerp(other, t) as ColorIQ).toXyz();
-
-  @override
-  HctColor toHct() => HctColor.fromInt(value);
 
   @override
   XyzColor fromHct(final HctColor hct) => hct.toColor().toXyz();
@@ -308,9 +302,6 @@ class XyzColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
-
-  @override
   Map<String, dynamic> toJson() {
     return <String, dynamic>{'type': 'XyzColor', 'x': x, 'y': y, 'z': z};
   }
@@ -318,4 +309,9 @@ class XyzColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   String toString() =>
       'XyzColor(x: ${x.toStringAsFixed(2)}, y: ${y.toStringAsFixed(2)}, z: ${z.toStringAsFixed(2)})';
+
+  @override
+  ColorIQ toColor() {
+    return ColorIQ(value);
+  }
 }

@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
@@ -331,13 +331,13 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   CmykColor adjustHue([final double amount = 20]) {
-    final HctColor hct = toHct();
+    final HctColor hct = toHctColor();
     return hct.copyWith(hue: (hct.hue + amount) % 360).toCMYK();
   }
 
   @override
   CmykColor get complementary {
-    return CmykColor.fromColorSpacesIQ(toHct().flipHue());
+    return CmykColor.fromColorSpacesIQ(toHctColor().flipHue());
   }
 
   @override
@@ -380,7 +380,7 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   List<CmykColor> analogous({final int count = 5, final double offset = 30}) {
-    final HctColor hct = toHct();
+    final HctColor hct = toHctColor();
     return List<CmykColor>.generate(count, (final int i) {
       final double hueShift = (i - (count ~/ 2)) * offset;
       return hct.copyWith(hue: (hct.hue + hueShift) % 360).toCMYK();
@@ -389,7 +389,7 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   List<CmykColor> square() {
-    final HctColor hct = toHct();
+    final HctColor hct = toHctColor();
     return <double>[0, 90, 180, 270]
         .map(
           (final double hue) =>
@@ -400,7 +400,7 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   List<CmykColor> tetrad({final double offset = 60}) {
-    final HctColor hct = toHct();
+    final HctColor hct = toHctColor();
     const double second = 180;
     return <double>[0, offset, second, (second + offset) % 360]
         .map(

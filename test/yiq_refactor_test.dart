@@ -1,5 +1,4 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:color_iq_utils/src/constants.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -19,7 +18,7 @@ void main() {
     });
 
     test('lerp interpolates correctly', () {
-      const YiqColor start = yiqBlack; // Black
+      final YiqColor start = YiqColor.alt(0.5, 0.0, 0.0); // Gray
       final YiqColor end = YiqColor.alt(1.0, 0.0, 0.0); // White
       final YiqColor mid = start.lerp(end, 0.5);
 

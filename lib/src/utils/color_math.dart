@@ -19,9 +19,42 @@ enum Gamut { sRGB, displayP3, rec2020, adobeRgb, proPhotoRgb }
 // -------------------------------------------------------------------
 // ARGB & Component Extraction
 // -------------------------------------------------------------------
+typedef RgbaInts = ({int alpha, int red, int green, int blue});
+typedef RgbaDoubles = ({double a, double r, double g, double b});
+
 /// Returns the alpha, red, green, and blue components of a color in ARGB format.
 List<int> argbToComponents(final int argb) {
   return <int>[argb >> 24 & 255, argb >> 16 & 255, argb >> 8 & 255, argb & 255];
+}
+
+/// Returns the alpha, red, green, and blue components of a color in ARGB format.
+///
+/// This is a convenience method that returns a record with named fields.
+///
+/// [argb] is the 32-bit integer representing the color.
+///
+/// Returns a record [RgbaInts].
+RgbaInts hexIdToComponents(final int argb) {
+  final int alpha = (argb >> 24) & 0xFF;
+  final int red = (argb >> 16) & 0xFF;
+  final int green = (argb >> 8) & 0xFF;
+  final int blue = argb & 0xFF;
+  return (alpha: alpha, red: red, green: green, blue: blue);
+}
+
+/// Returns the normalized alpha, red, green, and blue components of a color in ARGB format.
+///
+/// This is a convenience method that returns a record with named fields.
+///
+/// [argb] is the 32-bit integer representing the color.
+///
+/// Returns a record [RgbaDoubles] where each component is between 0.0 and 1.0.
+RgbaDoubles hexIdToNormalizedComponents(final int argb) {
+  final double an = (((argb >> 24) & 0xFF) / 255.0).clamp(0.0, 1.0);
+  final double rn = (((argb >> 16) & 0xFF) / 255.0).clamp(0.0, 1.0);
+  final double gn = (((argb >> 8) & 0xFF) / 255.0).clamp(0.0, 1.0);
+  final double bn = (((argb) & 0xFF) / 255.0).clamp(0.0, 1.0);
+  return (a: an, r: rn, g: gn, b: bn);
 }
 
 /// Returns the alpha component of a color in ARGB format.
@@ -129,18 +162,41 @@ int floatToInt8Hex(
 /// than most other linearize functions
 ///
 /// See <https://en.wikipedia.org/wiki/Relative_luminance>.
+/// See <https://www.w3.org/TR/WCAG20/#relativeluminancedef>
 double computeLuminance(final double r, final double g, final double b) {
 // assert(colorSpace != ColorSpace.extendedSRGB);
-// See <https://www.w3.org/TR/WCAG20/#relativeluminancedef>
   final double R =
       linearizeColorComponentDart(r.assertRange0to1('computeLuminance-r'));
   final double G =
       linearizeColorComponentDart(g.assertRange0to1('computeLuminance-g'));
   final double B =
       linearizeColorComponentDart(b.assertRange0to1('computeLuminance-b'));
-  return 0.2126 * R + 0.7152 * G + 0.0722 * B;
+  return computeLuminanceViaLinearized(R, G, B);
 }
 
+/// Returns a brightness value between 0 for darkest and 1 for lightest.
+///
+/// Represents the relative luminance of the color. This value is computationally
+/// expensive to calculate.  Note that this uses a different cutoff
+/// than most other linearize functions
+///
+/// See <https://en.wikipedia.org/wiki/Relative_luminance>.
+/// See <https://www.w3.org/TR/WCAG20/#relativeluminancedef>
+double computeLuminanceViaLinearized(final double redLinearized,
+    final double greenLinearized, final double blueLinearized) {
+  return 0.2126 * redLinearized +
+      0.7152 * greenLinearized +
+      0.0722 * blueLinearized;
+}
+
+/// Returns a brightness value between 0 for darkest and 1 for lightest.
+///
+/// Represents the relative luminance of the color. This value is computationally
+/// expensive to calculate.  Note that this uses a different cutoff
+/// than most other linearize functions
+///
+/// See <https://en.wikipedia.org/wiki/Relative_luminance>.
+/// See <https://www.w3.org/TR/WCAG20/#relativeluminancedef>
 double computeLuminanceViaInts(final int red, final int green, final int blue) {
   return computeLuminance(red.normalized, green.normalized, blue.normalized);
 }
@@ -179,10 +235,10 @@ double linearToSrgb(final double linearComponent) {
   // sRGB standard defines the inverse of the linearization function.
   if (linearComponent <= 0.0031308) {
     // Inverse linear segment: c * 12.92
-    return linearComponent * 12.92;
+    return (linearComponent * 12.92).clamp(0.0, 1.0);
   } else {
     // Inverse non-linear segment: 1.055 * c^(1/2.4) - 0.055
-    return (1.055 * pow(linearComponent, 1.0 / 2.4) - 0.055).toDouble();
+    return (1.055 * pow(linearComponent, 1.0 / 2.4) - 0.055).clamp(0.0, 1.0);
   }
 }
 
@@ -564,6 +620,51 @@ int argbFromLab(final double l, final double a, final double b) {
   final double y = yNormalized * kWhitePointD65[1];
   final double z = zNormalized * kWhitePointD65[2];
   return argbFromXyz(x, y, z);
+}
+
+/// Converts a color from ARGB representation to L*a*b*
+/// representation.
+///
+/// [argb] the ARGB representation of a color
+/// Returns a Lab object representing the color
+/// CREDIT: Material Color Utilities
+List<double> labFromArgb(final int argb) {
+  final double linearR = linearized(redFromArgb(argb));
+  final double linearG = linearized(greenFromArgb(argb));
+  final double linearB = linearized(blueFromArgb(argb));
+  final double x = srgbToXyzMatrix[0][0] * linearR +
+      srgbToXyzMatrix[0][1] * linearG +
+      srgbToXyzMatrix[0][2] * linearB;
+  final double y = srgbToXyzMatrix[1][0] * linearR +
+      srgbToXyzMatrix[1][1] * linearG +
+      srgbToXyzMatrix[1][2] * linearB;
+  final double z = srgbToXyzMatrix[2][0] * linearR +
+      srgbToXyzMatrix[2][1] * linearG +
+      srgbToXyzMatrix[2][2] * linearB;
+  final double xNormalized = x / kWhitePointD65[0];
+  final double yNormalized = y / kWhitePointD65[1];
+  final double zNormalized = z / kWhitePointD65[2];
+  final double fx = labF(xNormalized);
+  final double fy = labF(yNormalized);
+  final double fz = labF(zNormalized);
+  final double l = 116.0 * fy - 16;
+  final double a = 500.0 * (fx - fy);
+  final double b = 200.0 * (fy - fz);
+  return <double>[l, a, b];
+}
+
+/// CREDIT: Material Color Utilities
+List<double> labFromXYZ(final double x, final double y, final double z) {
+  final double xNormalized = x / kWhitePointD65[0];
+  final double yNormalized = y / kWhitePointD65[1];
+  final double zNormalized = z / kWhitePointD65[2];
+  final double fx = labF(xNormalized);
+  final double fy = labF(yNormalized);
+  final double fz = labF(zNormalized);
+  final double l = 116.0 * fy - 16;
+  final double a = 500.0 * (fx - fy);
+  final double b = 200.0 * (fy - fz);
+  return <double>[l, a, b];
 }
 
 /// A helper function for converting from CIELAB to CIEXYZ.

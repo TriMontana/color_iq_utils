@@ -1,5 +1,5 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -37,7 +37,7 @@ void main() {
     });
 
     test('OkLabColor darken', () {
-      const OkLabColor oklab = OkLabColor(0.5, 0.1, 0.1);
+      final OkLabColor oklab = OkLabColor.alt(0.5, 0.1, 0.1);
       final OkLabColor darkened = oklab.darken(20);
       expect(darkened.l, closeTo(0.3, 0.01));
       print('OkLabColor darken: $darkened');

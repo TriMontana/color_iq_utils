@@ -11,3 +11,6 @@ dependencies:
   color_iq_utils:
     path: ../
   meta: ^1.15.0
+
+dependency_overrides:
+  material_color_utilities: ^0.13.0

@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
@@ -21,7 +21,7 @@ import 'package:material_color_utilities/hct/cam16.dart';
 ///
 /// This model is based on the HSP color model described by Darel Rex Finley.
 /// More details can be found at http://alienryderflex.com/hsp.html
-class HspColor with ColorModelsMixin implements ColorSpacesIQ {
+class HspColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The hue component of the color, ranging from 0.0 to 1.0.
   final double h;
 
@@ -35,7 +35,13 @@ class HspColor with ColorModelsMixin implements ColorSpacesIQ {
   final double alpha;
 
   /// Creates a new `HspColor`.
-  const HspColor(this.h, this.s, this.p, [this.alpha = 1.0]);
+  const HspColor(this.h, this.s, this.p,
+      {this.alpha = 1.0, required final int hexId})
+      : super(hexId);
+
+  /// Creates a new `HspColor`.
+  HspColor.alt(this.h, this.s, this.p, {this.alpha = 1.0, final int? hexId})
+      : super(hexId ?? toHex(h, s, p, alpha));
 
   /// Creates a 32-bit hex ID/ARGB from this class's properties.
   /// This is a standalone static method for conversion.
@@ -358,37 +364,37 @@ class HspColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   HspColor darken([final double amount = 20]) {
-    return HspColor(h, s, max(0.0, p - amount / 100), alpha);
+    return HspColor.alt(h, s, max(0.0, p - amount / 100), alpha: alpha);
   }
 
   @override
   HspColor brighten([final double amount = 20]) {
-    return HspColor(h, s, min(1.0, p + amount / 100), alpha);
+    return HspColor.alt(h, s, min(1.0, p + amount / 100), alpha: alpha);
   }
 
   @override
   HspColor lighten([final double amount = 20]) {
-    return HspColor(h, s, min(1.0, p + amount / 100), alpha);
+    return HspColor.alt(h, s, min(1.0, p + amount / 100), alpha: alpha);
   }
 
   @override
   HspColor saturate([final double amount = 25]) {
-    return HspColor(h, min(1.0, s + amount / 100), p, alpha);
+    return HspColor.alt(h, min(1.0, s + amount / 100), p, alpha: alpha);
   }
 
   @override
   HspColor desaturate([final double amount = 25]) {
-    return HspColor(h, max(0.0, s - amount / 100), p, alpha);
+    return HspColor.alt(h, max(0.0, s - amount / 100), p, alpha: alpha);
   }
 
   @override
   HspColor intensify([final double amount = 10]) {
-    return HspColor(h, min(1.0, s + amount / 100), p, alpha);
+    return HspColor.alt(h, min(1.0, s + amount / 100), p, alpha: alpha);
   }
 
   @override
   HspColor deintensify([final double amount = 10]) {
-    return HspColor(h, max(0.0, s - amount / 100), p, alpha);
+    return HspColor.alt(h, max(0.0, s - amount / 100), p, alpha: alpha);
   }
 
   @override
@@ -420,16 +426,13 @@ class HspColor with ColorModelsMixin implements ColorSpacesIQ {
         other is HspColor ? other : other.toColor().toHsp();
     if (t == 1.0) return otherHsp;
 
-    return HspColor(
+    return HspColor.alt(
       lerpHue(h, otherHsp.h, t),
       lerpDouble(s, otherHsp.s, t),
       lerpDouble(p, otherHsp.p, t),
-      lerpDouble(alpha, otherHsp.alpha, t),
+      alpha: lerpDouble(alpha, otherHsp.alpha, t),
     );
   }
-
-  @override
-  HctColor toHct() => toColor().toHct();
 
   @override
   HspColor fromHct(final HctColor hct) => hct.toColor().toHsp();
@@ -452,7 +455,8 @@ class HspColor with ColorModelsMixin implements ColorSpacesIQ {
     final double? p,
     final double? alpha,
   }) {
-    return HspColor(h ?? this.h, s ?? this.s, p ?? this.p, alpha ?? this.alpha);
+    return HspColor.alt(h ?? this.h, s ?? this.s, p ?? this.p,
+        alpha: alpha ?? this.alpha);
   }
 
   @override

@@ -2,9 +2,10 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
+import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/hsv_color.dart';
 import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
@@ -32,6 +33,10 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
       : super(hexId);
   HsbColor.alt(this.h, this.s, this.b, {final int? hexId})
       : super(hexId ?? HsbColor.argbFromHsb(h, s, b));
+
+  static ColorSpacesIQ fromInt(final int hexId) {
+    throw UnimplementedError();
+  }
 
   /// Creates a 32-bit ARGB hex value from HSB components.
   ///
@@ -83,7 +88,7 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   ColorIQ toColor() {
     // HSB is the same as HSV, just B instead of V
-    return HsvColor(h, s, b).toColor();
+    return HsvColor.alt(h, s, b).toColor();
   }
 
   @override
@@ -91,17 +96,17 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   HsbColor darken([final double amount = 20]) {
-    return HsbColor(h, s, max(0.0, b - amount / 100));
+    return HsbColor.alt(h, s, max(0.0, b - amount / 100));
   }
 
   @override
   HsbColor brighten([final double amount = 20]) {
-    return HsbColor(h, s, min(1.0, b + amount / 100));
+    return HsbColor.alt(h, s, min(1.0, b + amount / 100));
   }
 
   @override
   HsbColor saturate([final double amount = 25]) {
-    return HsbColor(h, min(1.0, s + amount / 100), b);
+    return HsbColor.alt(h, min(1.0, s + amount / 100), b);
   }
 
   @override
@@ -116,7 +121,7 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   HsbColor deintensify([final double amount = 10]) {
-    return HsbColor(h, max(0.0, s - amount / 100), b);
+    return HsbColor.alt(h, max(0.0, s - amount / 100), b);
   }
 
   @override
@@ -148,7 +153,7 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
         other is HsbColor ? other : other.toColor().toHsb();
     if (t == 1.0) return otherHsb;
 
-    return HsbColor(
+    return HsbColor.alt(
       lerpHue(h, otherHsb.h, t),
       lerpDouble(s, otherHsb.s, t),
       lerpDouble(b, otherHsb.b, t),
@@ -157,7 +162,7 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   HsbColor lighten([final double amount = 20]) {
-    return HsbColor(h, s, min(1.0, b + amount / 100));
+    return HsbColor.alt(h, s, min(1.0, b + amount / 100));
   }
 
   @override
@@ -308,4 +313,9 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   Cam16 toCam16() => Cam16.fromInt(value);
+
+  @override
+  ColorSpacesIQ fromHct(final HctColor hct) {
+    return HsbColor.fromInt(hct.toInt());
+  }
 }

@@ -31,7 +31,7 @@ void main() {
     });
 
     test('OkLchColor saturate/desaturate', () {
-      const OkLchColor oklch = OkLchColor(0.5, 0.1, 0);
+      final OkLchColor oklch = OkLchColor.alt(0.5, 0.1, 0);
       final OkLchColor saturated = oklch.saturate(25);
       // 0.1 + 25/100 = 0.35
       expect(saturated.c, closeTo(0.35, 0.01));
@@ -60,7 +60,7 @@ void main() {
     });
 
     test('HsluvColor saturate/desaturate', () {
-      const HsluvColor hsluv = HsluvColor(0, 50, 50);
+      final HsluvColor hsluv = HsluvColor.alt(0, 50, 50);
       final HsluvColor saturated = hsluv.saturate(25);
       expect(saturated.s, closeTo(75, 0.01));
 

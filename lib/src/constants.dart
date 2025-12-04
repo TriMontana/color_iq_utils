@@ -1,34 +1,10 @@
-import 'package:color_iq_utils/color_iq_utils.dart';
-
-const int hxBlack = 0xFF000000;
-final ColorIQ cBlack = ColorIQ(hxBlack);
-const HslColor kHslBlack = HslColor(0, 0, 0, hexId: hxBlack);
-const YiqColor yiqBlack = YiqColor(0.0, 0.0, 0.0, val: hxBlack);
-const YuvColor yuvBlack = YuvColor(0.0, 0.0, 0.0, val: hxBlack); // Black
-const LuvColor luvBlack = LuvColor(0, 0, 0, hexId: hxBlack);
-const int hxWhite = 0xFFFFFFFF;
-final ColorIQ cWhite = ColorIQ(hxWhite);
-const HslColor kHslWhite = HslColor(0, 0, 1.0, hexId: hxWhite);
-const CmykColor cmykWhite = CmykColor(0, 0, 0, 0, value: hxWhite); // White
-const int hxRed = 0xFFFF0000;
-final ColorIQ cRed = ColorIQ(hxRed);
-const HslColor kHslRed = HslColor(0, 1.0, 0.5, hexId: hxRed); // Red
-const HsvColor kHsvRed = HsvColor(0, 1.0, 1.0, hexId: hxRed);
-const int hxGreen = 0xFF008000;
-final ColorIQ cGreen = ColorIQ(hxGreen);
-const int hxLime = 0xFF00FF00; // same as ElectricLime
-final ColorIQ cLime = ColorIQ(hxLime);
-const HsvColor hsvGreen = HsvColor(120, 1.0, 1.0, hexId: hxGreen);
-
-final ColorIQ cGray = ColorIQ(0xFF808080);
-final ColorIQ cBrown = ColorIQ(0xFFA52A2A);
-
 /// That constant `e = 216.0 / 24389.0` is the CIE L*a*b* epsilon threshold, usually called:
 /// "epsilon" (ε)**
 /// It is the breakpoint used in the CIE 1976 L*a*b* formulas to distinguish
 /// between the linear and cubic branches of the transfer function.
 const double kEpsilon = 216.0 / 24389.0;
 const double kKappa = 24389.0 / 27.0;
+const double kDelta = 6.0 / 29.0;
 const double kMinTone = 0.0;
 const double kMaxTone = 100.0;
 const double kMinChroma = 0.0;
@@ -85,3 +61,4 @@ const String kDollarSign = '\u{0024}'; // $
 // ---------------------------------------- Names ----------------------------------------
 const String kMagenta = 'Magenta';
 const String kRed = 'Red';
+const String kYellow = 'Yellow';

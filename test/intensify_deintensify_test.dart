@@ -31,8 +31,8 @@ void main() {
       final ColorIQ intensified = color.intensify(20);
 
       // Convert back to HCT to verify properties
-      final HctColor originalHct = color.toHct();
-      final HctColor intensifiedHct = intensified.toHct();
+      final HctColor originalHct = color.toHctColor();
+      final HctColor intensifiedHct = intensified.toHctColor();
 
       expect(intensifiedHct.chroma, greaterThan(originalHct.chroma));
       // Tone might not always strictly decrease due to gamut mapping,
@@ -45,8 +45,8 @@ void main() {
       final ColorIQ color = ColorIQ.fromARGB(255, 100, 150, 200);
       final ColorIQ deintensified = color.deintensify(20);
 
-      final HctColor originalHct = color.toHct();
-      final HctColor deintensifiedHct = deintensified.toHct();
+      final HctColor originalHct = color.toHctColor();
+      final HctColor deintensifiedHct = deintensified.toHctColor();
 
       expect(deintensifiedHct.chroma, lessThan(originalHct.chroma));
       expect(deintensifiedHct.tone, greaterThan(originalHct.tone));

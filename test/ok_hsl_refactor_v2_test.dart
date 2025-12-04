@@ -18,7 +18,7 @@ void main() {
     });
 
     test('accented increases saturation', () {
-      const OkHslColor color = OkHslColor(0.0, 0.5, 0.5);
+      final OkHslColor color = OkHslColor.alt(0.0, 0.5, 0.5);
       final OkHslColor accented = color.accented(10);
 
       expect(accented.s, greaterThan(color.s));

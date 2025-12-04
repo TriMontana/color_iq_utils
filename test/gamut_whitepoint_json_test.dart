@@ -1,5 +1,5 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:test/test.dart';
 
@@ -116,7 +116,7 @@ void main() {
     });
 
     test('Rec2020Color toJson', () {
-      const Rec2020Color rec2020 = Rec2020Color(0.1, 0.2, 0.3);
+      final Rec2020Color rec2020 = Rec2020Color.alt(0.1, 0.2, 0.3);
       final Map<String, dynamic> json = rec2020.toJson();
       expect(json['type'], 'Rec2020Color');
       expect(json['r'], 0.1);

@@ -1,5 +1,5 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:test/test.dart';
@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 void main() {
   group('New Mandatory Methods Tests', () {
     test('Random Color Generation', () {
-      final ColorIQ color = ColorIQ(0xFF000000);
+      final ColorIQ color = cBlack;
       final ColorSpacesIQ random = color.random;
       expect(random, isA<ColorIQ>());
       expect(random.value, isNot(0xFF000000)); // Unlikely to be black again

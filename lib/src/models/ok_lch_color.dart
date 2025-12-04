@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
@@ -21,17 +21,26 @@ import 'package:color_iq_utils/src/utils/color_math.dart';
 /// [c] is the chroma (distance from the neutral axis, similar to saturation).
 /// [h] is the hue angle (0-360).
 /// [alpha] is the transparency (0-1).
-class OkLchColor with ColorModelsMixin implements ColorSpacesIQ {
+class OkLchColor extends ColorSpacesIQ with ColorModelsMixin {
   final double l;
   final double c;
   final double h;
   final double alpha;
 
-  const OkLchColor(this.l, this.c, this.h, [this.alpha = 1.0])
+  const OkLchColor(this.l, this.c, this.h,
+      {this.alpha = 1.0, required final int hexId})
       : assert(l >= 0 && l <= 1, 'L must be between 0 and 1'),
         assert(c >= 0, 'C must be non-negative'),
         assert(h >= 0 && h <= 360, 'H must be between 0 and 360'),
-        assert(alpha >= 0 && alpha <= 1, 'Alpha must be between 0 and 1');
+        assert(alpha >= 0 && alpha <= 1, 'Alpha must be between 0 and 1'),
+        super(hexId);
+
+  OkLchColor.alt(this.l, this.c, this.h, {this.alpha = 1.0, final int? hexId})
+      : assert(l >= 0 && l <= 1, 'L must be between 0 and 1'),
+        assert(c >= 0, 'C must be non-negative'),
+        assert(h >= 0 && h <= 360, 'H must be between 0 and 360'),
+        assert(alpha >= 0 && alpha <= 1, 'Alpha must be between 0 and 1'),
+        super(hexId ?? toHex(l, c, h, alpha));
 
   /// Creates a 32-bit ARGB hex value from Oklch values.
   ///
@@ -40,14 +49,15 @@ class OkLchColor with ColorModelsMixin implements ColorSpacesIQ {
   static int toHex(
       final double l, final double c, final double h, final double alpha) {
     final double hRad = h * pi / 180;
-    final OkLabColor okLab = OkLabColor(l, c * cos(hRad), c * sin(hRad), alpha);
+    final OkLabColor okLab =
+        OkLabColor.alt(l, c * cos(hRad), c * sin(hRad), alpha: alpha);
     return okLab.toColor().value;
   }
 
   @override
   OkLabColor toOkLab() {
     final double hRad = h * pi / 180;
-    return OkLabColor(l, c * cos(hRad), c * sin(hRad), alpha);
+    return OkLabColor.alt(l, c * cos(hRad), c * sin(hRad), alpha: alpha);
   }
 
   @override
@@ -58,17 +68,14 @@ class OkLchColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   OkLchColor darken([final double amount = 20]) {
-    return OkLchColor(max(0.0, l - amount / 100), c, h, alpha);
+    return OkLchColor.alt(max(0.0, l - amount / 100), c, h, alpha: alpha);
   }
-
-  @override
-  List<double> get linearSrgb => toColor().linearSrgb;
 
   @override
   OkLchColor get inverted => toColor().inverted.toOkLch();
 
   @override
-  OkLchColor get grayscale => OkLchColor(l, 0.0, h, alpha);
+  OkLchColor get grayscale => OkLchColor.alt(l, 0.0, h, alpha: alpha);
 
   @override
   OkLchColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
@@ -97,25 +104,25 @@ class OkLchColor with ColorModelsMixin implements ColorSpacesIQ {
     } else if (thisC < kAchromaticThreshold && otherC < kAchromaticThreshold) {
       newHue = h;
     } else {
-      return OkLchColor(
+      return OkLchColor.alt(
         lerpDouble(l, otherOkLch.l, t),
         lerpDouble(c, otherOkLch.c, t),
         lerpHue(h, otherOkLch.h, t),
-        lerpDouble(alpha, otherOkLch.alpha, t),
+        alpha: lerpDouble(alpha, otherOkLch.alpha, t),
       );
     }
 
-    return OkLchColor(
+    return OkLchColor.alt(
       lerpDouble(l, otherOkLch.l, t),
       lerpDouble(c, otherOkLch.c, t),
       newHue,
-      lerpDouble(alpha, otherOkLch.alpha, t),
+      alpha: lerpDouble(alpha, otherOkLch.alpha, t),
     );
   }
 
   @override
   OkLchColor lighten([final double amount = 20]) {
-    return OkLchColor(min(1.0, l + amount / 100), c, h, alpha);
+    return OkLchColor.alt(min(1.0, l + amount / 100), c, h, alpha: alpha);
   }
 
   @override
@@ -125,12 +132,12 @@ class OkLchColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   OkLchColor saturate([final double amount = 25]) {
-    return OkLchColor(l, c + amount / 100, h, alpha);
+    return OkLchColor.alt(l, c + amount / 100, h, alpha: alpha);
   }
 
   @override
   OkLchColor desaturate([final double amount = 25]) {
-    return OkLchColor(l, max(0.0, c - amount / 100), h, alpha);
+    return OkLchColor.alt(l, max(0.0, c - amount / 100), h, alpha: alpha);
   }
 
   @override
@@ -174,11 +181,11 @@ class OkLchColor with ColorModelsMixin implements ColorSpacesIQ {
     final double? h,
     final double? alpha,
   }) {
-    return OkLchColor(
+    return OkLchColor.alt(
       l ?? this.l,
       c ?? this.c,
       h ?? this.h,
-      alpha ?? this.alpha,
+      alpha: alpha ?? this.alpha,
     );
   }
 
@@ -211,12 +218,6 @@ class OkLchColor with ColorModelsMixin implements ColorSpacesIQ {
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
 
   @override
-  double get luminance => toColor().luminance;
-
-  @override
-  Brightness get brightness => toColor().brightness;
-
-  @override
   bool get isDark => brightness == Brightness.dark;
 
   @override
@@ -232,7 +233,7 @@ class OkLchColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   OkLchColor adjustHue([final double amount = 20]) {
-    return OkLchColor(l, c, (h + amount) % 360, alpha);
+    return OkLchColor.alt(l, c, (h + amount) % 360, alpha: alpha);
   }
 
   @override
@@ -241,13 +242,15 @@ class OkLchColor with ColorModelsMixin implements ColorSpacesIQ {
   @override
   OkLchColor warmer([final double amount = 20]) {
     const double targetHue = 30.0;
-    return OkLchColor(l, c, lerpHue(h, targetHue, amount / 100), alpha);
+    return OkLchColor.alt(l, c, lerpHue(h, targetHue, amount / 100),
+        alpha: alpha);
   }
 
   @override
   OkLchColor cooler([final double amount = 20]) {
     const double targetHue = 210.0;
-    return OkLchColor(l, c, lerpHue(h, targetHue, amount / 100), alpha);
+    return OkLchColor.alt(l, c, lerpHue(h, targetHue, amount / 100),
+        alpha: alpha);
   }
 
   @override
@@ -263,16 +266,16 @@ class OkLchColor with ColorModelsMixin implements ColorSpacesIQ {
   @override
   List<OkLchColor> tonesPalette() {
     return <OkLchColor>[
-      OkLchColor(0.95, c, h, alpha), // 50
-      OkLchColor(0.9, c, h, alpha), // 100
-      OkLchColor(0.8, c, h, alpha), // 200
-      OkLchColor(0.7, c, h, alpha), // 300
-      OkLchColor(0.6, c, h, alpha), // 400
-      OkLchColor(0.5, c, h, alpha), // 500
-      OkLchColor(0.4, c, h, alpha), // 600
-      OkLchColor(0.3, c, h, alpha), // 700
-      OkLchColor(0.2, c, h, alpha), // 800
-      OkLchColor(0.1, c, h, alpha), // 900
+      OkLchColor.alt(0.95, c, h, alpha: alpha), // 50
+      OkLchColor.alt(0.9, c, h, alpha: alpha), // 100
+      OkLchColor.alt(0.8, c, h, alpha: alpha), // 200
+      OkLchColor.alt(0.7, c, h, alpha: alpha), // 300
+      OkLchColor.alt(0.6, c, h, alpha: alpha), // 400
+      OkLchColor.alt(0.5, c, h, alpha: alpha), // 500
+      OkLchColor.alt(0.4, c, h, alpha: alpha), // 600
+      OkLchColor.alt(0.3, c, h, alpha: alpha), // 700
+      OkLchColor.alt(0.2, c, h, alpha: alpha), // 800
+      OkLchColor.alt(0.1, c, h, alpha: alpha), // 900
     ];
   }
 
@@ -281,7 +284,8 @@ class OkLchColor with ColorModelsMixin implements ColorSpacesIQ {
     final List<OkLchColor> palette = <OkLchColor>[];
     final double startHue = h - ((count - 1) / 2) * offset;
     for (int i = 0; i < count; i++) {
-      palette.add(OkLchColor(l, c, (startHue + i * offset) % 360, alpha));
+      palette.add(
+          OkLchColor.alt(l, c, (startHue + i * offset) % 360, alpha: alpha));
     }
     return palette;
   }

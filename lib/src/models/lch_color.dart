@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
@@ -137,7 +137,7 @@ class LchColor extends ColorSpacesIQ with ColorModelsMixin {
     newHue %= 360;
     if (newHue < 0) newHue += 360;
 
-    return LchColor(
+    return LchColor.alt(
       l + (otherLch.l - l) * t,
       thisC + (otherC - thisC) * t,
       newHue,
@@ -161,9 +161,6 @@ class LchColor extends ColorSpacesIQ with ColorModelsMixin {
   LchColor brighten([final double amount = 20]) {
     return toColor().brighten(amount).toLch();
   }
-
-  @override
-  HctColor toHct() => HctColor.fromInt(value);
 
   @override
   LchColor fromHct(final HctColor hct) => hct.toColor().toLch();

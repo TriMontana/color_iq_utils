@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
@@ -79,7 +79,7 @@ class MunsellColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   MunsellColor darken([final double amount = 20]) {
     // Decrease Value
-    return MunsellColor(
+    return MunsellColor.alt(
       hue,
       (munsellValue - (amount / 10)).clamp(0.0, 10.0),
       chroma,
@@ -89,7 +89,7 @@ class MunsellColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   MunsellColor brighten([final double amount = 20]) {
     // Increase Value
-    return MunsellColor(
+    return MunsellColor.alt(
       hue,
       (munsellValue + (amount / 10)).clamp(0.0, 10.0),
       chroma,
@@ -99,7 +99,7 @@ class MunsellColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   MunsellColor saturate([final double amount = 25]) {
     // Increase Chroma
-    return MunsellColor(
+    return MunsellColor.alt(
       hue,
       munsellValue,
       chroma + (amount / 5),
@@ -109,7 +109,7 @@ class MunsellColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   MunsellColor desaturate([final double amount = 25]) {
     // Decrease Chroma
-    return MunsellColor(hue, munsellValue, max(0.0, chroma - (amount / 5)));
+    return MunsellColor.alt(hue, munsellValue, max(0.0, chroma - (amount / 5)));
   }
 
   @override
@@ -172,7 +172,7 @@ class MunsellColor extends ColorSpacesIQ with ColorModelsMixin {
     if (other is MunsellColor) {
       otherMunsell = other;
     } else if (other.isEqual(cWhite)) {
-      otherMunsell = const MunsellColor('N', 10.0, 0.0);
+      otherMunsell = MunsellColor.alt('N', 10.0, 0.0);
     } else if (other.isEqual(cBlack)) {
       otherMunsell = MunsellColor.alt('N', 0.0, 0.0);
     } else {
@@ -221,7 +221,7 @@ class MunsellColor extends ColorSpacesIQ with ColorModelsMixin {
     final double? munsellValue,
     final double? chroma,
   }) {
-    return MunsellColor(
+    return MunsellColor.alt(
       hue ?? this.hue,
       munsellValue ?? this.munsellValue,
       chroma ?? this.chroma,

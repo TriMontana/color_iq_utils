@@ -13,7 +13,7 @@ void main() {
     });
 
     test('deintensify decreases saturation and increases value', () {
-      const OkHsvColor color = OkHsvColor(180.0, 0.5, 0.5);
+      final OkHsvColor color = OkHsvColor.alt(180.0, 0.5, 0.5);
       final OkHsvColor deintensified = color.deintensify(20);
       // S: 0.5 - 0.2 = 0.3
       // V: 0.5 + 0.1 = 0.6
@@ -22,7 +22,7 @@ void main() {
     });
 
     test('accented increases saturation and increases value', () {
-      const OkHsvColor color = OkHsvColor(180.0, 0.5, 0.5);
+      final OkHsvColor color = OkHsvColor.alt(180.0, 0.5, 0.5);
       final OkHsvColor accented = color.accented(20);
       // S: 0.5 + 0.2 = 0.7
       // V: 0.5 + 0.1 = 0.6
@@ -31,7 +31,7 @@ void main() {
     });
 
     test('whiten moves towards white', () {
-      const OkHsvColor color = OkHsvColor(0.0, 1.0, 0.0); // Black/Red
+      final OkHsvColor color = OkHsvColor.alt(0.0, 1.0, 0.0); // Black/Red
       final OkHsvColor whitened = color.whiten(50);
       // White is S=0, V=1
       // Lerp 50% from S=1, V=0 to S=0, V=1
@@ -59,7 +59,7 @@ void main() {
     });
 
     test('monochromatic generates 5 colors', () {
-      const OkHsvColor color = OkHsvColor(180.0, 0.5, 0.5);
+      final OkHsvColor color = OkHsvColor.alt(180.0, 0.5, 0.5);
       final List<ColorSpacesIQ> palette = color.monochromatic;
       expect(palette.length, 5);
       expect(palette[2].value, equals(color.value));

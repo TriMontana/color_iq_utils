@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
@@ -22,14 +22,15 @@ import 'package:color_iq_utils/src/utils/color_math.dart';
 /// - **Saturation (s):** The color's intensity, from 0 (grayscale) to 100 (fully saturated).
 /// - **Lightness (l):** The color's perceived brightness, from 0 (black) to 100 (white).
 ///
-/// Example:
-///
-class HsluvColor with ColorModelsMixin implements ColorSpacesIQ {
+class HsluvColor extends ColorSpacesIQ with ColorModelsMixin {
   final double h;
   final double s;
   final double l;
 
-  const HsluvColor(this.h, this.s, this.l);
+  const HsluvColor(this.h, this.s, this.l, {required final int hexId})
+      : super(hexId);
+  HsluvColor.alt(this.h, this.s, this.l, {final int? hexId})
+      : super(hexId ?? toHex(h: h, s: s, l: l));
 
   /// Creates a 32-bit ARGB hex value from HSLuv components.
   ///
@@ -40,7 +41,7 @@ class HsluvColor with ColorModelsMixin implements ColorSpacesIQ {
       required final double s,
       required final double l}) {
     // Create a temporary HsluvColor instance to use the toColor() conversion.
-    final HsluvColor hsluv = HsluvColor(h, s, l);
+    final HsluvColor hsluv = HsluvColor.alt(h, s, l);
     // Convert to ColorIQ which holds the ARGB value.
     final ColorIQ color = hsluv.toColor();
     // Return the 32-bit integer value.
@@ -75,14 +76,14 @@ class HsluvColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   HsluvColor darken([final double amount = 20]) {
-    return HsluvColor(h, s, max(0.0, l - amount));
+    return HsluvColor.alt(h, s, max(0.0, l - amount));
   }
 
   @override
   HsluvColor get inverted => toColor().inverted.toHsluv();
 
   @override
-  HsluvColor get grayscale => HsluvColor(h, 0, l);
+  HsluvColor get grayscale => HsluvColor.alt(h, 0, l);
 
   @override
   HsluvColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
@@ -97,7 +98,7 @@ class HsluvColor with ColorModelsMixin implements ColorSpacesIQ {
         other is HsluvColor ? other : other.toColor().toHsluv();
     if (t == 1.0) return otherHsluv;
 
-    return HsluvColor(
+    return HsluvColor.alt(
       lerpHue(h, otherHsluv.h, t),
       lerpDouble(s, otherHsluv.s, t),
       lerpDouble(l, otherHsluv.l, t),
@@ -106,7 +107,7 @@ class HsluvColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   HsluvColor lighten([final double amount = 20]) {
-    return HsluvColor(h, s, min(100.0, l + amount));
+    return HsluvColor.alt(h, s, min(100.0, l + amount));
   }
 
   @override
@@ -116,12 +117,12 @@ class HsluvColor with ColorModelsMixin implements ColorSpacesIQ {
 
   @override
   HsluvColor saturate([final double amount = 25]) {
-    return HsluvColor(h, min(100.0, s + amount), l);
+    return HsluvColor.alt(h, min(100.0, s + amount), l);
   }
 
   @override
   HsluvColor desaturate([final double amount = 25]) {
-    return HsluvColor(h, max(0.0, s - amount), l);
+    return HsluvColor.alt(h, max(0.0, s - amount), l);
   }
 
   @override
@@ -145,7 +146,7 @@ class HsluvColor with ColorModelsMixin implements ColorSpacesIQ {
   }
 
   @override
-  HctColor toHct() => toColor().toHct();
+  HctColor toHctColor() => toColor().toHctColor();
 
   @override
   HsluvColor fromHct(final HctColor hct) => hct.toColor().toHsluv();
@@ -163,7 +164,7 @@ class HsluvColor with ColorModelsMixin implements ColorSpacesIQ {
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   HsluvColor copyWith({final double? h, final double? s, final double? l}) {
-    return HsluvColor(h ?? this.h, s ?? this.s, l ?? this.l);
+    return HsluvColor.alt(h ?? this.h, s ?? this.s, l ?? this.l);
   }
 
   @override
@@ -218,7 +219,7 @@ class HsluvColor with ColorModelsMixin implements ColorSpacesIQ {
   HsluvColor adjustHue([final double amount = 20]) {
     double newHue = (h + amount) % 360;
     if (newHue < 0) newHue += 360;
-    return HsluvColor(newHue, s, l);
+    return HsluvColor.alt(newHue, s, l);
   }
 
   @override

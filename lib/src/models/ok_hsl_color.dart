@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
@@ -58,7 +58,7 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
     final double C = s * 0.4; // Approximation
     final double hue = h;
 
-    return OkLchColor(L, C, hue).toColor().value;
+    return OkLchColor.alt(L, C, hue).value;
   }
 
   @override
@@ -71,12 +71,12 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
     final double C = s * 0.4; // Approximation
     final double hue = h;
 
-    return OkLchColor(L, C, hue).toColor();
+    return OkLchColor.alt(L, C, hue).toColor();
   }
 
   @override
   OkHslColor darken([final double amount = 20]) {
-    return OkHslColor(h, s, max(0.0, l - amount / 100));
+    return OkHslColor.alt(h, s, max(0.0, l - amount / 100));
   }
 
   @override
@@ -175,8 +175,6 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
     return toColor().simulate(type).toOkHsl();
   }
 
-
-
   @override
   OkHslColor fromHct(final HctColor hct) => hct.toColor().toOkHsl();
 
@@ -193,7 +191,7 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   OkHslColor copyWith({final double? h, final double? s, final double? l}) {
-    return OkHslColor(h ?? this.h, s ?? this.s, l ?? this.l);
+    return OkHslColor.alt(h ?? this.h, s ?? this.s, l ?? this.l);
   }
 
   @override

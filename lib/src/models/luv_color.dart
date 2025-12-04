@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
@@ -39,6 +39,11 @@ class LuvColor extends ColorSpacesIQ with ColorModelsMixin {
       : super(hexId);
   LuvColor.alt(this.l, this.u, this.v, {final int? hexId})
       : super(hexId ?? LuvColor.toHexId(l, u, v));
+
+  /// Creates a [LuvColor] from a 32-bit integer ARGB value.
+  factory LuvColor.fromInt(final int argb) {
+    return ColorIQ(argb).toLuv();
+  }
 
   /// Creates a 32-bit hex ARGB value from L, u, v components.
   ///
@@ -181,7 +186,7 @@ class LuvColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  HctColor toHct() => toColor().toHct();
+  HctColor toHctColor() => toColor().toHctColor();
 
   @override
   LuvColor fromHct(final HctColor hct) => hct.toColor().toLuv();

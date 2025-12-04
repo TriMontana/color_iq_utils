@@ -1,5 +1,6 @@
 import 'dart:developer' as developer;
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/string_helpers.dart';
@@ -69,7 +70,24 @@ extension DoubleHelpersIQ on double {
   }
 
   int roundAndClamp0to255int([final String? msg]) {
+    if (this < 0.0 || this > 255.0) {
+      throw RangeError(
+        'Range Error: Value must be between 0 and 255 -- ' //
+        '${msg ?? 'roundAndClamp0to255int'}',
+      );
+    }
     return round().clamp(0, 255);
+  }
+
+  /// Convert a normalized double (0.0-1.0) to an int (0-255), aka factored float to int
+  int normalizedTo255int([final String? msg]) {
+    if (this < 0.0 || this > 1.0) {
+      throw RangeError(
+        'Range Error: Value must be between 0 and 1.0 -- ' //
+        '${msg ?? 'normalizedTo255int'}',
+      );
+    }
+    return (this * 255).round();
   }
 
   /// To String without training zeros.
@@ -109,4 +127,6 @@ extension DoubleHelpersIQ on double {
     developer.log(er);
     throw Exception(er);
   }
+
+  double pow(final double exponent) => math.pow(this, exponent).toDouble();
 }

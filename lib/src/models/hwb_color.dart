@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
@@ -179,7 +179,7 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  HctColor toHct() => toColor().toHct();
+  HctColor toHctColor() => toColor().toHctColor();
 
   @override
   HwbColor fromHct(final HctColor hct) => hct.toColor().toHwb();
@@ -210,7 +210,8 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
     final double? b,
     final double? alpha,
   }) {
-    return HwbColor(h ?? this.h, w ?? this.w, b ?? this.b, alpha ?? this.alpha);
+    return HwbColor.alt(h ?? this.h, w ?? this.w, b ?? this.b,
+        alpha: alpha ?? this.alpha);
   }
 
   @override
@@ -254,7 +255,7 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
     // b must be <= 1 - w to be valid HWB, but constructor handles normalization if needed.
     // However, generating valid HWB is better.
     final double b = rng.nextDouble() * (1.0 - w);
-    return HwbColor(h, w, b);
+    return HwbColor.alt(h, w, b);
   }
 
   @override

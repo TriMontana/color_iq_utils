@@ -3,7 +3,7 @@ import 'package:color_iq_utils/src/extensions/int_helpers.dart';
 import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 
-export 'color_blindness.dart';
+export 'utils/color_blindness.dart';
 export 'color_wheels.dart';
 
 /// A common parent class and interface for all color models.
@@ -57,6 +57,14 @@ abstract class ColorSpacesIQ {
   List<int> get rgb255Ints => <int>[redInt, value.greenInt, value.blueInt];
   List<double> get rgbaLinearized =>
       <double>[redLinearized, greenLinearized, blueLinearized, alphaLinearized];
+  List<double> get rgbasNormalized => <double>[r, g, b, a];
+  RgbaInts get rgbaInts => (
+        alpha: value.alphaInt,
+        red: redInt,
+        green: value.greenInt,
+        blue: value.blueInt
+      );
+  RgbaDoubles get rgbaDoubles => (a: a, r: r, g: g, b: b);
 
   /// Returns the relative luminance of this color (0.0 - 1.0).
   double get toLRV =>

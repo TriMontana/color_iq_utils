@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('MunsellColor Refactor Tests', () {
     test('whiten increases value', () {
-      const MunsellColor color = MunsellColor('5R', 5.0, 10.0);
+      final MunsellColor color = MunsellColor.alt('5R', 5.0, 10.0);
       final MunsellColor whitened = color.whiten(50);
 
       expect(whitened.munsellValue, greaterThan(color.munsellValue));
@@ -18,7 +18,7 @@ void main() {
     });
 
     test('lerp interpolates correctly', () {
-      const MunsellColor start = MunsellColor('5R', 0.0, 0.0); // Black-ish
+      final MunsellColor start = MunsellColor.alt('5R', 0.0, 0.0); // Black-ish
       final MunsellColor end = MunsellColor.alt('5R', 10.0, 0.0); // White-ish
       final MunsellColor mid = start.lerp(end, 0.5);
 
@@ -26,7 +26,7 @@ void main() {
     });
 
     test('intensify increases chroma', () {
-      const MunsellColor color = MunsellColor('5R', 5.0, 10.0);
+      final MunsellColor color = MunsellColor.alt('5R', 5.0, 10.0);
       final MunsellColor intensified = color.intensify(10);
 
       expect(intensified.chroma, greaterThan(color.chroma));

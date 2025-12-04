@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
@@ -35,9 +35,16 @@ class LabColor extends ColorSpacesIQ with ColorModelsMixin {
   final double bLab;
 
   const LabColor(this.l, this.aLab, this.bLab, {required final int hexId})
-      : super(hexId);
+      : assert(l >= 0 && l <= 100, 'L must be between 0 and 100'),
+        super(hexId);
   LabColor.alt(this.l, this.aLab, this.bLab, {final int? hexId})
-      : super(hexId ?? LabColor.toHexId(l, aLab, bLab));
+      : assert(l >= 0 && l <= 100, 'L must be between 0 and 100'),
+        super(hexId ?? LabColor.toHexId(l, aLab, bLab));
+
+  static LabColor fromInt(final int hexId) {
+    final List<double> lab = labFromArgb(hexId);
+    return LabColor.alt(lab[0], lab[1], lab[2], hexId: hexId);
+  }
 
   /// Creates a 32-bit ARGB hex value from CIE-LAB components.
   ///
@@ -50,33 +57,7 @@ class LabColor extends ColorSpacesIQ with ColorModelsMixin {
   ///
   /// Returns an integer representing the ARGB color.
   static int toHexId(final double l, final double aLab, final double bLab) {
-    final double y = (l + 16) / 116;
-    final double x = aLab / 500 + y;
-    final double z = y - bLab / 200;
-
-    final double x3 = x * x * x;
-    final double y3 = y * y * y;
-    final double z3 = z * z * z;
-
-    const double xn = 95.047;
-    const double yn = 100.0;
-    const double zn = 108.883;
-
-    final double r = xn * ((x3 > 0.008856) ? x3 : ((x - 16 / 116) / 7.787));
-    final double g = yn * ((y3 > 0.008856) ? y3 : ((y - 16 / 116) / 7.787));
-    final double bVal = zn * ((z3 > 0.008856) ? z3 : ((z - 16 / 116) / 7.787));
-
-    double rL = (r * 3.2406 + g * -1.5372 + bVal * -0.4986) / 100;
-    double gL = (r * -0.9689 + g * 1.8758 + bVal * 0.0415) / 100;
-    double bL = (r * 0.0557 + g * -0.2040 + bVal * 1.0570) / 100;
-
-    rL = (rL > 0.0031308) ? (1.055 * pow(rL, 1 / 2.4) - 0.055) : (12.92 * rL);
-    gL = (gL > 0.0031308) ? (1.055 * pow(gL, 1 / 2.4) - 0.055) : (12.92 * gL);
-    bL = (bL > 0.0031308) ? (1.055 * pow(bL, 1 / 2.4) - 0.055) : (12.92 * bL);
-    return (255 << 24) |
-        ((rL * 255).round().clamp(0, 255) << 16) |
-        ((gL * 255).round().clamp(0, 255) << 8) |
-        (bL * 255).round().clamp(0, 255);
+    return argbFromLab(l, aLab, bLab);
   }
 
   @override
@@ -204,7 +185,7 @@ class LabColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  HctColor toHct() => toColor().toHct();
+  HctColor toHctColor() => toColor().toHctColor();
 
   @override
   LabColor fromHct(final HctColor hct) => hct.toColor().toLab();

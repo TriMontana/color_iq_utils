@@ -9,6 +9,8 @@ import 'package:color_iq_utils/src/utils/color_math.dart';
 /// Extension for integers
 extension IntHelperIQ on int {
   String get toHexStr => '0x${toRadixString(16).toUpperCase().padLeft(8, '0')}';
+  RgbaInts get rgbaInts => hexIdToComponents(this);
+  RgbaDoubles get rgbaDoubles => hexIdToNormalizedComponents(this);
 
   /// Normalizes a single 8-bit integer channel (0-255) to a double (0.0-1.0).
   ///
@@ -51,6 +53,9 @@ extension IntHelperIQ on int {
   double get b2 => ((this & 0xFF) / 255.0).clamp0to1;
   double get blueLinearized => srgbToLinear(b2);
 
+  double get toLRV => computeLuminanceViaLinearized(
+      redLinearized, greenLinearized, blueLinearized);
+
   int assertRange0to255([final String? message]) {
     if (this < 0 || this > 255) {
       throw ArgumentError(message ?? 'Value must be between 0 and 255--$this');
@@ -65,7 +70,7 @@ extension IntHelperIQ on int {
     return this;
   }
 
-  /// Determines the closest [ColorFamily] for this color value.
+  /// Determines the closest [ColorFamilyHTML] for this color value.
   ///
   /// Compares the color against representative colors from each family
   /// using Euclidean distance in RGB color space.
@@ -75,34 +80,34 @@ extension IntHelperIQ on int {
   /// int myColor = 0xFFFF6B6B;
   /// ColorFamily family = myColor.closestColorFamily(); // ColorFamily.red
   /// ```
-  ColorFamily closestColorFamily() {
+  ColorFamilyHTML closestColorFamily() {
     // Extract RGB components from this color
     final int r = (this >> 16) & 0xFF;
     final int g = (this >> 8) & 0xFF;
     final int b = this & 0xFF;
 
     // Representative colors for each family (using pure/typical colors)
-    final Map<ColorFamily, (int, int, int)> familyColors =
-        <ColorFamily, (int, int, int)>{
-      ColorFamily.red: (255, 0, 0),
-      ColorFamily.orange: (255, 165, 0),
-      ColorFamily.yellow: (255, 255, 0),
-      ColorFamily.green: (0, 128, 0),
-      ColorFamily.cyan: (0, 255, 255),
-      ColorFamily.blue: (0, 0, 255),
-      ColorFamily.purple: (128, 0, 128),
-      ColorFamily.pink: (255, 192, 203),
-      ColorFamily.brown: (165, 42, 42),
-      ColorFamily.white: (255, 255, 255),
-      ColorFamily.gray: (128, 128, 128),
-      ColorFamily.black: (0, 0, 0),
+    final Map<ColorFamilyHTML, (int, int, int)> familyColors =
+        <ColorFamilyHTML, (int, int, int)>{
+      ColorFamilyHTML.red: (255, 0, 0),
+      ColorFamilyHTML.orange: (255, 165, 0),
+      ColorFamilyHTML.yellow: (255, 255, 0),
+      ColorFamilyHTML.green: (0, 128, 0),
+      ColorFamilyHTML.cyan: (0, 255, 255),
+      ColorFamilyHTML.blue: (0, 0, 255),
+      ColorFamilyHTML.purple: (128, 0, 128),
+      ColorFamilyHTML.pink: (255, 192, 203),
+      ColorFamilyHTML.brown: (165, 42, 42),
+      ColorFamilyHTML.white: (255, 255, 255),
+      ColorFamilyHTML.gray: (128, 128, 128),
+      ColorFamilyHTML.black: (0, 0, 0),
     };
 
     // Find the family with minimum distance
-    ColorFamily? closestFamily;
+    ColorFamilyHTML? closestFamily;
     double minDistance = double.infinity;
 
-    for (final MapEntry<ColorFamily, (int, int, int)> entry
+    for (final MapEntry<ColorFamilyHTML, (int, int, int)> entry
         in familyColors.entries) {
       final (int fr, int fg, int fb) = entry.value;
       // Calculate Euclidean distance in RGB space
@@ -155,7 +160,7 @@ extension IntHelperIQ on int {
     return closestColor!;
   }
 
-  /// Determines the closest [ColorFamily] for this color value using CAM16-based distance.
+  /// Determines the closest [ColorFamilyHTML] for this color value using CAM16-based distance.
   ///
   /// Uses perceptually uniform CAM16/HCT color space for more accurate
   /// color family matching based on human perception.
@@ -165,32 +170,34 @@ extension IntHelperIQ on int {
   /// int myColor = 0xFFFF6B6B;
   /// ColorFamily family = myColor.closestColorFamilyPerceptual(); // ColorFamily.red
   /// ```
-  ColorFamily closestColorFamilyPerceptual() {
+  ColorFamilyHTML closestColorFamilyPerceptual() {
     final ColorIQ thisColor = ColorIQ(this);
-    final HctColor hct1 = thisColor.toHct();
+    final HctColor hct1 = thisColor.toHctColor();
 
     // Representative colors for each family (using pure/typical colors)
-    final Map<ColorFamily, ColorIQ> familyColors = <ColorFamily, ColorIQ>{
-      ColorFamily.red: cRed,
-      ColorFamily.orange: ColorIQ(0xFFFFA500),
-      ColorFamily.yellow: ColorIQ(0xFFFFFF00),
-      ColorFamily.green: cGreen,
-      ColorFamily.cyan: ColorIQ(0xFF00FFFF),
-      ColorFamily.blue: ColorIQ(0xFF0000FF),
-      ColorFamily.purple: ColorIQ(0xFF800080),
-      ColorFamily.pink: ColorIQ(0xFFFFC0CB),
-      ColorFamily.brown: ColorIQ(0xFFA52A2A),
-      ColorFamily.white: cWhite,
-      ColorFamily.gray: cGray,
-      ColorFamily.black: cBlack,
+    final Map<ColorFamilyHTML, ColorIQ> familyColors =
+        <ColorFamilyHTML, ColorIQ>{
+      ColorFamilyHTML.red: cRed,
+      ColorFamilyHTML.orange: ColorIQ(0xFFFFA500),
+      ColorFamilyHTML.yellow: ColorIQ(0xFFFFFF00),
+      ColorFamilyHTML.green: cGreen,
+      ColorFamilyHTML.cyan: ColorIQ(0xFF00FFFF),
+      ColorFamilyHTML.blue: ColorIQ(0xFF0000FF),
+      ColorFamilyHTML.purple: ColorIQ(0xFF800080),
+      ColorFamilyHTML.pink: ColorIQ(0xFFFFC0CB),
+      ColorFamilyHTML.brown: ColorIQ(0xFFA52A2A),
+      ColorFamilyHTML.white: cWhite,
+      ColorFamilyHTML.gray: cGray,
+      ColorFamilyHTML.black: cBlack,
     };
 
     // Find the family with minimum perceptual distance
-    ColorFamily? closestFamily;
+    ColorFamilyHTML? closestFamily;
     double minDistance = double.infinity;
 
-    for (final MapEntry<ColorFamily, ColorIQ> entry in familyColors.entries) {
-      final HctColor hct2 = entry.value.toHct();
+    for (final MapEntry<ColorFamilyHTML, ColorIQ> entry
+        in familyColors.entries) {
+      final HctColor hct2 = entry.value.toHctColor();
 
       // Calculate perceptual distance using CAM16/HCT
       // Convert to Cartesian coordinates for distance calculation

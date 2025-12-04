@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
@@ -97,7 +97,7 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
     final double c = saturation * val * 0.4;
     final double l = val * (1 - saturation);
     final double hRad = hue * pi / 180;
-    return OkLabColor(l, c * cos(hRad), c * sin(hRad), alpha);
+    return OkLabColor.alt(l, c * cos(hRad), c * sin(hRad), alpha: alpha);
   }
 
   @override
@@ -178,21 +178,22 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
   OkHsvColor lerp(final ColorSpacesIQ other, final double t) {
     final OkHsvColor otherOkHsv =
         other is OkHsvColor ? other : other.toColor().toOkHsv();
-    return OkHsvColor(
+    return OkHsvColor.alt(
       lerpHue(hue, otherOkHsv.hue, t),
       lerpDouble(saturation, otherOkHsv.saturation, t),
       lerpDouble(val, otherOkHsv.val, t),
-      lerpDouble(alpha, otherOkHsv.alpha, t),
+      alpha: lerpDouble(alpha, otherOkHsv.alpha, t),
     );
   }
 
   @override
   OkHsvColor lighten([final double amount = 20]) {
-    return OkHsvColor(hue, saturation, min(1.0, val + amount / 100), alpha);
+    return OkHsvColor.alt(hue, saturation, min(1.0, val + amount / 100),
+        alpha: alpha);
   }
 
   @override
-  HctColor toHct() => toColor().toHct();
+  HctColor toHctColor() => toColor().toHctColor();
 
   @override
   OkHsvColor fromHct(final HctColor hct) => hct.toColor().toOkHsv();
@@ -235,7 +236,7 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
     for (int i = 0; i < 5; i++) {
       final double delta = (i - 2) * 0.1;
       final double newVal = (val + delta).clamp(0.0, 1.0);
-      results.add(OkHsvColor(hue, saturation, newVal, alpha));
+      results.add(OkHsvColor.alt(hue, saturation, newVal, alpha: alpha));
     }
     return results;
   }

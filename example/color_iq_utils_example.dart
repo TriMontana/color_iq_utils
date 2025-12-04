@@ -7,7 +7,7 @@ void main() {
   final ColorIQ color = ColorIQ(HTML.purple.value); // Red
   print('Original Color (RGB): $color');
 
-  final HctColor hct = color.toHct();
+  final HctColor hct = color.toHctColor();
   print('HCT: $hct');
 
   // Convert to various color spaces

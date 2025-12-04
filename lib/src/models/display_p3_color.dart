@@ -2,10 +2,11 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
+import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/utils/color_math.dart';
 
 /// A representation of a color in the Display P3 color space.
@@ -35,6 +36,11 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
 
   DisplayP3Color.alt(this.r, this.g, this.b, {final int? hexId})
       : super(hexId ?? DisplayP3Color.toHexId(r, g, b));
+
+  static DisplayP3Color fromInt(final int hexId) {
+    // TODO: implement fromInt
+    throw UnimplementedError();
+  }
 
   /// Creates a 32-bit integer ARGB value from Display P3 components.
   static int toHexId(final double r, final double g, final double b) {
@@ -327,4 +333,9 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
       'g: ${g.toStrTrimZeros(4)}, ' //
       'b: ${b.toStringAsFixed(4)}, ' //
       'opacity: ${transparency.toStringAsFixed(2)})';
+
+  @override
+  ColorSpacesIQ fromHct(final HctColor hct) {
+    return DisplayP3Color.fromInt(hct.toInt());
+  }
 }

@@ -47,7 +47,7 @@ void main() {
 
     test('RGB to Hct conversion (Red)', () {
       final ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0);
-      final HctColor hct = color.toHct();
+      final HctColor hct = color.toHctColor();
       // Hct hue for sRGB Red is approx 27-28 degrees (Cam16 hue)
       expect(hct.hue, closeTo(27, 2.0));
       expect(hct.value, 0xFFFF0000);

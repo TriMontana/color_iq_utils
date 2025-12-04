@@ -1,7 +1,6 @@
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/models/hsl_color.dart';
 
-
 /// Provides functionality to describe and classify colors.
 class ColorDescriptor {
   /// Describes the given [color] using a combination of adjectives and the color name.
@@ -19,7 +18,9 @@ class ColorDescriptor {
 
     // 1. Handle Achromatic Colors (Grays)
     if (s < 0.03) {
-      if (l > 0.98) return "White";
+      if (l > 0.98) {
+        return "White";
+      }
       if (l < 0.02) return "Black";
       if (l > 0.80) return "Very Light Gray";
       if (l > 0.60) return "Light Gray";
@@ -52,7 +53,8 @@ class ColorDescriptor {
       } else {
         adjective = "Light";
       }
-    } else if (l > 0.40) { // Mid Lightness (0.4 - 0.7)
+    } else if (l > 0.40) {
+      // Mid Lightness (0.4 - 0.7)
       if (s < 0.20) {
         adjective = "Grayish";
       } else if (s < 0.50) {
@@ -62,7 +64,8 @@ class ColorDescriptor {
       } else {
         adjective = "Medium"; // Often omitted, just the color name
       }
-    } else if (l > 0.20) { // Dark (0.2 - 0.4)
+    } else if (l > 0.20) {
+      // Dark (0.2 - 0.4)
       if (s < 0.30) {
         adjective = "Dark Grayish";
       } else if (s > 0.80) {
@@ -70,12 +73,13 @@ class ColorDescriptor {
       } else {
         adjective = "Dark";
       }
-    } else { // Very Dark (< 0.2)
-       if (s > 0.80) {
-         adjective = "Very Deep";
-       } else {
-         adjective = "Very Dark";
-       }
+    } else {
+      // Very Dark (< 0.2)
+      if (s > 0.80) {
+        adjective = "Very Deep";
+      } else {
+        adjective = "Very Dark";
+      }
     }
 
     // Clean up "Medium" as it's often implicit

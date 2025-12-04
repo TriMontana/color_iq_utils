@@ -15,7 +15,7 @@ void main() {
     });
 
     test('blacken decreases lightness and desaturates', () {
-      const OkHslColor color = OkHslColor(0, 1.0, 0.5); // Red
+      final OkHslColor color = OkHslColor.alt(0, 1.0, 0.5); // Red
       final OkHslColor blackened = color.blacken(50);
 
       expect(blackened.l, lessThan(color.l));
@@ -26,8 +26,8 @@ void main() {
     });
 
     test('lerp interpolates correctly', () {
-      const OkHslColor start = OkHslColor(0, 1.0, 0.5); // Red
-      const OkHslColor end = OkHslColor(120, 1.0, 0.5); // Green
+      final OkHslColor start = OkHslColor.alt(0, 1.0, 0.5); // Red
+      final OkHslColor end = OkHslColor.alt(120, 1.0, 0.5); // Green
       final OkHslColor mid = start.lerp(end, 0.5);
 
       expect(mid.h, closeTo(60, 0.1)); // Yellow
@@ -36,8 +36,8 @@ void main() {
     });
 
     test('lerp handles hue wrapping', () {
-      const OkHslColor start = OkHslColor(350, 1.0, 0.5);
-      const OkHslColor end = OkHslColor(10, 1.0, 0.5);
+      final OkHslColor start = OkHslColor.alt(350, 1.0, 0.5);
+      final OkHslColor end = OkHslColor.alt(10, 1.0, 0.5);
       final OkHslColor mid = start.lerp(end, 0.5);
 
       expect(mid.h, closeTo(0, 0.1) /* or 360 */);

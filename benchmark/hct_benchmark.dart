@@ -7,7 +7,7 @@ void main() {
   const int iterations = 100000;
 
   for (int i = 0; i < iterations; i++) {
-    color.toHct();
+    color.toHctColor();
   }
 
   stopwatch.stop();

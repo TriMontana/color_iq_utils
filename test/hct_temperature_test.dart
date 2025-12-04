@@ -5,7 +5,7 @@ void main() {
   group('HCT and Temperature Tests', () {
     test('Color to HCT and back', () {
       final ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0); // Red
-      final HctColor hct = color.toHct();
+      final HctColor hct = color.toHctColor();
       expect(hct, isA<HctColor>());
       // Hue of red is roughly 27 (in HCT/CAM16) or 0 (in HSL).
       // HCT hue is different from HSL hue.

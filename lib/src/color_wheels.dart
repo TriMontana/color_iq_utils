@@ -31,7 +31,7 @@ List<ColorSlice> generateHsvWheel({
   final double value = 100,
 }) {
   return _generateWheel(
-    (final double hue) => HsvColor(hue, saturation / 100, value / 100),
+    (final double hue) => HsvColor.alt(hue, saturation / 100, value / 100),
     saturation,
     value,
   );

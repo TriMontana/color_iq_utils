@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/extensions/int_helpers.dart';
@@ -28,6 +29,7 @@ import 'package:color_iq_utils/src/models/rec2020_color.dart';
 import 'package:color_iq_utils/src/models/xyz_color.dart';
 import 'package:color_iq_utils/src/models/yiq_color.dart';
 import 'package:color_iq_utils/src/models/yuv_color.dart';
+import 'package:color_iq_utils/src/naming/color_namer.dart';
 import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/utils/color_spaces.dart';
 import 'package:color_iq_utils/src/utils/hex_utils.dart';
@@ -77,9 +79,6 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
   })  : alpha = alpha != null
             ? alpha.assertRange0to255('ColorIQ-COTR-alpha')
             : (value >> 24 & 0xFF),
-        // red = red != null
-        //     ? red.assertRange0to255('ColorIQ-COTR-red')
-        //     : (value >> 16 & 0xFF),
         green = green != null
             ? green.assertRange0to255('ColorIQ-COTR-green')
             : (value >> 8 & 0xFF),
@@ -175,7 +174,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
         : (b * 255).roundAndClamp0to255int('ColorIQ.fromSrgb-B');
     alphaInt = alphaInt != null
         ? alphaInt.assertRange0to255('ColorIQ.fromSrgb-AlphaInt')
-        : (a * 255).roundAndClamp0to255int();
+        : a.normalizedTo255int('ColorIQ.fromSrgb-A');
     argb ??= (alphaInt << 24) | (redInt << 16) | (greenInt << 8) | blueInt;
     luminance = luminance != null
         ? luminance.assertRange0to1('ColorIQ-COTR-luminance')
@@ -198,26 +197,18 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     return parseHex(hex);
   }
 
+  /// LAB representation, computed once and cached.
+  late final LabColor lab = LabColor.fromInt(value);
+  late final HctColor hct = HctColor.fromInt(value);
+  late final Cam16Color cam16 = Cam16Color.fromInt(value);
+
+  /// Human-friendly description ("soft blue", "warm neutral", etc.), cached.
+  late final String descriptiveName = ColorNamer.instance.name(this);
+  @override
+  late final double luminance = super.toLRV;
+
   /// Converts this color to XYZ.
-  XyzColor toXyz() {
-    double r = red / 255.0;
-    double g = green / 255.0;
-    double b = blue / 255.0;
-
-    r = (r > 0.04045) ? pow((r + 0.055) / 1.055, 2.4).toDouble() : (r / 12.92);
-    g = (g > 0.04045) ? pow((g + 0.055) / 1.055, 2.4).toDouble() : (g / 12.92);
-    b = (b > 0.04045) ? pow((b + 0.055) / 1.055, 2.4).toDouble() : (b / 12.92);
-
-    r *= 100;
-    g *= 100;
-    b *= 100;
-
-    final double x = r * 0.4124 + g * 0.3576 + b * 0.1805;
-    final double y = r * 0.2126 + g * 0.7152 + b * 0.0722;
-    final double z = r * 0.0193 + g * 0.1192 + b * 0.9505;
-
-    return XyzColor.alt(x, y, z);
-  }
+  XyzColor toXyz() => XyzColor.xyxFromRgb(red, green, blue);
 
   /// Converts this color to CIELab.
   LabColor toLab() => toXyz().toLab();
@@ -256,7 +247,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
 
     final double s = (maxVal == 0) ? 0 : delta / maxVal;
 
-    return HspColor(h, s, p);
+    return HspColor.alt(h, s, p);
   }
 
   /// Converts this color to YIQ.
@@ -315,7 +306,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
       bOut = 0;
     }
 
-    return HunterLabColor(lOut, aOut, bOut);
+    return HunterLabColor.alt(lOut, aOut, bOut);
   }
 
   /// Converts this color to HSLuv.
@@ -324,12 +315,12 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     final double c = sqrt(luv.u * luv.u + luv.v * luv.v);
     double h = atan2(luv.v, luv.u) * 180 / pi;
     if (h < 0) h += 360;
-    return HsluvColor(h, c, luv.l);
+    return HsluvColor.alt(h, c, luv.l);
   }
 
   /// Converts this color to Munsell.
   MunsellColor toMunsell() {
-    return const MunsellColor("N", 0, 0);
+    return MunsellColor.alt("N", 0, 0);
   }
 
   /// Converts this color to HSL.
@@ -357,7 +348,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
       h /= 6;
     }
 
-    return HslColor(h * 360, s, l);
+    return HslColor.alt(h * 360, s, l);
   }
 
   /// Converts this color to HSV.
@@ -392,7 +383,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
   /// Converts this color to HSB (Alias for HSV).
   HsbColor toHsb() {
     final HsvColor hsv = toHsv();
-    return HsbColor(hsv.h, hsv.s, hsv.v);
+    return HsbColor.alt(hsv.h, hsv.s, hsv.v);
   }
 
   /// Converts this color to HWB.
@@ -427,9 +418,9 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
 
   /// Converts this color to Cam16 (Material Color Utilities).
   Cam16Color toCam16Color() {
-    final int argb = value;
-    final mcu.Cam16 cam = mcu.Cam16.fromInt(argb);
-    return Cam16Color(cam.hue, cam.chroma, cam.j, cam.m, cam.s, cam.q);
+    final mcu.Cam16 cam = mcu.Cam16.fromInt(value);
+    return Cam16Color(cam.hue, cam.chroma, cam.j, cam.m, cam.s, cam.q,
+        hexId: value);
   }
 
   /// Converts this color to Display P3.
@@ -502,7 +493,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
       return 1.099 * pow(v, 0.45) - 0.099;
     }
 
-    return Rec2020Color(transfer(r2020), transfer(g2020), transfer(b2020));
+    return Rec2020Color.alt(transfer(r2020), transfer(g2020), transfer(b2020));
   }
 
   @override
@@ -541,23 +532,27 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   ColorIQ intensify([final double amount = 10]) {
-    return toHct().intensify(amount).toColor();
+    return toHctColor().intensify(amount).toColor();
   }
 
   @override
   ColorIQ deintensify([final double amount = 10]) {
-    return toHct().deintensify(amount).toColor();
+    return toHctColor().deintensify(amount).toColor();
   }
 
   @override
   ColorIQ accented([final double amount = 15]) {
-    return toHct().accented(amount).toColor();
+    return toHctColor().accented(amount).toColor();
   }
 
   @override
   ColorIQ simulate(final ColorBlindnessType type) {
     // 1. Convert to Linear sRGB (0-1)
-    final List<double> lin = [redLinearized, greenLinearized, blueLinearized];
+    final List<double> lin = <double>[
+      redLinearized,
+      greenLinearized,
+      blueLinearized
+    ];
     // 2. Simulate
     final List<double> sim = ColorBlindness.simulate(
       lin[0],
@@ -644,9 +639,18 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     }
   }
 
+  ColorIQ withAlpha(final int newA) =>
+      ColorIQ.fromARGB(newA.clamp(0, 255), red, green, blue);
+
+  ColorIQ withRgb({final int? red, final int? green, final int? blue}) =>
+      ColorIQ.fromARGB(
+          alpha, red ?? this.red, green ?? this.green, blue ?? this.blue);
+
   /// Creates a copy of this color with the given fields replaced with the new values.
-  ColorIQ copyWith({final int? a, final int? r, final int? g, final int? b}) {
-    return ColorIQ.fromARGB(a ?? alpha, r ?? red, g ?? green, b ?? blue);
+  ColorIQ copyWith(
+      {final int? alpha, final int? red, final int? green, final int? blue}) {
+    return ColorIQ.fromARGB(alpha ?? this.alpha, red ?? this.red,
+        green ?? this.green, blue ?? this.blue);
   }
 
   @override
@@ -721,7 +725,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
   ColorIQ opaquer([final double amount = 20]) {
     // Increase alpha by amount%
     final int newAlpha = (alpha + (255 * amount / 100)).round().clamp(0, 255);
-    return copyWith(a: newAlpha);
+    return copyWith(alpha: newAlpha);
   }
 
   @override
@@ -772,7 +776,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     if (newHue < 0) newHue += 360;
     if (newHue >= 360) newHue -= 360;
 
-    return HslColor(newHue, hsl.s, hsl.l).toColor();
+    return HslColor.alt(newHue, hsl.s, hsl.l).toColor();
   }
 
   @override
@@ -845,8 +849,8 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     // Let's use the HCT values (Hue, Chroma, Tone).
     // Hue is circular, so we need to handle that.
 
-    final HctColor hct1 = toHct();
-    final HctColor hct2 = other.toHct();
+    final HctColor hct1 = toHctColor();
+    final HctColor hct2 = other.toHctColor();
 
     // Simple Euclidean distance in HCT cylinder?
     // Or better: convert to Lab-like coordinates.
@@ -873,7 +877,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
   @override
   double contrastWith(final ColorSpacesIQ other) {
     final double l1 = luminance;
-    final double l2 = other.luminance;
+    final double l2 = other.toLRV;
     final double lighter = max(l1, l2);
     final double darker = min(l1, l2);
     return (lighter + 0.05) / (darker + 0.05);
@@ -919,27 +923,27 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
       case 'HctColor':
         return HctColor.alt(json['hue'], json[kChroma], json['tone']);
       case 'HsvColor':
-        return HsvColor(
+        return HsvColor.alt(
           json['hue'],
           json['saturation'],
           json['value'],
-          json['alpha'] ?? 1.0,
+          alpha: json['alpha'] ?? 1.0,
         );
       case 'HslColor':
-        return HslColor(
+        return HslColor.alt(
           json['hue'],
           json['saturation'],
           json['lightness'],
-          json['alpha'] ?? 1.0,
+          alpha: json['alpha'] ?? 1.0,
         );
       case 'CmykColor':
         return CmykColor.alt(json['c'], json['m'], json['y'], json['k']);
       case 'LabColor':
-        return LabColor(json['l'], json['a'], json['b']);
+        return LabColor.alt(json['l'], json['a'], json['b']);
       case 'XyzColor':
-        return XyzColor(json['x'], json['y'], json['z']);
+        return XyzColor.alt(json['x'], json['y'], json['z']);
       case 'LchColor':
-        return LchColor(json['l'], json['c'], json['h']);
+        return LchColor.alt(json['l'], json['c'], json['h']);
       // Add other cases as needed, defaulting to Color if unknown
       default:
         if (json.containsKey('value')) {
@@ -952,7 +956,4 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
   @override
   String toString() =>
       'ColorIQ(0x${value.toRadixString(16).toUpperCase().padLeft(8, '0')})';
-
-  @override
-  mcu.Cam16 toCam16() => mcu.Cam16.fromInt(value);
 }

@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
@@ -129,9 +129,6 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  List<double> get linearSrgb => toColor().linearSrgb;
-
-  @override
   HsvColor get inverted => toColor().inverted.toHsv();
 
   @override
@@ -167,12 +164,12 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   HsvColor brighten([final double amount = 20]) {
-    return HsvColor(h, s, min(1.0, v + amount / 100), alpha);
+    return HsvColor.alt(h, s, min(1.0, v + amount / 100), alpha: alpha);
   }
 
   @override
   HsvColor saturate([final double amount = 25]) {
-    return HsvColor(h, min(1.0, s + amount / 100), v, alpha);
+    return HsvColor.alt(h, min(1.0, s + amount / 100), v, alpha: alpha);
   }
 
   @override
@@ -187,7 +184,7 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   HsvColor deintensify([final double amount = 10]) {
-    return HsvColor(h, max(0.0, s - amount / 100), v, alpha);
+    return HsvColor.alt(h, max(0.0, s - amount / 100), v, alpha: alpha);
   }
 
   @override
@@ -200,9 +197,6 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
   HsvColor simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toHsv();
   }
-
-  @override
-  HsvColor fromHct(final HctColor hct) => hct.toColor().toHsv();
 
   @override
   HsvColor adjustTransparency([final double amount = 20]) {
@@ -275,19 +269,22 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  HsvColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
-      toColor().blend(other, amount).toHsv();
+  HsvColor blend(final ColorSpacesIQ other, [final double amount = 50]) {
+    return lerp(other, amount / 100);
+  }
 
   @override
-  HsvColor opaquer([final double amount = 20]) =>
-      toColor().opaquer(amount).toHsv();
+  HsvColor opaquer([final double amount = 20]) {
+    return HsvColor.alt(h, s, v, alpha: min(1.0, alpha + amount / 100));
+  }
 
   @override
-  HsvColor adjustHue([final double amount = 20]) =>
-      toColor().adjustHue(amount).toHsv();
+  HsvColor adjustHue([final double amount = 20]) {
+    return HsvColor.alt(wrapHue(h + amount), s, v, alpha: alpha);
+  }
 
   @override
-  HsvColor get complementary => toColor().complementary.toHsv();
+  HsvColor get complementary => adjustHue(180);
 
   @override
   HsvColor warmer([final double amount = 20]) =>
@@ -353,4 +350,9 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   double distanceTo(final ColorSpacesIQ other) =>
       toCam16().distance(other.toCam16());
+
+  @override
+  ColorSpacesIQ fromHct(final HctColor hct) {
+    return HctColor.fromInt(value);
+  }
 }

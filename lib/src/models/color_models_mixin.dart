@@ -28,6 +28,8 @@ mixin ColorModelsMixin {
       <int>[value.redInt, value.greenInt, value.blueInt];
   List<double> get rgbaLinearized =>
       <double>[redLinearized, greenLinearized, blueLinearized, alphaLinearized];
+  List<double> get linearSrgb =>
+      <double>[redLinearized, greenLinearized, blueLinearized];
 
   /// The white point of the color space.
   ///

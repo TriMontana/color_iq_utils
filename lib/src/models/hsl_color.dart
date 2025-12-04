@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/extensions/int_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
@@ -291,7 +291,7 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
 
     for (int i = 1; i <= 5; i++) {
       final double newL = (l - delta * i).clamp(0.0, 1.0);
-      results.add(HslColor(h, s, newL, alpha));
+      results.add(HslColor.alt(h, s, newL, alpha: alpha));
     }
     return results;
   }
@@ -396,7 +396,7 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
         HslColor.alt(h, s, l, alpha: alpha),
         HslColor.alt(_wrapHue(h + offset), s, l, alpha: alpha),
         HslColor.alt(_wrapHue(h + 180.0), s, l, alpha: alpha),
-        HslColor(_wrapHue(h + 180.0 + offset), s, l, alpha),
+        HslColor.alt(_wrapHue(h + 180.0 + offset), s, l, alpha: alpha),
       ];
 
   double _wrapHue(final double hue) {

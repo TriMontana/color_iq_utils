@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
-import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
@@ -16,7 +16,7 @@ import 'package:color_iq_utils/src/utils/color_math.dart';
 /// a much wider range of colors than the standard sRGB color space.
 ///
 /// The [r], [g], and [b] values are typically in the range of 0.0 to 1.0.
-class Rec2020Color with ColorModelsMixin implements ColorSpacesIQ {
+class Rec2020Color extends ColorSpacesIQ with ColorModelsMixin {
   @override
   final double r;
   @override
@@ -24,7 +24,11 @@ class Rec2020Color with ColorModelsMixin implements ColorSpacesIQ {
   @override
   final double b;
 
-  const Rec2020Color(this.r, this.g, this.b);
+  const Rec2020Color(this.r, this.g, this.b, {required final int hexId})
+      : super(hexId);
+
+  Rec2020Color.alt(this.r, this.g, this.b, {final int? hexId})
+      : super(hexId ?? toHex(r, g, b));
 
   /// Creates a 32-bit hex ARGB value from the properties of this class.
   ///
@@ -36,15 +40,7 @@ class Rec2020Color with ColorModelsMixin implements ColorSpacesIQ {
   /// The `alpha` value is always 255 (fully opaque).
   ///
   /// Returns the 32-bit ARGB hex value.
-  static int toHex(final Rec2020Color color) {
-    // This is essentially a stand-alone version of the `toColor().value` logic.
-    // It's implemented by calling the instance method `toColor()` and getting its value.
-    // The heavy lifting of color space conversion is done within `toColor()`.
-    return color.toColor().value;
-  }
-
-  @override
-  ColorIQ toColor() {
+  static int toHex(final double r, final double g, final double b) {
     // Rec. 2020 decoding (Gamma to Linear)
     double transferInv(final double v) {
       if (v < 0.018 * 4.5) return v / 4.5;
@@ -75,11 +71,13 @@ class Rec2020Color with ColorModelsMixin implements ColorSpacesIQ {
       (rS * 255).round().clamp(0, 255),
       (gS * 255).round().clamp(0, 255),
       (bS * 255).round().clamp(0, 255),
-    );
+    ).value;
   }
 
   @override
-  int get value => toColor().value;
+  ColorIQ toColor() {
+    return ColorIQ(value);
+  }
 
   @override
   Rec2020Color darken([final double amount = 20]) {
@@ -141,7 +139,7 @@ class Rec2020Color with ColorModelsMixin implements ColorSpacesIQ {
         other is Rec2020Color ? other : other.toColor().toRec2020();
     if (t == 1.0) return otherRec;
 
-    return Rec2020Color(
+    return Rec2020Color.alt(
       lerpDouble(r, otherRec.r, t),
       lerpDouble(g, otherRec.g, t),
       lerpDouble(b, otherRec.b, t),
@@ -152,8 +150,6 @@ class Rec2020Color with ColorModelsMixin implements ColorSpacesIQ {
   Rec2020Color lighten([final double amount = 20]) {
     return toColor().lighten(amount).toRec2020();
   }
-
-
 
   @override
   Rec2020Color fromHct(final HctColor hct) => hct.toColor().toRec2020();
@@ -173,7 +169,7 @@ class Rec2020Color with ColorModelsMixin implements ColorSpacesIQ {
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   Rec2020Color copyWith({final double? r, final double? g, final double? b}) {
-    return Rec2020Color(r ?? this.r, g ?? this.g, b ?? this.b);
+    return Rec2020Color.alt(r ?? this.r, g ?? this.g, b ?? this.b);
   }
 
   @override
