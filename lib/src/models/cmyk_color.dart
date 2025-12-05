@@ -26,13 +26,15 @@ import 'package:color_iq_utils/src/utils/color_math.dart';
 /// It implements the `ColorSpacesIQ` interface, ensuring a consistent API for color operations
 /// across different color models in this library.
 ///
-///
 class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
   final double c;
   final double m;
   final double y;
   final double k;
 
+  /// Constructs a CMYK color from normalized cyan, magenta, yellow, and black values.
+  ///
+  /// [c], [m], [y], and [k] must be between 0.0 and 1.0.
   const CmykColor(this.c, this.m, this.y, this.k, {required final int value})
       : assert(c >= 0 && c <= 1, 'Invalid C value: $c'),
         assert(m >= 0 && m <= 1, 'Invalid M value: $m'),
@@ -40,6 +42,9 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
         assert(k >= 0 && k <= 1, 'Invalid K value: $k'),
         super(value);
 
+  /// Alternative constructor for creating a CMYK color, optionally calculating the hex ID if not provided.
+  ///
+  /// [c], [m], [y], and [k] must be between 0.0 and 1.0.
   CmykColor.alt(this.c, this.m, this.y, this.k, {final int? value})
       : assert(c >= 0 && c <= 1, 'Invalid C value: $c'),
         assert(m >= 0 && m <= 1, 'Invalid M value: $m'),
@@ -47,6 +52,7 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
         assert(k >= 0 && k <= 1, 'Invalid K value: $k'),
         super(value ?? CmykColor.hexFromCmyk(c, m, y, k));
 
+  /// Converts this CMYK color to the sRGB color space.
   @override
   ColorIQ toColor() {
     final double r = 255 * (1 - c) * (1 - k);
@@ -411,7 +417,7 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  CmykColor get inverted => copyWith(c: 1 - c, m: 1 - m, y: 1 - y);
+  CmykColor get inverted => CmykColor.fromColorSpacesIQ(toColor().inverted);
 
   @override
   CmykColor get grayscale {

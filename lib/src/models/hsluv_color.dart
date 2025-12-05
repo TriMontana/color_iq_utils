@@ -4,12 +4,16 @@ import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/extensions/string_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:color_iq_utils/src/models/hsluv.dart';
 import 'package:color_iq_utils/src/utils/color_math.dart';
 
 /// A representation of color in the HSLuv color space.
+/// Adapted from hsluv-dart: https://github.com/hsluv/hsluv-dart
+/// by Bernardo Ferrari
 ///
 /// HSLuv is a human-friendly alternative to HSL. It is designed to be
 /// perceptually uniform, meaning that changes in the H, S, and L values
@@ -21,54 +25,48 @@ import 'package:color_iq_utils/src/utils/color_math.dart';
 /// - **Hue (h):** The color's angle on the color wheel, ranging from 0 to 360.
 /// - **Saturation (s):** The color's intensity, from 0 (grayscale) to 100 (fully saturated).
 /// - **Lightness (l):** The color's perceived brightness, from 0 (black) to 100 (white).
-///
+///  CREDIT: https://github.com/hsluv/hsluv-dart
 class HsluvColor extends ColorSpacesIQ with ColorModelsMixin {
   final double h;
   final double s;
   final double l;
 
   const HsluvColor(this.h, this.s, this.l, {required final int hexId})
-      : super(hexId);
+      : assert(h >= 0.0 && h <= 360.0, 'Hue must be between 0 and 360'),
+        assert(s >= 0.0 && s <= 100.0, 'Saturation must be between 0 and 100'),
+        assert(l >= 0.0 && l <= 100.0, 'Lightness must be between 0 and 100'),
+        super(hexId);
+
   HsluvColor.alt(this.h, this.s, this.l, {final int? hexId})
       : super(hexId ?? toHex(h: h, s: s, l: l));
 
   /// Creates a 32-bit ARGB hex value from HSLuv components.
   ///
-  /// This method converts the HSLuv color to sRGB and then packs it into a
-  /// 32-bit integer. The alpha component is always set to 255 (fully opaque).
+  /// HSLuv to ARGB Conversion FlowThe conversion relies on the
+  /// official HSLuv algorithm, which ensures the perceived lightness
+  /// and saturation are consistent.HSLuv $\to$ CIELuv: The HSLuv
+  /// coordinates (Hue, Saturation, Lightness) are converted into the
+  /// Cartesian coordinates of the CIELuv space ($L*, u*, v*$).CIELuv $\to$ CIEXYZ: The
+  /// CIELuv coordinates are transformed into the device-independent CIEXYZ color space.
+  /// CIEXYZ $\to$ Linear sRGB: The $X, Y, Z$ values are mapped onto the Linear sRGB color
+  /// cube.Linear sRGB $\to$ sRGB (Gamma): The color is then gamma-corrected (delinearized)
+  /// to standard sRGB values ($\text{R, G, B}$).sRGB $\to$ 32-bit ARGB:
+  /// The final $\text{R, G, B}$ values are combined with the Alpha channel (255 for full opacity)
+  /// into a 32-bit integer.
   static int toHex(
       {required final double h,
       required final double s,
       required final double l}) {
-    // Create a temporary HsluvColor instance to use the toColor() conversion.
-    final HsluvColor hsluv = HsluvColor.alt(h, s, l);
-    // Convert to ColorIQ which holds the ARGB value.
-    final ColorIQ color = hsluv.toColor();
-    // Return the 32-bit integer value.
-    return color.value;
+    return Hsluv.hsluvToHex(<double>[h, s, l]).toHexInt();
+  }
+
+  static int hsluvToHexId(final double h, final double s, final double l) {
+    return Hsluv.hsluvToHex(<double>[h, s, l]).toHexInt();
   }
 
   @override
   ColorIQ toColor() {
-    // HSLuv to Luv to XYZ to RGB
-    // This requires the full HSLuv implementation which is quite large.
-    // For now, we can use a placeholder or simplified version if available,
-    // or just assume we have the Luv conversion.
-
-    // HSLuv -> Luv
-    // This is non-trivial without the math.
-    // Let's assume we have a helper or just return Black for now if not critical,
-    // BUT the user asked for implementation.
-    // I'll implement a basic version if I can, or delegate.
-    // Since I don't have the full math here, I'll return a placeholder that preserves Lightness at least.
-
-    // L = l
-    // u, v = ?
-
-    // Fallback: Convert L to grayscale
-    // ignore: prefer_final_locals
-    int gray = (l * 2.55).round().clamp(0, 255);
-    return ColorIQ.fromARGB(255, gray, gray, gray);
+    return ColorIQ(Hsluv.hsluvToHex(<double>[h, s, l]).toHexInt());
   }
 
   @override

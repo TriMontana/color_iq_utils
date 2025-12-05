@@ -3,12 +3,17 @@ import 'dart:math';
 import 'package:color_iq_utils/color_iq_utils.dart';
 import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/extensions/float_ext_type.dart';
 import 'package:color_iq_utils/src/extensions/int_helpers.dart';
 
 /// Add gamma correction to a linear RGB component, aka delinear or delinearized
 const double Function(double linearComponent) delinearize = linearToSrgb;
 const double Function(double linearComponent) gammaCorrection = linearToSrgb;
+const double Function(double linearComponent) fromLinear = linearToSrgb;
 const double Function(double srgbComponent) linearize = srgbToLinear;
+const double Function(double srgbComponent) toLinear = srgbToLinear;
+const LinRGB Function(double nonLinearVal, {String? msg}) removeGamma = eotf;
+const SRGB Function(double linearRgb, {String? msg}) applyGamma = oetf;
 
 /// The brightness of a color.
 enum Brightness { dark, light }
@@ -184,6 +189,11 @@ double computeLuminance(final double r, final double g, final double b) {
 /// See <https://www.w3.org/TR/WCAG20/#relativeluminancedef>
 double computeLuminanceViaLinearized(final double redLinearized,
     final double greenLinearized, final double blueLinearized) {
+  redLinearized.assertRange0to1('computeLuminanceViaLinearized-redLinearized');
+  greenLinearized
+      .assertRange0to1('computeLuminanceViaLinearized-greenLinearized');
+  blueLinearized
+      .assertRange0to1('computeLuminanceViaLinearized-blueLinearized');
   return 0.2126 * redLinearized +
       0.7152 * greenLinearized +
       0.0722 * blueLinearized;
@@ -197,10 +207,9 @@ double computeLuminanceViaLinearized(final double redLinearized,
 ///
 /// See <https://en.wikipedia.org/wiki/Relative_luminance>.
 /// See <https://www.w3.org/TR/WCAG20/#relativeluminancedef>
-double computeLuminanceViaHexId(final int hexId) {
-  return computeLuminanceViaLinearized(
-      hexId.redLinearized, hexId.greenLinearized, hexId.blueLinearized);
-}
+double computeLuminanceViaHexId(final int hexId) =>
+    computeLuminanceViaLinearized(
+        hexId.redLinearized, hexId.greenLinearized, hexId.blueLinearized);
 
 /// Returns a brightness value between 0 for darkest and 1 for lightest.
 ///
@@ -210,17 +219,19 @@ double computeLuminanceViaHexId(final int hexId) {
 ///
 /// See <https://en.wikipedia.org/wiki/Relative_luminance>.
 /// See <https://www.w3.org/TR/WCAG20/#relativeluminancedef>
-double computeLuminanceViaInts(final int red, final int green, final int blue) {
-  return computeLuminance(red.normalized, green.normalized, blue.normalized);
-}
+double computeLuminanceViaInts(
+        final int red, final int green, final int blue) =>
+    computeLuminance(red.normalized, green.normalized, blue.normalized);
 
 // See <https://www.w3.org/TR/WCAG20/#relativeluminancedef>
 // This is Dart specific; it uses a different cutoff
 double linearizeColorComponentDart(final double srgbComponent) {
+  // clamp within specified tolerance
+  srgbComponent.assertRange0to1('linearizeColorComponentDart');
   if (srgbComponent <= 0.03928) {
-    return srgbComponent / 12.92;
+    return (srgbComponent / 12.92).clamp(0.0, 1.0);
   }
-  return pow((srgbComponent + 0.055) / 1.055, 2.4) as double;
+  return pow((srgbComponent + 0.055) / 1.055, 2.4).toDouble().clamp(0.0, 1.0);
 }
 
 /// Converts a normalized sRGB (gamma-encoded) double component [0.0 - 1.0]
@@ -231,13 +242,15 @@ double linearizeColorComponentDart(final double srgbComponent) {
 ///
 /// This is also known as "linearization" or "inverse gamma correction."
 double srgbToLinear(final double srgbComponent) {
+  // clamp within specified tolerance
+  srgbComponent.assertRange0to1('srgbToLinear');
   // sRGB standard specifies a linear segment near zero for better precision.
   if (srgbComponent <= 0.04045) {
     // Linear segment: c / 12.92
-    return srgbComponent / 12.92;
+    return (srgbComponent / 12.92).clamp(0.0, 1.0);
   }
   // Non-linear segment: ((c + 0.055) / 1.055) ^ 2.4
-  return pow((srgbComponent + 0.055) / 1.055, 2.4).toDouble();
+  return pow((srgbComponent + 0.055) / 1.055, 2.4).toDouble().clamp(0.0, 1.0);
 }
 
 /// Converts a linear intensity sRGB double component [0.0 - 1.0]
@@ -245,6 +258,8 @@ double srgbToLinear(final double srgbComponent) {
 ///
 /// This is also known as 'delinearize' or "gamma correction."
 double linearToSrgb(final double linearComponent) {
+  // clamp within specified tolerance
+  linearComponent.assertRange0to1('linearToSrgb');
   // sRGB standard defines the inverse of the linearization function.
   if (linearComponent <= 0.0031308) {
     // Inverse linear segment: c * 12.92
@@ -264,6 +279,10 @@ double linearToSrgb(final double linearComponent) {
 /// has been converted to its linear equivalent in the range of 0.0 to 1.0.
 /// This is useful for color space conversions and calculations.
 List<double> rgbToLinearRgb(final int r, final int g, final int b) {
+  // clamp within specified tolerance
+  r.assertRange0to255('rgbToLinearRgb-r');
+  g.assertRange0to255('rgbToLinearRgb-g');
+  b.assertRange0to255('rgbToLinearRgb-b');
   return <double>[
     srgbToLinear(r / 255.0),
     srgbToLinear(g / 255.0),
@@ -274,9 +293,9 @@ List<double> rgbToLinearRgb(final int r, final int g, final int b) {
 /// Converts a color from linear RGB components to ARGB format.
 /// CREDIT: MaterialColorUtilities
 int argbFromLinrgb(final List<double> linrgb) {
-  final int r = delinearized(linrgb[0]);
-  final int g = delinearized(linrgb[1]);
-  final int b = delinearized(linrgb[2]);
+  final int r = delinearized(linrgb[0].assertRange0to1('argbFromLinrgb-r'));
+  final int g = delinearized(linrgb[1].assertRange0to1('argbFromLinrgb-g'));
+  final int b = delinearized(linrgb[2].assertRange0to1('argbFromLinrgb-b'));
   return argbFromRgb(r, g, b);
 }
 
@@ -292,6 +311,7 @@ int argbFromLinrgb(final List<double> linrgb) {
 /// linear RGB space
 /// CREDIT: MaterialColorUtilities
 double linearized(final int rgbComponent) {
+  rgbComponent.assertRange0to255('linearized-rgbComponent');
   final double normalized = rgbComponent / 255.0;
   if (normalized <= 0.040449936) {
     return normalized / 12.92 * 100.0; // Note multiplication here
@@ -583,6 +603,7 @@ List<double> matrixMultiply(
 }
 
 // CREDIT: Material Color Utilities
+// CREDIT: https://github.com/bernaferrari/hsluv-dart/blob/main/lib/hsluv.dart
 const List<List<double>> srgbToXyzMatrix = <List<double>>[
   <double>[0.41233895, 0.35762064, 0.18051042],
   <double>[0.2126, 0.7152, 0.0722],
@@ -594,6 +615,22 @@ const List<List<double>> xyzToSrgbMatrix = <List<double>>[
   <double>[3.2413774792388685, -1.5376652402851851, -0.49885366846268053],
   <double>[-0.9691452513005321, 1.8758853451067872, 0.04156585616912061],
   <double>[0.05562093689691305, -0.20395524564742123, 1.0571799111220335],
+];
+
+/// CREDIT: https://github.com/bernaferrari/hsluv-dart/blob/main/lib/hsluv.dart
+/// CREDIT: Material Color Utilities, aka 'm
+const List<List<double>> xyzToSrgbMatrix2 = <List<double>>[
+  <double>[3.240969941904521, -1.537383177570093, -0.498610760293],
+  <double>[-0.96924363628087, 1.87596750150772, 0.041555057407175],
+  <double>[0.055630079696993, -0.20397695888897, 1.056971514242878]
+];
+
+/// CREDIT: https://github.com/bernaferrari/hsluv-dart/blob/main/lib/hsluv.dart
+/// CREDIT: Material Color Utilities, aka 'm', aka minV
+const List<List<double>> srgbToXyzMatrix2 = <List<double>>[
+  <double>[0.41239079926595, 0.35758433938387, 0.18048078840183],
+  <double>[0.21263900587151, 0.71516867876775, 0.072192315360733],
+  <double>[0.019330818715591, 0.11919477979462, 0.95053215224966]
 ];
 
 /// Converts a color from ARGB to XYZ;
@@ -719,4 +756,53 @@ double labInvf(final double ft) {
     // if ft^3 <= ε, the inverse is (116 * ft - 16) / κ
     return (116 * ft - 16) / kKappa;
   }
+}
+
+/// aka IsShortHex, aka is 8Bit, is8Bit isTwoDigitHex
+/// determines if a number is an 8-bit or 1-byte value (which are equivalent).
+/// Involves checking if it falls within the range of 0 to 255
+bool is8BitUnsigned(final int hexInt) {
+  // check
+  if (hexInt < 0 || hexInt > 255 || hexInt.bitLength > 8) {
+    return false;
+  }
+  // i.e. IF it an 8-bit number, than it will accept the 0xFF mask correctly and
+  // return the same number.
+  if ((hexInt & 0xFF == hexInt) && (hexInt >= 0 && hexInt <= 255)) {
+    return true; // Check if number is within 0-255
+  }
+
+  /// last-resort check here
+  final bool b = (hexInt <= 0xFF && hexInt.toRadixString(16).length <= 2);
+  return b;
+}
+
+/// Determines whether the input number is 32-bit unsigned
+bool is32BitUnsigned(final int hexInt) {
+  // check
+  if (hexInt.bitLength > 32 ||
+      hexInt.isNegative ||
+      hexInt.isNaN ||
+      hexInt.isInfinite ||
+      hexInt > maxUInt32) {
+    return false;
+  }
+
+  /// Handle the case where alpha is zero
+  if (hexInt.toRadixString(16).length >= 8) {
+    return true;
+  }
+
+  if (hexInt.alpha.toInt() > 0 &&
+      (hexInt.blue.toInt() > 0 ||
+          hexInt.red.toInt() > 0 ||
+          hexInt.green.toInt() > 0)) {
+    return true;
+  }
+
+  /// Handle the case where alpha is zero
+  if (is8BitUnsigned(hexInt)) {
+    return false;
+  }
+  return false;
 }

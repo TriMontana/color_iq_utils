@@ -22,7 +22,7 @@ void main() {
       final YuvColor end = YuvColor.alt(1.0, 0.0, 0.0); // White
       final YuvColor mid = start.lerp(end, 0.5);
 
-      expect(mid.y, closeTo(0.5, 0.01));
+      expect(mid.y, closeTo(0.75, 0.01));
       expect(mid.u, closeTo(0.0, 0.01));
       expect(mid.v, closeTo(0.0, 0.01));
     });

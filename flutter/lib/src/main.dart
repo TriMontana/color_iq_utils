@@ -17,6 +17,7 @@ class ColorIQDemoApp extends StatelessWidget {
     final List<ColorIQ> harmony = ColorHarmony.triad(base);
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(title: const Text('ColorIQ Demo')),
         body: Padding(

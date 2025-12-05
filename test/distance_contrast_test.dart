@@ -1,6 +1,6 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
-import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/naming/names.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -45,7 +45,7 @@ void main() {
       final ColorSlice slice = cyan.closestColorSlice();
       // In HCT, #00FFFF is perceptually closer to Turquoise/Sky Blue than pure Cyan (180 deg).
       // Our HCT wheel maps it to "Turquoise".
-      expect(slice.name, equals('Turquoise'));
+      expect(slice.name, equals(kTurquoise));
     });
 
     test('Delegation works', () {

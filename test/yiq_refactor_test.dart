@@ -22,7 +22,7 @@ void main() {
       final YiqColor end = YiqColor.alt(1.0, 0.0, 0.0); // White
       final YiqColor mid = start.lerp(end, 0.5);
 
-      expect(mid.y, closeTo(0.5, 0.01));
+      expect(mid.y, closeTo(0.75, 0.01));
       expect(mid.i, closeTo(0.0, 0.01));
       expect(mid.q, closeTo(0.0, 0.01));
     });

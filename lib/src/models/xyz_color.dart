@@ -41,6 +41,11 @@ class XyzColor extends ColorSpacesIQ with ColorModelsMixin {
       xyzFromRgbLinearized(
           linearized(red), linearized(green), linearized(blue));
 
+  /// Converts this color to XYZ.  Values are expected to be in the range of 0.0 to 1.0
+  /// and are expected to be in the sRGB color space, not linearized.
+  static XyzColor xyxFromSRgb(final double r, final double g, final double b) =>
+      xyzFromRgbLinearized(srgbToLinear(r), srgbToLinear(g), srgbToLinear(b));
+
   /// Converts this color to XYZ.
   static XyzColor xyzFromRgbLinearized(final double redLinearized,
       final double greenLinearized, final double blueLinearized) {

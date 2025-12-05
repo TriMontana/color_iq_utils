@@ -1,5 +1,5 @@
 import 'package:color_iq_utils/src/color_models.dart';
-import 'package:color_iq_utils/src/constants.dart';
+import 'package:color_iq_utils/src/naming/names.dart';
 
 /// Color family categories for HTML colors
 enum ColorFamilyHTML {
