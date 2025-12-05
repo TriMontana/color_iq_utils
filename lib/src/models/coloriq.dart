@@ -1,11 +1,7 @@
 import 'dart:math';
 
-import 'package:color_iq_utils/src/color_interfaces.dart';
-import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
-import 'package:color_iq_utils/src/constants.dart';
-import 'package:color_iq_utils/src/extensions/double_helpers.dart';
-import 'package:color_iq_utils/src/extensions/int_helpers.dart';
+import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/cam16_color.dart';
 import 'package:color_iq_utils/src/models/cmyk_color.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
@@ -29,10 +25,7 @@ import 'package:color_iq_utils/src/models/rec2020_color.dart';
 import 'package:color_iq_utils/src/models/xyz_color.dart';
 import 'package:color_iq_utils/src/models/yiq_color.dart';
 import 'package:color_iq_utils/src/models/yuv_color.dart';
-import 'package:color_iq_utils/src/naming/color_namer.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
-import 'package:color_iq_utils/src/utils/color_spaces.dart';
-import 'package:color_iq_utils/src/utils/hex_utils.dart';
+import 'package:color_iq_utils/src/utils_lib.dart';
 import 'package:material_color_utilities/material_color_utilities.dart' as mcu;
 
 /// A versatile color representation class, `ColorIQ`, designed for advanced color
@@ -66,7 +59,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
   /// Construct a color from the lower 32 bits of an [int].
   ColorIQ(
     super.value, {
-    final double? a,
+    final Percent? a,
     final double? r,
     final double? g,
     final double? b,
@@ -74,7 +67,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     final int? red,
     final int? green,
     final int? blue,
-    final double? luminance,
+    final Percent? luminance,
     this.colorSpace = ColorSpace.sRGB,
   })  : alpha = alpha != null
             ? alpha.assertRange0to255('ColorIQ-COTR-alpha')
@@ -86,12 +79,8 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
             ? blue.assertRange0to255('ColorIQ-COTR-blue')
             : (value & 0xFF),
         super(
-            lrv: luminance != null
-                ? luminance.assertRange0to1('ColorIQ-COTR-luminance')
-                : value.toLRV,
-            a: a != null
-                ? a.assertRange0to1('ColorIQ-COTR-a')
-                : ((value >> 24 & 0xFF) / 255).clamp0to1,
+            lrv: luminance ?? value.toLRV,
+            a: a ?? Percent(((value >> 24 & 0xFF) / 255).clamp0to1),
             r: r != null
                 ? r.assertRange0to1('ColorIQ-COTR-r')
                 : ((value >> 16 & 0xFF) / 255).clamp0to1,
@@ -111,11 +100,11 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     final int red,
     this.green,
     this.blue, {
-    final double? a,
-    final double? r,
+    final Percent? a,
+    final Percent? r,
     final double? g,
     final double? b,
-    final double? luminance,
+    final Percent? luminance,
     this.colorSpace = ColorSpace.sRGB,
   })  : assert(red >= 0 && red <= 255, 'Invalid Red 0-255 value: $red'),
         assert(green >= 0 && green <= 255, 'Invalid Green 0-255 value: $green'),
@@ -127,9 +116,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
                   ((green & 0xff) << 8) |
                   ((blue & 0xff) << 0)) &
               0xFFFFFFFF,
-          a: a != null
-              ? a.assertRange0to1('ColorIQ.fromARGB-Alpha')
-              : alpha.normalized,
+          a: a ?? alpha.normalized,
           r: r != null
               ? r.assertRange0to1('ColorIQ.fromARGB-Red')
               : red.normalized,
@@ -140,9 +127,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
           b: b != null
               ? b.assertRange0to1('ColorIQ.fromARGB-Blue')
               : (blue / 255.0).clamp0to1,
-          lrv: luminance != null
-              ? luminance.assertRange0to1('ColorIQ-COTR-luminance')
-              : computeLuminanceViaInts(red, green, blue),
+          lrv: luminance ?? computeLuminanceViaInts(red, green, blue),
         );
 
   /// Construct a color from sRGB delinearized values a, r, g, b (0.0 to 1.0)
@@ -150,13 +135,13 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     required final double r,
     required final double g,
     required final double b,
-    final double a = 1.0,
+    final Percent a = Percent.max,
     int? alphaInt,
     int? redInt,
     int? greenInt,
     int? blueInt,
     int? argb,
-    double? luminance,
+    Percent? luminance,
     final ColorSpace colorSpace = ColorSpace.sRGB,
   }) {
     a.assertRange0to1('ColorIQ.fromSrgb--a');
@@ -176,9 +161,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
         ? alphaInt.assertRange0to255('ColorIQ.fromSrgb-AlphaInt')
         : a.normalizedTo255int('ColorIQ.fromSrgb-A');
     argb ??= (alphaInt << 24) | (redInt << 16) | (greenInt << 8) | blueInt;
-    luminance = luminance != null
-        ? luminance.assertRange0to1('ColorIQ-COTR-luminance')
-        : computeLuminanceViaInts(redInt, greenInt, blueInt);
+    luminance = luminance ?? computeLuminanceViaInts(redInt, greenInt, blueInt);
     return ColorIQ(argb,
         alpha: alphaInt,
         red: redInt,
@@ -193,8 +176,32 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   /// Accepts hex like "#RRGGBB" or "RRGGBB" or "AARRGGBB".
-  factory ColorIQ.fromHexStr(final String hex) {
-    return parseHex(hex);
+  factory ColorIQ.fromHexStr(final String hexStr) {
+    String hex = hexStr.replaceAll('#', '').toUpperCase();
+    // hex = hex.substring(1);
+    if (hex.length == 3) {
+      hex = hex.split('').map((final String c) => '$c$c').join('');
+    }
+
+    if (hex.length == 6) {
+      hex = 'FF$hex';
+      return ColorIQ(int.parse(hex, radix: 16));
+    }
+
+    if (hex.length == 8) {
+      // CSS hex is RRGGBBAA, Dart Color is AARRGGBB
+      // So we need to move AA to the front.
+      // Input: RRGGBBAA
+      // Output: AARRGGBB
+      final String r = hex.substring(0, 2);
+      final String g = hex.substring(2, 4);
+      final String b = hex.substring(4, 6);
+      final String a = hex.substring(6, 8);
+      hex = '$a$r$g$b';
+      return ColorIQ(int.parse(hex, radix: 16));
+    }
+
+    throw FormatException('Invalid hex color: #$hex');
   }
 
   /// LAB representation, computed once and cached.

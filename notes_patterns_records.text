@@ -1,0 +1,26 @@
+// destructore record:
+    final (:int red, :int green, :int blue) = xyzToRgb(xyz.x, xyz.y, xyz.z); //
+
+// destructure class
+// final Foo myFoo = Foo(one: 'one', two: 2);
+// var Foo(:one, :two) = myFoo;
+// print('one $one, two $two');
+
+// class Person {
+//   final String name;
+//   final int age;
+//
+//   Person(this.name, this.age);
+// }
+// Destructuring the object
+//   var Person(name: name, age: age) = person;
+
+// Destructuring a map
+//  var person = {
+//     'name': 'Alice',
+//     'age': 25
+//   };
+// var {'name': name, 'age': age} = person;
+//
+// print('Name: $name');  // Output: Name: Alice
+// print('Age: $age');    // Output: Age: 25

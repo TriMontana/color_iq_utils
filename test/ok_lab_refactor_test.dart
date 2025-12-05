@@ -4,25 +4,22 @@ import 'package:test/test.dart';
 void main() {
   group('OkLabColor Refactor Tests', () {
     test('whiten increases lightness', () {
-      final OkLabColor color =
-          OkLabColor.alt(0.5, 0.0, 0.0, alpha: 1.0); // Gray
+      final OkLabColor color = OkLabColor.alt(0.5, 0.0, 0.0); // Gray
       final OkLabColor whitened = color.whiten(50);
 
       expect(whitened.l, greaterThan(color.l));
     });
 
     test('blacken decreases lightness', () {
-      final OkLabColor color =
-          OkLabColor.alt(0.5, 0.0, 0.0, alpha: 1.0); // Gray
+      final OkLabColor color = OkLabColor.alt(0.5, 0.0, 0.0); // Gray
       final OkLabColor blackened = color.blacken(50);
 
       expect(blackened.l, lessThan(color.l));
     });
 
     test('lerp interpolates correctly', () {
-      final OkLabColor start =
-          OkLabColor.alt(0.0, 0.0, 0.0, alpha: 1.0); // Black
-      final OkLabColor end = OkLabColor.alt(1.0, 0.0, 0.0, alpha: 1.0); // White
+      final OkLabColor start = OkLabColor.alt(0.0, 0.0, 0.0); // Black
+      final OkLabColor end = OkLabColor.alt(1.0, 0.0, 0.0); // White
       final OkLabColor mid = start.lerp(end, 0.5);
 
       expect(mid.l, closeTo(0.5, 0.01));

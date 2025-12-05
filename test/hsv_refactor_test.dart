@@ -1,5 +1,4 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -59,7 +58,8 @@ void main() {
     });
 
     test('opaquer increases alpha', () {
-      final HsvColor color = HsvColor.alt(0, 1.0, 1.0, alpha: 0.5);
+      final HsvColor color =
+          HsvColor.alt(0, 1.0, 1.0, alpha: const Percent(0.5));
       final HsvColor opaque = color.opaquer(20);
 
       expect(opaque.alpha, closeTo(0.7, 0.01));

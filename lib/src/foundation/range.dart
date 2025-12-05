@@ -1,11 +1,11 @@
 import 'dart:math' as math;
 import 'dart:math';
 
-import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/extensions/float_ext_type.dart';
 import 'package:color_iq_utils/src/extensions/num_helpers.dart';
 import 'package:color_iq_utils/src/extensions/string_helpers.dart';
+import 'package:color_iq_utils/src/foundation/constants.dart';
 import 'package:color_iq_utils/src/foundation/enums.dart';
 
 enum RangeType {
@@ -482,9 +482,9 @@ const RangeIQ<LinRGB> rangeLinearRGB = RangeIQ<LinRGB>(
 
 /// Range for RGBLinear percents, (factored, normalized), etc.
 const RangeIQ<Percent> rangePercents = RangeIQ<Percent>(
-  Percent.minInst,
-  Percent.maxInst,
-  centerPoint: Percent.midInst,
+  Percent.min,
+  Percent.max,
+  centerPoint: Percent.mid,
   rangeType: RangeType.standard,
 );
 

@@ -1,3 +1,9 @@
+/// The brightness of a color.
+enum Brightness { dark, light }
+
+/// Common color gamuts.
+enum Gamut { sRGB, displayP3, rec2020, adobeRgb, proPhotoRgb }
+
 /// Enum to indicate how to convert a [Color] object, from one Color Space
 /// to another
 enum ChannelAdjustMode {
@@ -34,3 +40,12 @@ enum PrefixOrSuffix { prefix, suffix }
 enum RotationDirection { clockwise, counterclockwise }
 
 enum SwatchType { materialColor, materialAccentColor }
+
+/// Enum representing the color temperature (warm or cool).
+enum ColorTemperature {
+  /// Warm colors (e.g., red, orange, yellow).
+  warm,
+
+  /// Cool colors (e.g., blue, green, purple).
+  cool,
+}

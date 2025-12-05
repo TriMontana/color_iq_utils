@@ -1,6 +1,12 @@
-import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:color_iq_utils/src/color_interfaces.dart';
+import 'package:color_iq_utils/src/extensions/float_ext_type.dart';
 import 'package:color_iq_utils/src/extensions/int_helpers.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
+import 'package:color_iq_utils/src/models/cmyk_color.dart';
+import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:color_iq_utils/src/models/hsl_color.dart';
+import 'package:color_iq_utils/src/models/luv_color.dart';
+import 'package:color_iq_utils/src/models/ok_lab_color.dart';
+import 'package:color_iq_utils/src/utils_lib.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 
 mixin ColorModelsMixin {
@@ -11,7 +17,7 @@ mixin ColorModelsMixin {
   int get red => value.redInt;
   int get green => value.greenInt;
   int get blue => value.blueInt;
-  double get a => value.a2;
+  Percent get a => value.a2;
   double get r => value.r2;
   double get g => value.g2;
   double get b => value.b2;

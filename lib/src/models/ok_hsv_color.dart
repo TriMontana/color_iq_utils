@@ -1,14 +1,11 @@
 import 'dart:math';
 
-import 'package:color_iq_utils/src/color_interfaces.dart';
-import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
-import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/ok_lab_color.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
 
 /// A color model that represents color in the Okhsv color space.
 ///
@@ -27,25 +24,16 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
   final double saturation;
   // Renamed from value to val to avoid conflict with ColorSpacesIQ.value
   final double val;
-  final double alpha;
+  Percent get alpha => super.a;
 
   const OkHsvColor(this.hue, this.saturation, this.val,
-      {this.alpha = 1.0, required final int hexId})
-      : super(hexId);
+      {final Percent alpha = Percent.max, required final int hexId})
+      : super(hexId, a: alpha);
 
   OkHsvColor.alt(this.hue, this.saturation, this.val,
-      {this.alpha = 1.0, final int? hexId})
-      : super(hexId ?? OkHsvColor.computeHexId(hue, saturation, val, alpha));
-
-  // OkHsvColor.alt(
-  // this.hue,
-  // this.saturation,
-  // this.hue,
-  // saturation,
-  // max(0.0, val - amount / 100),
-  // alpha: alpha,
-  // hexId: OkHsvColor.computeHexId(hue, saturation, max(0.0, val - amount / 100), alpha),
-  // )
+      {final Percent alpha = Percent.max, final int? hexId})
+      : super(hexId ?? OkHsvColor.computeHexId(hue, saturation, val, alpha),
+            a: alpha);
 
   /// Generates a 32-bit ARGB hex ID from OkHsv values.
   static int computeHexId(final double hue, final double saturation,
@@ -182,7 +170,6 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
       lerpHue(hue, otherOkHsv.hue, t),
       lerpDouble(saturation, otherOkHsv.saturation, t),
       lerpDouble(val, otherOkHsv.val, t),
-      alpha: lerpDouble(alpha, otherOkHsv.alpha, t),
     );
   }
 
@@ -200,7 +187,8 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   OkHsvColor adjustTransparency([final double amount = 20]) {
-    return copyWith(alpha: (alpha * (1 - amount / 100)).clamp(0.0, 1.0));
+    final double z = (alpha.val * (1 - amount / 100)).clamp(0.0, 1.0);
+    return copyWith(alpha: Percent(z));
   }
 
   @override
@@ -220,13 +208,13 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
     final double? hue,
     final double? saturation,
     final double? v,
-    final double? alpha,
+    final Percent? alpha,
   }) {
     return OkHsvColor.alt(
       hue ?? this.hue,
       saturation ?? this.saturation,
       v ?? val,
-      alpha: alpha ?? this.alpha,
+      alpha: alpha ?? super.a,
     );
   }
 
@@ -272,7 +260,6 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
       rng.nextDouble() * 360.0,
       rng.nextDouble(),
       rng.nextDouble(),
-      alpha: 1.0,
     );
   }
 
@@ -323,18 +310,19 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
       saturation + (target.saturation - saturation) * t,
     );
     final double blendedValue = _clamp01(val + (target.val - val) * t);
-    final double blendedAlpha = _clamp01(alpha + (target.alpha - alpha) * t);
+    final double blendedAlpha =
+        _clamp01(alpha.val + (target.alpha.val - alpha.val) * t);
     return OkHsvColor.alt(
       blendedHue,
       blendedSaturation,
       blendedValue,
-      alpha: blendedAlpha,
+      alpha: Percent(blendedAlpha),
     );
   }
 
   @override
   OkHsvColor opaquer([final double amount = 20]) {
-    return copyWith(alpha: _clamp01(alpha + amount / 100));
+    return copyWith(alpha: Percent(_clamp01(alpha.val + amount / 100)));
   }
 
   @override

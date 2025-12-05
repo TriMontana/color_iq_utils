@@ -1,12 +1,6 @@
 import 'dart:math';
 
 import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:color_iq_utils/src/colors/html.dart';
-import 'package:color_iq_utils/src/constants.dart';
-import 'package:color_iq_utils/src/extensions/double_helpers.dart';
-import 'package:color_iq_utils/src/extensions/int_helpers.dart';
-import 'package:color_iq_utils/src/models/color_models_mixin.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 import 'package:material_color_utilities/hct/src/hct_solver.dart';
 import 'package:material_color_utilities/utils/color_utils.dart';
@@ -19,7 +13,6 @@ class HctColor extends ColorSpacesIQ with ColorModelsMixin {
   final double hue;
   final double chroma;
   final double tone;
-  // late final int argb;
 
   /// 0 <= [hue] < 360; invalid values are corrected.
   /// 0 <= [chroma] <= ?; Informally, colorfulness. The color returned may be
@@ -39,21 +32,21 @@ class HctColor extends ColorSpacesIQ with ColorModelsMixin {
   /// Primary constructor.
   /// credit: Adapted from material_color_utilities
   const HctColor(this.hue, this.chroma, this.tone, final int argb,
-      {final double? lrv})
+      {final Percent? lrv, final Percent alpha = Percent.max})
       : assert(tone >= kMinTone && tone <= kMaxTone, 'Invalid Tone: $tone'),
         assert(
           chroma >= kMinChroma && chroma <= kMaxChroma,
           'Invalid Chroma: $chroma',
         ),
         assert(hue >= 0.0 && hue <= 360.0, 'Invalid Hue: $hue'),
-        super(argb, lrv: lrv);
+        super(argb, lrv: lrv, a: alpha);
 
   factory HctColor.fromInt(
     final int argb, {
     final double? h,
     final double? c,
     final double? t,
-    final double? lrv,
+    final Percent? lrv,
   }) {
     final Cam16 cam16 = Cam16.fromInt(argb);
     final double hue = h?.assertRangeHue('fromInt') ?? cam16.hue;
@@ -68,14 +61,13 @@ class HctColor extends ColorSpacesIQ with ColorModelsMixin {
     final double c,
     final double t, {
     final int? argb,
-    final double? lrv,
+    final Percent? lrv,
   }) {
     final double hue = h.assertRangeHue('HctColor.alt');
     final double chroma = c.assertRangeChroma('HctColor.alt');
     final double tone = t.assertRange0to100('HctColor.alt');
     final int hexID = argb ?? HctSolver.solveToInt(hue, chroma, tone);
-    final double luminance =
-        lrv != null ? lrv.assertRange0to1('HctColor.alt') : hexID.toLRV;
+    final Percent luminance = lrv ?? hexID.toLRV;
     return HctColor(hue, chroma, tone, hexID, lrv: luminance);
   }
 

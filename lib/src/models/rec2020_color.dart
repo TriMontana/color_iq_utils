@@ -1,13 +1,10 @@
 import 'dart:math';
 
-import 'package:color_iq_utils/src/color_interfaces.dart';
-import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
-import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
 
 /// A color representation in the Rec. 2020 color space.
 ///
@@ -24,11 +21,13 @@ class Rec2020Color extends ColorSpacesIQ with ColorModelsMixin {
   @override
   final double b;
 
-  const Rec2020Color(this.r, this.g, this.b, {required final int hexId})
-      : super(hexId);
+  const Rec2020Color(this.r, this.g, this.b,
+      {required final int hexId, final Percent alpha = Percent.max})
+      : super(hexId, a: alpha);
 
-  Rec2020Color.alt(this.r, this.g, this.b, {final int? hexId})
-      : super(hexId ?? toHex(r, g, b));
+  Rec2020Color.alt(this.r, this.g, this.b,
+      {final int? hexId, final Percent alpha = Percent.max})
+      : super(hexId ?? toHexID(r, g, b), a: alpha);
 
   /// Creates a 32-bit hex ARGB value from the properties of this class.
   ///
@@ -40,7 +39,7 @@ class Rec2020Color extends ColorSpacesIQ with ColorModelsMixin {
   /// The `alpha` value is always 255 (fully opaque).
   ///
   /// Returns the 32-bit ARGB hex value.
-  static int toHex(final double r, final double g, final double b) {
+  static int toHexID(final double r, final double g, final double b) {
     // Rec. 2020 decoding (Gamma to Linear)
     double transferInv(final double v) {
       if (v < 0.018 * 4.5) return v / 4.5;
@@ -57,27 +56,21 @@ class Rec2020Color extends ColorSpacesIQ with ColorModelsMixin {
     final double z = rLin * 0.0000000 + gLin * 0.0280727 + bLin * 1.0609851;
 
     // XYZ (D65) to sRGB Linear
-    double rS = x * 3.2404542 + y * -1.5371385 + z * -0.4985314;
-    double gS = x * -0.9692660 + y * 1.8760108 + z * 0.0415560;
-    double bS = x * 0.0556434 + y * -0.2040259 + z * 1.0572252;
+    final double rS = x * 3.2404542 + y * -1.5371385 + z * -0.4985314;
+    final double gS = x * -0.9692660 + y * 1.8760108 + z * 0.0415560;
+    final double bS = x * 0.0556434 + y * -0.2040259 + z * 1.0572252;
 
     // sRGB Linear to sRGB (Gamma encoded)
-    rS = (rS > 0.0031308) ? (1.055 * pow(rS, 1 / 2.4) - 0.055) : (12.92 * rS);
-    gS = (gS > 0.0031308) ? (1.055 * pow(gS, 1 / 2.4) - 0.055) : (12.92 * gS);
-    bS = (bS > 0.0031308) ? (1.055 * pow(bS, 1 / 2.4) - 0.055) : (12.92 * bS);
 
-    return ColorIQ.fromARGB(
-      255,
-      (rS * 255).round().clamp(0, 255),
-      (gS * 255).round().clamp(0, 255),
-      (bS * 255).round().clamp(0, 255),
+    return ColorIQ.fromSrgb(
+      r: rS.gammaCorrect,
+      g: gS.gammaCorrect,
+      b: bS.gammaCorrect,
     ).value;
   }
 
   @override
-  ColorIQ toColor() {
-    return ColorIQ(value);
-  }
+  ColorIQ toColor() => ColorIQ(value);
 
   @override
   Rec2020Color darken([final double amount = 20]) {

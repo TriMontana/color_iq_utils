@@ -1,9 +1,8 @@
-import 'package:color_iq_utils/src/color_interfaces.dart';
+import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hsl_color.dart';
 import 'package:color_iq_utils/src/models/ok_lab_color.dart';
 import 'package:color_iq_utils/src/models/ok_lch_color.dart';
-import 'package:color_iq_utils/src/utils/hex_utils.dart';
 
 /// Supported CSS color spaces.
 enum CssColorSpace {
@@ -139,7 +138,7 @@ class CssColor {
     final String s = cssString.trim().toLowerCase();
 
     if (s.startsWith('#')) {
-      return parseHex(s);
+      return ColorIQ.fromHexStr(s);
     } else if (s.startsWith('rgb')) {
       return _parseRgb(s);
     } else if (s.startsWith('hsl')) {
@@ -161,7 +160,9 @@ class CssColor {
         .where((final String p) => p.isNotEmpty)
         .toList();
 
-    if (parts.length < 3) throw const FormatException('Invalid RGB string');
+    if (parts.length < 3) {
+      throw const FormatException('Invalid RGB string');
+    }
 
     final int r = int.parse(parts[0]);
     final int g = int.parse(parts[1]);
@@ -183,19 +184,21 @@ class CssColor {
         .where((final String p) => p.isNotEmpty)
         .toList();
 
-    if (parts.length < 3) throw const FormatException('Invalid HSL string');
+    if (parts.length < 3) {
+      throw const FormatException('Invalid HSL string');
+    }
 
     final double h = double.parse(parts[0].replaceAll('deg', ''));
     final double sVal = double.parse(parts[1].replaceAll('%', '')) / 100.0;
     final double l = double.parse(parts[2].replaceAll('%', '')) / 100.0;
-    double a = 1.0;
+    Percent a = Percent.max;
 
     if (parts.length >= 4) {
-      a = double.parse(parts[3]
-          .replaceAll('%', '')); // Alpha can be percentage? Usually 0-1.
+      a = Percent(double.parse(parts[3]
+          .replaceAll('%', ''))); // Alpha can be percentage? Usually 0-1.
       // If it has %, divide by 100.
       if (parts[3].contains('%')) {
-        a /= 100.0;
+        a = Percent(a.val / 100.0);
       }
     }
 
@@ -210,18 +213,23 @@ class CssColor {
         .where((final String p) => p.isNotEmpty)
         .toList();
 
-    if (parts.length < 3) throw const FormatException('Invalid OKLAB string');
+    if (parts.length < 3) {
+      throw const FormatException('Invalid OKLAB string');
+    }
 
     double l = double.parse(parts[0].replaceAll('%', ''));
     if (parts[0].contains('%')) l /= 100.0; // L can be percentage
 
     final double aVal = double.parse(parts[1]);
     final double b = double.parse(parts[2]);
-    double alpha = 1.0;
+    Percent alpha = Percent.max;
 
     if (parts.length >= 4) {
-      alpha = double.parse(parts[3]);
-      if (parts[3].contains('%')) alpha /= 100.0;
+      alpha = Percent(double.parse(parts[3]));
+      if (parts[3].contains('%')) {
+        final double la = alpha.val / 100.0;
+        alpha = Percent(la);
+      }
     }
 
     return OkLabColor.alt(l, aVal, b, alpha: alpha);
@@ -235,18 +243,23 @@ class CssColor {
         .where((final String p) => p.isNotEmpty)
         .toList();
 
-    if (parts.length < 3) throw const FormatException('Invalid OKLCH string');
+    if (parts.length < 3) {
+      throw const FormatException('Invalid OKLCH string');
+    }
 
     double l = double.parse(parts[0].replaceAll('%', ''));
     if (parts[0].contains('%')) l /= 100.0;
 
     final double c = double.parse(parts[1]);
     final double h = double.parse(parts[2].replaceAll('deg', ''));
-    double alpha = 1.0;
+    Percent alpha = Percent.max;
 
     if (parts.length >= 4) {
-      alpha = double.parse(parts[3]);
-      if (parts[3].contains('%')) alpha /= 100.0;
+      alpha = Percent(double.parse(parts[3]));
+      if (parts[3].contains('%')) {
+        final double la = alpha.val / 100.0;
+        alpha = Percent(la);
+      }
     }
 
     return OkLchColor.alt(l, c, h, alpha: alpha);

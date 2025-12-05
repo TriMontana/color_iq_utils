@@ -1,13 +1,12 @@
 import 'dart:math';
 
-import 'package:color_iq_utils/src/color_interfaces.dart';
-import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:color_iq_utils/src/models/hsluv.dart';
 import 'package:color_iq_utils/src/models/lab_color.dart';
 import 'package:color_iq_utils/src/models/luv_color.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
 
 /// The CIE 1931 XYZ color space. This color space is based on the CIE 1931 RGB color space,
 /// but it has been transformed so that all of its color matching functions are non-negative.
@@ -27,10 +26,12 @@ class XyzColor extends ColorSpacesIQ with ColorModelsMixin {
   final double y;
   final double z;
 
-  const XyzColor(this.x, this.y, this.z, {required final int hexId})
-      : super(hexId);
-  XyzColor.alt(this.x, this.y, this.z, {final int? hexId})
-      : super(hexId ?? argbFromXyz(x, y, z));
+  const XyzColor(this.x, this.y, this.z,
+      {required final int hexId, final Percent alpha = Percent.max})
+      : super(hexId, a: alpha);
+  XyzColor.alt(this.x, this.y, this.z,
+      {final int? hexId, final Percent alpha = Percent.max})
+      : super(hexId ?? argbFromXyz(x, y, z), a: alpha);
   factory XyzColor.fromInt(final int hexId) {
     final List<double> lst = xyzFromArgb(hexId);
     return XyzColor(lst[0], lst[1], lst[2], hexId: hexId);
@@ -56,12 +57,16 @@ class XyzColor extends ColorSpacesIQ with ColorModelsMixin {
         hexId: argbFromXyz(xyzList[0], xyzList[1], xyzList[2]));
   }
 
-  static ColorIQ xyzToColor(final double x, final double y, final double z) {
-    return ColorIQ(argbFromXyz(x, y, z));
-  }
+  static ColorIQ xyzToColor(final double x, final double y, final double z) =>
+      ColorIQ(argbFromXyz(x, y, z));
 
   static int xyzToHexId(final double x, final double y, final double z) {
     return argbFromXyz(x, y, z);
+  }
+
+  RgbDoubles toRgbTuple() {
+    final List<double> lst = Hsluv.xyzToRgb(<double>[x, y, z]);
+    return (r: lst[0], g: lst[1], b: lst[2]);
   }
 
   LabColor toLab() {
@@ -177,8 +182,13 @@ class XyzColor extends ColorSpacesIQ with ColorModelsMixin {
   ColorTemperature get temperature => toColor().temperature;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  XyzColor copyWith({final double? x, final double? y, final double? z}) {
-    return XyzColor.alt(x ?? this.x, y ?? this.y, z ?? this.z);
+  XyzColor copyWith(
+      {final double? x,
+      final double? y,
+      final double? z,
+      final Percent? alpha}) {
+    return XyzColor.alt(x ?? this.x, y ?? this.y, z ?? this.z,
+        alpha: alpha ?? super.a);
   }
 
   @override
@@ -208,9 +218,6 @@ class XyzColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
-
-  @override
-  Brightness get brightness => toColor().brightness;
 
   @override
   bool get isDark => brightness == Brightness.dark;
@@ -313,10 +320,8 @@ class XyzColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   String toString() =>
-      'XyzColor(x: ${x.toStringAsFixed(2)}, y: ${y.toStringAsFixed(2)}, z: ${z.toStringAsFixed(2)})';
+      'XyzColor(x: ${x.toStrTrimZeros(2)}, y: ${y.toStringAsFixed(2)}, z: ${z.toStringAsFixed(2)})';
 
   @override
-  ColorIQ toColor() {
-    return ColorIQ(value);
-  }
+  ColorIQ toColor() => ColorIQ(value);
 }

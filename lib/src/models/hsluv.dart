@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
-import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/string_helpers.dart';
+import 'package:color_iq_utils/src/foundation/constants.dart';
 import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/utils/geometry.dart';
 

@@ -1,4 +1,4 @@
-import 'package:color_iq_utils/src/color_models.dart';
+import 'package:color_iq_utils/src/color_models_lib.dart';
 import 'package:color_iq_utils/src/naming/names.dart';
 
 /// Color family categories for HTML colors

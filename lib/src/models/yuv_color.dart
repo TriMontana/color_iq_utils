@@ -1,14 +1,10 @@
 import 'dart:math';
 
-import 'package:color_iq_utils/src/color_interfaces.dart';
-import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
-import 'package:color_iq_utils/src/extensions/double_helpers.dart';
-import 'package:color_iq_utils/src/extensions/int_helpers.dart';
+import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
 
 /// A representation of a color in the YUV color space.
 ///
@@ -35,9 +31,12 @@ class YuvColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The chrominance V component (red projection).
   final double v;
 
-  const YuvColor(this.y, this.u, this.v, {required final int val}) : super(val);
-  YuvColor.alt(this.y, this.u, this.v, {final int? val})
-      : super(val ?? YuvColor.toHexId(y, u, v));
+  const YuvColor(this.y, this.u, this.v,
+      {required final int val, final Percent alpha = Percent.max})
+      : super(val, a: alpha);
+  YuvColor.alt(this.y, this.u, this.v,
+      {final int? val, final Percent alpha = Percent.max})
+      : super(val ?? YuvColor.toHexId(y, u, v), a: alpha);
 
   /// Creates a [YuvColor] instance from a 32-bit hex value.
   factory YuvColor.fromHexId(final int hex) {
@@ -70,20 +69,7 @@ class YuvColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  ColorIQ toColor() {
-    final double r = y + 1.13983 * v;
-    final double g = y - 0.39465 * u - 0.58060 * v;
-    final double b = y + 2.03211 * u;
-    return ColorIQ.fromARGB(
-      255,
-      (r * 255).round().clamp(0, 255),
-      (g * 255).round().clamp(0, 255),
-      (b * 255).round().clamp(0, 255),
-    );
-  }
-
-  @override
-  int get value => toColor().value;
+  ColorIQ toColor() => ColorIQ(toHexId(y, u, v));
 
   @override
   YuvColor darken([final double amount = 20]) {

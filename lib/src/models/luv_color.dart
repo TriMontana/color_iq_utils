@@ -1,14 +1,11 @@
 import 'dart:math';
 
-import 'package:color_iq_utils/src/color_interfaces.dart';
-import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
-import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/xyz_color.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
 
 /// A representation of a color in the CIE L*u*v* color space.
 ///
@@ -35,10 +32,12 @@ class LuvColor extends ColorSpacesIQ with ColorModelsMixin {
   final double v;
 
   /// Creates a new `LuvColor`.
-  const LuvColor(this.l, this.u, this.v, {required final int hexId})
-      : super(hexId);
-  LuvColor.alt(this.l, this.u, this.v, {final int? hexId})
-      : super(hexId ?? LuvColor.toHexId(l, u, v));
+  const LuvColor(this.l, this.u, this.v,
+      {required final int hexId, final Percent alpha = Percent.max})
+      : super(hexId, a: alpha);
+  LuvColor.alt(this.l, this.u, this.v,
+      {final int? hexId, final Percent alpha = Percent.max})
+      : super(hexId ?? LuvColor.toHexId(l, u, v), a: alpha);
 
   /// Creates a [LuvColor] from a 32-bit integer ARGB value.
   factory LuvColor.fromInt(final int argb) {
@@ -84,33 +83,7 @@ class LuvColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  ColorIQ toColor() {
-    if (l == 0) {
-      return ColorIQ.fromARGB(255, 0, 0, 0);
-    }
-
-    const double refX = 95.047;
-    const double refY = 100.0;
-    const double refZ = 108.883;
-    const double refU = (4 * refX) / (refX + (15 * refY) + (3 * refZ));
-    const double refV = (9 * refY) / (refX + (15 * refY) + (3 * refZ));
-
-    final double uPrime = u / (13 * l) + refU;
-    final double vPrime = v / (13 * l) + refV;
-
-    final double y =
-        l > 8 ? refY * pow((l + 16) / 116, 3).toDouble() : refY * l / 903.3;
-
-    final double denominator = vPrime * 4;
-    double x = 0;
-    double z = 0;
-    if (denominator != 0) {
-      x = (9 * y * uPrime) / denominator;
-      z = (9 * y / vPrime - x - 15 * y) / 3;
-    }
-
-    return XyzColor.alt(x, y, z).toColor();
-  }
+  ColorIQ toColor() => ColorIQ(value);
 
   @override
   LuvColor get inverted => toColor().inverted.toLuv();
@@ -306,6 +279,6 @@ class LuvColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  String toString() =>
-      'LuvColor(l: ${l.toStrTrimZeros(3)}, u: ${u.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)})';
+  String toString() => 'LuvColor(l: ${l.toStrTrimZeros(3)}, ' //
+      'u: ${u.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)})';
 }

@@ -1,13 +1,10 @@
 import 'dart:math';
 
-import 'package:color_iq_utils/src/color_interfaces.dart';
-import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
-import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
 
 /// A representation of a color in the HSV (Hue, Saturation, Value) color space.
 ///
@@ -25,13 +22,14 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
   final double h;
   final double s;
   final double v;
-  final double alpha;
+  Percent get alpha => super.a;
 
   const HsvColor(this.h, this.s, this.v,
-      {this.alpha = 1.0, required final int hexId})
-      : super(hexId);
-  HsvColor.alt(this.h, this.s, this.v, {this.alpha = 1.0, final int? hexId})
-      : super(hexId ?? HsvColor.toHexId(h, s, v, alpha));
+      {final Percent alpha = Percent.max, required final int hexId})
+      : super(hexId, a: alpha);
+  HsvColor.alt(this.h, this.s, this.v,
+      {final Percent alpha = Percent.max, final int? hexId})
+      : super(hexId ?? HsvColor.toHexId(h, s, v, alpha), a: alpha);
 
   /// Creates a 32-bit integer ARGB value from HSV components.
   ///
@@ -80,48 +78,7 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  ColorIQ toColor() {
-    final double c = v * s;
-    final double x = c * (1 - ((h / 60) % 2 - 1).abs());
-    final double m = v - c;
-
-    double r = 0, g = 0, b = 0;
-    if (h < 60) {
-      r = c;
-      g = x;
-      b = 0;
-    } else if (h < 120) {
-      r = x;
-      g = c;
-      b = 0;
-    } else if (h < 180) {
-      r = 0;
-      g = c;
-      b = x;
-    } else if (h < 240) {
-      r = 0;
-      g = x;
-      b = c;
-    } else if (h < 300) {
-      r = x;
-      g = 0;
-      b = c;
-    } else {
-      r = c;
-      g = 0;
-      b = x;
-    }
-
-    return ColorIQ.fromARGB(
-      (alpha * 255).round(),
-      ((r + m) * 255).round().clamp(0, 255),
-      ((g + m) * 255).round().clamp(0, 255),
-      ((b + m) * 255).round().clamp(0, 255),
-    );
-  }
-
-  @override
-  int get value => toColor().value;
+  ColorIQ toColor() => ColorIQ(toHexId(h, s, v, alpha));
 
   @override
   HsvColor darken([final double amount = 20]) {
@@ -153,14 +110,12 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
       lerpHue(h, otherHsv.h, t),
       lerpDouble(s, otherHsv.s, t),
       lerpDouble(v, otherHsv.v, t),
-      alpha: lerpDouble(alpha, otherHsv.alpha, t),
     );
   }
 
   @override
-  HsvColor lighten([final double amount = 20]) {
-    return HsvColor.alt(h, s, min(1.0, v + amount / 100), alpha: alpha);
-  }
+  HsvColor lighten([final double amount = 20]) =>
+      copyWith(value: min(1.0, v + amount / 100));
 
   @override
   HsvColor brighten([final double amount = 20]) {
@@ -168,9 +123,8 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  HsvColor saturate([final double amount = 25]) {
-    return HsvColor.alt(h, min(1.0, s + amount / 100), v, alpha: alpha);
-  }
+  HsvColor saturate([final double amount = 25]) =>
+      copyWith(saturation: min(1.0, s + amount / 100));
 
   @override
   HsvColor desaturate([final double amount = 25]) {
@@ -178,14 +132,12 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  HsvColor intensify([final double amount = 10]) {
-    return HsvColor.alt(h, min(1.0, s + amount / 100), v, alpha: alpha);
-  }
+  HsvColor intensify([final double amount = 10]) =>
+      copyWith(saturation: min(1.0, s + amount / 100));
 
   @override
-  HsvColor deintensify([final double amount = 10]) {
-    return HsvColor.alt(h, max(0.0, s - amount / 100), v, alpha: alpha);
-  }
+  HsvColor deintensify([final double amount = 10]) =>
+      copyWith(saturation: max(0.0, s - amount / 100));
 
   @override
   HsvColor accented([final double amount = 15]) {
@@ -219,13 +171,13 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   HsvColor copyWith({
-    final double? h,
-    final double? s,
-    final double? v,
-    final double? alpha,
+    final double? hue,
+    final double? saturation,
+    final double? value,
+    final Percent? alpha,
   }) {
-    return HsvColor.alt(h ?? this.h, s ?? this.s, v ?? this.v,
-        alpha: alpha ?? this.alpha);
+    return HsvColor.alt(hue ?? h, saturation ?? s, value ?? v,
+        alpha: alpha ?? super.a);
   }
 
   @override
@@ -257,12 +209,6 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
 
   @override
-  double get luminance => toColor().luminance;
-
-  @override
-  Brightness get brightness => toColor().brightness;
-
-  @override
   bool get isDark => brightness == Brightness.dark;
 
   @override
@@ -275,13 +221,13 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   HsvColor opaquer([final double amount = 20]) {
-    return HsvColor.alt(h, s, v, alpha: min(1.0, alpha + amount / 100));
+    final double x = min(1.0, alpha.val + amount / 100);
+    return HsvColor.alt(h, s, v, alpha: Percent(x));
   }
 
   @override
-  HsvColor adjustHue([final double amount = 20]) {
-    return HsvColor.alt(wrapHue(h + amount), s, v, alpha: alpha);
-  }
+  HsvColor adjustHue([final double amount = 20]) =>
+      copyWith(hue: wrapHue(h + amount));
 
   @override
   HsvColor get complementary => adjustHue(180);

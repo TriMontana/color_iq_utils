@@ -28,7 +28,7 @@ const double fxFloat8bitInfinity = 9007199254740991.0;
 // https://www.npmjs.com/package/color-convert
 // https://github.com/material-foundation/material-color-utilities/blob/main/dart/lib/utils/color_utils.dart
 /// value for DELINEARIZE, i.e. linearToSRGB, linearToGamma
-const double gammaDelinearize = 0.0031308;
+const double kGammaDelinearize = 0.0031308;
 const double chi = 0.040449936; // 0.04045; from MCU
 // this is the DART color version of gammaLinearize  0.03928,
 
@@ -210,7 +210,7 @@ const String k0xLower = '0x';
 const String k0xUpper = '0X'; //uppercase on the x
 const String delimiter1 = kSemiColonSpace;
 const String kTilde = '\u{007E}';
-const String delimiter2 = ';\n';
+const String kDelimiter2 = ';\n';
 const String delimSeparator = '--'; // kDividerDouble?
 
 // ---------------------------------------- Messages ----------------------------------------

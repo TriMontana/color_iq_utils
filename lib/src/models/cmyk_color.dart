@@ -1,13 +1,8 @@
 import 'dart:math';
 
-import 'package:color_iq_utils/src/color_interfaces.dart';
-import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/color_models_lib.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
-import 'package:color_iq_utils/src/extensions/double_helpers.dart';
-import 'package:color_iq_utils/src/models/color_models_mixin.dart';
-import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:color_iq_utils/src/models/hct_color.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
+import 'package:color_iq_utils/src/foundation_lib.dart';
 
 /// A color model representing color in the CMYK (Cyan, Magenta, Yellow, Key/Black) color space.
 ///
@@ -35,22 +30,24 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
   /// Constructs a CMYK color from normalized cyan, magenta, yellow, and black values.
   ///
   /// [c], [m], [y], and [k] must be between 0.0 and 1.0.
-  const CmykColor(this.c, this.m, this.y, this.k, {required final int value})
+  const CmykColor(this.c, this.m, this.y, this.k,
+      {required final int value, final Percent alpha = Percent.max})
       : assert(c >= 0 && c <= 1, 'Invalid C value: $c'),
         assert(m >= 0 && m <= 1, 'Invalid M value: $m'),
         assert(y >= 0 && y <= 1, 'Invalid Y value: $y'),
         assert(k >= 0 && k <= 1, 'Invalid K value: $k'),
-        super(value);
+        super(value, a: alpha);
 
   /// Alternative constructor for creating a CMYK color, optionally calculating the hex ID if not provided.
   ///
   /// [c], [m], [y], and [k] must be between 0.0 and 1.0.
-  CmykColor.alt(this.c, this.m, this.y, this.k, {final int? value})
+  CmykColor.alt(this.c, this.m, this.y, this.k,
+      {final int? value, final Percent alpha = Percent.max})
       : assert(c >= 0 && c <= 1, 'Invalid C value: $c'),
         assert(m >= 0 && m <= 1, 'Invalid M value: $m'),
         assert(y >= 0 && y <= 1, 'Invalid Y value: $y'),
         assert(k >= 0 && k <= 1, 'Invalid K value: $k'),
-        super(value ?? CmykColor.hexFromCmyk(c, m, y, k));
+        super(value ?? CmykColor.hexFromCmyk(c, m, y, k), a: alpha);
 
   /// Converts this CMYK color to the sRGB color space.
   @override

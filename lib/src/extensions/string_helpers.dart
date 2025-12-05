@@ -1,36 +1,11 @@
 import 'dart:convert';
+import 'dart:developer' as developer;
 import 'dart:math' as math;
 
 import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/utils/error_handling.dart';
 import 'package:color_iq_utils/src/utils/hex_utils.dart';
 import 'package:color_iq_utils/src/utils/regex_utils.dart';
-import 'dart:developer' as developer;
-
-// destructure class
-// final Foo myFoo = Foo(one: 'one', two: 2);
-// var Foo(:one, :two) = myFoo;
-// print('one $one, two $two');
-
-// class Person {
-//   final String name;
-//   final int age;
-//
-//   Person(this.name, this.age);
-// }
-// Destructuring the object
-//   var Person(name: name, age: age) = person;
-
-// Destructuring a map
-//  var person = {
-//     'name': 'Alice',
-//     'age': 25
-//   };
-// var {'name': name, 'age': age} = person;
-//
-// print('Name: $name');  // Output: Name: Alice
-// print('Age: $age');    // Output: Age: 25
 
 const Map<String, String> kCharacterPairs = <String, String>{
   "(": ")",

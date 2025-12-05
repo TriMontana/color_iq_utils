@@ -1,9 +1,10 @@
 import 'dart:math';
 
-import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:color_iq_utils/src/color_models_lib.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
-import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/extensions/float_ext_type.dart';
+import 'package:color_iq_utils/src/foundation/constants.dart';
 import 'package:color_iq_utils/src/utils/color_math.dart';
 
 /// Extension for integers
@@ -17,7 +18,7 @@ extension IntHelperIQ on int {
   /// This is typically used for individual color channels (like red, green, or blue).
   /// It masks the integer to ensure it's treated as an 8-bit value,
   /// then divides by 255.0 to scale it to the 0.0-1.0 range.
-  double get normalized => ((this & 0xFF) / 255.0).clamp0to1;
+  Percent get normalized => Percent(((this & 0xFF) / 255.0).clamp0to1);
   double get factored => normalized;
   // The structure of the 32-bit integer is: AARRGGBB
   /// Shifts the Alpha byte 24 bits to the right, placing it in the lowest
@@ -41,11 +42,11 @@ extension IntHelperIQ on int {
   int get blueInt => (0x000000ff & this) >> 0;
 
   double get a => (alpha / kMax8bit).clamp0to1;
-  double get a2 => (((this >> 24) & 0xFF) / 255.0).clamp0to1;
+  Percent get a2 => Percent((((this >> 24) & 0xFF) / 255.0).clamp0to1);
   double get alphaLinearized => srgbToLinear(a2);
   double get r => (red / kMax8bit).clamp0to1;
   double get r2 => (((this >> 16) & 0xFF) / 255.0).clamp0to1;
-  double get redLinearized => srgbToLinear(r2);
+  LinRGB get redLinearized => srgbToLinear(r2);
   double get g => (green / kMax8bit).clamp0to1;
   double get g2 => (((this >> 8) & 0xFF) / 255.0).clamp0to1;
   double get greenLinearized => srgbToLinear(g2);
@@ -53,7 +54,7 @@ extension IntHelperIQ on int {
   double get b2 => ((this & 0xFF) / 255.0).clamp0to1;
   double get blueLinearized => srgbToLinear(b2);
 
-  double get toLRV => computeLuminanceViaLinearized(
+  Percent get toLRV => computeLuminanceViaLinearized(
       redLinearized, greenLinearized, blueLinearized);
 
   int assertRange0to255([final String? message]) {

@@ -1,12 +1,10 @@
 import 'dart:math';
 
-import 'package:color_iq_utils/src/color_interfaces.dart';
-import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
+import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 
 /// A color model that represents color in terms of Hue, Saturation, and
@@ -32,16 +30,17 @@ class HspColor extends ColorSpacesIQ with ColorModelsMixin {
   final double p;
 
   /// The alpha channel of the color, ranging from 0.0 (transparent) to 1.0 (opaque).
-  final double alpha;
+  Percent get alpha => super.a;
 
   /// Creates a new `HspColor`.
   const HspColor(this.h, this.s, this.p,
-      {this.alpha = 1.0, required final int hexId})
-      : super(hexId);
+      {final Percent alpha = Percent.max, required final int hexId})
+      : super(hexId, a: alpha);
 
   /// Creates a new `HspColor`.
-  HspColor.alt(this.h, this.s, this.p, {this.alpha = 1.0, final int? hexId})
-      : super(hexId ?? toHex(h, s, p, alpha));
+  HspColor.alt(this.h, this.s, this.p,
+      {final Percent alpha = Percent.max, final int? hexId})
+      : super(hexId ?? toHex(h, s, p, alpha), a: alpha);
 
   /// Creates a 32-bit hex ID/ARGB from this class's properties.
   /// This is a standalone static method for conversion.
@@ -424,13 +423,14 @@ class HspColor extends ColorSpacesIQ with ColorModelsMixin {
     if (t == 0.0) return this;
     final HspColor otherHsp =
         other is HspColor ? other : other.toColor().toHsp();
-    if (t == 1.0) return otherHsp;
+    if (t == 1.0) {
+      return otherHsp;
+    }
 
     return HspColor.alt(
       lerpHue(h, otherHsp.h, t),
       lerpDouble(s, otherHsp.s, t),
       lerpDouble(p, otherHsp.p, t),
-      alpha: lerpDouble(alpha, otherHsp.alpha, t),
     );
   }
 
@@ -453,10 +453,10 @@ class HspColor extends ColorSpacesIQ with ColorModelsMixin {
     final double? h,
     final double? s,
     final double? p,
-    final double? alpha,
+    final Percent? alpha,
   }) {
     return HspColor.alt(h ?? this.h, s ?? this.s, p ?? this.p,
-        alpha: alpha ?? this.alpha);
+        alpha: alpha ?? super.a);
   }
 
   @override

@@ -1,16 +1,13 @@
 import 'dart:math';
 
-import 'package:color_iq_utils/src/color_interfaces.dart';
-import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
-import 'package:color_iq_utils/src/extensions/int_helpers.dart';
+import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/ok_hsl_color.dart';
 import 'package:color_iq_utils/src/models/ok_hsv_color.dart';
 import 'package:color_iq_utils/src/models/ok_lch_color.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
 
 /// A representation of a color in the Oklab color space.
 ///
@@ -34,7 +31,7 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
   final double bLab;
 
   /// The alpha value (opacity) of the color, from 0.0 (transparent) to 1.0 (opaque).
-  final double alpha;
+  Percent get alpha => super.a;
 
   /// Creates an [OkLabColor].
   ///
@@ -43,24 +40,24 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
   /// - [b]: Blue-yellow component.
   /// - [alpha]: Opacity, defaults to 1.0 (fully opaque).
   const OkLabColor(this.l, this.aLab, this.bLab,
-      {this.alpha = 1.0, required final int hexId})
+      {final Percent alpha = Percent.max, required final int hexId})
       : assert(l >= 0 && l <= 1, 'L must be between 0 and 1'),
         assert(aLab >= -1 && aLab <= 1, 'A must be between -1 and 1'),
         assert(bLab >= -1 && bLab <= 1, 'B must be between -1 and 1'),
         assert(alpha >= 0 && alpha <= 1, 'Alpha must be between 0 and 1'),
-        super(hexId);
+        super(hexId, a: alpha);
 
   OkLabColor.alt(this.l, this.aLab, this.bLab,
-      {this.alpha = 1.0, final int? hexId})
+      {final Percent alpha = Percent.max, final int? hexId})
       : assert(l >= 0 && l <= 1, 'L must be between 0 and 1'),
         assert(aLab >= -1 && aLab <= 1, 'A must be between -1 and 1'),
         assert(bLab >= -1 && bLab <= 1, 'B must be between -1 and 1'),
         assert(alpha >= 0 && alpha <= 1, 'Alpha must be between 0 and 1'),
-        super(hexId ?? toHex(l, aLab, bLab, alpha));
+        super(hexId ?? OkLabColor.toHexID(l, aLab, bLab, alpha), a: alpha);
 
   /// A stand-alone static method to create a 32-bit hexID/ARGB from this
   /// class's properties.
-  static int toHex(
+  static int toHexID(
       final double l, final double a, final double b, final double alpha) {
     final double l_ = l + 0.3963377774 * a + 0.2158037573 * b;
     final double m_ = l - 0.1055613458 * a - 0.0638541728 * b;
@@ -92,20 +89,20 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
   ///
   /// - [argb]: An integer representing the color in ARGB format.
   factory OkLabColor.fromInt(final int argb) {
-    final double alpha = argb.a2;
-    double r = argb.r2;
+    final Percent alpha = argb.a2;
+
     double g = argb.g2;
     double b = argb.b2;
 
     // sRGB to Linear sRGB
-    r = srgbToLinear(r);
+    final LinRGB r = argb.redLinearized;
     g = srgbToLinear(g);
     b = srgbToLinear(b);
 
     // Linear sRGB to Oklab
-    final double l = 0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b;
-    final double m = 0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b;
-    final double s = 0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b;
+    final double l = 0.4122214708 * r.val + 0.5363325363 * g + 0.0514459929 * b;
+    final double m = 0.2119034982 * r.val + 0.6806995451 * g + 0.1073969566 * b;
+    final double s = 0.0883024619 * r.val + 0.2817188376 * g + 0.6299787005 * b;
 
     final double l_ = cbrt(l);
     final double m_ = cbrt(m);
@@ -217,13 +214,12 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
       lerpDouble(l, otherLab.l, t),
       lerpDouble(aLab, otherLab.aLab, t),
       lerpDouble(bLab, otherLab.bLab, t),
-      alpha: lerpDouble(alpha, otherLab.alpha, t),
     );
   }
 
   @override
   OkLabColor lighten([final double amount = 20]) {
-    return OkLabColor.alt(min(1.0, l + amount / 100), aLab, bLab, alpha: alpha);
+    return copyWith(l: min(1.0, l + amount / 100));
   }
 
   @override
@@ -285,13 +281,13 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
     final double? l,
     final double? a,
     final double? b,
-    final double? alpha,
+    final Percent? alpha,
   }) {
     return OkLabColor.alt(
       l ?? this.l,
       a ?? aLab,
       b ?? bLab,
-      alpha: alpha ?? this.alpha,
+      alpha: alpha ?? super.a,
     );
   }
 

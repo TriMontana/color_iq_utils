@@ -1,12 +1,10 @@
 import 'dart:math';
 
-import 'package:color_iq_utils/src/color_interfaces.dart';
-import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
+import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 
 /// Represents a color in the Munsell color system.
@@ -32,11 +30,13 @@ class MunsellColor extends ColorSpacesIQ with ColorModelsMixin {
   final double chroma;
 
   const MunsellColor(this.hue, this.munsellValue, this.chroma,
-      {required final int hexId})
-      : super(hexId);
+      {required final int hexId, final Percent alpha = Percent.max})
+      : super(hexId, a: alpha);
 
-  MunsellColor.alt(this.hue, this.munsellValue, this.chroma, {final int? hexId})
-      : super(hexId ?? MunsellColor.toHexId(hue, munsellValue, chroma));
+  MunsellColor.alt(this.hue, this.munsellValue, this.chroma,
+      {final int? hexId, final Percent alpha = Percent.max})
+      : super(hexId ?? MunsellColor.toHexId(hue, munsellValue, chroma),
+            a: alpha);
 
   /// Creates a 32-bit hex ID from the Munsell properties.
   ///
@@ -72,9 +72,6 @@ class MunsellColor extends ColorSpacesIQ with ColorModelsMixin {
     final int grayVal = (munsellValue * 25.5).round().clamp(0, 255);
     return ColorIQ.fromARGB(255, grayVal, grayVal, grayVal);
   }
-
-  @override
-  int get value => toColor().value;
 
   @override
   MunsellColor darken([final double amount = 20]) {

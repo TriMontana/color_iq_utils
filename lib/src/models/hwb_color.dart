@@ -1,14 +1,11 @@
 import 'dart:math';
 
-import 'package:color_iq_utils/src/color_interfaces.dart';
-import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
-import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/hsv_color.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 
 /// A representation of color in the HWB (Hue, Whiteness, Blackness) color model.
@@ -38,20 +35,25 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
   final double b;
 
   /// The alpha (transparency) component of the color, ranging from 0.0 to 1.0.
-  final double alpha;
+  Percent get alpha => super.a;
 
   const HwbColor(this.h, this.w, this.b,
-      {this.alpha = 1.0, required final int hexId})
-      : super(hexId);
-  HwbColor.alt(this.h, this.w, this.b, {this.alpha = 1.0, final int? hexId})
-      : super(hexId ?? HwbColor.hwbToHex(h, w, b, alpha));
+      {final Percent alpha = Percent.max, required final int hexId})
+      : super(hexId, a: alpha);
+  HwbColor.alt(this.h, this.w, this.b,
+      {final Percent alpha = Percent.max, final int? hexId})
+      : super(hexId ?? HwbColor.hwbToHex(h, w, b, alpha), a: alpha);
 
   /// Creates a 32-bit hex ID (ARGB) from HWB values.
   ///
   /// This is a utility method for creating a color value directly from HWB
   /// components without instantiating an `HwbColor` object.
-  static int hwbToHex(final double h, final double w, final double b,
-      [final double alpha = 1.0]) {
+  static int hwbToHex(
+    final double h,
+    final double w,
+    final double b, [
+    final Percent alpha = Percent.max,
+  ]) {
     // This is an inline conversion, avoiding creating intermediate color objects.
     // It mirrors the logic in toColor() -> Hsv.toColor() -> Rgb.toColor().
     double wNorm = w;
@@ -163,13 +165,14 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
     if (t == 0.0) return this;
     final HwbColor otherHwb =
         other is HwbColor ? other : other.toColor().toHwb();
-    if (t == 1.0) return otherHwb;
+    if (t == 1.0) {
+      return otherHwb;
+    }
 
     return HwbColor.alt(
       lerpHue(h, otherHwb.h, t),
       lerpDouble(w, otherHwb.w, t),
       lerpDouble(b, otherHwb.b, t),
-      alpha: lerpDouble(alpha, otherHwb.alpha, t),
     );
   }
 
@@ -206,12 +209,12 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
   /// Creates a copy of this color with the given fields replaced with the new values.
   HwbColor copyWith({
     final double? h,
-    final double? w,
+    final double? whiteness,
     final double? b,
-    final double? alpha,
+    final Percent? alpha,
   }) {
-    return HwbColor.alt(h ?? this.h, w ?? this.w, b ?? this.b,
-        alpha: alpha ?? this.alpha);
+    return HwbColor.alt(h ?? this.h, whiteness ?? w, b ?? this.b,
+        alpha: alpha ?? super.a);
   }
 
   @override

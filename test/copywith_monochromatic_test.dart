@@ -14,7 +14,7 @@ void main() {
 
     test('HslColor copyWith', () {
       final HslColor hsl = HslColor.alt(180, 0.5, 0.5);
-      final HslColor copy = hsl.copyWith(h: 90, l: 0.8);
+      final HslColor copy = hsl.copyWith(hue: 90, lightness: 0.8);
       expect(copy.h, 90);
       expect(copy.l, 0.8);
       expect(copy.s, 0.5); // Unchanged

@@ -1,14 +1,13 @@
+import 'dart:math' as math;
 import 'dart:math';
 
-import 'package:color_iq_utils/src/color_interfaces.dart';
-import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
-import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/lab_color.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
+import 'package:color_iq_utils/src/models/xyz_color.dart';
 
 /// A representation of a color in the CIE L*C*h° color space.
 ///
@@ -33,17 +32,47 @@ class LchColor extends ColorSpacesIQ with ColorModelsMixin {
   final double h;
 
   /// Creates a new `LchColor`.
-  const LchColor(this.l, this.c, this.h, {required final int hexId})
-      : super(hexId);
-  LchColor.alt(this.l, this.c, this.h, {final int? hexId})
-      : super(hexId ?? LchColor.toHexId(l, c, h));
+  const LchColor(this.l, this.c, this.h,
+      {required final int hexId,
+      final Percent alpha = Percent.max,
+      final Percent? lrv})
+      : super(hexId, a: alpha, lrv: lrv);
+  LchColor.alt(
+    this.l,
+    this.c,
+    this.h, {
+    final int? hexId,
+    final Percent alpha = Percent.max,
+  }) : super(hexId ?? LchColor.lchToHexID(l, c, h), a: alpha);
 
-  /// A stand-alone static method to create a 32-bit hexID/ARGB from l, c, h.
-  static int toHexId(final double l, final double c, final double h) {
-    final double hRad = h * pi / 180.0;
-    final double a = c * cos(hRad);
-    final double b = c * sin(hRad);
-    return LabColor.alt(l, a, b).toColor().value;
+  /// Converts CIELCH components to a 32-bit ARGB integer (Color ID).
+  /// This implementation relies on the standard CIELab/CIEXYZ transformations.
+  /// @param l Lightness (0 to 100)
+  /// @param c Chroma (0 to ~134)
+  /// @param h Hue (0.0 to 360.0)
+  /// @param alpha Alpha value (0 to 255)
+  static int lchToHexID(
+    final double l,
+    final double c,
+    final double h, [
+    final Percent alpha = Percent.max,
+  ]) {
+    // 1. LCH to Lab Conversion
+    final double hRad = h * math.pi / 180.0;
+    final double a = c * math.cos(hRad);
+    final double b = c * math.sin(hRad);
+
+    // 2. Lab to XYZ (Requires complex matrix inversion and power functions)
+    final XyzColor xyz = labToXYZ(l, a, b); //
+
+    // 3. XYZ to sRGB (Requires complex matrix and gamma correction)
+    final (:int red, :int green, :int blue) = xyzToRgb(xyz.x, xyz.y, xyz.z); //
+
+    final int alphaInt = alpha.toInt0to255;
+
+    // 4. Combine into 32-bit ARGB integer
+    // ARGB is (Alpha << 24) | (Red << 16) | (Green << 8) | (Blue)
+    return (alphaInt << 24) | (red << 16) | (green << 8) | blue;
   }
 
   LabColor toLab() {
@@ -284,5 +313,5 @@ class LchColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   String toString() => 'LchColor(l: ${l.toStrTrimZeros(2)}, ' //
-      'c: ${c.toStringAsFixed(2)}, h: ${h.toStringAsFixed(2)})';
+      'c: ${c.toStringAsFixed(2)}, h: ${h.toStrTrimZeros(3)})';
 }

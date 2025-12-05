@@ -1,13 +1,8 @@
 import 'dart:math';
 
-import 'package:color_iq_utils/src/color_interfaces.dart';
-import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/color_models_lib.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
-import 'package:color_iq_utils/src/extensions/int_helpers.dart';
-import 'package:color_iq_utils/src/models/color_models_mixin.dart';
-import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:color_iq_utils/src/models/hct_color.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
+import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:material_color_utilities/material_color_utilities.dart' as mcu;
 
 /// A color in the CAM16 color space.
@@ -29,15 +24,14 @@ class Cam16Color extends ColorSpacesIQ with ColorModelsMixin {
   final double q;
   final double m;
   final double s;
-  final double alpha;
 
   const Cam16Color(this.hue, this.chroma, this.j, this.q, this.m, this.s,
-      {this.alpha = 1.0, required final int hexId})
-      : super(hexId);
+      {final Percent alpha = Percent.max, required final int hexId})
+      : super(hexId, a: alpha);
 
   Cam16Color.alt(this.hue, this.chroma, this.j, this.q, this.m, this.s,
-      {this.alpha = 1.0, final int? hexId})
-      : super(hexId ?? mcu.Cam16.fromJch(j, chroma, hue).toInt());
+      {final Percent alpha = Percent.max, final int? hexId})
+      : super(hexId ?? mcu.Cam16.fromJch(j, chroma, hue).toInt(), a: alpha);
 
   static Cam16Color fromInt(final int hexId) {
     final mcu.Cam16 c1 = mcu.Cam16.fromInt(hexId);
@@ -55,31 +49,26 @@ class Cam16Color extends ColorSpacesIQ with ColorModelsMixin {
   @override
   Cam16Color darken([final double amount = 20]) {
     return Cam16Color.alt(hue, chroma, max(0, j - amount), q, m, s,
-        alpha: alpha);
+        alpha: super.a);
   }
 
   @override
-  Cam16Color saturate([final double amount = 25]) {
-    return Cam16Color.alt(hue, chroma + amount, j, q, m, s, alpha: alpha);
-  }
+  Cam16Color saturate([final double amount = 25]) =>
+      copyWith(chroma: chroma + amount);
 
   @override
   Cam16Color desaturate([final double amount = 25]) {
     return Cam16Color.alt(hue, max(0, chroma - amount), j, q, m, s,
-        alpha: alpha);
+        alpha: super.a);
   }
 
   @override
-  Cam16Color intensify([final double amount = 10]) {
-    return Cam16Color.alt(hue, chroma, j, q, m, min(100, s + amount),
-        alpha: alpha);
-  }
+  Cam16Color intensify([final double amount = 10]) =>
+      copyWith(s: min(100, s + amount));
 
   @override
-  Cam16Color deintensify([final double amount = 10]) {
-    return Cam16Color.alt(hue, chroma, j, q, m, max(0, s - amount),
-        alpha: alpha);
-  }
+  Cam16Color deintensify([final double amount = 10]) =>
+      copyWith(s: max(0, s - amount));
 
   @override
   Cam16Color accented([final double amount = 15]) {
@@ -95,7 +84,7 @@ class Cam16Color extends ColorSpacesIQ with ColorModelsMixin {
   Cam16Color get inverted => toColor().inverted.toCam16Color();
 
   @override
-  Cam16Color get grayscale => toColor().grayscale.toCam16Color();
+  Cam16Color get grayscale => copyWith(chroma: 0);
 
   @override
   Cam16Color whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
@@ -129,15 +118,12 @@ class Cam16Color extends ColorSpacesIQ with ColorModelsMixin {
       lerpDouble(q, otherCam16.q, t),
       lerpDouble(m, otherCam16.m, t),
       lerpDouble(s, otherCam16.s, t),
-      alpha: lerpDouble(alpha, otherCam16.alpha, t),
     );
   }
 
   @override
-  Cam16Color lighten([final double amount = 20]) {
-    return Cam16Color.alt(hue, chroma, min(100, j + amount), q, m, s,
-        alpha: alpha);
-  }
+  Cam16Color lighten([final double amount = 20]) =>
+      copyWith(j: min(100, j + amount));
 
   @override
   Cam16Color brighten([final double amount = 20]) {
@@ -166,7 +152,7 @@ class Cam16Color extends ColorSpacesIQ with ColorModelsMixin {
     final double? q,
     final double? m,
     final double? s,
-    final double? alpha,
+    final Percent? alpha,
   }) {
     return Cam16Color.alt(
       hue ?? this.hue,
@@ -175,7 +161,7 @@ class Cam16Color extends ColorSpacesIQ with ColorModelsMixin {
       q ?? this.q,
       m ?? this.m,
       s ?? this.s,
-      alpha: alpha ?? this.alpha,
+      alpha: alpha ?? super.a,
     );
   }
 
@@ -320,15 +306,15 @@ class Cam16Color extends ColorSpacesIQ with ColorModelsMixin {
       'q': q,
       'm': m,
       's': s,
-      'alpha': alpha,
+      'alpha': super.a,
     };
   }
 
   @override
-  String toString() => 'Cam16Color(hue: ${hue.toStringAsFixed(2)}, ' //
-      'chroma: ${chroma.toStringAsFixed(2)}, ' //
+  String toString() => 'Cam16Color(hue: ${hue.toStrTrimZeros(2)}, ' //
+      'chroma: ${chroma.toStrTrimZeros(2)}, ' //
       'j: ${j.toStringAsFixed(2)}, ' //
-      'alpha: ${alpha.toStringAsFixed(2)})';
+      'alpha: ${super.a.toStringAsFixed(2)})';
 
   @override
   mcu.Cam16 toCam16() => mcu.Cam16.fromInt(value);

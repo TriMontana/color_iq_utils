@@ -1,11 +1,8 @@
-import 'package:color_iq_utils/src/color_interfaces.dart';
-import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
-import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
 
 /// A class representing a color in the YIQ color space.
 ///
@@ -30,16 +27,49 @@ class YiqColor extends ColorSpacesIQ with ColorModelsMixin {
   final double q;
 
   /// Creates a new `YiqColor`.
-  const YiqColor(this.y, this.i, this.q, {required final int val}) : super(val);
-  YiqColor.alt(this.y, this.i, this.q, {final int? val})
-      : super(val ?? YiqColor.argbFromYiq(y, i, q));
+  const YiqColor(this.y, this.i, this.q,
+      {required final int val, final Percent alpha = Percent.max})
+      : super(val, a: alpha);
+  YiqColor.alt(this.y, this.i, this.q,
+      {final int? val, final Percent alpha = Percent.max})
+      : super(val ?? YiqColor.argbFromYiq(y, i, q), a: alpha);
+
+  /// Converts a 32-bit ARGB color ID (Flutter Color.value) to YIQ components.
+  ///
+  /// @param argb32 The 32-bit integer color ID (e.g., 0xFFRRGGBB).
+  /// @returns A Yiq object containing Luminance (Y), In-phase (I), and Quadrature (Q).
+  YiqColor convertArgbToYiq(final int argb32) {
+    // Normalize R, G, B to the range [0.0, 1.0]
+    final double r = argb32.r2;
+    final double g = argb32.g2;
+    final double b = argb32.b2;
+
+    // 2. Apply the NTSC YIQ Conversion Matrix
+    // [Y] = [0.299  0.587  0.114] [R]
+    // [I] = [0.596 -0.274 -0.322] [G]
+    // [Q] = [0.211 -0.523  0.312] [B]
+
+    // Y (Luminance): Perceived brightness (0.0 to 1.0)
+    final double y = (0.299 * r) + (0.587 * g) + (0.114 * b);
+
+    // I (In-phase): The orange-cyan axis (approx. -0.596 to +0.596)
+    final double i = (0.596 * r) - (0.274 * g) - (0.322 * b);
+
+    // Q (Quadrature): The green-magenta axis (approx. -0.523 to +0.523)
+    final double q = (0.211 * r) - (0.523 * g) + (0.312 * b);
+
+    // 3. Return the YIQ object
+    return YiqColor.alt(
+        y.clamp(0.0, 1.0), i.clamp(-0.596, 0.596), q.clamp(-0.523, 0.523));
+  }
 
   /// Creates a 32-bit hex ARGB value from YIQ components.
   ///
   /// [y] - The luma component (0.0 to 1.0).
   /// [i] - The in-phase chrominance component (-0.5957 to 0.5957).
   /// [q] - The quadrature chrominance component (-0.5226 to 0.5226).
-  static int argbFromYiq(final double y, final double i, final double q) {
+  static int argbFromYiq(final double y, final double i, final double q,
+      {final Percent alpha = Percent.max}) {
     final double r = y + 0.956 * i + 0.621 * q;
     final double g = y - 0.272 * i - 0.647 * q;
     final double b = y - 1.106 * i + 1.703 * q;
@@ -48,25 +78,11 @@ class YiqColor extends ColorSpacesIQ with ColorModelsMixin {
     final int green = (g * 255).round().clamp(0, 255);
     final int blue = (b * 255).round().clamp(0, 255);
 
-    return (255 << 24) | (red << 16) | (green << 8) | blue;
+    return (alpha.toInt0to255 << 24) | (red << 16) | (green << 8) | blue;
   }
 
   @override
-  ColorIQ toColor() {
-    final double r = y + 0.956 * i + 0.621 * q;
-    final double g = y - 0.272 * i - 0.647 * q;
-    final double b = y - 1.106 * i + 1.703 * q;
-
-    return ColorIQ.fromARGB(
-      255,
-      (r * 255).round().clamp(0, 255),
-      (g * 255).round().clamp(0, 255),
-      (b * 255).round().clamp(0, 255),
-    );
-  }
-
-  @override
-  int get value => toColor().value;
+  ColorIQ toColor() => ColorIQ(value);
 
   @override
   YiqColor darken([final double amount = 20]) {
@@ -96,9 +112,7 @@ class YiqColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  YiqColor deintensify([final double amount = 10]) {
-    return desaturate(amount);
-  }
+  YiqColor deintensify([final double amount = 10]) => desaturate(amount);
 
   @override
   YiqColor accented([final double amount = 15]) {
@@ -189,12 +203,6 @@ class YiqColor extends ColorSpacesIQ with ColorModelsMixin {
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
 
   @override
-  double get luminance => toColor().luminance;
-
-  @override
-  Brightness get brightness => toColor().brightness;
-
-  @override
   bool get isDark => brightness == Brightness.dark;
 
   @override
@@ -270,6 +278,6 @@ class YiqColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  String toString() =>
-      'YiqColor(y: ${y.toStrTrimZeros(2)}, i: ${i.toStringAsFixed(2)}, q: ${q.toStringAsFixed(2)})';
+  String toString() => 'YiqColor(y: ${y.toStrTrimZeros(2)}, ' //
+      'i: ${i.toStringAsFixed(2)}, q: ${q.toStringAsFixed(2)})';
 }

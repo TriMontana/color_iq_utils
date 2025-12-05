@@ -1,14 +1,29 @@
 import 'dart:math' as math;
 
-import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/extensions/num_helpers.dart';
 import 'package:color_iq_utils/src/extensions/string_helpers.dart';
+import 'package:color_iq_utils/src/foundation/constants.dart';
 import 'package:color_iq_utils/src/foundation/enums.dart';
 import 'package:color_iq_utils/src/foundation/range.dart';
 import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/utils/error_handling.dart';
 
+/// A base extension type for floating-point values used throughout the library.
+///
+/// `FltType` wraps a [double] and serves as the foundation for more specific
+/// float-based extension types like [Percent], [SRGB], and [LinRGB].
+/// It uses Dart's extension type feature to provide compile-time type safety
+/// and specific functionality without the runtime overhead of a traditional
+/// wrapper class.
+///
+/// As an `implements double`, it can be used wherever a `double` is expected,
+/// but it also defines a set of constructors and operators that are often
+/// overridden by its more specialized subtypes to enforce specific constraints
+/// (e.g., clamping values to a 0.0-1.0 range).
+///
+/// This type is not typically instantiated directly by consumers. Instead, one
+/// of its subtypes should be used.
 extension type const FltType._(double _) implements double {
   /// Constant constructor
   const FltType(final double val) : this._(val);
@@ -27,7 +42,8 @@ extension type const FltType._(double _) implements double {
 
   const factory FltType.lightnessHsl(final double value) = Percent;
 
-  const factory FltType.saturation(final double value) = Percent; //
+  const factory FltType.saturation(final double value) = Percent;
+
   const factory FltType.valueHsv(final double value) = Percent;
 
   const factory FltType.lrv(final double value) = Percent;
@@ -135,7 +151,27 @@ extension MapStringToFloatHelper on Map<String, FltType> {
   }
 }
 
-/// Percent types, for generic fractionalized values in the range of 0.0 to 1.0
+/// An extension type representing a percentage value in the range of 0.0 to 1.0.
+///
+/// `Percent` is a specialized version of [FltType] that ensures its underlying
+/// [double] value is always within the [0.0, 1.0] range. It is used as a base
+/// type for various color channel components that are expressed as fractions,
+/// such as saturation, lightness, and RGB channel values.
+///
+/// This type provides:
+/// - **Compile-time safety**: Guarantees that values are percentages without
+///   runtime overhead.
+/// - **Validation**: Constructors and factories assert or clamp values to
+///   ensure they remain within the valid 0.0 to 1.0 range.
+/// - **Utility methods**: Includes methods for interpolation (`lerpTo`),
+///   inversion (`inverted`), and convenient formatting (`toPercentString`).
+/// - **Predefined constants**: Offers constants for common percentage values
+///   like `zero`, `midInst` (0.5), and `max` (1.0) for efficiency and
+///   readability.
+///
+/// It serves as the supertype for more specific fractional types like [SRGB]
+/// (non-linear, gamma-corrected RGB) and [LinRGB] (linear RGB), inheriting
+/// its constraints and base functionality.
 extension type const Percent._(double _) implements FltType {
   /// Constant constructor.
   const Percent(final double val, {final String? msg})
@@ -161,6 +197,8 @@ extension type const Percent._(double _) implements FltType {
       msg: msg,
     );
   }
+
+  Percent replace(final double val) => Percent(val);
 
   static Percent? validOrNull(
     final double? val, {
@@ -201,16 +239,20 @@ extension type const Percent._(double _) implements FltType {
         ),
         _ = val;
 
-  Percent get flipAround50percent => Percent(1 - _);
-
   double get val => _;
+  double get value => _;
 
   Percent operator +(final Percent otherVal) => Percent(_ + otherVal._);
 
+  double operator *(final double otherVal) => (_ * otherVal);
+
+  int get toInt0to255 => (_ * 255).round().clamp(0, 255);
   static Percent toInvertFactored(final double val, {final String? msg}) =>
       Percent(1 - val.assertRange0to1(msg));
 
-  Percent get inverted => toInvertFactored(_);
+  Percent get inverted => Percent.toInvertFactored(_);
+
+  Percent get flipAround50percent => Percent(1 - _);
 
   static String get name => 'PercentType';
 
@@ -220,15 +262,15 @@ extension type const Percent._(double _) implements FltType {
   /// The legend to use for validation
   static const PercentsLegend _legend = legendPercent;
 
-  PercentsLegend get toDescriptor => _legend;
+  PercentsLegend get toDescriptor => Percent._legend;
 
   /// Linearly interpolate from this value to the target value.
   Percent lerpTo(
     final double target,
-    final double percent, {
+    final double factor, {
     final String? msg,
   }) {
-    final double clampedPercent = percent.assertPercentage(msg: msg);
+    final double clampedPercent = factor.assertPercentage(msg: msg);
     final double clampedTarget = target.clamp(Percent.minVal, Percent.maxVal);
     if (_ == clampedTarget || clampedPercent == 0.0) {
       return this;
@@ -250,7 +292,7 @@ extension type const Percent._(double _) implements FltType {
     final String? msg,
     final ChannelAdjustMode lerpMode = ChannelAdjustMode.interpolate,
   }) {
-    if (_ == Percent.minVal || this == Percent.minInst) {
+    if (_ == Percent.minVal || this == Percent.min) {
       return this;
     }
     return Percent._legend.lerpToMin(
@@ -266,7 +308,7 @@ extension type const Percent._(double _) implements FltType {
     final String? msg,
     final ChannelAdjustMode lerpMode = ChannelAdjustMode.interpolate,
   }) {
-    if (_ == Percent.maxVal || this == Percent.maxInst) {
+    if (_ == Percent.maxVal || this == Percent.max) {
       return this;
     }
     return Percent._legend.lerpToMax(
@@ -283,11 +325,9 @@ extension type const Percent._(double _) implements FltType {
   static const double maxVal = 1.0;
 
   /// precompiled constant values for efficiency
-  static const Percent minInst = Percent(Percent.minVal); // 0% or 0.0
+  static const Percent min = Percent(0.0); // 0% or 0.0
   static const Percent zero = Percent(0.0);
-  static const Percent maxInst = Percent(Percent.maxVal); // 100% or 1.0
-  static const Percent midInst = Percent(0.50); // 50% or 0.5
-  static const Percent v100 = Percent.maxInst; // 100 percent or 1.0
+  static const Percent mid = Percent(0.50); // 50% or 0.5
   static const Percent max = Percent(1.0);
   static const Percent v0 = Percent(0.0);
   static const Percent v05 = Percent(0.05);
@@ -306,39 +346,33 @@ extension type const Percent._(double _) implements FltType {
   static const Percent v87 = Percent(0.87);
 }
 
-/// [SRGB] is the 0.0-to-1.0 nonlinear, floating-point number type
-/// with gamma correction. It represents percentages or fractions.
-/// The non-gamma-corrected [LinRGB] type is virtually the same as
-/// this [SRGB] type except that it does not include gamma correction.
+/// An extension type representing a non-linear, gamma-corrected RGB channel
+/// value in the range of 0.0 to 1.0.
 ///
-/// The [SRGB] type is commonly named "Gamma-Corrected", "Non-Linear RGB",
-/// or "Delinearized".
-/// Unless otherwise specified, it is the [LinRGB] type that is intended
-/// with the following names found on the internet and in academia:
-/// "Factored", 'Normalized', 'RGB Percentages', 'Fractionalized,
-/// 'RgbLinearized', 'SrgbLinearized'.
+/// `SRGB` (Standard Red Green Blue) values are what are typically used for
+/// direct display on screens. They have a non-linear relationship with light
+/// intensity due to "gamma correction" (more accurately, an opto-electronic
+/// transfer function or OETF).
+///
+/// For color calculations and transformations, it's often necessary to work
+/// with linear RGB values. This type provides a `toLinearRGB` getter to
+/// convert this non-linear `SRGB` value to its linear equivalent, [LinRGB],
+/// by removing the gamma correction.
+///
+/// - **`SRGB`**: Non-linear, gamma-corrected, for display. Also known as
+///   "delinearized".
+/// - **[LinRGB]**: Linear, for mathematical operations. Also known as
+///   "normalized", "factored", or "linearized".
 ///
 /// Both the [LinRGB] and [SRGB] types have options to clamp a
 /// [double] within the 0.0-to-1.0 range or to throw an exception if the
 /// value exceeds the bounds.
-
-/// The [SRGB] property also includes a variety of predefined constants
-/// or functionality to improve performance, reduce code and assist in
-/// filtering, transformations, and identification.
 ///
-/// A common operation is to 'normalize' these values into 0-to-255 unsigned
-/// integers [Uint8], so that each RGB channel -- [r], [greenNamed], [blueNamed] --
-/// would be represented as an integer bounded in the 0-to-255 range. Such
-/// an operation from [SRGB] would require the removal (or inversion) of the
-/// gamma channel from [SRGB], thus making the value linear and ready for
-/// math conversions to 0-to-255 unsigned integers [Uint8] and [Uint32].
-///
-/// [RgbComposite] type encapsulates both [Uint8] and [LinRGB] into a single
-/// type for efficiency reasons. Also [Flt0to100]
-///
+/// This type also includes predefined constants for common values, improving
+/// performance and readability.
 extension type const SRGB._(double _) implements Percent {
   /// Constant constructor. Important: this constructor assumes the
-  /// input value has already been gamma corrected (delinearized)!! i.e.
+  /// input value is already a gamma-corrected (non-linear) sRGB value.
   /// the linear-to-srgb transformation HAS already taken place.
   const SRGB(final double gammaCorrectedVal, {final String? msg})
       : assert(
@@ -487,16 +521,14 @@ extension type const SRGB._(double _) implements Percent {
       (_ * 100).toStrTrimZeros(decimals) + kPercentSign;
 
   /// To factored (aka RGB percents or normalized) string
-  String toFactoredStr({
+  String toStringDetailed({
     final int decimals = 6,
     final String? msg,
     final String delimiter = kDivisionSlash,
-  }) {
-    // https://dart.dev/language/patterns
-    // destructure the record using patterns
-    return 'SRGB:${_.toStrTrimZeros(decimals)}$delimiter' //
-        'LRGB:${toLinearRGB.toStrTrimZeros(decimals)}';
-  }
+  }) =>
+      'SRGB:${_.toStrTrimZeros(decimals)}'
+      '$delimiter'
+      'LinRGB:${toLinearRGB.toStrTrimZeros(decimals)}';
 
   /// Get the Linearized (normalized) value, i.e. without gamma in a range
   /// of 0.0 to 1.0
@@ -591,43 +623,28 @@ extension type const SRGB._(double _) implements Percent {
 
   static SRGB getSumOfList(final List<SRGB> inList) =>
       inList.reduce((final SRGB a, final SRGB b) => a + b);
-
-  // String toStringCombo([final int decimals = 4]) {
-  //   final Uint8 myUint8 = toUint8;
-  //   return '${_.toStringAsFixed(decimals)} - $myUint8 - ' //
-  //       '${myUint8.toStringHexShort(digits: decimals)}';
-  // }
 } // ------------------- End of Extension type ----------------------
 
-// ref: https://maxim-gorin.medium.com/generics-in-dart-type-safe-reusable-code-f1e8744c1f9f
-// ref: https://dart.dev/language/generics
-
-/// LinearRGB property type
-/// [LinRGB] is the 0.0-to-1.0 floating-point number "Linear sRGB" data
-/// type (without gamma correction), representing percentages or fractions.
-/// Its name is specific to disambiguate it from the standard [sRGB]
-/// (with gamma correction). The non-gamma-corrected [LinRGB] nomenclature
-/// is analogous to many other terms found on the internet and in
-/// academia, such as "Factored", 'Normalized', 'RGB Percentages',
-/// 'Fractionalized, 'RgbLinearized', 'SrgbLinearized'.
+/// An extension type representing a linear RGB channel value in the range of
+/// 0.0 to 1.0.
 ///
-/// The [LinRGB] property has options to clamp a [double] within the
+/// `LinRGB` (Linear RGB) values have a linear relationship with light intensity.
+/// They are used for accurate color calculations, blending, and transformations.
+/// This contrasts with [SRGB] values, which are non-linear ("gamma-corrected")
+/// and optimized for display.
+///
+/// `LinRGB` is also known by other names, such as "linearized", "normalized",
+/// "factored", or "RGB percent".
+///
+/// Key features:
+/// - **Validation**: Constructors and factories either clamp a [double] to the
 /// 0.0-to-1.0 range or to throw an exception if the value exceeds
 /// the bounds.
-///
-/// The [LinRGB] property also includes a variety of predefined constants
-/// or functionality to improve performance, reduce code and assist in
-/// filtering, transformations, and identification.
-///
-/// A common operation is to 'normalize' these values into 0-to-255 unsigned
-/// integers [Uint8], so that each RGB channel -- [r], [greenNamed], [blueNamed] --
-/// would be represented as an integer bounded in the 0-to-255 range. These
-/// single-channel values are often converted to two-character hexadecimal
-/// values and combined to create a 32-bit hexadecimal unique ID using
-/// the [Uint32] type.
-///
-/// [RgbComposite] type encapsulates both [Uint8] and [LinRGB] into a single
-/// type for efficiency reasons. Also [Flt0to100]
+/// - **Conversion**: The `linearToSrgb` getter provides an easy way to apply
+///   gamma correction and convert a linear value to its non-linear [SRGB]
+///   equivalent for display.
+/// - **Efficiency**: Predefined constants for common values (e.g., `zero`,
+///   `midInst`, `maxInst`) improve performance and code readability.
 ///
 /// Credit for [Uint8] and [Uint32]:
 /// https://github.com/matanlurey/binary.dart/blob/main/lib/src/uint32.dart
@@ -667,36 +684,6 @@ extension type const LinRGB._(double _) implements Percent {
   static const LinearRGBLegend _legend = legendLinearRGB;
 
   LinearRGBLegend get toDescriptor => LinRGB._legend;
-
-  // /// Linearly interpolate to the target number
-  // LinRGB lerpTo(
-  //   final double target,
-  //   final double percent, {
-  //   final String? msg,
-  //   final ChannelAdjustMode lerpMode = ChannelAdjustMode.lerp,
-  // }) {
-  //   if (this == target || _ == target) {
-  //     return this;
-  //   }
-  //   return lerpTo(
-  //     this,
-  //     LinRGB.checkOrThrow(target),
-  //     percent.assertPercentage(msg: msg),
-  //     maxValue: LinRGB.maxInst,
-  //     lerpMode: lerpMode,
-  //   );
-  // }
-
-  // /// Lerp Away, LerpOpposite
-  // LinRGB lerpOpposite(
-  //   final num oppTarget,
-  //   final double percent, {
-  //   final String? msg,
-  // }) => lerpOppositeOf(
-  //   this,
-  //   LinRGB.checkOrThrow(oppTarget),
-  //   percent: percent.assertPercentage(msg: msg),
-  // );
 
   /// Linearly interpolate to minimum
   LinRGB lerpToMin(
@@ -739,7 +726,7 @@ extension type const LinRGB._(double _) implements Percent {
 
   /// precompiled constant values for efficiency
   static const LinRGB minInst = LinRGB(minVal); // 0% or 0.0
-  static const LinRGB maxInst = LinRGB(maxVal); // 100% or 1.0
+  static const LinRGB maxInst = LinRGB(1.0); // 100% or 1.0
   static const LinRGB midInst = LinRGB(0.5); // 50% or 0.5
   static const LinRGB v0 = LinRGB.minInst; // 0%
   static const LinRGB zero = LinRGB.minInst; // 0%
@@ -859,7 +846,7 @@ SRGB oetf(
     tolerance: tolerance,
   );
   // the Gamma threshold - breakpoint
-  if (linearRgbFloat0to1 >= gammaDelinearize) {
+  if (linearRgbFloat0to1 >= kGammaDelinearize) {
     // 0.0031308) {
     return SRGB(1.055 * math.pow(linearRgbFloat0to1, 1.0 / kGammaVal) - 0.055);
   } else {
@@ -867,14 +854,15 @@ SRGB oetf(
   }
 }
 
-/// EOTF (Electro-Optical Transfer Function), the inverse transform
-/// to back to a "linear" sRGB, i.e. to convert an sRGB "delinearized"
-/// color channel to a "linear RGB" color channel.
-/// This method removes (inverts) the gamma correction and returns a
-/// LinearRGB value in the range of 0 to 1.0, i.e. one that has many
-/// nomenclatures, such as 'normalized', 'LinearRGB', 'gamma_inv', 'linearized',
-/// 'sRGB to Linear', 'RGBdecoded', 'gammaInv', 'wcagGammaInv', and
-/// 'sRGBToLinearized', 'srgbToLinearRgb'
+/// EOTF (Electro-Optical Transfer Function): Converts a non-linear sRGB value
+/// back to a linear RGB value.
+///
+/// This function performs the inverse of the `oetf` operation by removing
+/// the gamma correction from an sRGB color channel. The result is a "linear"
+/// value in the [0.0, 1.0] range, suitable for mathematical calculations.
+///
+/// "Linear RGB" is also known by other names, such as 'linearized',
+/// 'normalized', or 'gamma-decoded'.
 LinRGB eotf(final double srgbNonLinearVal0to1, {final String? msg}) {
   srgbNonLinearVal0to1.assertPercentage(msg: msg);
   if (srgbNonLinearVal0to1 <= chi) {
@@ -909,41 +897,6 @@ sealed class PropertyLegend<T extends num> {
     required this.range,
     required final TdCheckCastFN<T> checkAndCastFN,
   }) : _checkAndCastFN = checkAndCastFN;
-
-  // /// Linearly interpolate from one value to another
-  // T lerpTo(
-  //   final T val1,
-  //   final T val2,
-  //   final double percent, {
-  //   final ChannelAdjustMode lerpMode = ChannelAdjustMode.lerp,
-  // }) {
-  //   try {
-  //     if (val1 == val2) {
-  //       return val1;
-  //     }
-  //     final T rslt = lerpTo(
-  //       val1,
-  //       val2,
-  //       percent,
-  //       maxValue: maxVal,
-  //       lerpMode: lerpMode,
-  //     );
-  //     return toCheckCastFN(rslt);
-  //   } catch (e, stacktrace) {
-  //     final String st =
-  //         '${stacktrace.convertToString()}\n-' //
-  //         '${e.toString()}--$val1 and $val2 and $percent';
-  //     developer.log(
-  //       'ERROR in lerpTo $st\n', //
-  //       stackTrace: stacktrace,
-  //       error: e,
-  //     );
-  //     debugPrint(st);
-  //     stderr.write(st);
-  //     debugPrintStack(stackTrace: stacktrace);
-  //     throw Exception(st);
-  //   }
-  // }
 
   /// Linearly interpolate to the lower limit
   T lerpToMin(
@@ -1403,3 +1356,6 @@ extension type const Zxyz._(double _) implements FltType {
   static const String errorMsgZ =
       'Invalid "Z" in XYZ; range is (${Zxyz.minZval} to ${Zxyz.maxZval})';
 }
+
+// ref: https://maxim-gorin.medium.com/generics-in-dart-type-safe-reusable-code-f1e8744c1f9f
+// ref: https://dart.dev/language/generics

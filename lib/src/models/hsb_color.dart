@@ -1,12 +1,10 @@
 import 'dart:math';
 
-import 'package:color_iq_utils/src/color_interfaces.dart';
-import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
+import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 
 /// A representation of a color in the HSB (Hue, Saturation, Brightness) color space.
@@ -28,10 +26,12 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   final double b;
 
-  const HsbColor(this.h, this.s, this.b, {required final int hexId})
-      : super(hexId);
-  HsbColor.alt(this.h, this.s, this.b, {final int? hexId})
-      : super(hexId ?? HsbColor.argbFromHsb(h, s, b));
+  const HsbColor(this.h, this.s, this.b,
+      {required final int hexId, final Percent alpha = Percent.max})
+      : super(hexId, a: alpha);
+  HsbColor.alt(this.h, this.s, this.b,
+      {final int? hexId, final Percent alpha = Percent.max})
+      : super(hexId ?? HsbColor.argbFromHsb(h, s, b), a: alpha);
 
 // Note: THERE are two methods to convert HSB to ARGB
 // This function takes hue (0-360 degrees), saturation (0-1), and brightness (0-1) as inputs and returns a 32-bit integer in ARGB format (with full opacity). If you're using this in a context like Flutter, you can pass the result to Color(value) for rendering.
@@ -39,7 +39,9 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
       double hue, final double saturation, final double brightness) {
     // Normalize hue to 0-360
     hue = hue % 360;
-    if (hue < 0) hue += 360;
+    if (hue < 0) {
+      hue += 360;
+    }
 
     // Handle achromatic case
     if (saturation == 0) {
@@ -100,6 +102,7 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
     return 0xFF000000 | (ir << 16) | (ig << 8) | ib;
   }
 
+  // // Note: THERE are two methods to convert HSB to ARGB
   /// Creates a 32-bit ARGB hex value from HSB components.
   ///
   /// `h` is hue (0-360), `s` is saturation (0-1), and `b` is brightness (0-1).
@@ -185,15 +188,11 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  ColorIQ toColor() {
-    // HSB is the same as HSV, just B instead of V
-    return ColorIQ(value);
-  }
+  ColorIQ toColor() => ColorIQ(value);
 
   @override
-  HsbColor darken([final double amount = 20]) {
-    return HsbColor.alt(h, s, max(0.0, b - amount / 100));
-  }
+  HsbColor darken([final double amount = 20]) =>
+      HsbColor.alt(h, s, max(0.0, b - amount / 100));
 
   @override
   HsbColor brighten([final double amount = 20]) {
@@ -509,7 +508,8 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   String toString() =>
-      'HsbColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)})';
+      'HsbColor(h: ${h.toStrTrimZeros(2)}, s: ${s.toStringAsFixed(2)}, ' //
+      'b: ${b.toStringAsFixed(2)})';
 
   @override
   Cam16 toCam16() => Cam16.fromInt(value);

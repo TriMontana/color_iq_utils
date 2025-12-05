@@ -1,7 +1,4 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:color_iq_utils/src/colors/html.dart';
-import 'package:color_iq_utils/src/extensions/double_helpers.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:test/test.dart';
 
 void main() {

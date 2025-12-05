@@ -1,14 +1,11 @@
 import 'dart:math';
 
-import 'package:color_iq_utils/src/color_interfaces.dart';
-import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
-import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/ok_lab_color.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
 
 /// A color model that represents colors in the Oklch color space.
 ///
@@ -25,29 +22,28 @@ class OkLchColor extends ColorSpacesIQ with ColorModelsMixin {
   final double l;
   final double c;
   final double h;
-  final double alpha;
+  Percent get alpha => super.a;
 
   const OkLchColor(this.l, this.c, this.h,
-      {this.alpha = 1.0, required final int hexId})
+      {final Percent alpha = Percent.max, required final int hexId})
       : assert(l >= 0 && l <= 1, 'L must be between 0 and 1'),
         assert(c >= 0, 'C must be non-negative'),
         assert(h >= 0 && h <= 360, 'H must be between 0 and 360'),
-        assert(alpha >= 0 && alpha <= 1, 'Alpha must be between 0 and 1'),
-        super(hexId);
+        super(hexId, a: alpha);
 
-  OkLchColor.alt(this.l, this.c, this.h, {this.alpha = 1.0, final int? hexId})
+  OkLchColor.alt(this.l, this.c, this.h,
+      {final Percent alpha = Percent.max, final int? hexId})
       : assert(l >= 0 && l <= 1, 'L must be between 0 and 1'),
         assert(c >= 0, 'C must be non-negative'),
         assert(h >= 0 && h <= 360, 'H must be between 0 and 360'),
-        assert(alpha >= 0 && alpha <= 1, 'Alpha must be between 0 and 1'),
-        super(hexId ?? toHex(l, c, h, alpha));
+        super(hexId ?? toHexID(l, c, h, alpha: alpha), a: alpha);
 
   /// Creates a 32-bit ARGB hex value from Oklch values.
   ///
   /// This is a stand-alone static method that converts Oklch color
   /// components directly to an integer representation of an ARGB color.
-  static int toHex(
-      final double l, final double c, final double h, final double alpha) {
+  static int toHexID(final double l, final double c, final double h,
+      {final Percent alpha = Percent.max}) {
     final double hRad = h * pi / 180;
     final OkLabColor okLab =
         OkLabColor.alt(l, c * cos(hRad), c * sin(hRad), alpha: alpha);
@@ -64,12 +60,8 @@ class OkLchColor extends ColorSpacesIQ with ColorModelsMixin {
   ColorIQ toColor() => toOkLab().toColor();
 
   @override
-  int get value => toColor().value;
-
-  @override
-  OkLchColor darken([final double amount = 20]) {
-    return OkLchColor.alt(max(0.0, l - amount / 100), c, h, alpha: alpha);
-  }
+  OkLchColor darken([final double amount = 20]) =>
+      copyWith(l: max(0.0, l - amount / 100));
 
   @override
   OkLchColor get inverted => toColor().inverted.toOkLch();
@@ -108,7 +100,6 @@ class OkLchColor extends ColorSpacesIQ with ColorModelsMixin {
         lerpDouble(l, otherOkLch.l, t),
         lerpDouble(c, otherOkLch.c, t),
         lerpHue(h, otherOkLch.h, t),
-        alpha: lerpDouble(alpha, otherOkLch.alpha, t),
       );
     }
 
@@ -116,7 +107,6 @@ class OkLchColor extends ColorSpacesIQ with ColorModelsMixin {
       lerpDouble(l, otherOkLch.l, t),
       lerpDouble(c, otherOkLch.c, t),
       newHue,
-      alpha: lerpDouble(alpha, otherOkLch.alpha, t),
     );
   }
 
@@ -179,13 +169,13 @@ class OkLchColor extends ColorSpacesIQ with ColorModelsMixin {
     final double? l,
     final double? c,
     final double? h,
-    final double? alpha,
+    final Percent? alpha,
   }) {
     return OkLchColor.alt(
       l ?? this.l,
       c ?? this.c,
       h ?? this.h,
-      alpha: alpha ?? this.alpha,
+      alpha: alpha ?? super.a,
     );
   }
 

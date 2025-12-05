@@ -2,8 +2,8 @@ import 'dart:developer' as developer;
 import 'dart:io';
 import 'dart:math' as math;
 
-import 'package:color_iq_utils/src/constants.dart';
 import 'package:color_iq_utils/src/extensions/string_helpers.dart';
+import 'package:color_iq_utils/src/foundation/constants.dart';
 import 'package:color_iq_utils/src/foundation/enums.dart';
 import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/utils/error_handling.dart';
@@ -102,6 +102,8 @@ extension DoubleHelpersIQ on double {
     assertRange0to1('gammaCorrect-$this');
     return linearToSrgb(this);
   }
+
+  double get delinearize => gammaCorrect;
 
   /// To String without training zeros.
   String toStrTrimZeros([

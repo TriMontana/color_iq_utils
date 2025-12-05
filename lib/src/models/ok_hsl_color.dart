@@ -1,15 +1,11 @@
 import 'dart:math';
 
-import 'package:color_iq_utils/src/color_interfaces.dart';
-import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
-import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/ok_lch_color.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
-import 'package:material_color_utilities/hct/cam16.dart';
 
 /// A color model that represents colors using Hue, Saturation, and Lightness
 /// in the Oklab color space. OkHSL is designed to be more perceptually uniform
@@ -35,10 +31,12 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
   final double l;
 
   /// Creates an `OkHslColor` instance.
-  const OkHslColor(this.h, this.s, this.l, {required final int hexId})
-      : super(hexId);
-  OkHslColor.alt(this.h, this.s, this.l, {final int? hexId})
-      : super(hexId ?? OkHslColor.hexIdFromHsl(h, s, l));
+  const OkHslColor(this.h, this.s, this.l,
+      {required final int hexId, final Percent alpha = Percent.max})
+      : super(hexId, a: alpha);
+  OkHslColor.alt(this.h, this.s, this.l,
+      {final int? hexId, final Percent alpha = Percent.max})
+      : super(hexId ?? OkHslColor.hexIdFromHsl(h, s, l), a: alpha);
 
   /// Creates a 32-bit integer ARGB representation of an OKHSL color.
   ///
@@ -126,7 +124,9 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
     }
 
     newHue %= 360;
-    if (newHue < 0) newHue += 360;
+    if (newHue < 0) {
+      newHue += 360;
+    }
 
     return OkHslColor.alt(
       newHue,
@@ -151,9 +151,8 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  OkHslColor desaturate([final double amount = 25]) {
-    return OkHslColor.alt(h, max(0.0, s - amount / 100), l);
-  }
+  OkHslColor desaturate([final double amount = 25]) =>
+      copyWith(s: max(0.0, s - amount / 100));
 
   @override
   OkHslColor intensify([final double amount = 10]) {
@@ -190,8 +189,13 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
   ColorTemperature get temperature => toColor().temperature;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  OkHslColor copyWith({final double? h, final double? s, final double? l}) {
-    return OkHslColor.alt(h ?? this.h, s ?? this.s, l ?? this.l);
+  OkHslColor copyWith(
+      {final double? hue,
+      final double? s,
+      final double? l,
+      final Percent? alpha}) {
+    return OkHslColor.alt(hue ?? h, s ?? this.s, l ?? this.l,
+        alpha: alpha ?? super.a);
   }
 
   @override
@@ -276,9 +280,6 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
       .toList();
 
   @override
-  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
-
-  @override
   double contrastWith(final ColorSpacesIQ other) =>
       toColor().contrastWith(other);
 
@@ -288,9 +289,6 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) =>
       toColor().isWithinGamut(gamut);
-
-  @override
-  List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
 
   @override
   Map<String, dynamic> toJson() {
@@ -304,9 +302,6 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  String toString() =>
-      'OkHslColor(h: ${h.toStrTrimZeros(3)}, s: ${s.toStringAsFixed(2)}, l: ${l.toStringAsFixed(2)})';
-
-  @override
-  Cam16 toCam16() => Cam16.fromInt(value);
+  String toString() => 'OkHslColor(h: ${h.toStrTrimZeros(3)}, ' //
+      's: ${s.toStringAsFixed(2)}, l: ${l.toStringAsFixed(2)})';
 }

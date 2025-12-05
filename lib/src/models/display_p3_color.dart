@@ -1,15 +1,8 @@
 import 'dart:math';
 
-import 'package:color_iq_utils/src/color_interfaces.dart';
-import 'package:color_iq_utils/src/color_temperature.dart';
+import 'package:color_iq_utils/src/color_models_lib.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
-import 'package:color_iq_utils/src/extensions/double_helpers.dart';
-import 'package:color_iq_utils/src/extensions/int_helpers.dart';
-import 'package:color_iq_utils/src/models/color_models_mixin.dart';
-import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:color_iq_utils/src/models/hct_color.dart';
-import 'package:color_iq_utils/src/models/xyz_color.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
+import 'package:color_iq_utils/src/foundation_lib.dart';
 
 /// A representation of a color in the Display P3 color space.
 ///
@@ -33,11 +26,13 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
   @override
   final double b;
 
-  const DisplayP3Color(this.r, this.g, this.b, {required final int hexId})
-      : super(hexId);
+  const DisplayP3Color(this.r, this.g, this.b,
+      {required final int hexId, final Percent alpha = Percent.max})
+      : super(hexId, a: alpha);
 
-  DisplayP3Color.alt(this.r, this.g, this.b, {final int? hexId})
-      : super(hexId ?? DisplayP3Color.toHexId(r, g, b));
+  DisplayP3Color.alt(this.r, this.g, this.b,
+      {final int? hexId, final Percent alpha = Percent.max})
+      : super(hexId ?? DisplayP3Color.toHexId(r, g, b), a: alpha);
 
   static DisplayP3Color fromInt(final int hexId) {
     final XyzColor xyz = XyzColor.xyzFromRgbLinearized(
@@ -108,7 +103,7 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
     final double bLin = srgbToLinear(b.clamp(0.0, 1.0));
 
     // Display P3 Linear to XYZ (D65)
-    final XyzColor xyz = displayP3LinearsToXyz(rLin, gLin, bLin);
+    final XyzColor xyz = DisplayP3Color.displayP3LinearsToXyz(rLin, gLin, bLin);
 
     // XYZ (D65) to sRGB Linear
     final double rS =
@@ -120,7 +115,6 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
 
     // sRGB Linear to sRGB (Gamma encoded)
     return ColorIQ.fromSrgb(
-      a: 1.0,
       r: rS.gammaCorrect,
       g: gS.gammaCorrect,
       b: bS.gammaCorrect,
@@ -337,9 +331,6 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
       toColor().isWithinGamut(gamut);
 
   @override
-  List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
-
-  @override
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'type': 'DisplayP3Color',
@@ -351,7 +342,7 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  String toString() => 'DisplayP3Color(r: ${r.toStringAsFixed(4)}, ' //
+  String toString() => 'DisplayP3Color(r: ${r.toStrTrimZeros(4)}, ' //
       'g: ${g.toStrTrimZeros(4)}, ' //
       'b: ${b.toStringAsFixed(4)}, ' //
       'opacity: ${transparency.toStringAsFixed(2)})';

@@ -1,6 +1,4 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:color_iq_utils/src/colors/html.dart';
-import 'package:color_iq_utils/src/naming/names.dart';
 import 'package:test/test.dart';
 
 void main() {

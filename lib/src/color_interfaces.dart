@@ -1,45 +1,43 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:color_iq_utils/src/extensions/int_helpers.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
+import 'package:color_iq_utils/src/maps/lrv_maps.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 
-export 'utils/color_blindness.dart';
 export 'color_wheels.dart';
+export 'utils/color_blindness.dart';
 
 /// A common parent class and interface for all color models.
 abstract class ColorSpacesIQ {
   /// Returns the 32-bit integer ID (ARGB) of this color.
   /// The 32-bit alpha-red-green-blue integer value.
   final int value;
-  final double a;
+  final Percent a;
   final double r;
   final double g;
   final double b;
   final int redInt;
-  final double? lrv;
+  final Percent? lrv;
 
   /// Constructs a color from an integer.
   const ColorSpacesIQ(this.value,
-      {final double? a,
+      {required this.a,
       final double? r,
       final double? g,
       final double? b,
       this.lrv,
       final int? redIntVal})
-      : a = a ?? (value >> 24 & 0xFF) / 255.0,
-        r = r ?? (value >> 16 & 0xFF) / 255.0,
+      : r = r ?? (value >> 16 & 0xFF) / 255.0,
         g = g ?? (value >> 8 & 0xFF) / 255.0,
         b = b ?? (value & 0xFF) / 255.0,
         redInt = redIntVal ?? (value >> 16 & 0xFF);
   const ColorSpacesIQ.alt({
     required this.value,
-    final double? a,
+    required this.a,
     final double? r,
     final double? g,
     final double? b,
     this.lrv,
     final int? redIntVal,
-  })  : a = a ?? (value >> 24 & 0xFF) / 255.0,
+  })  : // a = a ?? (value >> 24 & 0xFF) / 255.0,
         r = r ?? (value >> 16 & 0xFF) / 255.0,
         g = g ?? (value >> 8 & 0xFF) / 255.0,
         b = b ?? (value & 0xFF) / 255.0,
@@ -57,7 +55,7 @@ abstract class ColorSpacesIQ {
   List<int> get rgb255Ints => <int>[redInt, value.greenInt, value.blueInt];
   List<double> get rgbaLinearized =>
       <double>[redLinearized, greenLinearized, blueLinearized, alphaLinearized];
-  List<double> get rgbasNormalized => <double>[r, g, b, a];
+  RgbaDoubles get rgbasNormalized => (r: r, g: g, b: b, a: a);
   RgbaInts get rgbaInts => (
         alpha: value.alphaInt,
         red: redInt,
@@ -67,11 +65,7 @@ abstract class ColorSpacesIQ {
   RgbaDoubles get rgbaDoubles => (a: a, r: r, g: g, b: b);
 
   /// Returns the relative luminance of this color (0.0 - 1.0).
-  double get toLRV =>
-      lrv ??
-      (0.2126 * redLinearized +
-          0.7152 * greenLinearized +
-          0.0722 * blueLinearized);
+  Percent get toLRV => lrv ?? mapLRVs.getOrCreate(value);
 
   /// Returns the brightness of this color (light or dark).
   Brightness get brightness {

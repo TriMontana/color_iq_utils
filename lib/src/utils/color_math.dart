@@ -1,10 +1,8 @@
 import 'dart:math';
 
-import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:color_iq_utils/src/constants.dart';
-import 'package:color_iq_utils/src/extensions/double_helpers.dart';
-import 'package:color_iq_utils/src/extensions/float_ext_type.dart';
-import 'package:color_iq_utils/src/extensions/int_helpers.dart';
+import 'package:color_iq_utils/src/foundation_lib.dart';
+import 'package:color_iq_utils/src/models/coloriq.dart';
+import 'package:color_iq_utils/src/models/xyz_color.dart';
 
 /// Add gamma correction to a linear RGB component, aka delinear or delinearized
 const double Function(double linearComponent) delinearize = linearToSrgb;
@@ -15,15 +13,11 @@ const double Function(double srgbComponent) toLinear = srgbToLinear;
 const LinRGB Function(double nonLinearVal, {String? msg}) removeGamma = eotf;
 const SRGB Function(double linearRgb, {String? msg}) applyGamma = oetf;
 
-/// The brightness of a color.
-enum Brightness { dark, light }
-
-/// Common color gamuts.
-enum Gamut { sRGB, displayP3, rec2020, adobeRgb, proPhotoRgb }
-
 // -------------------------------------------------------------------
 // ARGB & Component Extraction
 // -------------------------------------------------------------------
+typedef RgbInts = ({int red, int green, int blue});
+typedef RgbDoubles = ({double r, double g, double b});
 typedef RgbaInts = ({int alpha, int red, int green, int blue});
 typedef RgbaDoubles = ({double a, double r, double g, double b});
 
@@ -168,7 +162,7 @@ int floatToInt8Hex(
 ///
 /// See <https://en.wikipedia.org/wiki/Relative_luminance>.
 /// See <https://www.w3.org/TR/WCAG20/#relativeluminancedef>
-double computeLuminance(final double r, final double g, final double b) {
+Percent computeLuminance(final double r, final double g, final double b) {
 // assert(colorSpace != ColorSpace.extendedSRGB);
   final double R =
       linearizeColorComponentDart(r.assertRange0to1('computeLuminance-r'));
@@ -187,16 +181,16 @@ double computeLuminance(final double r, final double g, final double b) {
 ///
 /// See <https://en.wikipedia.org/wiki/Relative_luminance>.
 /// See <https://www.w3.org/TR/WCAG20/#relativeluminancedef>
-double computeLuminanceViaLinearized(final double redLinearized,
+Percent computeLuminanceViaLinearized(final double redLinearized,
     final double greenLinearized, final double blueLinearized) {
   redLinearized.assertRange0to1('computeLuminanceViaLinearized-redLinearized');
   greenLinearized
       .assertRange0to1('computeLuminanceViaLinearized-greenLinearized');
   blueLinearized
       .assertRange0to1('computeLuminanceViaLinearized-blueLinearized');
-  return 0.2126 * redLinearized +
+  return Percent(0.2126 * redLinearized +
       0.7152 * greenLinearized +
-      0.0722 * blueLinearized;
+      0.0722 * blueLinearized);
 }
 
 /// Returns a brightness value between 0 for darkest and 1 for lightest.
@@ -219,7 +213,7 @@ double computeLuminanceViaHexId(final int hexId) =>
 ///
 /// See <https://en.wikipedia.org/wiki/Relative_luminance>.
 /// See <https://www.w3.org/TR/WCAG20/#relativeluminancedef>
-double computeLuminanceViaInts(
+Percent computeLuminanceViaInts(
         final int red, final int green, final int blue) =>
     computeLuminance(red.normalized, green.normalized, blue.normalized);
 
@@ -241,16 +235,17 @@ double linearizeColorComponentDart(final double srgbComponent) {
 /// This is the official sRGB EOTF/OETF (Electro-Optical Transfer Function).
 ///
 /// This is also known as "linearization" or "inverse gamma correction."
-double srgbToLinear(final double srgbComponent) {
+LinRGB srgbToLinear(final double srgbComponent) {
   // clamp within specified tolerance
   srgbComponent.assertRange0to1('srgbToLinear');
   // sRGB standard specifies a linear segment near zero for better precision.
   if (srgbComponent <= 0.04045) {
     // Linear segment: c / 12.92
-    return (srgbComponent / 12.92).clamp(0.0, 1.0);
+    return LinRGB((srgbComponent / 12.92).clamp(0.0, 1.0));
   }
   // Non-linear segment: ((c + 0.055) / 1.055) ^ 2.4
-  return pow((srgbComponent + 0.055) / 1.055, 2.4).toDouble().clamp(0.0, 1.0);
+  return LinRGB(
+      pow((srgbComponent + 0.055) / 1.055, 2.4).toDouble().clamp(0.0, 1.0));
 }
 
 /// Converts a linear intensity sRGB double component [0.0 - 1.0]
@@ -264,10 +259,9 @@ double linearToSrgb(final double linearComponent) {
   if (linearComponent <= 0.0031308) {
     // Inverse linear segment: c * 12.92
     return (linearComponent * 12.92).clamp(0.0, 1.0);
-  } else {
-    // Inverse non-linear segment: 1.055 * c^(1/2.4) - 0.055
-    return (1.055 * pow(linearComponent, 1.0 / 2.4) - 0.055).clamp(0.0, 1.0);
   }
+  // Inverse non-linear segment: 1.055 * c^(1/2.4) - 0.055
+  return (1.055 * pow(linearComponent, 1.0 / 2.4) - 0.055).clamp(0.0, 1.0);
 }
 
 /// Converts an sRGB color (with 8-bit integer components) to a list
@@ -293,9 +287,12 @@ List<double> rgbToLinearRgb(final int r, final int g, final int b) {
 /// Converts a color from linear RGB components to ARGB format.
 /// CREDIT: MaterialColorUtilities
 int argbFromLinrgb(final List<double> linrgb) {
-  final int r = delinearized(linrgb[0].assertRange0to1('argbFromLinrgb-r'));
-  final int g = delinearized(linrgb[1].assertRange0to1('argbFromLinrgb-g'));
-  final int b = delinearized(linrgb[2].assertRange0to1('argbFromLinrgb-b'));
+  final int r =
+      delinearized100Based(linrgb[0].assertRange0to1('argbFromLinrgb-r'));
+  final int g =
+      delinearized100Based(linrgb[1].assertRange0to1('argbFromLinrgb-g'));
+  final int b =
+      delinearized100Based(linrgb[2].assertRange0to1('argbFromLinrgb-b'));
   return argbFromRgb(r, g, b);
 }
 
@@ -321,13 +318,13 @@ double linearized(final int rgbComponent) {
 }
 
 /// Delinearizes an RGB component.
-///
+/// NOTE: This is 100-based, not 1.0 based
 /// [rgbComponent] 0.0 <= rgb_component <= 100.0, represents linear
 /// R/G/B channel
 /// Returns 0 <= output <= 255, color channel converted to regular
 /// RGB space
 /// CREDIT: MaterialColorUtilities
-int delinearized(final double rgbComponent) {
+int delinearized100Based(final double rgbComponent) {
   final double normalized = rgbComponent / 100.0;
   double delinearized = 0.0;
   if (normalized <= 0.0031308) {
@@ -641,9 +638,9 @@ int argbFromXyz(final double x, final double y, final double z) {
   final double linearR = matrix[0][0] * x + matrix[0][1] * y + matrix[0][2] * z;
   final double linearG = matrix[1][0] * x + matrix[1][1] * y + matrix[1][2] * z;
   final double linearB = matrix[2][0] * x + matrix[2][1] * y + matrix[2][2] * z;
-  final int r = delinearized(linearR);
-  final int g = delinearized(linearG);
-  final int b = delinearized(linearB);
+  final int r = delinearized100Based(linearR);
+  final int g = delinearized100Based(linearG);
+  final int b = delinearized100Based(linearB);
   return argbFromRgb(r, g, b);
 }
 
@@ -654,6 +651,33 @@ List<double> xyzFromArgb(final int argb) {
   final double g = linearized(greenFromArgb(argb));
   final double b = linearized(blueFromArgb(argb));
   return matrixMultiply(<double>[r, g, b], srgbToXyzMatrix);
+}
+
+/// Converts a color represented in Lab color space into an ARGB
+/// integer.
+XyzColor labToXYZ(final double l, final double a, final double b) {
+  final double fy = (l + 16.0) / 116.0;
+  final double fx = a / 500.0 + fy;
+  final double fz = fy - b / 200.0;
+  final double xNormalized = labInvf(fx);
+  final double yNormalized = labInvf(fy);
+  final double zNormalized = labInvf(fz);
+  final double x = xNormalized * kWhitePointD65[0];
+  final double y = yNormalized * kWhitePointD65[1];
+  final double z = zNormalized * kWhitePointD65[2];
+  return XyzColor.alt(x, y, z);
+}
+
+/// Converts a color from ARGB to XYZ.
+RgbInts xyzToRgb(final double x, final double y, final double z) {
+  const List<List<double>> matrix = xyzToSrgbMatrix;
+  final double linearR = matrix[0][0] * x + matrix[0][1] * y + matrix[0][2] * z;
+  final double linearG = matrix[1][0] * x + matrix[1][1] * y + matrix[1][2] * z;
+  final double linearB = matrix[2][0] * x + matrix[2][1] * y + matrix[2][2] * z;
+  final int r = delinearized100Based(linearR);
+  final int g = delinearized100Based(linearG);
+  final int b = delinearized100Based(linearB);
+  return (red: r, green: g, blue: b);
 }
 
 /// Converts a color represented in Lab color space into an ARGB
