@@ -88,7 +88,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
         super(
             lrv: luminance != null
                 ? luminance.assertRange0to1('ColorIQ-COTR-luminance')
-                : computeLuminanceViaInts(red!, green!, blue!),
+                : value.toLRV,
             a: a != null
                 ? a.assertRange0to1('ColorIQ-COTR-a')
                 : ((value >> 24 & 0xFF) / 255).clamp0to1,
@@ -146,11 +146,11 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
         );
 
   /// Construct a color from sRGB delinearized values a, r, g, b (0.0 to 1.0)
-  factory ColorIQ.fromSrgb(
-    final double a,
-    final double r,
-    final double g,
-    final double b, {
+  factory ColorIQ.fromSrgb({
+    required final double r,
+    required final double g,
+    required final double b,
+    final double a = 1.0,
     int? alphaInt,
     int? redInt,
     int? greenInt,
@@ -168,10 +168,10 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
         : (r * 255).roundAndClamp0to255int('ColorIQ.fromSrgb-RedInt2');
     greenInt = greenInt != null
         ? greenInt.assertRange0to255('ColorIQ.fromSrgb-GreenInt')
-        : (g * 255).roundAndClamp0to255int('ColorIQ.fromSrgb-GreenInt2');
+        : g.normalizedTo255int('ColorIQ.fromSrgb-GreenInt2');
     blueInt = blueInt != null
         ? blueInt.assertRange0to255('ColorIQ.fromSrgb-BlueInt')
-        : (b * 255).roundAndClamp0to255int('ColorIQ.fromSrgb-B');
+        : b.normalizedTo255int('ColorIQ.fromSrgb-BlueInt2');
     alphaInt = alphaInt != null
         ? alphaInt.assertRange0to255('ColorIQ.fromSrgb-AlphaInt')
         : a.normalizedTo255int('ColorIQ.fromSrgb-A');

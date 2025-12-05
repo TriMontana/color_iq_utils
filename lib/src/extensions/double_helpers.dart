@@ -90,6 +90,13 @@ extension DoubleHelpersIQ on double {
     return (this * 255).round();
   }
 
+// sRGB Linear to sRGB (Gamma encoded), aka gamma correction, delinearization
+  // Gamma correction (Transfer function) for Display P3 is sRGB curve.
+  double get gammaCorrect {
+    assertRange0to1('gammaCorrect-$this');
+    return linearToSrgb(this);
+  }
+
   /// To String without training zeros.
   String toStrTrimZeros([
     final int decimals = 6,

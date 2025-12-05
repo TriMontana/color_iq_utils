@@ -4,9 +4,11 @@ import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/color_temperature.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/src/extensions/int_helpers.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:color_iq_utils/src/models/xyz_color.dart';
 import 'package:color_iq_utils/src/utils/color_math.dart';
 
 /// A representation of a color in the Display P3 color space.
@@ -38,18 +40,31 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
       : super(hexId ?? DisplayP3Color.toHexId(r, g, b));
 
   static DisplayP3Color fromInt(final int hexId) {
-    // TODO: implement fromInt
-    throw UnimplementedError();
+    final XyzColor xyz = XyzColor.xyzFromRgbLinearized(
+        hexId.redLinearized, hexId.greenLinearized, hexId.blueLinearized);
+
+    // XYZ (D65) to Display P3 Linear
+    // Matrix from http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
+    // or Apple's specs.
+    // Using standard P3 D65 matrix.
+    double rP3 = xyz.x * 2.4934969 + xyz.y * -0.9313836 + xyz.z * -0.4027107;
+    double gP3 = xyz.x * -0.8294889 + xyz.y * 1.7626640 + xyz.z * 0.0236246;
+    double bP3 = xyz.x * 0.0358458 + xyz.y * -0.0761723 + xyz.z * 0.9568845;
+
+    // Gamma correction (Transfer function) for Display P3 is sRGB curve.
+    rP3 = rP3.gammaCorrect;
+    gP3 = gP3.gammaCorrect;
+    bP3 = bP3.gammaCorrect;
+
+    return DisplayP3Color.alt(rP3, gP3, bP3);
   }
 
   /// Creates a 32-bit integer ARGB value from Display P3 components.
   static int toHexId(final double r, final double g, final double b) {
     // Gamma decoding (P3 to Linear), Linearize
     final double rLin = srgbToLinear(r);
-    final double gLin =
-        (g > 0.04045) ? pow((g + 0.055) / 1.055, 2.4).toDouble() : (g / 12.92);
-    final double bLin =
-        (b > 0.04045) ? pow((b + 0.055) / 1.055, 2.4).toDouble() : (b / 12.92);
+    final double gLin = srgbToLinear(g);
+    final double bLin = srgbToLinear(b);
 
     // Display P3 Linear to XYZ (D65)
     final double x = rLin * 0.4865709 + gLin * 0.2656677 + bLin * 0.1982173;
@@ -74,36 +89,39 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
     return (a << 24) | (r8 << 16) | (g8 << 8) | b8;
   }
 
+  // Display P3 Linear to XYZ (D65)
+  static XyzColor displayP3LinearsToXyz(
+      final double rLin, final double gLin, final double bLin) {
+    final double x = rLin * 0.4865709 + gLin * 0.2656677 + bLin * 0.1982173;
+    final double y = rLin * 0.2289746 + gLin * 0.6917385 + bLin * 0.0792869;
+    final double z = rLin * 0.0000000 + gLin * 0.0451134 + bLin * 1.0439444;
+    return XyzColor.alt(x, y, z);
+  }
+
   @override
   ColorIQ toColor() {
     // Gamma decoding (P3 to Linear)
     final double rLin = srgbToLinear(r);
-    final double gLin =
-        (g > 0.04045) ? pow((g + 0.055) / 1.055, 2.4).toDouble() : (g / 12.92);
-    final double bLin =
-        (b > 0.04045) ? pow((b + 0.055) / 1.055, 2.4).toDouble() : (b / 12.92);
+    final double gLin = srgbToLinear(g);
+    final double bLin = srgbToLinear(b);
 
     // Display P3 Linear to XYZ (D65)
-    // Matrix inverse of the one used in conversion
-    final double x = rLin * 0.4865709 + gLin * 0.2656677 + bLin * 0.1982173;
-    final double y = rLin * 0.2289746 + gLin * 0.6917385 + bLin * 0.0792869;
-    final double z = rLin * 0.0000000 + gLin * 0.0451134 + bLin * 1.0439444;
+    final XyzColor xyz = displayP3LinearsToXyz(rLin, gLin, bLin);
 
     // XYZ (D65) to sRGB Linear
-    double rS = x * 3.2404542 + y * -1.5371385 + z * -0.4985314;
-    double gS = x * -0.9692660 + y * 1.8760108 + z * 0.0415560;
-    double bS = x * 0.0556434 + y * -0.2040259 + z * 1.0572252;
+    final double rS =
+        xyz.x * 3.2404542 + xyz.y * -1.5371385 + xyz.z * -0.4985314;
+    final double gS =
+        xyz.x * -0.9692660 + xyz.y * 1.8760108 + xyz.z * 0.0415560;
+    final double bS =
+        xyz.x * 0.0556434 + xyz.y * -0.2040259 + xyz.z * 1.0572252;
 
     // sRGB Linear to sRGB (Gamma encoded)
-    rS = (rS > 0.0031308) ? (1.055 * pow(rS, 1 / 2.4) - 0.055) : (12.92 * rS);
-    gS = (gS > 0.0031308) ? (1.055 * pow(gS, 1 / 2.4) - 0.055) : (12.92 * gS);
-    bS = (bS > 0.0031308) ? (1.055 * pow(bS, 1 / 2.4) - 0.055) : (12.92 * bS);
-
-    return ColorIQ.fromARGB(
-      255,
-      (rS * 255).round().clamp(0, 255),
-      (gS * 255).round().clamp(0, 255),
-      (bS * 255).round().clamp(0, 255),
+    return ColorIQ.fromSrgb(
+      a: 1.0,
+      r: rS.gammaCorrect,
+      g: gS.gammaCorrect,
+      b: bS.gammaCorrect,
     );
   }
 
@@ -163,7 +181,9 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   DisplayP3Color lerp(final ColorSpacesIQ other, final double t) {
-    if (t == 0.0) return this;
+    if (t == 0.0) {
+      return this;
+    }
     final DisplayP3Color otherP3 =
         other is DisplayP3Color ? other : other.toColor().toDisplayP3();
     if (t == 1.0) {

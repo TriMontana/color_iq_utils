@@ -38,17 +38,17 @@ class XyzColor extends ColorSpacesIQ with ColorModelsMixin {
 
   /// Converts this color to XYZ.
   static XyzColor xyxFromRgb(final int red, final int green, final int blue) =>
-      xyxFromRgbLinearized(
+      xyzFromRgbLinearized(
           linearized(red), linearized(green), linearized(blue));
 
   /// Converts this color to XYZ.
-  static XyzColor xyxFromRgbLinearized(final double redLinearized,
+  static XyzColor xyzFromRgbLinearized(final double redLinearized,
       final double greenLinearized, final double blueLinearized) {
-    final List<double> lst = matrixMultiply(
+    final List<double> xyzList = matrixMultiply(
         <double>[redLinearized, greenLinearized, blueLinearized],
         srgbToXyzMatrix);
-    return XyzColor(lst[0], lst[1], lst[2],
-        hexId: argbFromXyz(lst[0], lst[1], lst[2]));
+    return XyzColor(xyzList[0], xyzList[1], xyzList[2],
+        hexId: argbFromXyz(xyzList[0], xyzList[1], xyzList[2]));
   }
 
   static ColorIQ xyzToColor(final double x, final double y, final double z) {

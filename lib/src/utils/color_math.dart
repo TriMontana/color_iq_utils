@@ -197,6 +197,19 @@ double computeLuminanceViaLinearized(final double redLinearized,
 ///
 /// See <https://en.wikipedia.org/wiki/Relative_luminance>.
 /// See <https://www.w3.org/TR/WCAG20/#relativeluminancedef>
+double computeLuminanceViaHexId(final int hexId) {
+  return computeLuminanceViaLinearized(
+      hexId.redLinearized, hexId.greenLinearized, hexId.blueLinearized);
+}
+
+/// Returns a brightness value between 0 for darkest and 1 for lightest.
+///
+/// Represents the relative luminance of the color. This value is computationally
+/// expensive to calculate.  Note that this uses a different cutoff
+/// than most other linearize functions
+///
+/// See <https://en.wikipedia.org/wiki/Relative_luminance>.
+/// See <https://www.w3.org/TR/WCAG20/#relativeluminancedef>
 double computeLuminanceViaInts(final int red, final int green, final int blue) {
   return computeLuminance(red.normalized, green.normalized, blue.normalized);
 }
