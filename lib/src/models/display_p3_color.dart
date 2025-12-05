@@ -62,9 +62,10 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
   /// Creates a 32-bit integer ARGB value from Display P3 components.
   static int toHexId(final double r, final double g, final double b) {
     // Gamma decoding (P3 to Linear), Linearize
-    final double rLin = srgbToLinear(r);
-    final double gLin = srgbToLinear(g);
-    final double bLin = srgbToLinear(b);
+    // Gamma decoding (P3 to Linear), Linearize
+    final double rLin = srgbToLinear(r.clamp(0.0, 1.0));
+    final double gLin = srgbToLinear(g.clamp(0.0, 1.0));
+    final double bLin = srgbToLinear(b.clamp(0.0, 1.0));
 
     // Display P3 Linear to XYZ (D65)
     final double x = rLin * 0.4865709 + gLin * 0.2656677 + bLin * 0.1982173;
@@ -101,9 +102,10 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
   @override
   ColorIQ toColor() {
     // Gamma decoding (P3 to Linear)
-    final double rLin = srgbToLinear(r);
-    final double gLin = srgbToLinear(g);
-    final double bLin = srgbToLinear(b);
+    // Gamma decoding (P3 to Linear)
+    final double rLin = srgbToLinear(r.clamp(0.0, 1.0));
+    final double gLin = srgbToLinear(g.clamp(0.0, 1.0));
+    final double bLin = srgbToLinear(b.clamp(0.0, 1.0));
 
     // Display P3 Linear to XYZ (D65)
     final XyzColor xyz = displayP3LinearsToXyz(rLin, gLin, bLin);

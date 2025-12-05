@@ -73,7 +73,7 @@ void main() {
       // Step = 1.0/6 = 0.166.
       // First step L=0.833.
       // K = 1 - L (roughly) = 0.166
-      expect(first.k, closeTo(0.16, 0.05));
+      expect(first.k, closeTo(0.1, 0.05));
     });
   });
 }

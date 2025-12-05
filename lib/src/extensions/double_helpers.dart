@@ -49,7 +49,7 @@ extension DoubleHelpersIQ on double {
     if (this < kMinChroma || this > kMaxChroma) {
       throw RangeError(
         'Range Error: Value must be between $kMinChroma ' //
-        'and $kMaxTone -- ${msg ?? 'assertRange0to100'}',
+        'and $kMaxChroma -- ${msg ?? 'assertRangeChroma'}',
       );
     }
     return this;

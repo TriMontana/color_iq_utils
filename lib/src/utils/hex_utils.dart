@@ -937,6 +937,8 @@ abstract class HexUtils {
       // upper case
       hexStr =
           (hexStr.startsWith(k0xUpper) ? hexStr.keepAfter(k0xUpper) : hexStr);
+      // Remove pound sign if present
+      hexStr = hexStr.replaceAll('#', '');
       // Target Length of three---------------------------------
       if (hexStr.length == 3) {
         if (targetLength == 3) {

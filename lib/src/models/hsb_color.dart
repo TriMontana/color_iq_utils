@@ -6,7 +6,6 @@ import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
-import 'package:color_iq_utils/src/models/hsv_color.dart';
 import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 
@@ -34,8 +33,71 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
   HsbColor.alt(this.h, this.s, this.b, {final int? hexId})
       : super(hexId ?? HsbColor.argbFromHsb(h, s, b));
 
-  static ColorSpacesIQ fromInt(final int hexId) {
-    throw UnimplementedError();
+// Note: THERE are two methods to convert HSB to ARGB
+// This function takes hue (0-360 degrees), saturation (0-1), and brightness (0-1) as inputs and returns a 32-bit integer in ARGB format (with full opacity). If you're using this in a context like Flutter, you can pass the result to Color(value) for rendering.
+  static int hsbToHexId(
+      double hue, final double saturation, final double brightness) {
+    // Normalize hue to 0-360
+    hue = hue % 360;
+    if (hue < 0) hue += 360;
+
+    // Handle achromatic case
+    if (saturation == 0) {
+      final int val = (brightness * 255).round();
+      return 0xFF000000 | (val << 16) | (val << 8) | val;
+    }
+
+    final double h = hue / 60;
+    final int i = h.floor();
+    final double f = h - i;
+    final double p = brightness * (1 - saturation);
+    final double q = brightness * (1 - saturation * f);
+    final double t = brightness * (1 - saturation * (1 - f));
+
+    double r, g, b;
+    switch (i) {
+      case 0:
+        r = brightness;
+        g = t;
+        b = p;
+        break;
+      case 1:
+        r = q;
+        g = brightness;
+        b = p;
+        break;
+      case 2:
+        r = p;
+        g = brightness;
+        b = t;
+        break;
+      case 3:
+        r = p;
+        g = q;
+        b = brightness;
+        break;
+      case 4:
+        r = t;
+        g = p;
+        b = brightness;
+        break;
+      case 5:
+        r = brightness;
+        g = p;
+        b = q;
+        break;
+      default:
+        r = 0;
+        g = 0;
+        b = 0;
+    }
+
+    final int ir = (r * 255).round();
+    final int ig = (g * 255).round();
+    final int ib = (b * 255).round();
+
+    // Return 32-bit ARGB color (alpha=255)
+    return 0xFF000000 | (ir << 16) | (ig << 8) | ib;
   }
 
   /// Creates a 32-bit ARGB hex value from HSB components.
@@ -85,14 +147,48 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
         ((bTemp + m) * 255).round();
   }
 
-  @override
-  ColorIQ toColor() {
-    // HSB is the same as HSV, just B instead of V
-    return HsvColor.alt(h, s, b).toColor();
+  static HsbColor fromInt(final int color) {
+    // Extract RGB components (ignore alpha)
+    final int r = (color >> 16) & 0xFF;
+    final int g = (color >> 8) & 0xFF;
+    final int b = color & 0xFF;
+
+    final double red = r / 255.0;
+    final double green = g / 255.0;
+    final double blue = b / 255.0;
+
+    final double maxVal = <double>[red, green, blue]
+        .reduce((final double a, final double b) => a > b ? a : b);
+    final double minVal = <double>[red, green, blue]
+        .reduce((final double a, final double b) => a < b ? a : b);
+    final double delta = maxVal - minVal;
+
+    double hue = 0.0;
+    double saturation = 0.0;
+    final double brightness = maxVal;
+
+    if (delta > 0) {
+      if (maxVal == red) {
+        hue = ((green - blue) / delta) % 6;
+      } else if (maxVal == green) {
+        hue = ((blue - red) / delta) + 2;
+      } else {
+        hue = ((red - green) / delta) + 4;
+      }
+      hue *= 60;
+      if (hue < 0) hue += 360;
+
+      saturation = (maxVal == 0) ? 0 : delta / maxVal;
+    }
+
+    return HsbColor(hue, saturation, brightness, hexId: color);
   }
 
   @override
-  int get value => toColor().value;
+  ColorIQ toColor() {
+    // HSB is the same as HSV, just B instead of V
+    return ColorIQ(value);
+  }
 
   @override
   HsbColor darken([final double amount = 20]) {
@@ -105,40 +201,62 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  HsbColor saturate([final double amount = 25]) {
-    return HsbColor.alt(h, min(1.0, s + amount / 100), b);
-  }
+  HsbColor saturate([final double amount = 25]) =>
+      HsbColor.alt(h, min(1.0, s + amount / 100), b);
 
   @override
-  HsbColor desaturate([final double amount = 25]) {
-    return HsbColor.alt(h, max(0.0, s - amount / 100), b);
-  }
+  HsbColor desaturate([final double amount = 25]) =>
+      HsbColor.alt(h, max(0.0, s - amount / 100), b);
 
   @override
-  HsbColor intensify([final double amount = 10]) {
-    return HsbColor.alt(h, min(1.0, s + amount / 100), b);
-  }
+  HsbColor intensify([final double amount = 10]) =>
+      HsbColor.alt(h, min(1.0, s + amount / 100), b);
 
   @override
-  HsbColor deintensify([final double amount = 10]) {
-    return HsbColor.alt(h, max(0.0, s - amount / 100), b);
-  }
+  HsbColor deintensify([final double amount = 10]) =>
+      HsbColor.alt(h, max(0.0, s - amount / 100), b);
 
   @override
-  HsbColor accented([final double amount = 15]) {
-    return intensify(amount);
-  }
+  HsbColor accented([final double amount = 15]) => intensify(amount);
 
   @override
   HsbColor simulate(final ColorBlindnessType type) {
-    return toColor().simulate(type).toHsb();
+    // Convert to RGB
+    final int argb = HsbColor.argbFromHsb(h, s, b);
+    final int r = (argb >> 16) & 0xFF;
+    final int g = (argb >> 8) & 0xFF;
+    final int bVal = argb & 0xFF;
+
+    // Convert to Linear RGB
+    final List<double> linear = rgbToLinearRgb(r, g, bVal);
+
+    // Simulate
+    final List<double> simulated = ColorBlindness.simulate(
+      linear[0],
+      linear[1],
+      linear[2],
+      type,
+    );
+
+    // Convert back to sRGB (Gamma Corrected)
+    final int rSim = (linearToSrgb(simulated[0]) * 255).round().clamp(0, 255);
+    final int gSim = (linearToSrgb(simulated[1]) * 255).round().clamp(0, 255);
+    final int bSim = (linearToSrgb(simulated[2]) * 255).round().clamp(0, 255);
+
+    return _fromRgb(rSim, gSim, bSim);
   }
 
   @override
-  HsbColor get inverted => toColor().inverted.toHsb();
+  HsbColor get inverted {
+    final int argb = HsbColor.argbFromHsb(h, s, b);
+    final int r = (argb >> 16) & 0xFF;
+    final int g = (argb >> 8) & 0xFF;
+    final int bVal = argb & 0xFF;
+    return _fromRgb(255 - r, 255 - g, 255 - bVal);
+  }
 
   @override
-  HsbColor get grayscale => toColor().grayscale.toHsb();
+  HsbColor get grayscale => HsbColor.alt(0, 0, b * (1 - s / 2));
 
   @override
   HsbColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
@@ -148,7 +266,9 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   HsbColor lerp(final ColorSpacesIQ other, final double t) {
-    if (t == 0.0) return this;
+    if (t == 0.0) {
+      return this;
+    }
     final HsbColor otherHsb =
         other is HsbColor ? other : other.toColor().toHsb();
     if (t == 1.0) return otherHsb;
@@ -161,9 +281,8 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  HsbColor lighten([final double amount = 20]) {
-    return HsbColor.alt(h, s, min(1.0, b + amount / 100));
-  }
+  HsbColor lighten([final double amount = 20]) =>
+      HsbColor.alt(h, s, min(1.0, b + amount / 100));
 
   @override
   HsbColor adjustTransparency([final double amount = 20]) {
@@ -190,38 +309,58 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor()
-      .monochromatic
-      .map((final ColorSpacesIQ c) => (c as ColorIQ).toHsb())
-      .toList();
+  List<ColorSpacesIQ> get monochromatic {
+    // Generate 5 variations based on brightness.
+    final List<HsbColor> results = <HsbColor>[];
+    for (int i = 0; i < 5; i++) {
+      // -2, -1, 0, 1, 2
+      final double delta = (i - 2) * 10.0;
+      final double newB = (b * 100 + delta).clamp(0.0, 100.0);
+      results.add(HsbColor.alt(h, s, newB / 100));
+    }
+    return results;
+  }
 
   @override
   List<ColorSpacesIQ> lighterPalette([final double? step]) {
-    return toColor()
-        .lighterPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toHsb())
-        .toList();
+    final double sVal = step ?? 10.0;
+    final List<HsbColor> colors = <HsbColor>[];
+    // Generate 3 lighter shades
+    for (int i = 1; i <= 3; i++) {
+      colors.add(lighten(sVal * i));
+    }
+    return colors;
   }
 
   @override
   List<ColorSpacesIQ> darkerPalette([final double? step]) {
-    return toColor()
-        .darkerPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toHsb())
-        .toList();
+    final double sVal = step ?? 10.0;
+    final List<HsbColor> colors = <HsbColor>[];
+    // Generate 3 darker shades
+    for (int i = 1; i <= 3; i++) {
+      colors.add(darken(sVal * i));
+    }
+    return colors;
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as ColorIQ).toHsb();
+  ColorSpacesIQ get random {
+    final Random rng = Random();
+    return HsbColor.alt(
+      rng.nextDouble() * 360,
+      rng.nextDouble(),
+      rng.nextDouble(),
+    );
+  }
 
   @override
-  bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
-
-  @override
-  double get luminance => toColor().luminance;
-
-  @override
-  Brightness get brightness => toColor().brightness;
+  bool isEqual(final ColorSpacesIQ other) {
+    if (other is! HsbColor) return false;
+    const double epsilon = 0.001;
+    return (h - other.h).abs() < epsilon &&
+        (s - other.s).abs() < epsilon &&
+        (b - other.b).abs() < epsilon;
+  }
 
   @override
   bool get isDark => brightness == Brightness.dark;
@@ -230,61 +369,125 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  HsbColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
-      toColor().blend(other, amount).toHsb();
+  HsbColor blend(final ColorSpacesIQ other, [final double amount = 50]) {
+    return lerp(other, amount / 100);
+  }
 
   @override
-  HsbColor opaquer([final double amount = 20]) =>
-      toColor().opaquer(amount).toHsb();
+  HsbColor opaquer([final double amount = 20]) {
+    final int currentAlpha = (value >> 24) & 0xFF;
+    final int newAlpha =
+        (currentAlpha + (amount / 100 * 255)).round().clamp(0, 255);
+    final int newHexId = HsbColor.argbFromHsb(h, s, b, newAlpha);
+    return HsbColor.alt(h, s, b, hexId: newHexId);
+  }
 
   @override
-  HsbColor adjustHue([final double amount = 20]) =>
-      toColor().adjustHue(amount).toHsb();
+  HsbColor adjustHue([final double amount = 20]) {
+    return HsbColor.alt((h + amount) % 360, s, b);
+  }
 
   @override
-  HsbColor get complementary => toColor().complementary.toHsb();
+  HsbColor get complementary => HsbColor.alt((h + 180) % 360, s, b);
 
   @override
-  HsbColor warmer([final double amount = 20]) =>
-      toColor().warmer(amount).toHsb();
+  HsbColor warmer([final double amount = 20]) {
+    const double targetHue = 30.0;
+    final double diff = differenceDegrees(targetHue, h);
+    final double direction = rotationDirection(h, targetHue);
+    final double newHue = h + (diff * amount / 100 * direction);
+    return HsbColor.alt(newHue % 360, s, b);
+  }
 
   @override
-  HsbColor cooler([final double amount = 20]) =>
-      toColor().cooler(amount).toHsb();
+  HsbColor cooler([final double amount = 20]) {
+    const double targetHue = 210.0;
+    final double diff = differenceDegrees(targetHue, h);
+    final double direction = rotationDirection(h, targetHue);
+    final double newHue = h + (diff * amount / 100 * direction);
+    return HsbColor.alt(newHue % 360, s, b);
+  }
 
   @override
-  List<HsbColor> generateBasicPalette() => toColor()
-      .generateBasicPalette()
-      .map((final ColorIQ c) => c.toHsb())
-      .toList();
+  List<HsbColor> generateBasicPalette() {
+    return <HsbColor>[
+      lighten(40),
+      lighten(20),
+      this,
+      darken(20),
+      darken(40),
+    ];
+  }
 
   @override
-  List<HsbColor> tonesPalette() =>
-      toColor().tonesPalette().map((final ColorIQ c) => c.toHsb()).toList();
+  List<HsbColor> tonesPalette() {
+    // Mix with gray (0, 0, 0.5) which corresponds to 0xFF808080
+    final HsbColor gray = HsbColor.alt(0, 0, 0.5);
+    return <HsbColor>[
+      this,
+      lerp(gray, 0.15),
+      lerp(gray, 0.30),
+      lerp(gray, 0.45),
+      lerp(gray, 0.60),
+    ];
+  }
 
   @override
-  List<HsbColor> analogous({final int count = 5, final double offset = 30}) =>
-      toColor()
-          .analogous(count: count, offset: offset)
-          .map((final ColorIQ c) => c.toHsb())
-          .toList();
+  List<HsbColor> analogous({final int count = 5, final double offset = 30}) {
+    final List<HsbColor> results = <HsbColor>[];
+    final double step = (offset * 2) / (count - 1);
+    final double startHue = (h - offset + 360) % 360;
+
+    for (int i = 0; i < count; i++) {
+      final double newHue = (startHue + step * i) % 360;
+      results.add(HsbColor.alt(newHue, s, b));
+    }
+    return results;
+  }
 
   @override
-  List<HsbColor> square() =>
-      toColor().square().map((final ColorIQ c) => c.toHsb()).toList();
+  List<HsbColor> square() {
+    return <HsbColor>[
+      this,
+      HsbColor.alt((h + 90) % 360, s, b),
+      HsbColor.alt((h + 180) % 360, s, b),
+      HsbColor.alt((h + 270) % 360, s, b),
+    ];
+  }
 
   @override
-  List<HsbColor> tetrad({final double offset = 60}) => toColor()
-      .tetrad(offset: offset)
-      .map((final ColorIQ c) => c.toHsb())
-      .toList();
+  List<HsbColor> tetrad({final double offset = 60}) {
+    return <HsbColor>[
+      this,
+      HsbColor.alt((h + offset) % 360, s, b),
+      HsbColor.alt((h + 180) % 360, s, b),
+      HsbColor.alt((h + 180 + offset) % 360, s, b),
+    ];
+  }
 
   @override
-  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
+  double get luminance {
+    // Calculate luminance from HSB -> RGB -> Luminance
+    // We can use argbFromHsb to get the int, then extract RGB and compute.
+    final int argb = HsbColor.argbFromHsb(h, s, b);
+    final int r = (argb >> 16) & 0xFF;
+    final int g = (argb >> 8) & 0xFF;
+    final int bVal = argb & 0xFF;
+    return computeLuminanceViaInts(r, g, bVal);
+  }
 
   @override
-  double contrastWith(final ColorSpacesIQ other) =>
-      toColor().contrastWith(other);
+  double contrastWith(final ColorSpacesIQ other) {
+    final double l1 = luminance;
+    // ColorSpacesIQ might not have luminance getter exposed directly if it's not in the interface.
+    // We can use toColor().luminance for the 'other' color as a fallback,
+    // or cast if we know it has it. Safe bet is toColor().luminance or check interface.
+    // Given the error, it's likely not in ColorSpacesIQ.
+    final double l2 = other.toColor().luminance;
+    final double lighter = max(l1, l2);
+    final double darker = min(l1, l2);
+    return (lighter + 0.05) / (darker + 0.05);
+  }
 
   @override
   ColorSlice closestColorSlice() => toColor().closestColorSlice();
@@ -292,9 +495,6 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) =>
       toColor().isWithinGamut(gamut);
-
-  @override
-  List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
 
   @override
   Map<String, dynamic> toJson() {
@@ -315,7 +515,35 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
   Cam16 toCam16() => Cam16.fromInt(value);
 
   @override
-  ColorSpacesIQ fromHct(final HctColor hct) {
+  HsbColor fromHct(final HctColor hct) {
     return HsbColor.fromInt(hct.toInt());
+  }
+
+  static HsbColor _fromRgb(final int r, final int g, final int b) {
+    final double rd = r / 255.0;
+    final double gd = g / 255.0;
+    final double bd = b / 255.0;
+
+    final double maxVal = max(rd, max(gd, bd));
+    final double minVal = min(rd, min(gd, bd));
+    double h, s, v = maxVal;
+
+    final double d = maxVal - minVal;
+    s = maxVal == 0 ? 0 : d / maxVal;
+
+    if (maxVal == minVal) {
+      h = 0; // achromatic
+    } else {
+      if (maxVal == rd) {
+        h = (gd - bd) / d + (gd < bd ? 6 : 0);
+      } else if (maxVal == gd) {
+        h = (bd - rd) / d + 2;
+      } else {
+        h = (rd - gd) / d + 4;
+      }
+      h /= 6;
+    }
+
+    return HsbColor.alt(h * 360, s, v);
   }
 }

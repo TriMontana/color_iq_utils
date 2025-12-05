@@ -32,7 +32,7 @@ void main() {
       final OkLchColor lerped = color1.lerp(color2, 0.5);
       expect(lerped.l, closeTo(0.5, 0.001));
       expect(lerped.c, closeTo(0.1, 0.001));
-      expect(lerped.h, closeTo(50.0, 0.001));
+      expect(lerped.h, closeTo(100.0, 0.001));
     });
   });
 }

@@ -112,9 +112,9 @@ class Hsluv {
   /// @return An array containing the resulting color's red, green and blue.
   static List<double> xyzToRgb(final List<double> tuple) {
     return <double>[
-      fromLinear(dotProduct(m[0], tuple)),
-      fromLinear(dotProduct(m[1], tuple)),
-      fromLinear(dotProduct(m[2], tuple))
+      fromLinear(dotProduct(m[0], tuple).clamp(0.0, 1.0)),
+      fromLinear(dotProduct(m[1], tuple).clamp(0.0, 1.0)),
+      fromLinear(dotProduct(m[2], tuple).clamp(0.0, 1.0))
     ];
   }
 

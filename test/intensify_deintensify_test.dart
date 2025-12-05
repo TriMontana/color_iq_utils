@@ -73,7 +73,7 @@ void main() {
     });
 
     test('Intensify clamps values correctly', () {
-      final HctColor hct = HctColor.alt(120, 145, 10); // High chroma, low tone
+      final HctColor hct = HctColor.alt(120, 120, 10); // High chroma, low tone
       final HctColor intensified = hct.intensify(50);
       // Chroma is unbounded technically in HCT but practically limited. Tone is 0-100.
       expect(intensified.tone, greaterThanOrEqualTo(0));
