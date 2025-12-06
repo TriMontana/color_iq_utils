@@ -1,17 +1,41 @@
 import 'dart:math';
 
 import 'package:color_iq_utils/src/color_models_lib.dart';
+import 'package:color_iq_utils/src/color_wheels.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/extensions/double_helpers.dart';
 import 'package:color_iq_utils/src/extensions/float_ext_type.dart';
 import 'package:color_iq_utils/src/foundation/constants.dart';
 import 'package:color_iq_utils/src/utils/color_math.dart';
+import 'package:material_color_utilities/hct/cam16.dart' as mcucam16;
+import 'package:material_color_utilities/hct/hct.dart' as mcuhct;
 
 /// Extension for integers
 extension IntHelperIQ on int {
   String get toHexStr => '0x${toRadixString(16).toUpperCase().padLeft(8, '0')}';
   RgbaInts get rgbaInts => hexIdToComponents(this);
   RgbaDoubles get rgbaDoubles => hexIdToNormalizedComponents(this);
+
+  /// Returns the closest color slice from the HCT color wheel.
+  ColorSlice closestColorSlice() {
+    ColorSlice? closest;
+    double minDistance = double.infinity;
+
+    for (final ColorSlice slice in hctSlices) {
+      final double dist = distanceTo(slice.color.value);
+      if (dist < minDistance) {
+        minDistance = dist;
+        closest = slice;
+      }
+    }
+    return closest!;
+  }
+
+  double distanceTo(final int other) {
+    final mcucam16.Cam16 cam1 = mcucam16.Cam16.fromInt(this);
+    final mcucam16.Cam16 cam2 = mcucam16.Cam16.fromInt(other);
+    return cam1.distance(cam2);
+  }
 
   /// Normalizes a single 8-bit integer channel (0-255) to a double (0.0-1.0).
   ///
@@ -56,6 +80,11 @@ extension IntHelperIQ on int {
 
   Percent get toLRV => computeLuminanceViaLinearized(
       redLinearized, greenLinearized, blueLinearized);
+
+  Cam16Color get toCam16Color => Cam16Color.fromInt(this);
+  HctColor get toHctColor => HctColor.fromInt(this);
+  mcucam16.Cam16 get toCam16 => mcucam16.Cam16.fromInt(this);
+  mcuhct.Hct get toHct => mcuhct.Hct.fromInt(this);
 
   int assertRange0to255([final String? message]) {
     if (this < 0 || this > 255) {

@@ -656,7 +656,7 @@ List<double> xyzFromArgb(final int argb) {
 
 /// Converts a color represented in Lab color space into an ARGB
 /// integer.
-XyzColor labToXYZ(final double l, final double a, final double b) {
+XYZ labToXYZ(final double l, final double a, final double b) {
   final double fy = (l + 16.0) / 116.0;
   final double fx = a / 500.0 + fy;
   final double fz = fy - b / 200.0;
@@ -666,7 +666,7 @@ XyzColor labToXYZ(final double l, final double a, final double b) {
   final double x = xNormalized * kWhitePointD65[0];
   final double y = yNormalized * kWhitePointD65[1];
   final double z = zNormalized * kWhitePointD65[2];
-  return XyzColor.alt(x, y, z);
+  return XYZ.alt(x, y, z);
 }
 
 /// Converts a color from ARGB to XYZ.
@@ -796,16 +796,19 @@ class LmsPrime {
 /// @param lg Linear Green component.
 /// @param lb Linear Blue component.
 LmsPrime linearRgbToLmsPrime(
-    final double lr, final double lg, final double lb) {
+    final LinRGB lr, final LinRGB lg, final LinRGB lb) {
   // --- Stage 1: Linear sRGB to LMS (Long, Medium, Short) ---
   // This matrix transforms light intensities into values related to the
   // human eye's cone responses (photoreceptors).
-  final double L =
-      (0.4121656120 * lr) + (0.5362752080 * lg) + (0.0514570080 * lb);
-  final double M =
-      (0.2118591070 * lr) + (0.6807189584 * lg) + (0.1074061555 * lb);
-  final double S =
-      (0.0883097947 * lr) + (0.2818474174 * lg) + (0.6300096956 * lb);
+  final double L = (0.4121656120 * lr.value) +
+      (0.5362752080 * lg.value) +
+      (0.0514570080 * lb.value);
+  final double M = (0.2118591070 * lr.value) +
+      (0.6807189584 * lg.value) +
+      (0.1074061555 * lb.value);
+  final double S = (0.0883097947 * lr.value) +
+      (0.2818474174 * lg.value) +
+      (0.6300096956 * lb.value);
 
   // --- Stage 2: Non-linear Compression (Cube Root) ---
   // This compression step is crucial for achieving perceptual uniformity.
@@ -816,6 +819,25 @@ LmsPrime linearRgbToLmsPrime(
   final double sPrime = math.pow(S, 1.0 / 3.0).toDouble();
 
   return LmsPrime(lPrime, mPrime, sPrime);
+}
+
+/// Converts L*a*b* components [0.0 - 1.0] into the non-linear LMS space.
+///
+/// @param l L* component.
+/// @param aLab a* component.
+/// @param bLab b* component.
+///
+/// Returns the LMS space representation of the color.
+LmsPrime labToLmsPrime(final double l, final double aLab, final double bLab) {
+  final double l_ = l + 0.3963377774 * aLab + 0.2158037573 * bLab;
+  final double m_ = l - 0.1055613458 * aLab - 0.0638541728 * bLab;
+  final double s_ = l - 0.0894841775 * aLab - 1.2914855480 * bLab;
+
+  final double l3 = l_ * l_ * l_;
+  final double m3 = m_ * m_ * m_;
+  final double s3 = s_ * s_ * s_;
+
+  return LmsPrime(l3, m3, s3);
 }
 
 /// aka IsShortHex, aka is 8Bit, is8Bit isTwoDigitHex

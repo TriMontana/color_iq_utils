@@ -44,12 +44,12 @@ class HspColor extends ColorSpacesIQ with ColorModelsMixin {
       {final Percent alpha = Percent.max,
       final int? hexId,
       final List<String>? names})
-      : super(hexId ?? toHex(h, s, p, alpha),
+      : super(hexId ?? HspColor.toHexID(h, s, p, alpha),
             a: alpha, names: names ?? const <String>[]);
 
   /// Creates a 32-bit hex ID/ARGB from this class's properties.
   /// This is a standalone static method for conversion.
-  static int toHex(final double h, final double s, final double p,
+  static int toHexID(final double h, final double s, final double p,
       [final double alpha = 1.0]) {
     // http://alienryderflex.com/hsp.html
     double part = 0.0;
@@ -195,176 +195,37 @@ class HspColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  ColorIQ toColor() {
-    // http://alienryderflex.com/hsp.html
-    double part = 0.0;
-    double r = 0.0;
-    double g = 0.0;
-    double b = 0.0;
-    final double minOverMax = 1.0 - s;
+  ColorIQ toColor() => ColorIQ(HspColor.toHexID(h, s, p));
 
-    if (minOverMax > 0.0) {
-      double hLocal = h;
-      if (hLocal < 1.0 / 6.0) {
-        hLocal = 6.0 * (hLocal - 0.0 / 6.0);
-        part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
-        b = p /
-            sqrt(0.299 / minOverMax / minOverMax + 0.587 * part * part + 0.114);
-        r = (b) / minOverMax;
-        g = (b) + hLocal * ((r) - (b));
-      } else if (hLocal < 2.0 / 6.0) {
-        hLocal = 6.0 * (-hLocal + 2.0 / 6.0);
-        part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
-        b = p /
-            sqrt(0.587 / minOverMax / minOverMax + 0.299 * part * part + 0.114);
-        g = (b) / minOverMax;
-        r = (b) + hLocal * ((g) - (b));
-      } else if (hLocal < 3.0 / 6.0) {
-        hLocal = 6.0 * (hLocal - 2.0 / 6.0);
-        part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
-        r = p /
-            sqrt(0.587 / minOverMax / minOverMax + 0.114 * part * part + 0.299);
-        g = (r) / minOverMax;
-        b = (r) + hLocal * ((g) - (r));
-      } else if (hLocal < 4.0 / 6.0) {
-        hLocal = 6.0 * (-hLocal + 4.0 / 6.0);
-        part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
-        r = p /
-            sqrt(0.114 / minOverMax / minOverMax + 0.587 * part * part + 0.299);
-        b = (r) / minOverMax;
-        g = (r) + hLocal * ((b) - (r));
-      } else if (hLocal < 5.0 / 6.0) {
-        hLocal = 6.0 * (hLocal - 4.0 / 6.0);
-        part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
-        g = p /
-            sqrt(0.114 / minOverMax / minOverMax + 0.299 * part * part + 0.587);
-        b = (g) / minOverMax;
-        r = (g) + hLocal * ((b) - (g));
+  /// Converts this color to HSP.
+  static HspColor fromInt(final int argb) {
+    final double r = argb.r;
+    final double g = argb.g;
+    final double b = argb.b;
+
+    final double p = sqrt(0.299 * r * r + 0.587 * g * g + 0.114 * b * b);
+
+    final double minVal = min(r, min(g, b));
+    final double maxVal = max(r, max(g, b));
+    final double delta = maxVal - minVal;
+
+    double h = 0;
+    if (delta != 0) {
+      if (maxVal == r) {
+        h = (g - b) / delta;
+      } else if (maxVal == g) {
+        h = 2 + (b - r) / delta;
       } else {
-        hLocal = 6.0 * (-hLocal + 6.0 / 6.0);
-        part = 1.0 + hLocal * (1.0 / minOverMax - 1.0);
-        g = p /
-            sqrt(0.299 / minOverMax / minOverMax + 0.114 * part * part + 0.587);
-        r = (g) / minOverMax;
-        b = (g) + hLocal * ((r) - (g));
+        h = 4 + (r - g) / delta;
       }
-    } else {
-      double hLocal = h;
-      if (hLocal < 1.0 / 6.0) {
-        hLocal = 6.0 * (hLocal - 0.0 / 6.0);
-        r = sqrt(
-          p *
-              p /
-              (0.299 +
-                  0.587 * hLocal * hLocal +
-                  0.114 * (1.0 - hLocal) * (1.0 - hLocal)),
-        );
-        g = sqrt(
-          p *
-              p /
-              (0.299 / hLocal / hLocal +
-                  0.587 +
-                  0.114 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0)),
-        );
-        b = 0.0;
-      } else if (hLocal < 2.0 / 6.0) {
-        hLocal = 6.0 * (-hLocal + 2.0 / 6.0);
-        g = sqrt(
-          p *
-              p /
-              (0.587 +
-                  0.299 * hLocal * hLocal +
-                  0.114 * (1.0 - hLocal) * (1.0 - hLocal)),
-        );
-        r = sqrt(
-          p *
-              p /
-              (0.587 / hLocal / hLocal +
-                  0.299 +
-                  0.114 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0)),
-        );
-        b = 0.0;
-      } else if (hLocal < 3.0 / 6.0) {
-        hLocal = 6.0 * (hLocal - 2.0 / 6.0);
-        g = sqrt(
-          p *
-              p /
-              (0.587 +
-                  0.114 * hLocal * hLocal +
-                  0.299 * (1.0 - hLocal) * (1.0 - hLocal)),
-        );
-        b = sqrt(
-          p *
-              p /
-              (0.587 / hLocal / hLocal +
-                  0.114 +
-                  0.299 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0)),
-        );
-        r = 0.0;
-      } else if (hLocal < 4.0 / 6.0) {
-        hLocal = 6.0 * (-hLocal + 4.0 / 6.0);
-        b = sqrt(
-          p *
-              p /
-              (0.114 +
-                  0.587 * hLocal * hLocal +
-                  0.299 * (1.0 - hLocal) * (1.0 - hLocal)),
-        );
-        g = sqrt(
-          p *
-              p /
-              (0.114 / hLocal / hLocal +
-                  0.587 +
-                  0.299 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0)),
-        );
-        r = 0.0;
-      } else if (hLocal < 5.0 / 6.0) {
-        hLocal = 6.0 * (hLocal - 4.0 / 6.0);
-        b = sqrt(
-          p *
-              p /
-              (0.114 +
-                  0.299 * hLocal * hLocal +
-                  0.587 * (1.0 - hLocal) * (1.0 - hLocal)),
-        );
-        r = sqrt(
-          p *
-              p /
-              (0.114 / hLocal / hLocal +
-                  0.299 +
-                  0.587 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0)),
-        );
-        g = 0.0;
-      } else {
-        hLocal = 6.0 * (-hLocal + 6.0 / 6.0);
-        r = sqrt(
-          p *
-              p /
-              (0.299 +
-                  0.114 * hLocal * hLocal +
-                  0.587 * (1.0 - hLocal) * (1.0 - hLocal)),
-        );
-        b = sqrt(
-          p *
-              p /
-              (0.299 / hLocal / hLocal +
-                  0.114 +
-                  0.587 * (1.0 / hLocal - 1.0) * (1.0 / hLocal - 1.0)),
-        );
-        g = 0.0;
-      }
+      h *= 60;
+      if (h < 0) h += 360;
     }
 
-    return ColorIQ.fromARGB(
-      (alpha * 255).round(),
-      (r * 255).round().clamp(0, 255),
-      (g * 255).round().clamp(0, 255),
-      (b * 255).round().clamp(0, 255),
-    );
-  }
+    final double s = (maxVal == 0) ? 0 : delta / maxVal;
 
-  @override
-  int get value => toColor().value;
+    return HspColor.alt(h, s, p);
+  }
 
   @override
   HspColor darken([final double amount = 20]) {

@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
@@ -24,21 +25,31 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
   final double saturation;
   // Renamed from value to val to avoid conflict with ColorSpacesIQ.value
   final double val;
-  final Percent alpha;
+  Percent get alpha => super.a;
 
   const OkHsvColor(this.hue, this.saturation, this.val,
-      {this.alpha = Percent.max,
+      {final Percent alpha = Percent.max,
       required final int hexId,
       final List<String>? names})
       : super(hexId, a: alpha, names: names ?? const <String>[]);
 
   OkHsvColor.alt(this.hue, this.saturation, this.val,
-      {this.alpha = Percent.max, final int? hexId, final List<String>? names})
-      : super(hexId ?? OkHsvColor.computeHexId(hue, saturation, val, alpha.val),
-            a: alpha, names: names ?? const <String>[]);
+      {final Percent alpha = Percent.max,
+      final int? hexId,
+      final List<String>? names})
+      : super(
+            hexId ?? OkHsvColor.hexIdFromOkHSV(hue, saturation, val, alpha.val),
+            a: alpha,
+            names: names ??
+                names ??
+                <String>[
+                  ColorNames.generateDefaultNameFromInt(hexId ??
+                      OkHsvColor.hexIdFromOkHSV(
+                          hue, saturation, val, alpha.val))
+                ]);
 
   /// Generates a 32-bit ARGB hex ID from OkHsv values.
-  static int computeHexId(final double hue, final double saturation,
+  static int hexIdFromOkHSV(final double hue, final double saturation,
       final double val, final double alpha) {
     // Convert OkHsv to OkLab
     final double c = saturation * val * 0.4;
@@ -64,10 +75,7 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
     // Gamma correction (sRGB)
     r = r.clamp(0.0, 1.0).gammaCorrect;
     g = g.clamp(0.0, 1.0).gammaCorrect;
-    blue = blue.clamp(0.0, 1.0);
-    blue = (blue > 0.0031308)
-        ? (1.055 * pow(blue, 1.0 / 2.4) - 0.055)
-        : (12.92 * blue);
+    blue = blue.clamp(0.0, 1.0).gammaCorrect;
 
     // Clamp and convert to 0-255
     final int rInt = (r.clamp(0.0, 1.0) * 255).round();
@@ -76,6 +84,47 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
     final int aInt = (alpha.clamp(0.0, 1.0) * 255).round();
 
     return (aInt << 24) | (rInt << 16) | (gInt << 8) | bInt;
+  }
+
+  /// Converts a 32-bit ARGB color ID to OkHSV components.
+  /// Note: OkLab Lightness (L) is used as a proxy for Value (V).
+  static OkHsvColor fromInt(final int argb32) {
+    final LinRGB lr = argb32.redLinearized;
+    final LinRGB lg = argb32.greenLinearized;
+    final LinRGB lb = argb32.blueLinearized;
+
+    final LmsPrime lmsPrime = linearRgbToLmsPrime(lr, lg, lb);
+
+    // 3. Convert L'M'S' to Oklab (L, a, b)
+    final double oklabL = 0.2104542553 * lmsPrime.lPrime +
+        0.7936177850 * lmsPrime.mPrime -
+        0.0040720468 * lmsPrime.sPrime;
+    final double oklabA = 1.9779984951 * lmsPrime.lPrime -
+        2.4285922050 * lmsPrime.mPrime +
+        0.4505937102 * lmsPrime.sPrime;
+    final double oklabB = 0.0259040371 * lmsPrime.lPrime +
+        0.7827717662 * lmsPrime.mPrime -
+        0.8086757660 * lmsPrime.sPrime;
+
+    // 4. Calculate Chroma (C) and Hue (H)
+    final double c = math.sqrt(oklabA * oklabA + oklabB * oklabB);
+    double h = math.atan2(oklabB, oklabA) * 180.0 / math.pi;
+
+    if (h < 0) {
+      h += 360.0;
+    }
+
+    // 5. Calculate Saturation (S) and Value (V)
+
+    // S: Saturation is Chroma divided by the maximum possible Chroma (C_max)
+    final double saturation = (c / cMaxApprox).clamp(0.0, 1.0);
+
+    // V (Value): Oklab Lightness (L) is the perceptually uniform metric [0, 1].
+    // We use L as the Value (V) component, as it represents the perceived intensity/lightness.
+    final double value = oklabL.clamp(0.0, 1.0);
+
+    // H is Hue [0, 360)
+    return OkHsvColor.alt(h, saturation, value);
   }
 
   @override
@@ -91,9 +140,6 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
     final double hRad = hue * pi / 180;
     return OkLabColor.alt(l, c * cos(hRad), c * sin(hRad), alpha: alpha);
   }
-
-  @override
-  ColorIQ toColor() => ColorIQ(value);
 
   @override
   OkHsvColor darken([final double amount = 20]) {
@@ -114,10 +160,8 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  OkHsvColor desaturate([final double amount = 25]) {
-    return OkHsvColor.alt(hue, max(0.0, saturation - amount / 100), val,
-        alpha: alpha);
-  }
+  OkHsvColor desaturate([final double amount = 25]) =>
+      copyWith(saturation: max(0.0, saturation - amount / 100));
 
   @override
   OkHsvColor intensify([final double amount = 10]) {
@@ -155,9 +199,6 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  OkHsvColor get inverted => toColor().inverted.toOkHsv();
-
-  @override
   OkHsvColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
@@ -181,19 +222,16 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  HctColor toHctColor() => toColor().toHctColor();
+  HctColor toHctColor() => HctColor.fromInt(value);
 
   @override
-  OkHsvColor fromHct(final HctColor hct) => hct.toColor().toOkHsv();
+  OkHsvColor fromHct(final HctColor hct) => OkHsvColor.fromInt(hct.toInt());
 
   @override
   OkHsvColor adjustTransparency([final double amount = 20]) {
     final double z = (alpha.val * (1 - amount / 100)).clamp(0.0, 1.0);
     return copyWith(alpha: Percent(z));
   }
-
-  @override
-  double get transparency => alpha;
 
   @override
   ColorTemperature get temperature {
@@ -266,18 +304,6 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
-
-  @override
-  double get luminance => toColor().luminance;
-
-  @override
-  Brightness get brightness => toColor().brightness;
-
-  @override
-  bool get isDark => brightness == Brightness.dark;
-
-  @override
-  bool get isLight => brightness == Brightness.light;
 
   double _lerpHue(final double start, final double end, final double t) {
     final double delta = ((end - start + 540) % 360) - 180;

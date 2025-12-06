@@ -66,7 +66,7 @@ class LchColor extends ColorSpacesIQ with ColorModelsMixin {
     final double b = c * math.sin(hRad);
 
     // 2. Lab to XYZ (Requires complex matrix inversion and power functions)
-    final XyzColor xyz = labToXYZ(l, a, b); //
+    final XYZ xyz = labToXYZ(l, a, b); //
 
     // 3. XYZ to sRGB (Requires complex matrix and gamma correction)
     final (:int red, :int green, :int blue) = xyzToRgb(xyz.x, xyz.y, xyz.z); //

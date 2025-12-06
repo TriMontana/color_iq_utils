@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
@@ -36,12 +37,18 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
       final Percent alpha = Percent.max,
       final List<String>? names})
       : super(hexId, a: alpha, names: names ?? const <String>[]);
+
   OkHslColor.alt(this.h, this.s, this.l,
       {final int? hexId,
       final Percent alpha = Percent.max,
       final List<String>? names})
       : super(hexId ?? OkHslColor.hexIdFromHsl(h, s, l),
-            a: alpha, names: names ?? const <String>[]);
+            a: alpha,
+            names: names ??
+                <String>[
+                  ColorNames.generateDefaultNameFromInt(
+                      hexId ?? OkHslColor.hexIdFromHsl(h, s, l))
+                ]);
 
   /// Creates a 32-bit integer ARGB representation of an OKHSL color.
   ///
@@ -60,7 +67,49 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
     final double C = s * 0.4; // Approximation
     final double hue = h;
 
-    return OkLchColor.alt(Percent(l), C, hue).value;
+    return OkLCH.alt(Percent(l), C, hue).value;
+  }
+
+  /// Converts a 32-bit ARGB color ID to OkHSL components.
+  static OkHslColor fromInt(final int argb32) {
+    final LinRGB lr = argb32.redLinearized;
+    final LinRGB lg = argb32.greenLinearized;
+    final LinRGB lb = argb32.blueLinearized;
+
+    final LmsPrime lmsPrime = linearRgbToLmsPrime(lr, lg, lb);
+
+    // 3. Convert L'M'S' to Oklab (L, a, b)
+    final double oklabL = 0.2104542553 * lmsPrime.lPrime +
+        0.7936177850 * lmsPrime.mPrime -
+        0.0040720468 * lmsPrime.sPrime;
+    final double oklabA = 1.9779984951 * lmsPrime.lPrime -
+        2.4285922050 * lmsPrime.mPrime +
+        0.4505937102 * lmsPrime.sPrime;
+    final double oklabB = 0.0259040371 * lmsPrime.lPrime +
+        0.7827717662 * lmsPrime.mPrime -
+        0.8086757660 * lmsPrime.sPrime;
+
+    // 4. Calculate Chroma (C) and Hue (H) from Oklab (a, b)
+    final double c = math.sqrt(oklabA * oklabA + oklabB * oklabB);
+    double h = math.atan2(oklabB, oklabA) * 180.0 / math.pi;
+
+    if (h < 0) h += 360.0;
+
+    // 5. Calculate Saturation (S) [The key step for OkHSL]
+    // In OkHSL, Saturation is defined as Chroma divided by the theoretical maximum chroma (C_max)
+    // for the current Lightness (L) and Hue (H).
+
+    // Note: Calculating C_max dynamically is complex and requires gamut mapping.
+    // For practical implementation, we use a constant approximation for maximum chroma (C_max)
+    // often seen in simplified OkHSL models, and clamp the resulting S value to 1.0.
+    // A reasonable approximate C_max for typical display conditions is around 0.3 or 0.4.
+
+    // Saturation S = C / C_max(L, H)
+    final double saturation = (c / cMaxApprox).clamp(0.0, 1.0);
+
+    // L is already in the [0, 1] range from the Oklab conversion.
+    return OkHslColor(oklabL.clamp(0.0, 1.0), h, saturation,
+        hexId: argb32, names: const <String>[]);
   }
 
   @override
@@ -163,7 +212,7 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  OkHslColor fromHct(final HctColor hct) => hct.toColor().toOkHsl();
+  OkHslColor fromHct(final HctColor hct) => OkHslColor.fromInt(hct.toInt());
 
   @override
   OkHslColor adjustTransparency([final double amount = 20]) {

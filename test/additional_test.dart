@@ -44,7 +44,7 @@ void main() {
     test('RGB to OkLch conversion (Red)', () {
       // Red is approx L=0.627, C=0.257, h=29.2
       final ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0);
-      final OkLchColor oklch = color.toOkLch();
+      final OkLCH oklch = color.toOkLch();
 
       expect(oklch.l, closeTo(0.627, 0.05));
       expect(oklch.c, closeTo(0.257, 0.05));

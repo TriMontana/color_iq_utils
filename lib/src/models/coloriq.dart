@@ -20,11 +20,11 @@ import 'package:color_iq_utils/src/models/luv_color.dart';
 import 'package:color_iq_utils/src/models/munsell_color.dart';
 import 'package:color_iq_utils/src/models/ok_hsl_color.dart';
 import 'package:color_iq_utils/src/models/ok_hsv_color.dart';
-import 'package:color_iq_utils/src/models/ok_lch_color.dart';
 import 'package:color_iq_utils/src/models/rec2020_color.dart';
 import 'package:color_iq_utils/src/models/xyz_color.dart';
 import 'package:color_iq_utils/src/models/yiq_color.dart';
 import 'package:color_iq_utils/src/models/yuv_color.dart';
+import 'package:color_iq_utils/src/utils/misc_utils.dart';
 import 'package:color_iq_utils/src/utils_lib.dart';
 import 'package:material_color_utilities/material_color_utilities.dart' as mcu;
 
@@ -209,58 +209,29 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     throw FormatException('Invalid hex color: #$hex');
   }
 
+  @override
+  ColorIQ toColor() => this;
+
   /// LAB representation, computed once and cached.
   late final LabColor lab = LabColor.fromInt(value);
   late final HctColor hct = HctColor.fromInt(value);
   late final Cam16Color cam16 = Cam16Color.fromInt(value);
 
+  /// Converts this color to XYZ once and cached.
+  late final XYZ xyz = XYZ.xyxFromRgb(red, green, blue);
+  late final LuvColor luv = xyz.toLuv();
+
   /// Human-friendly description ("soft blue", "warm neutral", etc.), cached.
-  late final String descriptiveName = ColorNamer.instance.name(this);
+  late final String descriptiveName = ColorNamerSuperSimple.instance.name(this);
+
   @override
   late final double luminance = super.toLRV;
 
-  /// Converts this color to XYZ.
-  XyzColor toXyz() => XyzColor.xyxFromRgb(red, green, blue);
-
-  /// Converts this color to CIELab.
-  LabColor toLab() => toXyz().toLab();
-
-  /// Converts this color to CIELuv.
-  @override
-  LuvColor toLuv() => toXyz().toLuv();
-
   /// Converts this color to CIELCH.
-  LchColor toLch() => toLab().toLch();
+  LchColor toLch() => lab.toLch();
 
   /// Converts this color to HSP.
-  HspColor toHsp() {
-    final double r = red / 255.0;
-    final double g = green / 255.0;
-    final double b = blue / 255.0;
-
-    final double p = sqrt(0.299 * r * r + 0.587 * g * g + 0.114 * b * b);
-
-    final double minVal = min(r, min(g, b));
-    final double maxVal = max(r, max(g, b));
-    final double delta = maxVal - minVal;
-
-    double h = 0;
-    if (delta != 0) {
-      if (maxVal == r) {
-        h = (g - b) / delta;
-      } else if (maxVal == g) {
-        h = 2 + (b - r) / delta;
-      } else {
-        h = 4 + (r - g) / delta;
-      }
-      h *= 60;
-      if (h < 0) h += 360;
-    }
-
-    final double s = (maxVal == 0) ? 0 : delta / maxVal;
-
-    return HspColor.alt(h, s, p);
-  }
+  HspColor toHsp() => HspColor.fromInt(value);
 
   /// Converts this color to YIQ.
   YiqColor toYiq() {
@@ -289,7 +260,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   /// Converts this color to OkLch.
-  OkLchColor toOkLch() => toOkLab().toOkLch();
+  // OkLCH toOkLch() => toOkLab().toOkLch();
 
   /// Converts this color to OkHSL.
   OkHslColor toOkHsl() => toOkLab().toOkHsl();
@@ -299,7 +270,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
 
   /// Converts this color to Hunter Lab.
   HunterLabColor toHunterLab() {
-    final XyzColor xyz = toXyz();
+    final XYZ xyz = XYZ.fromInt(value);
     final double x = xyz.x;
     final double y = xyz.y;
     final double z = xyz.z;
@@ -429,6 +400,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   /// Converts this color to Cam16 (Material Color Utilities).
+  @override
   Cam16Color toCam16Color() {
     final mcu.Cam16 cam = mcu.Cam16.fromInt(value);
     return Cam16Color(cam.hue, cam.chroma, cam.j, cam.m, cam.s, cam.q,
@@ -704,9 +676,6 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  ColorIQ toColor() => this;
-
-  @override
   ColorSpacesIQ get random {
     final Random rng = Random();
     return ColorIQ.fromARGB(
@@ -954,7 +923,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
       case 'LabColor':
         return LabColor.alt(json['l'], json['a'], json['b']);
       case 'XyzColor':
-        return XyzColor.alt(json['x'], json['y'], json['z']);
+        return XYZ.alt(json['x'], json['y'], json['z']);
       case 'LchColor':
         return LchColor.alt(json['l'], json['c'], json['h']);
       // Add other cases as needed, defaulting to Color if unknown

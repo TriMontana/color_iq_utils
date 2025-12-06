@@ -419,9 +419,6 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  CmykColor get inverted => CmykColor.fromColorSpacesIQ(toColor().inverted);
-
-  @override
   CmykColor get grayscale {
     // Using a weighted average of C, M, Y to determine the gray value for K
     final double gray = c * 0.3 + m * 0.59 + y * 0.11;

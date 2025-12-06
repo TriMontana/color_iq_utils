@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
@@ -45,14 +46,20 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
       {final Percent alpha = Percent.max,
       final int? hexId,
       final List<String>? names})
-      : super(hexId ?? HwbColor.hwbToHex(h, w, b, alpha),
-            a: alpha, names: names ?? const <String>[]);
+      : super(hexId ?? HwbColor.hexIdFromHWB(h, w, b, alpha),
+            a: alpha,
+            names: names ??
+                names ??
+                <String>[
+                  ColorNames.generateDefaultNameFromInt(
+                      hexId ?? HwbColor.hexIdFromHWB(h, w, b, alpha))
+                ]);
 
   /// Creates a 32-bit hex ID (ARGB) from HWB values.
   ///
   /// This is a utility method for creating a color value directly from HWB
   /// components without instantiating an `HwbColor` object.
-  static int hwbToHex(
+  static int hexIdFromHWB(
     final double h,
     final double w,
     final double b, [
@@ -74,6 +81,82 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
     return HsvColor.alt(h, s, v, alpha: alpha).value;
   }
 
+// /// Represents a color in the HWB color space.
+// class HWB {
+//   /// Hue (0.0 to 360.0)
+//   final double h;
+//   /// Whiteness (0.0 to 1.0)
+//   final double w;
+//   /// Blackness (0.0 to 1.0)
+//   final double b;
+//   HWB(this.h, this.w, this.b);
+// }
+
+  /// Converts a 32-bit ARGB color ID to HWB components (Hue, Whiteness, Blackness).
+  ///
+  /// @param argb32 The 32-bit integer color ID (e.g., 0xFFRRGGBB).
+  /// @returns An HWB object.
+  static HwbColor fromInt(final int argb32) {
+    // final Color color = Color(argb32);
+
+    // Normalize R, G, B to the range [0.0, 1.0]
+    final double r = argb32.r;
+    final double g = argb32.g;
+    final double b = argb32.b;
+
+    // Find the maximum (M) and minimum (m) components
+    final double max = math.max(r, math.max(g, b));
+    final double min = math.min(r, math.min(g, b));
+
+    final double delta = max - min;
+
+    // --- 1. Calculate Blackness (B) and Whiteness (W) ---
+
+    // Blackness (B): The amount of black added, proportional to the minimum component.
+    // B = 1 - max(R, G, B)
+    final double blackness = 1.0 - max;
+
+    // Whiteness (W): The amount of white added, proportional to the minimum component.
+    // W = min(R, G, B)
+    final double whiteness = min;
+
+    // --- 2. Calculate Hue (H) ---
+
+    double hue;
+
+    if (delta == 0.0) {
+      // Achromatic (Gray-scale): Hue is undefined, usually 0 or 360.
+      hue = 0.0;
+    } else if (max == r) {
+      // Red is the largest component
+      hue = (g - b) / delta;
+    } else if (max == g) {
+      // Green is the largest component
+      hue = 2.0 + (b - r) / delta;
+    } else {
+      // max == b
+      // Blue is the largest component
+      hue = 4.0 + (r - g) / delta;
+    }
+
+    // Convert H from [0, 6) to degrees [0, 360)
+    hue *= 60.0;
+    if (hue < 0.0) {
+      hue += 360.0;
+    }
+
+    // --- 3. Final Clamping and Normalization ---
+
+    // HWB requires W + B + C_pure <= 1.0, where C_pure = 1 - W - B = delta
+    // Since we derived W and B from min and max, W + B + delta == 1 is guaranteed.
+
+    return HwbColor.alt(
+      hue.clamp(0.0, 360.0),
+      whiteness.clamp(0.0, 1.0),
+      blackness.clamp(0.0, 1.0),
+    );
+  }
+
   @override
   ColorIQ toColor() {
     final double ratio = w + b;
@@ -91,16 +174,13 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  int get value => toColor().value;
-
-  @override
   HwbColor darken([final double amount = 20]) {
-    return toColor().darken(amount).toHwb();
+    return copyWith(b: (b + amount / 100).clamp(0.0, 1.0));
   }
 
   @override
   HwbColor brighten([final double amount = 20]) {
-    return toColor().brighten(amount).toHwb();
+    return copyWith(b: (b - amount / 100).clamp(0.0, 1.0));
   }
 
   @override
@@ -153,9 +233,6 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  HwbColor get inverted => toColor().inverted.toHwb();
-
-  @override
   HwbColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
@@ -186,7 +263,7 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
   HctColor toHctColor() => toColor().toHctColor();
 
   @override
-  HwbColor fromHct(final HctColor hct) => hct.toColor().toHwb();
+  HwbColor fromHct(final HctColor hct) => HwbColor.fromInt(hct.toInt());
 
   @override
   HwbColor adjustTransparency([final double amount = 20]) {

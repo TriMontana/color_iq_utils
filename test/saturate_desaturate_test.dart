@@ -31,12 +31,12 @@ void main() {
     });
 
     test('OkLchColor saturate/desaturate', () {
-      final OkLchColor oklch = OkLchColor.alt(const Percent(0.5), 0.1, 0);
-      final OkLchColor saturated = oklch.saturate(25);
+      final OkLCH oklch = OkLCH.alt(const Percent(0.5), 0.1, 0);
+      final OkLCH saturated = oklch.saturate(25);
       // 0.1 + 25/100 = 0.35
       expect(saturated.c, closeTo(0.35, 0.01));
 
-      final OkLchColor desaturated = oklch.desaturate(5);
+      final OkLCH desaturated = oklch.desaturate(5);
       // 0.1 - 5/100 = 0.05
       expect(desaturated.c, closeTo(0.05, 0.01));
     });

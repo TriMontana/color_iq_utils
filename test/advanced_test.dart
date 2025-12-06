@@ -5,7 +5,7 @@ void main() {
   group('Advanced Color Conversion Tests', () {
     test('RGB to XYZ conversion (White)', () {
       final ColorIQ color = ColorIQ.fromARGB(255, 255, 255, 255);
-      final XyzColor xyz = color.toXyz();
+      final XYZ xyz = color.xyz;
 
       // D65 White point
       expect(xyz.x, closeTo(95.047, 0.1));
@@ -20,7 +20,7 @@ void main() {
 
     test('RGB to Lab conversion (Red)', () {
       final ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0);
-      final LabColor lab = color.toLab();
+      final LabColor lab = color.lab;
 
       // Approximate values for pure red in sRGB -> Lab (D65)
       // L=53.24, a=80.09, b=67.20
@@ -72,12 +72,12 @@ void main() {
     test('Black conversion', () {
       final ColorIQ color = ColorIQ.fromARGB(255, 0, 0, 0);
 
-      final XyzColor xyz = color.toXyz();
+      final XYZ xyz = color.xyz;
       expect(xyz.x, 0);
       expect(xyz.y, 0);
       expect(xyz.z, 0);
 
-      final LabColor lab = color.toLab();
+      final LabColor lab = color.lab;
       expect(lab.l, 0);
       expect(lab.aLab, 0);
       expect(lab.bLab, 0);

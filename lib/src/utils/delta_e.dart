@@ -39,14 +39,14 @@ extension DeltaEExtension on ColorSpacesIQ {
     if (this is LabColor) {
       lab1 = this as LabColor;
     } else {
-      lab1 = toColor().toLab();
+      lab1 = toColor().lab;
     }
 
     final LabColor lab2;
     if (other is LabColor) {
       lab2 = other;
     } else {
-      lab2 = other.toColor().toLab();
+      lab2 = other.toColor().lab;
     }
 
     switch (algorithm) {

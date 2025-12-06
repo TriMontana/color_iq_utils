@@ -106,9 +106,9 @@ extension CssExtensions on ColorSpacesIQ {
   }
 
   String _toOklch() {
-    final OkLchColor oklch;
-    if (this is OkLchColor) {
-      oklch = this as OkLchColor;
+    final OkLCH oklch;
+    if (this is OkLCH) {
+      oklch = this as OkLCH;
     } else {
       oklch = toColor().toOkLch();
     }
@@ -235,7 +235,7 @@ class CssColor {
     return OkLabColor.alt(l, aVal, b, alpha: alpha);
   }
 
-  static OkLchColor _parseOklch(final String s) {
+  static OkLCH _parseOklch(final String s) {
     // oklch(l c h / alpha)
     final String content = s.substring(s.indexOf('(') + 1, s.lastIndexOf(')'));
     final List<String> parts = content
@@ -262,6 +262,6 @@ class CssColor {
       }
     }
 
-    return OkLchColor.alt(Percent(l), c, h, alpha: alpha);
+    return OkLCH.alt(Percent(l), c, h, alpha: alpha);
   }
 }

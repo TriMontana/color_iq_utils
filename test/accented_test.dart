@@ -34,21 +34,21 @@ void main() {
 
     test('Accented works across different color models', () {
       final ColorIQ rgb = ColorIQ.fromARGB(255, 100, 150, 200);
-      final XyzColor xyz = rgb.toXyz();
-      final LabColor lab = rgb.toLab();
-      final LuvColor luv = rgb.toLuv();
+      final XYZ xyz = rgb.xyz;
+      final LabColor lab = rgb.lab;
+      final LuvColor luv = LuvColor.fromInt(rgb.value);
 
       final ColorIQ accentedRgb = rgb.accented();
-      final XyzColor accentedXyz = xyz.accented();
+      final XYZ accentedXyz = xyz.accented();
       final LabColor accentedLab = lab.accented();
       final LuvColor accentedLuv = luv.accented();
 
       // Since they all delegate to ColorIQ -> Hct -> accented -> ColorIQ -> Model
       // They should represent approximately the same color (allowing for conversion errors)
 
-      expect(accentedXyz.toColor().value, closeTo(accentedRgb.value, 1));
-      expect(accentedLab.toColor().value, closeTo(accentedRgb.value, 1));
-      expect(accentedLuv.toColor().value, closeTo(accentedRgb.value, 1));
+      expect(accentedXyz.value, closeTo(accentedRgb.value, 1));
+      expect(accentedLab.value, closeTo(accentedRgb.value, 1));
+      expect(accentedLuv.value, closeTo(accentedRgb.value, 1));
 
       print('✓ Accented color model test completed');
       print('  Original RGB: ${rgb.value}');

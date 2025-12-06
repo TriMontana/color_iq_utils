@@ -79,7 +79,7 @@ class LabColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  LabColor get inverted => toColor().inverted.toLab();
+  LabColor get inverted => toColor().inverted.lab;
 
   @override
   LabColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
@@ -94,7 +94,7 @@ class LabColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   LabColor brighten([final double amount = 20]) {
-    return toColor().brighten(amount).toLab();
+    return toColor().brighten(amount).lab;
   }
 
   @override
@@ -114,29 +114,28 @@ class LabColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   LabColor intensify([final double amount = 10]) {
-    return toColor().intensify(amount).toLab();
+    return toColor().intensify(amount).lab;
   }
 
   @override
   LabColor deintensify([final double amount = 10]) {
-    return toColor().deintensify(amount).toLab();
+    return toColor().deintensify(amount).lab;
   }
 
   @override
   LabColor accented([final double amount = 15]) {
-    return toColor().accented(amount).toLab();
+    return toColor().accented(amount).lab;
   }
 
   @override
   LabColor simulate(final ColorBlindnessType type) {
-    return toColor().simulate(type).toLab();
+    return toColor().simulate(type).lab;
   }
 
   @override
   LabColor lerp(final ColorSpacesIQ other, final double t) {
     if (t == 0.0) return this;
-    final LabColor otherLab =
-        other is LabColor ? other : other.toColor().toLab();
+    final LabColor otherLab = other is LabColor ? other : other.toColor().lab;
     if (t == 1.0) {
       return otherLab;
     }
@@ -152,11 +151,11 @@ class LabColor extends ColorSpacesIQ with ColorModelsMixin {
   HctColor toHctColor() => toColor().toHctColor();
 
   @override
-  LabColor fromHct(final HctColor hct) => hct.toColor().toLab();
+  LabColor fromHct(final HctColor hct) => LabColor.fromInt(hct.toInt());
 
   @override
   LabColor adjustTransparency([final double amount = 20]) {
-    return toColor().adjustTransparency(amount).toLab();
+    return toColor().adjustTransparency(amount).lab;
   }
 
   @override
@@ -178,14 +177,14 @@ class LabColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   List<ColorSpacesIQ> get monochromatic => toColor()
       .monochromatic
-      .map((final ColorSpacesIQ c) => (c as ColorIQ).toLab())
+      .map((final ColorSpacesIQ c) => (c as ColorIQ).lab)
       .toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([final double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toLab())
+        .map((final ColorSpacesIQ c) => (c as ColorIQ).lab)
         .toList();
   }
 
@@ -193,71 +192,61 @@ class LabColor extends ColorSpacesIQ with ColorModelsMixin {
   List<ColorSpacesIQ> darkerPalette([final double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toLab())
+        .map((final ColorSpacesIQ c) => (c as ColorIQ).lab)
         .toList();
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as ColorIQ).toLab();
+  ColorSpacesIQ get random => (toColor().random as ColorIQ).lab;
 
   @override
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
-
-  @override
-  bool get isDark => brightness == Brightness.dark;
 
   @override
   bool get isLight => brightness == Brightness.light;
 
   @override
   LabColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
-      toColor().blend(other, amount).toLab();
+      toColor().blend(other, amount).lab;
 
   @override
-  LabColor opaquer([final double amount = 20]) =>
-      toColor().opaquer(amount).toLab();
+  LabColor opaquer([final double amount = 20]) => toColor().opaquer(amount).lab;
 
   @override
   LabColor adjustHue([final double amount = 20]) =>
-      toColor().adjustHue(amount).toLab();
+      toColor().adjustHue(amount).lab;
 
   @override
-  LabColor get complementary => toColor().complementary.toLab();
+  LabColor get complementary => toColor().complementary.lab;
 
   @override
-  LabColor warmer([final double amount = 20]) =>
-      toColor().warmer(amount).toLab();
+  LabColor warmer([final double amount = 20]) => toColor().warmer(amount).lab;
 
   @override
-  LabColor cooler([final double amount = 20]) =>
-      toColor().cooler(amount).toLab();
+  LabColor cooler([final double amount = 20]) => toColor().cooler(amount).lab;
 
   @override
-  List<LabColor> generateBasicPalette() => toColor()
-      .generateBasicPalette()
-      .map((final ColorIQ c) => c.toLab())
-      .toList();
+  List<LabColor> generateBasicPalette() =>
+      toColor().generateBasicPalette().map((final ColorIQ c) => c.lab).toList();
 
   @override
   List<LabColor> tonesPalette() =>
-      toColor().tonesPalette().map((final ColorIQ c) => c.toLab()).toList();
+      toColor().tonesPalette().map((final ColorIQ c) => c.lab).toList();
 
   @override
   List<LabColor> analogous({final int count = 5, final double offset = 30}) =>
       toColor()
           .analogous(count: count, offset: offset)
-          .map((final ColorIQ c) => c.toLab())
+          .map((final ColorIQ c) => c.lab)
           .toList();
 
   @override
   List<LabColor> square() =>
-      toColor().square().map((final ColorIQ c) => c.toLab()).toList();
+      toColor().square().map((final ColorIQ c) => c.lab).toList();
 
   @override
-  List<LabColor> tetrad({final double offset = 60}) => toColor()
-      .tetrad(offset: offset)
-      .map((final ColorIQ c) => c.toLab())
-      .toList();
+  List<LabColor> tetrad({final double offset = 60}) =>
+      toColor().tetrad(offset: offset).map((final ColorIQ c) => c.lab).toList();
 
   @override
   double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);

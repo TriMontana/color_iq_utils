@@ -19,7 +19,7 @@ void main() {
   final OkLabColor oklab = color.toOkLab();
   print('OkLab: $oklab');
 
-  final OkLchColor oklch = color.toOkLch();
+  final OkLCH oklch = color.toOkLch();
   print('OkLch: $oklch');
 
   final HunterLabColor hunter = color.toHunterLab();

@@ -49,6 +49,12 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
         assert(bLab >= -1 && bLab <= 1, 'B must be between -1 and 1'),
         super(hexId, a: alpha, names: names ?? const <String>[]);
 
+  /// Creates an [OkLabColor].
+  ///
+  /// - [l]: Lightness, must be between 0.0 and 1.0.
+  /// - [a]: Green-red component.
+  /// - [b]: Blue-yellow component.
+  /// - [alpha]: Opacity, defaults to 1.0 (fully opaque).
   OkLabColor.alt(this.l, this.aLab, this.bLab,
       {this.alpha = Percent.max, final int? hexId, final List<String>? names})
       : assert(l >= 0 && l <= 1, 'L must be between 0 and 1'),
@@ -61,20 +67,21 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
   /// class's properties.
   static int toHexID(
       final double l, final double a, final double b, final double alpha) {
-    final double l_ = l + 0.3963377774 * a + 0.2158037573 * b;
-    final double m_ = l - 0.1055613458 * a - 0.0638541728 * b;
-    final double s_ = l - 0.0894841775 * a - 1.2914855480 * b;
+    final LmsPrime lmsPrime = labToLmsPrime(l, a, b);
 
-    final double l3 = l_ * l_ * l_;
-    final double m3 = m_ * m_ * m_;
-    final double s3 = s_ * s_ * s_;
+    double r = 4.0767416621 * lmsPrime.lPrime -
+        3.3077115913 * lmsPrime.mPrime +
+        0.2309699292 * lmsPrime.sPrime;
+    double g = -1.2684380046 * lmsPrime.lPrime +
+        2.6097574011 * lmsPrime.mPrime -
+        0.3413193965 * lmsPrime.sPrime;
+    double bVal = -0.0041960863 * lmsPrime.lPrime -
+        0.7034186147 * lmsPrime.mPrime +
+        1.7076147010 * lmsPrime.sPrime;
 
-    double r = 4.0767416621 * l3 - 3.3077115913 * m3 + 0.2309699292 * s3;
-    double g = -1.2684380046 * l3 + 2.6097574011 * m3 - 0.3413193965 * s3;
-    double bVal = -0.0041960863 * l3 - 0.7034186147 * m3 + 1.7076147010 * s3;
-
-    r = (r > 0.0031308) ? (1.055 * pow(r, 1 / 2.4) - 0.055) : (12.92 * r);
-    g = (g > 0.0031308) ? (1.055 * pow(g, 1 / 2.4) - 0.055) : (12.92 * g);
+    r = r.clamp(0.0, 1.0).delinearize;
+    g = g.clamp(0.0, 1.0).delinearize;
+    bVal = bVal.clamp(0.0, 1.0);
     bVal = (bVal > 0.0031308)
         ? (1.055 * pow(bVal, 1 / 2.4) - 0.055)
         : (12.92 * bVal);
@@ -93,29 +100,22 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
   factory OkLabColor.fromInt(final int argb) {
     final Percent alpha = argb.a2;
 
-    double g = argb.g2;
-    double b = argb.b2;
-
     // sRGB to Linear sRGB
-    final LinRGB r = argb.redLinearized;
-    g = srgbToLinear(g);
-    b = srgbToLinear(b);
+    final LinRGB lr = argb.redLinearized;
+    final LinRGB lg = argb.greenLinearized;
+    final LinRGB lb = argb.blueLinearized;
 
-    // Linear sRGB to Oklab
-    final double l = 0.4122214708 * r.val + 0.5363325363 * g + 0.0514459929 * b;
-    final double m = 0.2119034982 * r.val + 0.6806995451 * g + 0.1073969566 * b;
-    final double s = 0.0883024619 * r.val + 0.2817188376 * g + 0.6299787005 * b;
+    final LmsPrime lmsPrime = linearRgbToLmsPrime(lr, lg, lb);
 
-    final double l_ = cbrt(l);
-    final double m_ = cbrt(m);
-    final double s_ = cbrt(s);
-
-    final double labL =
-        0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
-    final double labA =
-        1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
-    final double labB =
-        0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
+    final double labL = 0.2104542553 * lmsPrime.lPrime +
+        0.7936177850 * lmsPrime.mPrime -
+        0.0040720468 * lmsPrime.sPrime;
+    final double labA = 1.9779984951 * lmsPrime.lPrime -
+        2.4285922050 * lmsPrime.mPrime +
+        0.4505937099 * lmsPrime.sPrime;
+    final double labB = 0.0259040371 * lmsPrime.lPrime +
+        0.7827717662 * lmsPrime.mPrime -
+        0.8086757660 * lmsPrime.sPrime;
 
     return OkLabColor.alt(labL, labA, labB, alpha: alpha);
   }
@@ -128,44 +128,23 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   ColorIQ toColor() {
-    final double l_ = l + 0.3963377774 * aLab + 0.2158037573 * bLab;
-    final double m_ = l - 0.1055613458 * aLab - 0.0638541728 * bLab;
-    final double s_ = l - 0.0894841775 * aLab - 1.2914855480 * bLab;
-
-    final double l3 = l_ * l_ * l_;
-    final double m3 = m_ * m_ * m_;
-    final double s3 = s_ * s_ * s_;
-
-    double r = 4.0767416621 * l3 - 3.3077115913 * m3 + 0.2309699292 * s3;
-    double g = -1.2684380046 * l3 + 2.6097574011 * m3 - 0.3413193965 * s3;
-    double bVal = -0.0041960863 * l3 - 0.7034186147 * m3 + 1.7076147010 * s3;
-
-    r = (r > 0.0031308) ? (1.055 * pow(r, 1 / 2.4) - 0.055) : (12.92 * r);
-    g = (g > 0.0031308) ? (1.055 * pow(g, 1 / 2.4) - 0.055) : (12.92 * g);
-    bVal = (bVal > 0.0031308)
-        ? (1.055 * pow(bVal, 1 / 2.4) - 0.055)
-        : (12.92 * bVal);
-
-    return ColorIQ.fromARGB(
-      (alpha * 255).round(),
-      (r * 255).round().clamp(0, 255),
-      (g * 255).round().clamp(0, 255),
-      (bVal * 255).round().clamp(0, 255),
-    );
+    final int argb = OkLabColor.toHexID(l, aLab, bLab, alpha);
+    return ColorIQ(argb);
   }
 
-  OkLchColor toOkLch() {
+  @override
+  OkLCH toOkLch() {
     final double c = sqrt(aLab * aLab + bLab * bLab);
     double h = atan2(bLab, aLab);
     h = h * 180 / pi;
     if (h < 0) {
       h += 360;
     }
-    return OkLchColor.alt(Percent(l), c, h, alpha: alpha);
+    return OkLCH.alt(Percent(l), c, h, alpha: alpha);
   }
 
   OkHslColor toOkHsl() {
-    final OkLchColor lch = toOkLch();
+    final OkLCH lch = toOkLch();
     double s = (lch.l.val == 0 || lch.l.val == 1) ? 0 : lch.c / 0.4;
     if (s > 1) s = 1;
     return OkHslColor.alt(
@@ -178,7 +157,7 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   OkHsvColor toOkHsv() {
-    final OkLchColor lch = toOkLch();
+    final OkLCH lch = toOkLch();
     double v = lch.l.val + lch.c / 0.4;
     if (v > 1) {
       v = 1;

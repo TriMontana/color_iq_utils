@@ -19,13 +19,13 @@ import 'package:color_iq_utils/src/models/ok_lab_color.dart';
 /// [c] is the chroma (distance from the neutral axis, similar to saturation).
 /// [h] is the hue angle (0-360).
 /// [alpha] is the transparency (0-1).
-class OkLchColor extends ColorSpacesIQ with ColorModelsMixin {
+class OkLCH extends ColorSpacesIQ with ColorModelsMixin {
   final Percent l;
   final double c;
   final double h;
   final Percent alpha;
 
-  const OkLchColor(this.l, this.c, this.h,
+  const OkLCH(this.l, this.c, this.h,
       {this.alpha = Percent.max,
       required final int hexId,
       final List<String>? names})
@@ -34,7 +34,7 @@ class OkLchColor extends ColorSpacesIQ with ColorModelsMixin {
         assert(h >= 0 && h <= 360, 'H must be between 0 and 360'),
         super(hexId, a: alpha, names: names ?? const <String>[]);
 
-  OkLchColor.alt(this.l, this.c, this.h,
+  OkLCH.alt(this.l, this.c, this.h,
       {this.alpha = Percent.max, final int? hexId, final List<String>? names})
       : assert(l >= 0 && l <= 1, 'L must be between 0 and 1'),
         assert(c >= 0, 'C must be non-negative'),
@@ -55,10 +55,10 @@ class OkLchColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   /// Converts a 32-bit ARGB color ID to OkLCH components.
-  static OkLchColor fromInt(final int argb32) {
-    final double lr = argb32.redLinearized;
-    final double lg = argb32.greenLinearized;
-    final double lb = argb32.blueLinearized;
+  static OkLCH fromInt(final int argb32) {
+    final LinRGB lr = argb32.redLinearized;
+    final LinRGB lg = argb32.greenLinearized;
+    final LinRGB lb = argb32.blueLinearized;
 
     final LmsPrime lmsPrime = linearRgbToLmsPrime(lr, lg, lb);
 
@@ -87,7 +87,7 @@ class OkLchColor extends ColorSpacesIQ with ColorModelsMixin {
       h += 360.0;
     }
 
-    return OkLchColor(Percent(oklabL.clamp(0.0, 1.0)), c, h,
+    return OkLCH(Percent(oklabL.clamp(0.0, 1.0)), c, h,
         alpha: argb32.a2, hexId: argb32);
   }
 
@@ -98,28 +98,27 @@ class OkLchColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  OkLchColor darken([final double amount = 20]) {
+  OkLCH darken([final double amount = 20]) {
     final double x = max(0.0, l.value - amount / 100);
     return copyWith(l: Percent(x));
   }
 
   @override
-  OkLchColor get inverted => toColor().inverted.toOkLch();
+  OkLCH get inverted => toColor().inverted.toOkLch();
 
   @override
-  OkLchColor get grayscale => OkLchColor.alt(l, 0.0, h, alpha: alpha);
+  OkLCH get grayscale => OkLCH.alt(l, 0.0, h, alpha: alpha);
 
   @override
-  OkLchColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
+  OkLCH whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
-  OkLchColor blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
+  OkLCH blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
 
   @override
-  OkLchColor lerp(final ColorSpacesIQ other, final double t) {
+  OkLCH lerp(final ColorSpacesIQ other, final double t) {
     if (t == 0.0) return this;
-    final OkLchColor otherOkLch =
-        other is OkLchColor ? other : other.toColor().toOkLch();
+    final OkLCH otherOkLch = other is OkLCH ? other : other.toColor().toOkLch();
     if (t == 1.0) return otherOkLch;
 
     double newHue = h;
@@ -136,14 +135,14 @@ class OkLchColor extends ColorSpacesIQ with ColorModelsMixin {
     } else if (thisC < kAchromaticThreshold && otherC < kAchromaticThreshold) {
       newHue = h;
     } else {
-      return OkLchColor.alt(
+      return OkLCH.alt(
         l.lerpTo(otherOkLch.l, t),
         lerpDouble(c, otherOkLch.c, t),
         lerpHue(h, otherOkLch.h, t),
       );
     }
 
-    return OkLchColor.alt(
+    return OkLCH.alt(
       l.lerpTo(otherOkLch.l, t),
       lerpDouble(c, otherOkLch.c, t),
       newHue,
@@ -151,51 +150,51 @@ class OkLchColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  OkLchColor lighten([final double amount = 20]) {
+  OkLCH lighten([final double amount = 20]) {
     final double x = min(1.0, l.value + amount / 100);
     return copyWith(l: Percent(x));
   }
 
   @override
-  OkLchColor brighten([final double amount = 20]) {
+  OkLCH brighten([final double amount = 20]) {
     return toColor().brighten(amount).toOkLch();
   }
 
   @override
-  OkLchColor saturate([final double amount = 25]) {
-    return OkLchColor.alt(l, c + amount / 100, h, alpha: alpha);
+  OkLCH saturate([final double amount = 25]) {
+    return OkLCH.alt(l, c + amount / 100, h, alpha: alpha);
   }
 
   @override
-  OkLchColor desaturate([final double amount = 25]) {
-    return OkLchColor.alt(l, max(0.0, c - amount / 100), h, alpha: alpha);
+  OkLCH desaturate([final double amount = 25]) {
+    return OkLCH.alt(l, max(0.0, c - amount / 100), h, alpha: alpha);
   }
 
   @override
-  OkLchColor intensify([final double amount = 10]) {
+  OkLCH intensify([final double amount = 10]) {
     return toColor().intensify(amount).toOkLch();
   }
 
   @override
-  OkLchColor deintensify([final double amount = 10]) {
+  OkLCH deintensify([final double amount = 10]) {
     return toColor().deintensify(amount).toOkLch();
   }
 
   @override
-  OkLchColor accented([final double amount = 15]) {
+  OkLCH accented([final double amount = 15]) {
     return toColor().accented(amount).toOkLch();
   }
 
   @override
-  OkLchColor simulate(final ColorBlindnessType type) {
+  OkLCH simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toOkLch();
   }
 
   @override
-  OkLchColor fromHct(final HctColor hct) => hct.toColor().toOkLch();
+  OkLCH fromHct(final HctColor hct) => hct.toColor().toOkLch();
 
   @override
-  OkLchColor adjustTransparency([final double amount = 20]) {
+  OkLCH adjustTransparency([final double amount = 20]) {
     return toColor().adjustTransparency(amount).toOkLch();
   }
 
@@ -206,13 +205,13 @@ class OkLchColor extends ColorSpacesIQ with ColorModelsMixin {
   ColorTemperature get temperature => toColor().temperature;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  OkLchColor copyWith({
+  OkLCH copyWith({
     final Percent? l,
     final double? c,
     final double? h,
     final Percent? alpha,
   }) {
-    return OkLchColor.alt(
+    return OkLCH.alt(
       l ?? this.l,
       c ?? this.c,
       h ?? this.h,
@@ -255,38 +254,36 @@ class OkLchColor extends ColorSpacesIQ with ColorModelsMixin {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  OkLchColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
+  OkLCH blend(final ColorSpacesIQ other, [final double amount = 50]) =>
       toColor().blend(other, amount).toOkLch();
 
   @override
-  OkLchColor opaquer([final double amount = 20]) =>
+  OkLCH opaquer([final double amount = 20]) =>
       toColor().opaquer(amount).toOkLch();
 
   @override
-  OkLchColor adjustHue([final double amount = 20]) {
-    return OkLchColor.alt(l, c, (h + amount) % 360, alpha: alpha);
+  OkLCH adjustHue([final double amount = 20]) {
+    return OkLCH.alt(l, c, (h + amount) % 360, alpha: alpha);
   }
 
   @override
-  OkLchColor get complementary => adjustHue(180);
+  OkLCH get complementary => adjustHue(180);
 
   @override
-  OkLchColor warmer([final double amount = 20]) {
+  OkLCH warmer([final double amount = 20]) {
     const double targetHue = 30.0;
-    return OkLchColor.alt(l, c, lerpHue(h, targetHue, amount / 100),
-        alpha: alpha);
+    return OkLCH.alt(l, c, lerpHue(h, targetHue, amount / 100), alpha: alpha);
   }
 
   @override
-  OkLchColor cooler([final double amount = 20]) {
+  OkLCH cooler([final double amount = 20]) {
     const double targetHue = 210.0;
-    return OkLchColor.alt(l, c, lerpHue(h, targetHue, amount / 100),
-        alpha: alpha);
+    return OkLCH.alt(l, c, lerpHue(h, targetHue, amount / 100), alpha: alpha);
   }
 
   @override
-  List<OkLchColor> generateBasicPalette() {
-    return <OkLchColor>[
+  List<OkLCH> generateBasicPalette() {
+    return <OkLCH>[
       this,
       complementary,
       adjustHue(120),
@@ -295,35 +292,34 @@ class OkLchColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  List<OkLchColor> tonesPalette() {
-    return <OkLchColor>[
-      OkLchColor.alt(const Percent(0.95), c, h, alpha: alpha), // 50
-      OkLchColor.alt(const Percent(0.9), c, h, alpha: alpha), // 100
-      OkLchColor.alt(const Percent(0.8), c, h, alpha: alpha), // 200
-      OkLchColor.alt(const Percent(0.7), c, h, alpha: alpha), // 300
-      OkLchColor.alt(const Percent(0.6), c, h, alpha: alpha), // 400
-      OkLchColor.alt(const Percent(0.5), c, h, alpha: alpha), // 500
-      OkLchColor.alt(const Percent(0.4), c, h, alpha: alpha), // 600
-      OkLchColor.alt(const Percent(0.3), c, h, alpha: alpha), // 700
-      OkLchColor.alt(const Percent(0.2), c, h, alpha: alpha), // 800
-      OkLchColor.alt(const Percent(0.1), c, h, alpha: alpha), // 900
+  List<OkLCH> tonesPalette() {
+    return <OkLCH>[
+      OkLCH.alt(const Percent(0.95), c, h, alpha: alpha), // 50
+      OkLCH.alt(const Percent(0.9), c, h, alpha: alpha), // 100
+      OkLCH.alt(const Percent(0.8), c, h, alpha: alpha), // 200
+      OkLCH.alt(const Percent(0.7), c, h, alpha: alpha), // 300
+      OkLCH.alt(const Percent(0.6), c, h, alpha: alpha), // 400
+      OkLCH.alt(const Percent(0.5), c, h, alpha: alpha), // 500
+      OkLCH.alt(const Percent(0.4), c, h, alpha: alpha), // 600
+      OkLCH.alt(const Percent(0.3), c, h, alpha: alpha), // 700
+      OkLCH.alt(const Percent(0.2), c, h, alpha: alpha), // 800
+      OkLCH.alt(const Percent(0.1), c, h, alpha: alpha), // 900
     ];
   }
 
   @override
-  List<OkLchColor> analogous({final int count = 5, final double offset = 30}) {
-    final List<OkLchColor> palette = <OkLchColor>[];
+  List<OkLCH> analogous({final int count = 5, final double offset = 30}) {
+    final List<OkLCH> palette = <OkLCH>[];
     final double startHue = h - ((count - 1) / 2) * offset;
     for (int i = 0; i < count; i++) {
-      palette.add(
-          OkLchColor.alt(l, c, (startHue + i * offset) % 360, alpha: alpha));
+      palette.add(OkLCH.alt(l, c, (startHue + i * offset) % 360, alpha: alpha));
     }
     return palette;
   }
 
   @override
-  List<OkLchColor> square() {
-    return <OkLchColor>[
+  List<OkLCH> square() {
+    return <OkLCH>[
       this,
       adjustHue(90),
       adjustHue(180),
@@ -332,8 +328,8 @@ class OkLchColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  List<OkLchColor> tetrad({final double offset = 60}) {
-    return <OkLchColor>[
+  List<OkLCH> tetrad({final double offset = 60}) {
+    return <OkLCH>[
       this,
       adjustHue(offset),
       adjustHue(180),

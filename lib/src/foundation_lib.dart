@@ -10,6 +10,6 @@ export 'foundation/constants.dart';
 export 'foundation/enums.dart';
 export 'foundation/range.dart';
 export 'naming/color_description.dart';
-export 'naming/color_namer.dart';
+export 'naming/color_names.dart';
 export 'naming/names.dart';
 export 'utils/color_math.dart';

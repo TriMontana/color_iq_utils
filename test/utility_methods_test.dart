@@ -58,7 +58,8 @@ void main() {
 
     test('Other models delegation (CmykColor)', () {
       final CmykColor cmyk = CmykColor.alt(0, 0, 0, 1); // Black
-      final CmykColor inverted = cmyk.inverted; // Should be White (0, 0, 0, 0)
+      final CmykColor inverted =
+          cmyk.inverted as CmykColor; // Should be White (0, 0, 0, 0)
       expect(inverted.k, 0.0);
     });
   });

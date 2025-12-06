@@ -70,14 +70,14 @@ void main() {
     });
 
     test('toJson and fromJson for XyzColor', () {
-      final XyzColor xyz = XyzColor.alt(20, 30, 40);
+      final XYZ xyz = XYZ.alt(20, 30, 40);
       final Map<String, dynamic> json = xyz.toJson();
       expect(json['type'], 'XyzColor');
       expect(json['x'], 20);
       expect(json['y'], 30);
       expect(json['z'], 40);
 
-      final XyzColor fromJson = ColorIQ.fromJson(json) as XyzColor;
+      final XYZ fromJson = ColorIQ.fromJson(json) as XYZ;
       expect(fromJson.x, 20);
       expect(fromJson.y, 30);
       expect(fromJson.z, 40);

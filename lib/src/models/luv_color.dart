@@ -84,14 +84,11 @@ class LuvColor extends ColorSpacesIQ with ColorModelsMixin {
       z = (9 * y / vPrime - x - 15 * y) / 3;
     }
 
-    return XyzColor.alt(x, y, z).value;
+    return XYZ.alt(x, y, z).value;
   }
 
   @override
   ColorIQ toColor() => ColorIQ(value);
-
-  @override
-  LuvColor get inverted => toColor().inverted.toLuv();
 
   @override
   LuvColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);

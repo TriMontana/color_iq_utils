@@ -40,7 +40,7 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
             a: alpha, names: names ?? const <String>[]);
 
   static DisplayP3Color fromInt(final int hexId) {
-    final XyzColor xyz = XyzColor.xyzFromRgbLinearized(
+    final XYZ xyz = XYZ.xyzFromRgbLinearized(
         hexId.redLinearized, hexId.greenLinearized, hexId.blueLinearized);
 
     // XYZ (D65) to Display P3 Linear
@@ -91,12 +91,12 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   // Display P3 Linear to XYZ (D65)
-  static XyzColor displayP3LinearsToXyz(
+  static XYZ displayP3LinearsToXyz(
       final double rLin, final double gLin, final double bLin) {
     final double x = rLin * 0.4865709 + gLin * 0.2656677 + bLin * 0.1982173;
     final double y = rLin * 0.2289746 + gLin * 0.6917385 + bLin * 0.0792869;
     final double z = rLin * 0.0000000 + gLin * 0.0451134 + bLin * 1.0439444;
-    return XyzColor.alt(x, y, z);
+    return XYZ.alt(x, y, z);
   }
 
   @override
@@ -108,7 +108,7 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
     final double bLin = srgbToLinear(b.clamp(0.0, 1.0));
 
     // Display P3 Linear to XYZ (D65)
-    final XyzColor xyz = DisplayP3Color.displayP3LinearsToXyz(rLin, gLin, bLin);
+    final XYZ xyz = DisplayP3Color.displayP3LinearsToXyz(rLin, gLin, bLin);
 
     // XYZ (D65) to sRGB Linear
     final double rS =

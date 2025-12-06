@@ -18,21 +18,21 @@ void main() {
     });
 
     test('HslColor stores names', () {
-      final HslColor color = HslColor.alt(0, 100, 50, names: testNames);
+      final HslColor color = HslColor.alt(0, 1.0, 0.5, names: testNames);
       expect(color.names, equals(testNames));
-      expect(HslColor.alt(0, 100, 50).names, isEmpty);
+      expect(HslColor.alt(0, 1.0, 0.5).names, isEmpty);
     });
 
     test('HsvColor stores names', () {
-      final HsvColor color = HsvColor.alt(0, 100, 100, names: testNames);
+      final HsvColor color = HsvColor.alt(0, 1.0, 1.0, names: testNames);
       expect(color.names, equals(testNames));
-      expect(HsvColor.alt(0, 100, 100).names, isEmpty);
+      expect(HsvColor.alt(0, 1.0, 1.0).names, isEmpty);
     });
 
     test('HsbColor stores names', () {
-      final HsbColor color = HsbColor.alt(0, 100, 100, names: testNames);
+      final HsbColor color = HsbColor.alt(0, 1.0, 1.0, names: testNames);
       expect(color.names, equals(testNames));
-      expect(HsbColor.alt(0, 100, 100).names, isEmpty);
+      expect(HsbColor.alt(0, 1.0, 1.0).names, isEmpty);
     });
 
     test('HwbColor stores names', () {
@@ -54,9 +54,9 @@ void main() {
     });
 
     test('XyzColor stores names', () {
-      final XyzColor color = XyzColor.alt(0.5, 0.5, 0.5, names: testNames);
+      final XYZ color = XYZ.alt(0.5, 0.5, 0.5, names: testNames);
       expect(color.names, equals(testNames));
-      expect(XyzColor.alt(0.5, 0.5, 0.5).names, isEmpty);
+      expect(XYZ.alt(0.5, 0.5, 0.5).names, isEmpty);
     });
 
     test('LchColor stores names', () {
@@ -72,16 +72,15 @@ void main() {
     });
 
     test('OkLchColor stores names', () {
-      final OkLchColor color =
-          OkLchColor.alt(const Percent(0.5), 0, 0, names: testNames);
+      final OkLCH color = OkLCH.alt(const Percent(0.5), 0, 0, names: testNames);
       expect(color.names, equals(testNames));
-      expect(OkLchColor.alt(const Percent(0.5), 0, 0).names, isEmpty);
+      expect(OkLCH.alt(const Percent(0.5), 0, 0).names, isEmpty);
     });
 
     test('OkHslColor stores names', () {
       final OkHslColor color = OkHslColor.alt(0, 1, 0.5, names: testNames);
       expect(color.names, equals(testNames));
-      expect(OkHslColor.alt(0, 1, 0.5).names, isEmpty);
+      expect(OkHslColor.alt(0, 1, 0.5).names, isNotEmpty);
     });
 
     test('OkHsvColor stores names', () {
