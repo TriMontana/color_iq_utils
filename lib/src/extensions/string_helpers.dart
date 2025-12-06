@@ -50,6 +50,7 @@ extension NullableStringExtensions on String? {
   String get orEmpty => this ?? kEmptyStr;
 }
 
+/// TODO: Add detailed documentation describing the purpose and usage of this code selection.
 extension StringHelpers on String {
   String get stripUnderscores => replaceAll("_", kEmptyStr).trim();
 
@@ -63,6 +64,16 @@ extension StringHelpers on String {
     if (prefix.isEmpty) return this;
     return startsWith(prefix) ? substring(prefix.length) : this;
   }
+
+  String decodeHtml() {
+  return this
+      .replaceAll('&quot;', '"')
+      .replaceAll('&amp;', '&')
+      .replaceAll('&lt;', '<')
+      .replaceAll('&gt;', '>')
+      .replaceAll('&#39;', "'")
+      .replaceAll('&nbsp;', ' ');
+}
 
   /// Removes trailing zeroes after the decimal point, retaining at least [decimalsToRetain] digits.
   /// If there is no decimal point or no trailing zeroes, returns the original string.
