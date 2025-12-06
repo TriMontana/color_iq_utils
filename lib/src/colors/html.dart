@@ -89,7 +89,7 @@ const int hxDarkOrchid = 0xFF9932CC;
 final ColorIQ cDarkOrchid = ColorIQ(hxDarkOrchid);
 const int hxDarkRed = 0xFF8B0000;
 final ColorIQ cDarkRed = ColorIQ(hxDarkRed);
-const int hxDarkSalmon = 0xFF8F0000;
+const int hxDarkSalmon = 0xFFE9967A;
 final ColorIQ cDarkSalmon = ColorIQ(hxDarkSalmon);
 const int hxDarkSeaGreen = 0xFF8FBC8F;
 final ColorIQ cDarkSeaGreen = ColorIQ(hxDarkSeaGreen);
@@ -105,7 +105,7 @@ const int hxDarkYellow = 0xFF8B8B00;
 final ColorIQ cDarkYellow = ColorIQ(hxDarkYellow);
 const int hxDeepPink = 0xFFFF1493;
 final ColorIQ cDeepPink = ColorIQ(hxDeepPink);
-const int hxDeepSkyBlue = 0xFFFFBF00;
+const int hxDeepSkyBlue = 0xFF00BFFF;
 final ColorIQ cDeepSkyBlue = ColorIQ(hxDeepSkyBlue);
 const int hxDimGray = 0xFF696969;
 final ColorIQ cDimGray = ColorIQ(hxDimGray);
@@ -229,7 +229,7 @@ const int hxMidnightBlue = 0xFF191970;
 final ColorIQ cMidnightBlue = ColorIQ(hxMidnightBlue);
 const int hxMintCream = 0xFFF5FFFA;
 final ColorIQ cMintCream = ColorIQ(hxMintCream);
-const int hxMistyRose = 0xFFE1E4EB;
+const int hxMistyRose = 0xFFFFE4E1;
 final ColorIQ cMistyRose = ColorIQ(hxMistyRose);
 const int hxMoccasin = 0xFFFFE4B5;
 final ColorIQ cMoccasin = ColorIQ(hxMoccasin);
@@ -289,7 +289,7 @@ const int hxSandyBrown = 0xFFF4A460;
 final ColorIQ cSandyBrown = ColorIQ(hxSandyBrown);
 const int hxSeaGreen = 0xFF2E8B57;
 final ColorIQ cSeaGreen = ColorIQ(hxSeaGreen);
-const int hxSeaShell = 0xFFF5F5DC;
+const int hxSeaShell = 0xFFFFF5EE;
 final ColorIQ cSeaShell = ColorIQ(hxSeaShell);
 const int hxSienna = 0xFFA0522D;
 final ColorIQ cSienna = ColorIQ(hxSienna);
@@ -341,8 +341,12 @@ final ColorIQ cYellowGreen = ColorIQ(hxYellowGreen);
 enum HTML {
   aliceBlue(hxAliceBlue, kAliceBlue, ColorFamilyHTML.blue),
   antiqueWhite(hxAntiqueWhite, kAntiqueWhite, ColorFamilyHTML.white),
+  aqua(hxAqua, kAqua, ColorFamilyHTML.cyan),
   aquamarine(hxAquamarine, kAquamarine, ColorFamilyHTML.cyan),
   azure(hxAzure, kAzure, ColorFamilyHTML.cyan),
+  beige(hxBeige, kBeige, ColorFamilyHTML.white),
+  black(hxBlack, kBlack, ColorFamilyHTML.black),
+  blanchedAlmond(hxBlanchedAlmond, kBlanchedAlmond, ColorFamilyHTML.white),
   chartreuse(hxChartreuse, kChartreuse, ColorFamilyHTML.green),
   chocolate(hxChocolate, kChocolate, ColorFamilyHTML.brown),
   coral(hxCoral, kCoral, ColorFamilyHTML.orange),
