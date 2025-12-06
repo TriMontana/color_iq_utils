@@ -15,25 +15,49 @@ void main() {
     return;
   }
 
-  final List<String> lines = htmlFile.readAsLinesSync();
-  final Set<String> colorIqNames = _collectColorIqNames(lines);
-  final _CollectResult collectResult =
-      _collectColorEntries(lines, colorIqNames);
-  final List<_ColorEntry> entries = collectResult.entries;
-
-  if (entries.isEmpty) {
-    stderr.writeln('No color entries were parsed from html.dart.');
+  final File encycFile = File('lib/src/colors/encycolorpedia.dart');
+  if (!encycFile.existsSync()) {
+    stderr.writeln('Unable to locate lib/src/colors/encycolorpedia.dart');
     exitCode = 1;
     return;
   }
 
+  // Process HTML colors
+  final List<String> htmlLines = htmlFile.readAsLinesSync();
+  final Set<String> htmlColorIqNames = _collectColorIqNames(htmlLines);
+  final _CollectResult htmlResult =
+      _collectColorEntries(htmlLines, htmlColorIqNames);
+
+  // Process Encycolorpedia colors
+  final List<String> encycLines = encycFile.readAsLinesSync();
+  final Set<String> encycColorIqNames = _collectColorIqNames(encycLines);
+  final _CollectResult encycResult =
+      _collectColorEntries(encycLines, encycColorIqNames);
+
+  // Merge and sort all entries
+  final List<_ColorEntry> allEntries = <_ColorEntry>[
+    ...htmlResult.entries,
+    ...encycResult.entries,
+  ];
+  
+  if (allEntries.isEmpty) {
+    stderr.writeln('No color entries were parsed.');
+    exitCode = 1;
+    return;
+  }
+  
+  // Sort alphabetically by hx name (case-insensitive)
+  allEntries.sort((final _ColorEntry a, final _ColorEntry b) =>
+      a.hxName.toLowerCase().compareTo(b.hxName.toLowerCase()));
+
   final StringBuffer buffer = StringBuffer()
+    ..writeln("import 'package:color_iq_utils/src/colors/encycolorpedia.dart';")
     ..writeln("import 'package:color_iq_utils/src/colors/html.dart';")
     ..writeln("import 'package:color_iq_utils/src/models/coloriq.dart';")
     ..writeln()
     ..writeln('Map<int, ColorIQ> colorFamilyRegistry = <int, ColorIQ>{');
 
-  for (final _ColorEntry entry in entries) {
+  for (final _ColorEntry entry in allEntries) {
     buffer.writeln('  ${entry.hxName}: ${entry.cName},');
   }
 
@@ -42,18 +66,18 @@ void main() {
   File('lib/src/colors/registry.dart').writeAsStringSync(buffer.toString());
 
   stdout.writeln(
-      'Updated registry.dart with ${entries.length} hx->c HTML color mappings.');
-  if (collectResult.aliasesSkipped.isNotEmpty) {
-    stdout.writeln(
-        'Skipped ${collectResult.aliasesSkipped.length} alias hex constants: ${collectResult.aliasesSkipped.toList()..sort()}');
+      'Updated registry.dart with ${allEntries.length} total color mappings.');
+  stdout.writeln('  - HTML colors: ${htmlResult.entries.length}');
+  stdout.writeln('  - Encycolorpedia colors: ${encycResult.entries.length}');
+  
+  final int totalAliases = htmlResult.aliasesSkipped.length + encycResult.aliasesSkipped.length;
+  if (totalAliases > 0) {
+    stdout.writeln('Skipped $totalAliases alias hex constants');
   }
-  if (collectResult.missingColorIqNames.isNotEmpty) {
-    stderr.writeln(
-        'Warning: Missing ColorIQ definitions for: ${collectResult.missingColorIqNames.toList()..sort()}');
-  }
-  if (collectResult.duplicatesSkipped.isNotEmpty) {
-    stdout.writeln(
-        'Skipped ${collectResult.duplicatesSkipped.length} duplicate hex values: ${collectResult.duplicatesSkipped.toList()..sort()}');
+  
+  final int totalDuplicates = htmlResult.duplicatesSkipped.length + encycResult.duplicatesSkipped.length;
+  if (totalDuplicates > 0) {
+    stdout.writeln('Skipped $totalDuplicates duplicate hex values');
   }
 }
 

@@ -81,7 +81,7 @@ List<_ColorRecord> _extractRecords(
       continue;
     }
 
-    final int count = identifierCounts.update(identifier, (int value) => value + 1,
+    final int count = identifierCounts.update(identifier, (final int value) => value + 1,
         ifAbsent: () => 0);
     if (count > 0) {
       identifier += '${count + 1}';

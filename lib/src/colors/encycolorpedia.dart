@@ -136,8 +136,8 @@ final ColorIQ cAmericanYellow = ColorIQ(hxAmericanYellow, names: const <String>[
 const int hxAmethyst = 0xFF9966CC;
 final ColorIQ cAmethyst = ColorIQ(hxAmethyst, names: const <String>['Amethyst']);
 
-const int hxAmurCorkTreePhellodendronAmurenseKihada = 0xFFF3C13A;
-final ColorIQ cAmurCorkTreePhellodendronAmurenseKihada = ColorIQ(hxAmurCorkTreePhellodendronAmurenseKihada, names: const <String>['Amur cork tree (Phellodendron amurense) (Kihada)']);
+const int hxAmurCorkTree = 0xFFF3C13A;
+final ColorIQ cAmurCorkTree = ColorIQ(hxAmurCorkTree, names: const <String>['Amur cork tree (Phellodendron amurense) (Kihada)']);
 
 const int hxAntiFlashWhite = 0xFFF2F3F4;
 final ColorIQ cAntiFlashWhite = ColorIQ(hxAntiFlashWhite, names: const <String>['Anti-flash white']);
@@ -4570,8 +4570,8 @@ final ColorIQ cWillowTeaYanagicha = ColorIQ(hxWillowTeaYanagicha, names: const <
 const int hxWillpowerOrange = 0xFFFD5800;
 final ColorIQ cWillpowerOrange = ColorIQ(hxWillpowerOrange, names: const <String>['Willpower orange']);
 
-const int hxWiltedBrownLitWiltedLawnClippingsShikancha = 0xFFAB4C3D;
-final ColorIQ cWiltedBrownLitWiltedLawnClippingsShikancha = ColorIQ(hxWiltedBrownLitWiltedLawnClippingsShikancha, names: const <String>['Wilted brown (lit. wilted lawn-clippings) (Shikancha)']);
+const int hxWiltedBrown = 0xFFAB4C3D;
+final ColorIQ cWiltedBrown = ColorIQ(hxWiltedBrown, names: const <String>['Wilted brown (lit. wilted lawn-clippings) (Shikancha)']);
 
 const int hxWindsorTan = 0xFFA75502;
 final ColorIQ cWindsorTan = ColorIQ(hxWindsorTan, names: const <String>['Windsor tan']);
@@ -4645,8 +4645,8 @@ final ColorIQ cYellowGreenCrayola = ColorIQ(hxYellowGreenCrayola, names: const <
 const int hxYinmnBlue = 0xFF2E5090;
 final ColorIQ cYinmnBlue = ColorIQ(hxYinmnBlue, names: const <String>['YInMn Blue']);
 
-const int hxYoungBambooColorWakatakeIro = 0xFF6B9362;
-final ColorIQ cYoungBambooColorWakatakeIro = ColorIQ(hxYoungBambooColorWakatakeIro, names: const <String>['Young bamboo color (Wakatake-iro)']);
+const int hxYoungBambooColor = 0xFF6B9362;
+final ColorIQ cYoungBambooColoro = ColorIQ(hxYoungBambooColor, names: const <String>['Young bamboo color (Wakatake-iro)']);
 
 const int hxYoutubeRed = 0xFFB2071D;
 final ColorIQ cYoutubeRed = ColorIQ(hxYoutubeRed, names: const <String>['Youtube red']);
