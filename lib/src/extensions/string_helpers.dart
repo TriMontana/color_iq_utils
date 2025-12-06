@@ -77,15 +77,28 @@ extension StringHelpers on String {
     return startsWith(prefix) ? substring(prefix.length) : this;
   }
 
+  /// Decodes common HTML entities into their corresponding characters.
+  ///
+  /// This method handles a limited set of the most frequent HTML entities:
+  /// - `&quot;` -> `"`
+  /// - `&amp;` -> `&`
+  /// - `&lt;` -> `<`
+  /// - `&gt;` -> `>`
+  /// - `&#39;` -> `'`
+  /// - `&nbsp;` -> ` ` (space)
+  ///
+  /// For more comprehensive HTML decoding, consider using a dedicated library
+  /// like `package:html_unescape`.
+  ///
+
   String decodeHtml() {
-  return this
-      .replaceAll('&quot;', '"')
-      .replaceAll('&amp;', '&')
-      .replaceAll('&lt;', '<')
-      .replaceAll('&gt;', '>')
-      .replaceAll('&#39;', "'")
-      .replaceAll('&nbsp;', ' ');
-}
+    return replaceAll('&quot;', '"')
+        .replaceAll('&amp;', '&')
+        .replaceAll('&lt;', '<')
+        .replaceAll('&gt;', '>')
+        .replaceAll('&#39;', "'")
+        .replaceAll('&nbsp;', ' ');
+  }
 
   /// Removes trailing zeroes after the decimal point, retaining at least [decimalsToRetain] digits.
   /// If there is no decimal point or no trailing zeroes, returns the original string.
@@ -110,6 +123,15 @@ extension StringHelpers on String {
     return substring(0, end);
   }
 
+  /// Trims a string representing a decimal number to a specified number of decimal places
+  /// and removes any trailing zeros.
+  ///
+  /// - If the string does not contain a decimal point, it is returned unchanged.
+  /// - The string is first truncated to a maximum of [decimals] decimal places.
+  /// - Then, any trailing zeros are removed, ensuring at least one decimal digit remains
+  ///   if there were decimals to begin with (e.g., '1.00' with `decimals`=2 becomes '1.0').
+  ///   But '1.20' becomes '1.2'.
+  /// - It differs from [removeTrailingZeroes] by first truncating to a max number of decimals.
   String trimZeros([final int decimals = 7]) {
     if (!contains(dot)) {
       return this;
@@ -231,14 +253,19 @@ extension StringHelpers on String {
   ]) =>
       "$leftSide$this$rightSide";
 
+  /// Wraps the string in parentheses `()`.
   String get bracketWithParens => bracketed(kLeftParens, kRightParens);
 
+  /// Wraps the string in double parentheses `(())`.
   String get bracketWithDoubleParens =>
       bracketed(kLeftDoubleParens, kRightDoubleParens);
 
+  /// Wraps the string in double quotes `""`.
+  /// See also [quote].
   String get bracketWithDoubleQuotes =>
       bracketed(kLeftDoubleQuotationMark, kRightDoubleQuotationMark);
 
+  /// Wraps the string in lenticular brackets `【】`.
   String get bracketWithLenticulars =>
       bracketed(kLeftLenticularBracket, kRightLenticularBracket);
 
@@ -454,6 +481,9 @@ extension StringHelpers on String {
   /// Remove new lines
   String get stripNewLines => replaceAll("\n", kSpace);
 
+  /// Replaces all newline characters (`\n`) in the string with a given [substitute].
+  /// Defaults to a single space if no substitute is provided.
+  ///
   String replaceNewLines([final String substitute = kSpace]) =>
       replaceAll("\n", substitute);
 
@@ -521,14 +551,22 @@ extension StringHelpers on String {
     return tmp;
   }
 
+  /// Inserts a newline character after each dash `-`.
   String get splitAtDash => replaceAll('-', '-\n');
 
+  /// Inserts a newline character after each slash `/`, replacing it with a dash.
+  /// Example: 'a/b/c' becomes 'a-\nb-\nc'.
   String get splitAtSlash => replaceAll('/', '-\n');
 
+  /// Inserts a newline character before each opening parenthesis `(`.
   String get splitAtParens => replaceAll('(', '\n(');
 
+  /// Counts the number of vowels (a, e, i, o, u) in the string, case-insensitively.
   int countVowels() => replaceAll(RegExp(r'[^aeiou]'), '').length;
 
+  /// Wraps the string in squiggly brackets `{}`.
+  ///
+  /// Example: `'value'.formatAsSquigglyBracketed()` returns `'{value}'`.
   String formatAsSquigglyBracketed() {
     return '{$this}'; // Example: wraps with squiggly brackets
   }
@@ -650,11 +688,6 @@ extension StringHelpers on String {
   double get toDouble =>
       double.tryParse(this) ??
       (throw Exception('unexpected at 465-${toString()}'));
-
-  // FltType get toLRV {
-  //   final double d = toDouble;
-  //   return FltType.lrv(d);
-  // }
 
   /// String to Int parse, does not use radix, defaults to BASE10 (non hex)
   int get toIntBase10 => toInt(radix: 10);

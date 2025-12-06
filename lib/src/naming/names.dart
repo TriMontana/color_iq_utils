@@ -141,50 +141,34 @@ const List<String> kDarkGray = <String>[
 const List<String> kDarkGrey = <String>[
   'Dark Grey',
   'Cinza-Escuro',
-  'Cinza-Escuro-claro',
-  'Cinza-Escuro-escuro'
 ];
 const List<String> kDarkGreen = <String>[
   'Dark Green',
   'Verde-Escuro',
-  'Verde-Escuro-claro',
-  'Verde-Escuro-escuro'
 ];
 const List<String> kDarkKhaki = <String>[
   'Dark Khaki',
   'Khaki-Escuro',
-  'Khaki-Escuro-claro',
-  'Khaki-Escuro-escuro'
 ];
 const List<String> kDarkMagenta = <String>[
   'Dark Magenta',
   'Magenta-Escuro',
-  'Magenta-Escuro-claro',
-  'Magenta-Escuro-escuro'
 ];
 const List<String> kDarkOliveGreen = <String>[
   'Dark Olive Green',
   'Oliva-Escuro',
-  'Oliva-Escuro-claro',
-  'Oliva-Escuro-escuro'
 ];
 const List<String> kDarkOrange = <String>[
   'Dark Orange',
   'Laranja-Escuro',
-  'Laranja-Escuro-claro',
-  'Laranja-Escuro-escuro'
 ];
 const List<String> kDarkOrchid = <String>[
   'Dark Orchid',
   'Orquídea-Escuro',
-  'Orquídea-Escuro-claro',
-  'Orquídea-Escuro-escuro'
 ];
 const List<String> kDarkRed = <String>[
   'Dark Red',
   'Vermelho-Escuro',
-  'Vermelho-Escuro-claro',
-  'Vermelho-Escuro-escuro'
 ];
 const List<String> kDarkSalmon = <String>[
   'Dark Salmon',
@@ -201,56 +185,46 @@ const List<String> kDarkSeaGreen = <String>[
 const List<String> kDarkSlateBlue = <String>[
   'Dark Slate Blue',
   'Azul-Plateado-Escuro',
-  'Azul-Plateado-Escuro-claro',
-  'Azul-Plateado-Escuro-escuro'
 ];
 const List<String> kDarkSlateGray = <String>[
   'Dark Slate Gray',
   'Cinza-Plateado-Escuro',
-  'Cinza-Plateado-Escuro-claro',
-  'Cinza-Plateado-Escuro-escuro'
 ];
 const List<String> kDarkSlateGrey = <String>[
   'Dark Slate Grey',
   'Cinza-Plateado-Escuro',
-  'Cinza-Plateado-Escuro-claro',
-  'Cinza-Plateado-Escuro-escuro'
 ];
 const List<String> kDarkTurquoise = <String>[
   'Dark Turquoise',
   'Turquesa-Escuro',
-  'Turquesa-Escuro-claro',
-  'Turquesa-Escuro-escuro'
 ];
 const List<String> kDarkViolet = <String>[
   'Dark Violet',
   'Violeta-Escuro',
-  'Violeta-Escuro-claro',
-  'Violeta-Escuro-escuro'
 ];
 const List<String> kDeepPink = <String>[
   'Deep Pink',
   'Rosa-Profundo',
-  'Rosa-Profundo-claro',
-  'Rosa-Profundo-escuro'
 ];
 const List<String> kDeepSkyBlue = <String>[
   'Deep Sky Blue',
   'Azul-Céu-Profundo',
-  'Azul-Céu-Profundo-claro',
-  'Azul-Céu-Profundo-escuro'
+];
+const List<String> kDeer = <String>[
+  'Deer',
+  'Ciervo',
+];
+const List<String> kDeepViolet = <String>[
+  'Deep Violet',
+  'Violeta-Profundo',
 ];
 const List<String> kDimGray = <String>[
   'Dim Gray',
   'Cinza-Escuro',
-  'Cinza-Escuro-claro',
-  'Cinza-Escuro-escuro'
 ];
 const List<String> kDimGrey = <String>[
   'Dim Grey',
   'Cinza-Escuro',
-  'Cinza-Escuro-claro',
-  'Cinza-Escuro-escuro'
 ];
 const List<String> kDodgerBlue = <String>[
   'Dodger Blue',
@@ -273,20 +247,14 @@ const List<String> kFloralWhite = <String>[
 const List<String> kForestGreen = <String>[
   'Forest Green',
   'Verde-Floresta',
-  'Verde-Floresta-claro',
-  'Verde-Floresta-escuro'
 ];
 const List<String> kFuchsia = <String>[
   'Fuchsia',
   'Fúcsia',
-  'Fúcsia-claro',
-  'Fúcsia-escuro'
 ];
 const List<String> kGainsboro = <String>[
   'Gainsboro',
   'Gainsboro',
-  'Gainsboro-claro',
-  'Gainsboro-escuro'
 ];
 const List<String> kGhostWhite = <String>[
   'Ghost White',
@@ -336,32 +304,22 @@ const List<String> kHotPink = <String>[
 const List<String> kIndianRed = <String>[
   'Indian Red',
   'Vermelho-Indiano',
-  'Vermelho-Indiano-claro',
-  'Vermelho-Indiano-escuro'
 ];
 const List<String> kIndigo = <String>[
   'Indigo',
   'Índigo',
-  'Índigo-claro',
-  'Índigo-escuro'
 ];
 const List<String> kIvory = <String>[
   'Ivory',
   'Ébano',
-  'Ébano-claro',
-  'Ébano-escuro'
 ];
 const List<String> kKhaki = <String>[
   'Khaki',
-  'Khaki',
-  'Khaki-claro',
-  'Khaki-escuro'
+  'Caqui',
 ];
 const List<String> kLavender = <String>[
   'Lavender',
   'Lavanda',
-  'Lavanda-claro',
-  'Lavanda-escuro'
 ];
 const List<String> kLavenderBlush = <String>[
   'Lavender Blush',
@@ -384,14 +342,10 @@ const List<String> kLemonChiffon = <String>[
 const List<String> kLightBlue = <String>[
   'Light Blue',
   'Azul-Claro',
-  'Azul-Claro-claro',
-  'Azul-Claro-escuro'
 ];
 const List<String> kLightCoral = <String>[
   'Light Coral',
   'Coral-Claro',
-  'Coral-Claro-claro',
-  'Coral-Claro-escuro'
 ];
 const List<String> kLightCyan = <String>[
   'Light Cyan',
@@ -414,20 +368,14 @@ const List<String> kLightGray = <String>[
 const List<String> kLightGreen = <String>[
   'Light Green',
   'Verde-Claro',
-  'Verde-Claro-claro',
-  'Verde-Claro-escuro'
 ];
 const List<String> kLightPink = <String>[
   'Light Pink',
   'Rosa-Claro',
-  'Rosa-Claro-claro',
-  'Rosa-Claro-escuro'
 ];
 const List<String> kLightSalmon = <String>[
   'Light Salmon',
   'Salmão-Claro',
-  'Salmão-Claro-claro',
-  'Salmão-Claro-escuro'
 ];
 const List<String> kLightSeaGreen = <String>[
   'Light Sea Green',
@@ -450,14 +398,10 @@ const List<String> kLightSlateGray = <String>[
 const List<String> kLightSlateGrey = <String>[
   'Light Slate Grey',
   'Cinza-Plateado-Claro',
-  'Cinza-Plateado-Claro-claro',
-  'Cinza-Plateado-Claro-escuro'
 ];
 const List<String> kLightSteelBlue = <String>[
   'Light Steel Blue',
   'Azul-Aço-Claro',
-  'Azul-Aço-Claro-claro',
-  'Azul-Aço-Claro-escuro'
 ];
 const List<String> kLightYellow = <String>[
   'Light Yellow',
@@ -591,6 +535,10 @@ const List<String> kOldLace = <String>[
   'Linho-Antigo',
   'Linho-Antigo-claro',
   'Linho-Antigo-escuro'
+];
+const List<String> kOldLavender = <String>[
+  'Old Lavender',
+  'Lavanda-Antiga',
 ];
 const List<String> kOlive = <String>[
   'Olive',
