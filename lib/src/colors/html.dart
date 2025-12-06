@@ -3,64 +3,24 @@ import 'package:color_iq_utils/src/naming/names.dart';
 
 /// Color family categories for HTML colors
 enum ColorFamilyHTML {
-  red,
-  orange,
-  yellow,
-  green,
-  cyan,
-  blue,
-  purple,
-  pink,
-  brown,
-  white,
-  gray,
-  black,
+  red(hxRed, kRed),
+  orange(hxOrange, kOrange),
+  yellow(hxYellow, kYellow),
+  green(hxGreen, kGreen),
+  cyan(hxCyan, kCyan),
+  blue(hxBlue, kBlue),
+  purple(hxPurple, kPurple),
+  pink(hxPink, kPink),
+  brown(hxBrown, kBrown),
+  white(hxWhite, kWhite),
+  gray(hxGray, kGray),
+  black(hxBlack, kBlack);
+
+  const ColorFamilyHTML(this.argb, this.names);
+  final int argb;
+  final List<String> names;
 }
 
-const int hxYellow = 0xFFFFFF00;
-final ColorIQ cYellow = ColorIQ(hxYellow);
-const int hxCyan = 0xFF00FFFF;
-final ColorIQ cCyan = ColorIQ(hxCyan);
-const int hxBlue = 0xFF0000FF;
-final ColorIQ cBlue = ColorIQ(hxBlue);
-const int hxRed = 0xFFFF0000;
-final ColorIQ cRed = ColorIQ(hxRed);
-const HslColor kHslRed = HslColor(0, 1.0, 0.5, hexId: hxRed); // Red
-const HsvColor kHsvRed = HsvColor(0, 1.0, 1.0, hexId: hxRed);
-const int hxOrange = 0xFFFFA500;
-final ColorIQ cOrange = ColorIQ(hxOrange);
-const int hxGreen = 0xFF00FF00;
-final ColorIQ cGreen = ColorIQ(hxGreen);
-const int hxElectricLime = 0xFF008000;
-final ColorIQ cElectricLime = ColorIQ(hxElectricLime);
-const HsvColor hsvGreen = HsvColor(120, 1.0, 1.0, hexId: hxGreen);
-const HslColor hslGreen = HslColor(120, 1.0, 0.5, hexId: hxGreen);
-const YiqColor yiqGreen = YiqColor(0.0, 0.0, 0.0, val: hxGreen);
-const YuvColor yuvGreen = YuvColor(0.0, 0.0, 0.0, val: hxGreen); // Green
-const LuvColor luvGreen = LuvColor(0, 0, 0, hexId: hxGreen);
-const CmykColor cmykGreen = CmykColor(0, 0, 0, 0, value: hxGreen); // Green
-const HwbColor hwbGreen = HwbColor(120, 0.0, 0.0, hexId: hxGreen);
-const int hxLime = 0xFF00FF00; // same as ElectricLime
-final ColorIQ cLime = ColorIQ(hxLime);
-const int hxPurple = 0xFF800080;
-final ColorIQ cPurple = ColorIQ(hxPurple);
-const int hxPink = 0xFFFFC0CB;
-final ColorIQ cPink = ColorIQ(hxPink);
-const int hxGray = 0xFF808080;
-final ColorIQ cGray = ColorIQ(hxGray);
-const int hxBlack = 0xFF000000;
-final ColorIQ cBlack = ColorIQ(hxBlack);
-const HslColor kHslBlack = HslColor(0, 0, 0, hexId: hxBlack);
-const YiqColor yiqBlack = YiqColor(0.0, 0.0, 0.0, val: hxBlack);
-const YuvColor yuvBlack = YuvColor(0.0, 0.0, 0.0, val: hxBlack); // Black
-const LuvColor luvBlack = LuvColor(0, 0, 0, hexId: hxBlack);
-const int hxWhite = 0xFFFFFFFF;
-final ColorIQ cWhite = ColorIQ(hxWhite);
-const HslColor kHslWhite = HslColor(0, 0, 1.0, hexId: hxWhite);
-const CmykColor cmykWhite = CmykColor(0, 0, 0, 0, value: hxWhite); // White
-const YiqColor yiqWhite = YiqColor(1.0, 1.0, 1.0, val: hxWhite);
-const YuvColor yuvWhite = YuvColor(1.0, 1.0, 1.0, val: hxWhite); // White
-const LuvColor luvWhite = LuvColor(100, 0, 0, hexId: hxWhite);
 const int hxAliceBlue = 0xFFF0F8FF;
 final ColorIQ cAliceBlue = ColorIQ(hxAliceBlue);
 const int hxAntiqueWhite = 0xFFFAEBD7;
@@ -75,8 +35,16 @@ const int hxBeige = 0xFFF5F5DC;
 final ColorIQ cBeige = ColorIQ(hxBeige);
 const int hxBisque = 0xFFFFE4C4;
 final ColorIQ cBisque = ColorIQ(hxBisque);
+const int hxBlack = 0xFF000000;
+final ColorIQ cBlack = ColorIQ(hxBlack);
+const HslColor kHslBlack = HslColor(0, 0, 0, hexId: hxBlack);
+const YiqColor yiqBlack = YiqColor(0.0, 0.0, 0.0, val: hxBlack);
+const YuvColor yuvBlack = YuvColor(0.0, 0.0, 0.0, val: hxBlack); // Black
+const LuvColor luvBlack = LuvColor(0, 0, 0, hexId: hxBlack);
 const int hxBlanchedAlmond = 0xFFFFEBCD;
 final ColorIQ cBlanchedAlmond = ColorIQ(hxBlanchedAlmond);
+const int hxBlue = 0xFF0000FF;
+final ColorIQ cBlue = ColorIQ(hxBlue);
 const int hxBlueViolet = 0xFF8A2BE2;
 final ColorIQ cBlueViolet = ColorIQ(hxBlueViolet);
 const int hxBrown = 0xFFA52A2A;
@@ -97,6 +65,8 @@ const int hxCornSilk = 0xFFFFF8DC;
 final ColorIQ cCornSilk = ColorIQ(hxCornSilk);
 const int hxCrimson = 0xFFDC143C;
 final ColorIQ cCrimson = ColorIQ(hxCrimson);
+const int hxCyan = 0xFF00FFFF;
+final ColorIQ cCyan = ColorIQ(hxCyan);
 const int hxDarkBlue = 0xFF00008B;
 final ColorIQ cDarkBlue = ColorIQ(hxDarkBlue);
 const int hxDarkCyan = 0xFF008B8B;
@@ -133,166 +103,387 @@ const int hxDarkViolet = 0xFF9400D3;
 final ColorIQ cDarkViolet = ColorIQ(hxDarkViolet);
 const int hxDarkYellow = 0xFF8B8B00;
 final ColorIQ cDarkYellow = ColorIQ(hxDarkYellow);
+const int hxDeepPink = 0xFFFF1493;
+final ColorIQ cDeepPink = ColorIQ(hxDeepPink);
+const int hxDeepSkyBlue = 0xFFFFBF00;
+final ColorIQ cDeepSkyBlue = ColorIQ(hxDeepSkyBlue);
+const int hxDimGray = 0xFF696969;
+final ColorIQ cDimGray = ColorIQ(hxDimGray);
+const int hxDimGrey = 0xFF696969;
+final ColorIQ cDimGrey = ColorIQ(hxDimGrey);
+const int hxDodgerBlue = 0xFF1E90FF;
+final ColorIQ cDodgerBlue = ColorIQ(hxDodgerBlue);
+const int hxFireBrick = 0xFFB22222;
+final ColorIQ cFireBrick = ColorIQ(hxFireBrick);
+const int hxFloralWhite = 0xFFFFFAF0;
+final ColorIQ cFloralWhite = ColorIQ(hxFloralWhite);
+const int hxForestGreen = 0xFF228B22;
+final ColorIQ cForestGreen = ColorIQ(hxForestGreen);
+const int hxFuchsia = 0xFFFF00FF;
+final ColorIQ cFuchsia = ColorIQ(hxFuchsia);
+const int hxGainsboro = 0xFFDCDCDC;
+final ColorIQ cGainsboro = ColorIQ(hxGainsboro);
+const int hxGhostWhite = 0xFFF8F8FF;
+final ColorIQ cGhostWhite = ColorIQ(hxGhostWhite);
+const int hxGold = 0xFFFFD700;
+final ColorIQ cGold = ColorIQ(hxGold);
+const int hxGoldenRod = 0xFFDAA520;
+final ColorIQ cGoldenRod = ColorIQ(hxGoldenRod);
+const int hxGray = 0xFF808080;
+final ColorIQ cGray = ColorIQ(hxGray);
+const int hxGrey = hxGray;
+final ColorIQ cGrey = cGray;
+const int hxGreen = 0xFF00FF00;
+final ColorIQ cGreen = ColorIQ(hxGreen);
+const int hxElectricLime = 0xFF008000;
+final ColorIQ cElectricLime = ColorIQ(hxElectricLime);
+const HsvColor hsvGreen = HsvColor(120, 1.0, 1.0, hexId: hxGreen);
+const HslColor hslGreen = HslColor(120, 1.0, 0.5, hexId: hxGreen);
+const YiqColor yiqGreen = YiqColor(0.0, 0.0, 0.0, val: hxGreen);
+const YuvColor yuvGreen = YuvColor(0.0, 0.0, 0.0, val: hxGreen); // Green
+const LuvColor luvGreen = LuvColor(0, 0, 0, hexId: hxGreen);
+const CmykColor cmykGreen = CmykColor(0, 0, 0, 0, value: hxGreen); // Green
+const HwbColor hwbGreen = HwbColor(120, 0.0, 0.0, hexId: hxGreen);
+const int hxGreenYellow = 0xFFADFF2F;
+final ColorIQ cGreenYellow = ColorIQ(hxGreenYellow);
+const int hxHoneyDew = 0xFFF0FFF0;
+const int hxHoneydew = hxHoneyDew;
+final ColorIQ cHoneyDew = ColorIQ(hxHoneyDew);
+const int hxHotPink = 0xFFFF69B4;
+final ColorIQ cHotPink = ColorIQ(hxHotPink);
+const int hxIndianRed = 0xFFCD5C5C;
+final ColorIQ cIndianRed = ColorIQ(hxIndianRed);
+const int hxIndigo = 0xFF4B0082;
+final ColorIQ cIndigo = ColorIQ(hxIndigo);
+const int hxIvory = 0xFFFFFFF0;
+final ColorIQ cIvory = ColorIQ(hxIvory);
+const int hxKhaki = 0xFFF0E68C;
+const int hxLightKhaki = hxKhaki;
+final ColorIQ cKhaki = ColorIQ(hxKhaki);
+const int hxLavender = 0xFFE6E6FA;
+final ColorIQ cLavender = ColorIQ(hxLavender);
+const int hxLavenderBlush = 0xFFFFF0F5;
+final ColorIQ cLavenderBlush = ColorIQ(hxLavenderBlush);
+const int hxLawnGreen = 0xFF7CFC00;
+final ColorIQ cLawnGreen = ColorIQ(hxLawnGreen);
+const int hxLemonChiffon = 0xFFFFFACD;
+final ColorIQ cLemonChiffon = ColorIQ(hxLemonChiffon);
+const int hxLightBlue = 0xFFADD8E6;
+final ColorIQ cLightBlue = ColorIQ(hxLightBlue);
+const int hxLightCoral = 0xFFF08080;
+final ColorIQ cLightCoral = ColorIQ(hxLightCoral);
+const int hxLightCyan = 0xE0FFFF;
+final ColorIQ cLightCyan = ColorIQ(hxLightCyan);
+const int hxLightGoldenRodYellow = 0xFFFAFAD2;
+final ColorIQ cLightGoldenRodYellow = ColorIQ(hxLightGoldenRodYellow);
+const int hxLightGray = 0xFFD3D3D3;
+final ColorIQ cLightGray = ColorIQ(hxLightGray);
+const int hxLightGreen = 0xFF90EE90;
+final ColorIQ cLightGreen = ColorIQ(hxLightGreen);
+const int hxLightPink = 0xFFFFB6C1;
+final ColorIQ cLightPink = ColorIQ(hxLightPink);
+const int hxLightSalmon = 0xFFFFA07A;
+final ColorIQ cLightSalmon = ColorIQ(hxLightSalmon);
+const int hxLightSeaGreen = 0xFF20B2AA;
+final ColorIQ cLightSeaGreen = ColorIQ(hxLightSeaGreen);
+const int hxLightSkyBlue = 0xFF87CEFA;
+final ColorIQ cLightSkyBlue = ColorIQ(hxLightSkyBlue);
+const int hxLightSlateGray = 0xFF778899;
+final ColorIQ cLightSlateGray = ColorIQ(hxLightSlateGray);
+const int hxLightSlateGrey = 0xFF778899;
+final ColorIQ cLightSlateGrey = ColorIQ(hxLightSlateGrey);
+const int hxLightSteelBlue = 0xFFB0C4DE;
+final ColorIQ cLightSteelBlue = ColorIQ(hxLightSteelBlue);
+const int hxLightYellow = 0xFFFFFFE0;
+final ColorIQ cLightYellow = ColorIQ(hxLightYellow);
+
+const int hxLime = 0xFF00FF00; // same as ElectricLime
+final ColorIQ cLime = ColorIQ(hxLime);
+const int hxLimeGreen = 0xFF32CD32;
+final ColorIQ cLimeGreen = ColorIQ(hxLimeGreen);
+const int hxLinen = 0xFFFAF0E6;
+final ColorIQ cLinen = ColorIQ(hxLinen);
+const int hxMagenta = 0xFFFF00FF;
+final ColorIQ cMagenta = ColorIQ(hxMagenta);
+const int hxMaroon = 0xFF800000;
+final ColorIQ cMaroon = ColorIQ(hxMaroon);
+const int hxMediumAquaMarine = 0xFF66CDAA;
+final ColorIQ cMediumAquaMarine = ColorIQ(hxMediumAquaMarine);
+const int hxMediumBlue = 0xFF0000CD;
+final ColorIQ cMediumBlue = ColorIQ(hxMediumBlue);
+const int hxMediumOrchid = 0xFFBA55D3;
+final ColorIQ cMediumOrchid = ColorIQ(hxMediumOrchid);
+const int hxMediumPurple = 0xFF9370DB;
+final ColorIQ cMediumPurple = ColorIQ(hxMediumPurple);
+const int hxMediumSeaGreen = 0xFF3CB371;
+final ColorIQ cMediumSeaGreen = ColorIQ(hxMediumSeaGreen);
+const int hxMediumSlateBlue = 0xFF7B68EE;
+final ColorIQ cMediumSlateBlue = ColorIQ(hxMediumSlateBlue);
+const int hxMediumSpringGreen = 0xFF00FA9A;
+final ColorIQ cMediumSpringGreen = ColorIQ(hxMediumSpringGreen);
+const int hxMediumTurquoise = 0xFF48D1CC;
+final ColorIQ cMediumTurquoise = ColorIQ(hxMediumTurquoise);
+const int hxMediumVioletRed = 0xFFC71585;
+final ColorIQ cMediumVioletRed = ColorIQ(hxMediumVioletRed);
+const int hxMidnightBlue = 0xFF191970;
+final ColorIQ cMidnightBlue = ColorIQ(hxMidnightBlue);
+const int hxMintCream = 0xFFF5FFFA;
+final ColorIQ cMintCream = ColorIQ(hxMintCream);
+const int hxMistyRose = 0xFFE1E4EB;
+final ColorIQ cMistyRose = ColorIQ(hxMistyRose);
+const int hxMoccasin = 0xFFFFE4B5;
+final ColorIQ cMoccasin = ColorIQ(hxMoccasin);
+const int hxNavajoWhite = 0xFFFFDEAD;
+final ColorIQ cNavajoWhite = ColorIQ(hxNavajoWhite);
+const int hxNavy = 0xFF000080;
+final ColorIQ cNavy = ColorIQ(hxNavy);
+const int hxOldLace = 0xFFFDF5E6;
+final ColorIQ cOldLace = ColorIQ(hxOldLace);
+const int hxOlive = 0xFF808000;
+final ColorIQ cOlive = ColorIQ(hxOlive);
+const int hxOliveDrab = 0xFF6B8E23;
+final ColorIQ cOliveDrab = ColorIQ(hxOliveDrab);
+const int hxOrange = 0xFFFFA500;
+final ColorIQ cOrange = ColorIQ(hxOrange);
+const int hxOrangeRed = 0xFFFF4500;
+final ColorIQ cOrangeRed = ColorIQ(hxOrangeRed);
+const int hxOrchid = 0xFFDA70D6;
+final ColorIQ cOrchid = ColorIQ(hxOrchid);
+const int hxPaleGoldenRod = 0xFFEEE8AA;
+final ColorIQ cPaleGoldenRod = ColorIQ(hxPaleGoldenRod);
+const int hxPaleGreen = 0xFF98FB98;
+final ColorIQ cPaleGreen = ColorIQ(hxPaleGreen);
+const int hxPaleTurquoise = 0xFFAFEEEE;
+final ColorIQ cPaleTurquoise = ColorIQ(hxPaleTurquoise);
+const int hxPaleVioletRed = 0xFFDB7093;
+final ColorIQ cPaleVioletRed = ColorIQ(hxPaleVioletRed);
+const int hxPapayaWhip = 0xFFFFEFD5;
+final ColorIQ cPapayaWhip = ColorIQ(hxPapayaWhip);
+const int hxPeachPuff = 0xFFFFDAB9;
+final ColorIQ cPeachPuff = ColorIQ(hxPeachPuff);
+const int hxPeru = 0xFFCD853F;
+final ColorIQ cPeru = ColorIQ(hxPeru);
+const int hxPink = 0xFFFFC0CB;
+final ColorIQ cPink = ColorIQ(hxPink);
+const int hxPlum = 0xFFDDA0DD;
+final ColorIQ cPlum = ColorIQ(hxPlum);
+const int hxPowderBlue = 0xFFB0E0E6;
+final ColorIQ cPowderBlue = ColorIQ(hxPowderBlue);
+const int hxPurple = 0xFF800080;
+final ColorIQ cPurple = ColorIQ(hxPurple);
+const int hxRebeccaPurple = 0xFF663399;
+final ColorIQ cRebeccaPurple = ColorIQ(hxRebeccaPurple);
+const int hxRed = 0xFFFF0000;
+final ColorIQ cRed = ColorIQ(hxRed);
+const HslColor kHslRed = HslColor(0, 1.0, 0.5, hexId: hxRed); // Red
+const HsvColor kHsvRed = HsvColor(0, 1.0, 1.0, hexId: hxRed);
+const int hxRosyBrown = 0xFFBC8F8F;
+final ColorIQ cRosyBrown = ColorIQ(hxRosyBrown);
+const int hxRoyalBlue = 0xFF4169E1;
+final ColorIQ cRoyalBlue = ColorIQ(hxRoyalBlue);
+const int hxSaddleBrown = 0xFF8B4513;
+final ColorIQ cSaddleBrown = ColorIQ(hxSaddleBrown);
+const int hxSalmon = 0xFFFA8072;
+final ColorIQ cSalmon = ColorIQ(hxSalmon);
+const int hxSandyBrown = 0xFFF4A460;
+final ColorIQ cSandyBrown = ColorIQ(hxSandyBrown);
+const int hxSeaGreen = 0xFF2E8B57;
+final ColorIQ cSeaGreen = ColorIQ(hxSeaGreen);
+const int hxSeaShell = 0xFFF5F5DC;
+final ColorIQ cSeaShell = ColorIQ(hxSeaShell);
+const int hxSienna = 0xFFA0522D;
+final ColorIQ cSienna = ColorIQ(hxSienna);
+const int hxSilver = 0xFFC0C0C0;
+final ColorIQ cSilver = ColorIQ(hxSilver);
+const int hxSkyBlue = 0xFF87CEEB;
+final ColorIQ cSkyBlue = ColorIQ(hxSkyBlue);
+const int hxSlateBlue = 0xFF6A5ACD;
+final ColorIQ cSlateBlue = ColorIQ(hxSlateBlue);
+const int hxSlateGray = 0xFF708090;
+final ColorIQ cSlateGray = ColorIQ(hxSlateGray);
+const int hxSlateGrey = 0xFF708090;
+final ColorIQ cSlateGrey = ColorIQ(hxSlateGrey);
+const int hxSnow = 0xFFFAFAFA;
+final ColorIQ cSnow = ColorIQ(hxSnow);
+const int hxSpringGreen = 0xFF00FF7F;
+final ColorIQ cSpringGreen = ColorIQ(hxSpringGreen);
+const int hxSteelBlue = 0xFF4682B4;
+final ColorIQ cSteelBlue = ColorIQ(hxSteelBlue);
+const int hxTan = 0xFFD2B48C;
+final ColorIQ cTan = ColorIQ(hxTan);
+const int hxTeal = 0xFF008080;
+final ColorIQ cTeal = ColorIQ(hxTeal);
+const int hxThistle = 0xFFD8BFD8;
+final ColorIQ cThistle = ColorIQ(hxThistle);
+const int hxTomato = 0xFFFF6347;
+final ColorIQ cTomato = ColorIQ(hxTomato);
+const int hxTurquoise = 0xFF40E0D0;
+final ColorIQ cTurquoise = ColorIQ(hxTurquoise);
+const int hxViolet = 0xFFEE82EE;
+final ColorIQ cViolet = ColorIQ(hxViolet);
+const int hxWheat = 0xFFF5DEB3;
+final ColorIQ cWheat = ColorIQ(hxWheat);
+const int hxWhite = 0xFFFFFFFF;
+final ColorIQ cWhite = ColorIQ(hxWhite);
+const HslColor kHslWhite = HslColor(0, 0, 1.0, hexId: hxWhite);
+const CmykColor cmykWhite = CmykColor(0, 0, 0, 0, value: hxWhite); // White
+const YiqColor yiqWhite = YiqColor(1.0, 1.0, 1.0, val: hxWhite);
+const YuvColor yuvWhite = YuvColor(1.0, 1.0, 1.0, val: hxWhite); // White
+const LuvColor luvWhite = LuvColor(100, 0, 0, hexId: hxWhite);
+const int hxWhiteSmoke = 0xFFF5F5F5;
+final ColorIQ cWhiteSmoke = ColorIQ(hxWhiteSmoke);
+const int hxYellow = 0xFFFFFF00;
+final ColorIQ cYellow = ColorIQ(hxYellow);
+const int hxYellowGreen = 0xFF9ACD32;
+final ColorIQ cYellowGreen = ColorIQ(hxYellowGreen);
 
 /// Standard HTML/CSS color names with their hex values
 enum HTML {
-  aliceBlue(hxAliceBlue, 'Alice Blue', ColorFamilyHTML.blue),
-  antiqueWhite(hxAntiqueWhite, 'Antique White', ColorFamilyHTML.white),
-  aqua(hxAqua, 'Aqua', ColorFamilyHTML.cyan),
-  aquamarine(hxAquamarine, 'Aquamarine', ColorFamilyHTML.cyan),
-  azure(hxAzure, 'Azure', ColorFamilyHTML.cyan),
-  beige(hxBeige, 'Beige', ColorFamilyHTML.white),
-  bisque(hxBisque, 'Bisque', ColorFamilyHTML.orange),
-  black(hxBlack, 'Black', ColorFamilyHTML.black),
-  blanchedAlmond(hxBlanchedAlmond, 'Blanched Almond', ColorFamilyHTML.white),
-  blue(hxBlue, 'Blue', ColorFamilyHTML.blue),
-  blueViolet(hxBlueViolet, 'Blue Violet', ColorFamilyHTML.purple),
-  brown(hxBrown, 'Brown', ColorFamilyHTML.brown),
-  burlyWood(hxBurlyWood, 'BurlyWood', ColorFamilyHTML.brown),
-  cadetBlue(hxCadetBlue, 'Cadet Blue', ColorFamilyHTML.blue),
-  chartreuse(hxChartreuse, 'Chartreuse', ColorFamilyHTML.green),
-  chocolate(hxChocolate, 'Chocolate', ColorFamilyHTML.brown),
-  coral(hxCoral, 'Coral', ColorFamilyHTML.orange),
-  cornflowerBlue(hxCornflowerBlue, 'CornflowerBlue', ColorFamilyHTML.blue),
-  cornsilk(hxCornSilk, 'Cornsilk', ColorFamilyHTML.white),
-  crimson(hxCrimson, 'Crimson', ColorFamilyHTML.red),
-  cyan(hxCyan, 'Cyan', ColorFamilyHTML.cyan),
-  darkBlue(hxDarkBlue, 'Dark Blue', ColorFamilyHTML.blue),
-  darkCyan(hxDarkCyan, 'Dark Cyan', ColorFamilyHTML.cyan),
-  darkGoldenRod(hxDarkGoldenRod, 'DarkGoldenRod', ColorFamilyHTML.yellow),
-  darkGray(hxDarkGray, 'Dark Gray', ColorFamilyHTML.gray),
-  darkGrey(hxDarkGray, 'DarkGrey', ColorFamilyHTML.gray),
-  darkGreen(hxDarkGreen, 'Dark Green', ColorFamilyHTML.green),
-  darkKhaki(hxDarkKhaki, 'Dark Khaki', ColorFamilyHTML.yellow),
-  darkMagenta(hxDarkMagenta, 'Dark Magenta', ColorFamilyHTML.purple),
-  darkOliveGreen(hxDarkOliveGreen, 'Dark OliveGreen', ColorFamilyHTML.green),
-  darkOrange(0xFFFF8C00, 'DarkOrange', ColorFamilyHTML.orange),
-  darkOrchid(0xFF9932CC, 'DarkOrchid', ColorFamilyHTML.purple),
-  darkRed(0xFF8B0000, 'DarkRed', ColorFamilyHTML.red),
-  darkSalmon(0xFFE9967A, 'DarkSalmon', ColorFamilyHTML.orange),
-  darkSeaGreen(0xFF8FBC8F, 'DarkSeaGreen', ColorFamilyHTML.green),
-  darkSlateBlue(0xFF483D8B, 'DarkSlateBlue', ColorFamilyHTML.blue),
-  darkSlateGray(0xFF2F4F4F, 'Dark SlateGray', ColorFamilyHTML.gray),
-  darkSlateGrey(0xFF2F4F4F, 'Dark SlateGrey', ColorFamilyHTML.gray),
-  darkTurquoise(0xFF00CED1, 'Dark Turquoise', ColorFamilyHTML.cyan),
-  darkViolet(0xFF9400D3, 'Dark Violet', ColorFamilyHTML.purple),
-  deepPink(0xFFFF1493, 'Deep Pink', ColorFamilyHTML.pink),
-  deepSkyBlue(0xFF00BFFF, 'Deep SkyBlue', ColorFamilyHTML.blue),
-  dimGray(0xFF696969, 'DimGray', ColorFamilyHTML.gray),
-  dimGrey(0xFF696969, 'DimGrey', ColorFamilyHTML.gray),
-  dodgerBlue(0xFF1E90FF, 'DodgerBlue', ColorFamilyHTML.blue),
-  fireBrick(0xFFB22222, 'FireBrick', ColorFamilyHTML.red),
-  floralWhite(0xFFFFFAF0, 'Floral White', ColorFamilyHTML.white),
-  forestGreen(0xFF228B22, 'Forest Green', ColorFamilyHTML.green),
-  fuchsia(0xFFFF00FF, 'Fuchsia', ColorFamilyHTML.purple),
-  gainsboro(0xFFDCDCDC, 'Gainsboro', ColorFamilyHTML.gray),
-  ghostWhite(0xFFF8F8FF, 'Ghost White', ColorFamilyHTML.white),
-  gold(0xFFFFD700, 'Gold', ColorFamilyHTML.yellow),
-  goldenRod(0xFFDAA520, 'GoldenRod', ColorFamilyHTML.yellow),
-  gray(0xFF808080, 'Gray', ColorFamilyHTML.gray),
-  grey(0xFF808080, 'Grey', ColorFamilyHTML.gray),
-  green(0xFF008000, 'Green', ColorFamilyHTML.green),
-  greenYellow(0xFFADFF2F, 'Green Yellow', ColorFamilyHTML.green),
-  honeyDew(0xFFF0FFF0, 'HoneyDew', ColorFamilyHTML.white),
-  hotPink(0xFFFF69B4, 'HotPink', ColorFamilyHTML.pink),
-  indianRed(0xFFCD5C5C, 'IndianRed', ColorFamilyHTML.red),
-  indigo(0xFF4B0082, 'Indigo', ColorFamilyHTML.purple),
-  ivory(0xFFFFFFF0, 'Ivory', ColorFamilyHTML.white),
-  khaki(0xFFF0E68C, 'Khaki', ColorFamilyHTML.yellow),
-  lavender(0xFFE6E6FA, 'Lavender', ColorFamilyHTML.purple),
-  lavenderBlush(0xFFFFF0F5, 'LavenderBlush', ColorFamilyHTML.pink),
-  lawnGreen(0xFF7CFC00, 'Lawn Green', ColorFamilyHTML.green),
-  lemonChiffon(0xFFFFFACD, 'Lemon Chiffon', ColorFamilyHTML.yellow),
-  lightBlue(0xFFADD8E6, 'Light Blue', ColorFamilyHTML.blue),
-  lightCoral(0xFFF08080, 'Light Coral', ColorFamilyHTML.orange),
-  lightCyan(0xFFE0FFFF, 'Light Cyan', ColorFamilyHTML.cyan),
+  aliceBlue(hxAliceBlue, kAliceBlue, ColorFamilyHTML.blue),
+  antiqueWhite(hxAntiqueWhite, kAntiqueWhite, ColorFamilyHTML.white),
+  aquamarine(hxAquamarine, kAquamarine, ColorFamilyHTML.cyan),
+  azure(hxAzure, kAzure, ColorFamilyHTML.cyan),
+  chartreuse(hxChartreuse, kChartreuse, ColorFamilyHTML.green),
+  chocolate(hxChocolate, kChocolate, ColorFamilyHTML.brown),
+  coral(hxCoral, kCoral, ColorFamilyHTML.orange),
+  cornflowerBlue(hxCornflowerBlue, kCornflowerBlue, ColorFamilyHTML.blue),
+  cornsilk(hxCornSilk, kCornsilk, ColorFamilyHTML.white),
+  crimson(hxCrimson, kCrimson, ColorFamilyHTML.red),
+  cyan(hxCyan, kCyan, ColorFamilyHTML.cyan),
+  darkBlue(hxDarkBlue, kDarkBlue, ColorFamilyHTML.blue),
+  darkCyan(hxDarkCyan, kDarkCyan, ColorFamilyHTML.cyan),
+  darkGoldenRod(hxDarkGoldenRod, kDarkGoldenRod, ColorFamilyHTML.yellow),
+  darkGray(hxDarkGray, kDarkGray, ColorFamilyHTML.gray),
+  darkGrey(hxDarkGray, kDarkGrey, ColorFamilyHTML.gray),
+  darkGreen(hxDarkGreen, kDarkGreen, ColorFamilyHTML.green),
+  darkKhaki(hxDarkKhaki, kDarkKhaki, ColorFamilyHTML.yellow),
+  darkMagenta(hxDarkMagenta, kDarkMagenta, ColorFamilyHTML.purple),
+  darkOliveGreen(hxDarkOliveGreen, kDarkOliveGreen, ColorFamilyHTML.green),
+  darkOrange(hxDarkOrange, kDarkOrange, ColorFamilyHTML.orange),
+  darkOrchid(hxDarkOrchid, kDarkOrchid, ColorFamilyHTML.purple),
+  darkRed(hxDarkRed, kDarkRed, ColorFamilyHTML.red),
+  darkSalmon(hxDarkSalmon, kDarkSalmon, ColorFamilyHTML.orange),
+  darkSeaGreen(hxDarkSeaGreen, kDarkSeaGreen, ColorFamilyHTML.green),
+  darkSlateBlue(hxDarkSlateBlue, kDarkSlateBlue, ColorFamilyHTML.blue),
+  darkSlateGray(hxDarkSlateGray, kDarkSlateGray, ColorFamilyHTML.gray),
+  darkSlateGrey(hxDarkSlateGray, kDarkSlateGray, ColorFamilyHTML.gray),
+  darkTurquoise(hxDarkTurquoise, kDarkTurquoise, ColorFamilyHTML.cyan),
+  darkViolet(hxDarkViolet, kDarkViolet, ColorFamilyHTML.purple),
+  deepPink(hxDeepPink, kDeepPink, ColorFamilyHTML.pink),
+  deepSkyBlue(hxDeepSkyBlue, kDeepSkyBlue, ColorFamilyHTML.blue),
+  dimGray(hxDimGray, kDimGray, ColorFamilyHTML.gray),
+  dimGrey(hxDimGray, kDimGray, ColorFamilyHTML.gray),
+  dodgerBlue(hxDodgerBlue, kDodgerBlue, ColorFamilyHTML.blue),
+  fireBrick(hxFireBrick, kFireBrick, ColorFamilyHTML.red),
+  floralWhite(hxFloralWhite, kFloralWhite, ColorFamilyHTML.white),
+  forestGreen(hxForestGreen, kForestGreen, ColorFamilyHTML.green),
+  fuchsia(hxFuchsia, kFuchsia, ColorFamilyHTML.purple),
+  gainsboro(hxGainsboro, kGainsboro, ColorFamilyHTML.gray),
+  ghostWhite(hxGhostWhite, kGhostWhite, ColorFamilyHTML.white),
+  gold(hxGold, kGold, ColorFamilyHTML.yellow),
+  goldenRod(hxGoldenRod, kGoldenRod, ColorFamilyHTML.yellow),
+  gray(hxGray, kGray, ColorFamilyHTML.gray),
+  grey(hxGray, kGray, ColorFamilyHTML.gray),
+  green(hxGreen, kGreen, ColorFamilyHTML.green),
+  greenYellow(hxGreenYellow, kGreenYellow, ColorFamilyHTML.green),
+  honeyDew(hxHoneyDew, kHoneyDew, ColorFamilyHTML.white),
+  hotPink(hxHotPink, kHotPink, ColorFamilyHTML.pink),
+  indianRed(hxIndianRed, kIndianRed, ColorFamilyHTML.red),
+  indigo(0xFF4B0082, kIndigo, ColorFamilyHTML.purple),
+  ivory(hxIvory, kIvory, ColorFamilyHTML.white),
+  khaki(hxKhaki, kKhaki, ColorFamilyHTML.yellow),
+  lavender(hxLavender, kLavender, ColorFamilyHTML.purple),
+  lavenderBlush(hxLavenderBlush, kLavenderBlush, ColorFamilyHTML.pink),
+  lawnGreen(hxLawnGreen, kLawnGreen, ColorFamilyHTML.green),
+  lemonChiffon(hxLemonChiffon, kLemonChiffon, ColorFamilyHTML.yellow),
+  lightBlue(hxLightBlue, kLightBlue, ColorFamilyHTML.blue),
+  lightCoral(hxLightCoral, kLightCoral, ColorFamilyHTML.orange),
+  lightCyan(hxLightCyan, kLightCyan, ColorFamilyHTML.cyan),
   lightGoldenRodYellow(
-    0xFFFAFAD2,
-    'Light GoldenRod Yellow',
-    ColorFamilyHTML.yellow,
-  ),
-  lightGray(0xFFD3D3D3, 'Light Gray', ColorFamilyHTML.gray),
-  lightGrey(0xFFD3D3D3, 'Light Grey', ColorFamilyHTML.gray),
-  lightGreen(0xFF90EE90, 'Light Green', ColorFamilyHTML.green),
-  lightPink(0xFFFFB6C1, 'LightPink', ColorFamilyHTML.pink),
-  lightSalmon(0xFFFFA07A, 'Light Salmon', ColorFamilyHTML.orange),
-  lightSeaGreen(0xFF20B2AA, 'Light SeaGreen', ColorFamilyHTML.green),
-  lightSkyBlue(0xFF87CEFA, 'Light SkyBlue', ColorFamilyHTML.blue),
-  lightSlateGray(0xFF778899, 'Light SlateGray', ColorFamilyHTML.gray),
-  lightSlateGrey(0xFF778899, 'Light SlateGrey', ColorFamilyHTML.gray),
-  lightSteelBlue(0xFFB0C4DE, 'Light SteelBlue', ColorFamilyHTML.blue),
-  lightYellow(0xFFFFFFE0, 'Light Yellow', ColorFamilyHTML.yellow),
-  lime(hxLime, 'Lime', ColorFamilyHTML.green),
-  limeGreen(0xFF32CD32, 'Lime Green', ColorFamilyHTML.green),
-  linen(0xFFFAF0E6, 'Linen', ColorFamilyHTML.white),
-  magenta(0xFFFF00FF, kMagenta, ColorFamilyHTML.purple),
-  maroon(0xFF800000, 'Maroon', ColorFamilyHTML.red),
-  mediumAquaMarine(0xFF66CDAA, 'Medium AquaMarine', ColorFamilyHTML.cyan),
-  mediumBlue(0xFF0000CD, 'Medium Blue', ColorFamilyHTML.blue),
-  mediumOrchid(0xFFBA55D3, 'Medium Orchid', ColorFamilyHTML.purple),
-  mediumPurple(0xFF9370DB, 'Medium Purple', ColorFamilyHTML.purple),
-  mediumSeaGreen(0xFF3CB371, 'MediumSeaGreen', ColorFamilyHTML.green),
-  mediumSlateBlue(0xFF7B68EE, 'MediumSlateBlue', ColorFamilyHTML.blue),
-  mediumSpringGreen(0xFF00FA9A, 'Medium SpringGreen', ColorFamilyHTML.green),
-  mediumTurquoise(0xFF48D1CC, 'MediumTurquoise', ColorFamilyHTML.cyan),
-  mediumVioletRed(0xFFC71585, 'MediumVioletRed', ColorFamilyHTML.pink),
-  midnightBlue(0xFF191970, 'MidnightBlue', ColorFamilyHTML.blue),
-  mintCream(0xFFF5FFFA, 'Mint Cream', ColorFamilyHTML.white),
-  mistyRose(0xFFFFE4E1, 'MistyRose', ColorFamilyHTML.pink),
-  moccasin(0xFFFFE4B5, 'Moccasin', ColorFamilyHTML.orange),
-  navajoWhite(0xFFFFDEAD, 'Navajo White', ColorFamilyHTML.orange),
-  navy(0xFF000080, 'Navy', ColorFamilyHTML.blue),
-  oldLace(0xFFFDF5E6, 'Old Lace', ColorFamilyHTML.white),
-  olive(0xFF808000, 'Olive', ColorFamilyHTML.green),
-  oliveDrab(0xFF6B8E23, 'Olive Drab', ColorFamilyHTML.green),
-  orange(0xFFFFA500, 'Orange', ColorFamilyHTML.orange),
-  orangeRed(0xFFFF4500, 'OrangeRed', ColorFamilyHTML.orange),
-  orchid(0xFFDA70D6, 'Orchid', ColorFamilyHTML.purple),
-  paleGoldenRod(0xFFEEE8AA, 'Pale GoldenRod', ColorFamilyHTML.yellow),
-  paleGreen(0xFF98FB98, 'Pale Green', ColorFamilyHTML.green),
-  paleTurquoise(0xFFAFEEEE, 'Pale Turquoise', ColorFamilyHTML.cyan),
-  paleVioletRed(0xFFDB7093, 'PaleVioletRed', ColorFamilyHTML.pink),
-  papayaWhip(0xFFFFEFD5, 'PapayaWhip', ColorFamilyHTML.orange),
-  peachPuff(0xFFFFDAB9, 'PeachPuff', ColorFamilyHTML.orange),
-  peru(0xFFCD853F, 'Peru', ColorFamilyHTML.orange),
-  pink(0xFFFFC0CB, 'Pink', ColorFamilyHTML.pink),
-  plum(0xFFDDA0DD, 'Plum', ColorFamilyHTML.purple),
-  powderBlue(0xFFB0E0E6, 'Powder Blue', ColorFamilyHTML.blue),
-  purple(0xFF800080, 'Purple', ColorFamilyHTML.purple),
-  rebeccaPurple(0xFF663399, 'Rebecca Purple', ColorFamilyHTML.purple),
-  red(0xFFFF0000, 'Red', ColorFamilyHTML.red),
-  rosyBrown(0xFFBC8F8F, 'Rosy Brown', ColorFamilyHTML.brown),
-  royalBlue(0xFF4169E1, 'Royal Blue', ColorFamilyHTML.blue),
-  saddleBrown(0xFF8B4513, 'Saddle Brown', ColorFamilyHTML.brown),
-  salmon(0xFFFA8072, 'Salmon', ColorFamilyHTML.orange),
-  sandyBrown(0xFFF4A460, 'Sandy Brown', ColorFamilyHTML.orange),
-  seaGreen(0xFF2E8B57, 'SeaGreen', ColorFamilyHTML.green),
-  seaShell(0xFFFFF5EE, 'SeaShell', ColorFamilyHTML.white),
-  sienna(0xFFA0522D, 'Sienna', ColorFamilyHTML.brown),
-  silver(0xFFC0C0C0, 'Silver', ColorFamilyHTML.gray),
-  skyBlue(0xFF87CEEB, 'SkyBlue', ColorFamilyHTML.blue),
-  slateBlue(0xFF6A5ACD, 'Slate Blue', ColorFamilyHTML.blue),
-  slateGray(0xFF708090, 'Slate Gray', ColorFamilyHTML.gray),
-  slateGrey(0xFF708090, 'SlateGrey', ColorFamilyHTML.gray),
-  snow(0xFFFFFAFA, 'Snow', ColorFamilyHTML.white),
-  springGreen(0xFF00FF7F, 'SpringGreen', ColorFamilyHTML.green),
-  steelBlue(0xFF4682B4, 'Steel Blue', ColorFamilyHTML.blue),
-  tan(0xFFD2B48C, 'Tan', ColorFamilyHTML.brown),
-  teal(0xFF008080, 'Teal', ColorFamilyHTML.cyan),
-  thistle(0xFFD8BFD8, 'Thistle', ColorFamilyHTML.purple),
-  tomato(0xFFFF6347, 'Tomato', ColorFamilyHTML.red),
-  turquoise(0xFF40E0D0, 'Turquoise', ColorFamilyHTML.cyan),
-  violet(0xFFEE82EE, 'Violet', ColorFamilyHTML.purple),
-  wheat(0xFFF5DEB3, 'Wheat', ColorFamilyHTML.brown),
-  white(0xFFFFFFFF, 'White', ColorFamilyHTML.white),
-  whiteSmoke(0xFFF5F5F5, 'White Smoke', ColorFamilyHTML.white),
+      hxLightGoldenRodYellow, kLightGoldenRodYellow, ColorFamilyHTML.yellow),
+  lightGray(hxLightGray, kLightGray, ColorFamilyHTML.gray),
+  lightGrey(hxLightGray, kLightGray, ColorFamilyHTML.gray),
+  lightGreen(hxLightGreen, kLightGreen, ColorFamilyHTML.green),
+  lightPink(hxLightPink, kLightPink, ColorFamilyHTML.pink),
+  lightSalmon(hxLightSalmon, kLightSalmon, ColorFamilyHTML.orange),
+  lightSeaGreen(hxLightSeaGreen, kLightSeaGreen, ColorFamilyHTML.green),
+  lightSkyBlue(hxLightSkyBlue, kLightSkyBlue, ColorFamilyHTML.blue),
+  lightSlateGray(hxLightSlateGray, kLightSlateGray, ColorFamilyHTML.gray),
+  lightSlateGrey(hxLightSlateGray, kLightSlateGray, ColorFamilyHTML.gray),
+  lightSteelBlue(hxLightSteelBlue, kLightSteelBlue, ColorFamilyHTML.blue),
+  lightYellow(hxLightYellow, kLightYellow, ColorFamilyHTML.yellow),
+  lime(hxLime, kLime, ColorFamilyHTML.green),
+  limeGreen(hxLimeGreen, kLimeGreen, ColorFamilyHTML.green),
+  linen(hxLinen, kLinen, ColorFamilyHTML.white),
+  magenta(hxMagenta, kMagenta, ColorFamilyHTML.purple),
+  maroon(hxMaroon, kMaroon, ColorFamilyHTML.red),
+  mediumAquaMarine(hxMediumAquaMarine, kMediumAquaMarine, ColorFamilyHTML.cyan),
+  mediumBlue(hxMediumBlue, kMediumBlue, ColorFamilyHTML.blue),
+  mediumOrchid(hxMediumOrchid, kMediumOrchid, ColorFamilyHTML.purple),
+  mediumPurple(hxMediumPurple, kMediumPurple, ColorFamilyHTML.purple),
+  mediumSeaGreen(hxMediumSeaGreen, kMediumSeaGreen, ColorFamilyHTML.green),
+  mediumSlateBlue(hxMediumSlateBlue, kMediumSlateBlue, ColorFamilyHTML.blue),
+  mediumSpringGreen(
+      hxMediumSpringGreen, kMediumSpringGreen, ColorFamilyHTML.green),
+  mediumTurquoise(hxMediumTurquoise, kMediumTurquoise, ColorFamilyHTML.cyan),
+  mediumVioletRed(hxMediumVioletRed, kMediumVioletRed, ColorFamilyHTML.pink),
+  midnightBlue(hxMidnightBlue, kMidnightBlue, ColorFamilyHTML.blue),
+  mintCream(hxMintCream, kMintCream, ColorFamilyHTML.white),
+  mistyRose(hxMistyRose, kMistyRose, ColorFamilyHTML.pink),
+  moccasin(hxMoccasin, kMoccasin, ColorFamilyHTML.orange),
+  navajoWhite(hxNavajoWhite, kNavajoWhite, ColorFamilyHTML.orange),
+  navy(hxNavy, kNavy, ColorFamilyHTML.blue),
+  oldLace(hxOldLace, kOldLace, ColorFamilyHTML.white),
+  olive(hxOlive, kOlive, ColorFamilyHTML.green),
+  oliveDrab(hxOliveDrab, kOliveDrab, ColorFamilyHTML.green),
+  orange(hxOrange, kOrange, ColorFamilyHTML.orange),
+  orangeRed(hxOrangeRed, kOrangeRed, ColorFamilyHTML.orange),
+  orchid(hxOrchid, kOrchid, ColorFamilyHTML.purple),
+  paleGoldenRod(hxPaleGoldenRod, kPaleGoldenRod, ColorFamilyHTML.yellow),
+  paleGreen(hxPaleGreen, kPaleGreen, ColorFamilyHTML.green),
+  paleTurquoise(hxPaleTurquoise, kPaleTurquoise, ColorFamilyHTML.cyan),
+  paleVioletRed(hxPaleVioletRed, kPaleVioletRed, ColorFamilyHTML.pink),
+  papayaWhip(hxPapayaWhip, kPapayaWhip, ColorFamilyHTML.orange),
+  peachPuff(hxPeachPuff, kPeachPuff, ColorFamilyHTML.orange),
+  peru(hxPeru, kPeru, ColorFamilyHTML.orange),
+  pink(hxPink, kPink, ColorFamilyHTML.pink),
+  plum(hxPlum, kPlum, ColorFamilyHTML.purple),
+  powderBlue(hxPowderBlue, kPowderBlue, ColorFamilyHTML.blue),
+  purple(hxPurple, kPurple, ColorFamilyHTML.purple),
+  rebeccaPurple(hxRebeccaPurple, kRebeccaPurple, ColorFamilyHTML.purple),
+  red(hxRed, kRed, ColorFamilyHTML.red),
+  rosyBrown(hxRosyBrown, kRosyBrown, ColorFamilyHTML.brown),
+  royalBlue(hxRoyalBlue, kRoyalBlue, ColorFamilyHTML.blue),
+  saddleBrown(hxSaddleBrown, kSaddleBrown, ColorFamilyHTML.brown),
+  salmon(hxSalmon, kSalmon, ColorFamilyHTML.orange),
+  sandyBrown(hxSandyBrown, kSandyBrown, ColorFamilyHTML.orange),
+  seaGreen(hxSeaGreen, kSeaGreen, ColorFamilyHTML.green),
+  seaShell(hxSeaShell, kSeaShell, ColorFamilyHTML.white),
+  sienna(hxSienna, kSienna, ColorFamilyHTML.brown),
+  silver(hxSilver, kSilver, ColorFamilyHTML.gray),
+  skyBlue(hxSkyBlue, kSkyBlue, ColorFamilyHTML.blue),
+  slateBlue(hxSlateBlue, kSlateBlue, ColorFamilyHTML.blue),
+  slateGray(hxSlateGray, kSlateGray, ColorFamilyHTML.gray),
+  slateGrey(hxSlateGray, kSlateGray, ColorFamilyHTML.gray),
+  snow(hxSnow, kSnow, ColorFamilyHTML.white),
+  springGreen(hxSpringGreen, kSpringGreen, ColorFamilyHTML.green),
+  steelBlue(hxSteelBlue, kSteelBlue, ColorFamilyHTML.blue),
+  tan(hxTan, kTan, ColorFamilyHTML.brown),
+  teal(hxTeal, kTeal, ColorFamilyHTML.cyan),
+  thistle(hxThistle, kThistle, ColorFamilyHTML.purple),
+  tomato(hxTomato, kTomato, ColorFamilyHTML.red),
+  turquoise(hxTurquoise, kTurquoise, ColorFamilyHTML.cyan),
+  violet(hxViolet, kViolet, ColorFamilyHTML.purple),
+  wheat(hxWheat, kWheat, ColorFamilyHTML.brown),
+  white(hxWhite, kWhite, ColorFamilyHTML.white),
+  whiteSmoke(hxWhiteSmoke, kWhiteSmoke, ColorFamilyHTML.white),
   yellow(hxYellow, kYellow, ColorFamilyHTML.yellow),
-  yellowGreen(0xFF9ACD32, 'Yellow Green', ColorFamilyHTML.green);
+  yellowGreen(hxYellowGreen, kYellowGreen, ColorFamilyHTML.green);
 
   final int value;
-  final String name;
+  final List<String> names;
   final ColorFamilyHTML family;
-  const HTML(this.value, this.name, this.family);
+  const HTML(this.value, this.names, this.family);
   int get hexId => value;
   String get hexString =>
       '0x${value.toRadixString(16).toUpperCase().padLeft(8, '0')})';
