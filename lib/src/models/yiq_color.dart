@@ -28,11 +28,16 @@ class YiqColor extends ColorSpacesIQ with ColorModelsMixin {
 
   /// Creates a new `YiqColor`.
   const YiqColor(this.y, this.i, this.q,
-      {required final int val, final Percent alpha = Percent.max})
-      : super(val, a: alpha);
+      {required final int val,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
+      : super(val, a: alpha, names: names ?? const <String>[]);
   YiqColor.alt(this.y, this.i, this.q,
-      {final int? val, final Percent alpha = Percent.max})
-      : super(val ?? YiqColor.argbFromYiq(y, i, q), a: alpha);
+      {final int? val,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
+      : super(val ?? YiqColor.argbFromYiq(y, i, q),
+            a: alpha, names: names ?? const <String>[]);
 
   /// Converts a 32-bit ARGB color ID (Flutter Color.value) to YIQ components.
   ///
@@ -126,9 +131,6 @@ class YiqColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   YiqColor get inverted => toColor().inverted.toYiq();
-
-  @override
-  YiqColor get grayscale => toColor().grayscale.toYiq();
 
   @override
   YiqColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);

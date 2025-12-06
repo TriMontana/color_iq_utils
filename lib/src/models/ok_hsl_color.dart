@@ -32,11 +32,16 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
 
   /// Creates an `OkHslColor` instance.
   const OkHslColor(this.h, this.s, this.l,
-      {required final int hexId, final Percent alpha = Percent.max})
-      : super(hexId, a: alpha);
+      {required final int hexId,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
+      : super(hexId, a: alpha, names: names ?? const <String>[]);
   OkHslColor.alt(this.h, this.s, this.l,
-      {final int? hexId, final Percent alpha = Percent.max})
-      : super(hexId ?? OkHslColor.hexIdFromHsl(h, s, l), a: alpha);
+      {final int? hexId,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
+      : super(hexId ?? OkHslColor.hexIdFromHsl(h, s, l),
+            a: alpha, names: names ?? const <String>[]);
 
   /// Creates a 32-bit integer ARGB representation of an OKHSL color.
   ///
@@ -52,24 +57,10 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
   /// Returns the 32-bit ARGB hex value.
   static int hexIdFromHsl(final double h, final double s, final double l) {
     // Approximate conversion via OkLch
-    final double L = l;
     final double C = s * 0.4; // Approximation
     final double hue = h;
 
-    return OkLchColor.alt(L, C, hue).value;
-  }
-
-  @override
-  ColorIQ toColor() {
-    // Approximate conversion via OkLch
-    // s is roughly c/0.4 for s=1.
-    // l is roughly L.
-
-    final double L = l;
-    final double C = s * 0.4; // Approximation
-    final double hue = h;
-
-    return OkLchColor.alt(L, C, hue).toColor();
+    return OkLchColor.alt(Percent(l), C, hue).value;
   }
 
   @override
@@ -79,9 +70,6 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   OkHslColor get inverted => toColor().inverted.toOkHsl();
-
-  @override
-  OkHslColor get grayscale => toColor().grayscale.toOkHsl();
 
   @override
   OkHslColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);

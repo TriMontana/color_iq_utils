@@ -26,12 +26,17 @@ class HunterLabColor extends ColorSpacesIQ with ColorModelsMixin {
   final double bLab;
 
   const HunterLabColor(this.l, this.aLab, this.bLab,
-      {required final int hexId, final Percent alpha = Percent.max})
-      : super(hexId, a: alpha);
+      {required final int hexId,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
+      : super(hexId, a: alpha, names: names ?? const <String>[]);
 
   HunterLabColor.alt(this.l, this.aLab, this.bLab,
-      {final int? hexId, final Percent alpha = Percent.max})
-      : super(hexId ?? toARGB(l, aLab, bLab), a: alpha);
+      {final int? hexId,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
+      : super(hexId ?? toARGB(l, aLab, bLab),
+            a: alpha, names: names ?? const <String>[]);
 
   /// A stand-alone static method to create a 32-bit hexID/ARGB from l, aLab, bLab.
   static int toARGB(final double l, final double aLab, final double bLab,
@@ -110,9 +115,6 @@ class HunterLabColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   HunterLabColor get inverted => toColor().inverted.toHunterLab();
-
-  @override
-  HunterLabColor get grayscale => toColor().grayscale.toHunterLab();
 
   @override
   HunterLabColor whiten([final double amount = 20]) =>
@@ -262,21 +264,12 @@ class HunterLabColor extends ColorSpacesIQ with ColorModelsMixin {
       .toList();
 
   @override
-  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
-
-  @override
   double contrastWith(final ColorSpacesIQ other) =>
       toColor().contrastWith(other);
 
   @override
-  ColorSlice closestColorSlice() => toColor().closestColorSlice();
-
-  @override
   bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) =>
       toColor().isWithinGamut(gamut);
-
-  @override
-  List<double> get whitePoint => kWhitePointD65;
 
   @override
   Map<String, dynamic> toJson() {
@@ -291,7 +284,4 @@ class HunterLabColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   String toString() => 'HunterLabColor(l: ${l.toStrTrimZeros(3)}, ' //
       'a: ${aLab.toStrTrimZeros(3)}, b: ${bLab.toStringAsFixed(2)})';
-
-  // @override
-  // Cam16 toCam16() => Cam16.fromInt(value);
 }

@@ -24,16 +24,18 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
   final double saturation;
   // Renamed from value to val to avoid conflict with ColorSpacesIQ.value
   final double val;
-  Percent get alpha => super.a;
+  final Percent alpha;
 
   const OkHsvColor(this.hue, this.saturation, this.val,
-      {final Percent alpha = Percent.max, required final int hexId})
-      : super(hexId, a: alpha);
+      {this.alpha = Percent.max,
+      required final int hexId,
+      final List<String>? names})
+      : super(hexId, a: alpha, names: names ?? const <String>[]);
 
   OkHsvColor.alt(this.hue, this.saturation, this.val,
-      {final Percent alpha = Percent.max, final int? hexId})
-      : super(hexId ?? OkHsvColor.computeHexId(hue, saturation, val, alpha),
-            a: alpha);
+      {this.alpha = Percent.max, final int? hexId, final List<String>? names})
+      : super(hexId ?? OkHsvColor.computeHexId(hue, saturation, val, alpha.val),
+            a: alpha, names: names ?? const <String>[]);
 
   /// Generates a 32-bit ARGB hex ID from OkHsv values.
   static int computeHexId(final double hue, final double saturation,
@@ -59,8 +61,10 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
     double blue = -0.0041960863 * l3 - 0.7034186147 * m3 + 1.7076147010 * s3;
 
     // Gamma correction (sRGB)
-    r = (r > 0.0031308) ? (1.055 * pow(r, 1.0 / 2.4) - 0.055) : (12.92 * r);
-    g = (g > 0.0031308) ? (1.055 * pow(g, 1.0 / 2.4) - 0.055) : (12.92 * g);
+    // Gamma correction (sRGB)
+    r = r.clamp(0.0, 1.0).gammaCorrect;
+    g = g.clamp(0.0, 1.0).gammaCorrect;
+    blue = blue.clamp(0.0, 1.0);
     blue = (blue > 0.0031308)
         ? (1.055 * pow(blue, 1.0 / 2.4) - 0.055)
         : (12.92 * blue);
@@ -89,7 +93,7 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  ColorIQ toColor() => toOkLab().toColor();
+  ColorIQ toColor() => ColorIQ(value);
 
   @override
   OkHsvColor darken([final double amount = 20]) {
@@ -152,9 +156,6 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   OkHsvColor get inverted => toColor().inverted.toOkHsv();
-
-  @override
-  OkHsvColor get grayscale => toColor().grayscale.toOkHsv();
 
   @override
   OkHsvColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);

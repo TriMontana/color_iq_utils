@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
@@ -25,11 +26,16 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
   Percent get alpha => super.a;
 
   const HsvColor(this.h, this.s, this.v,
-      {final Percent alpha = Percent.max, required final int hexId})
-      : super(hexId, a: alpha);
+      {final Percent alpha = Percent.max,
+      required final int hexId,
+      final List<String>? names})
+      : super(hexId, a: alpha, names: names ?? const <String>[]);
   HsvColor.alt(this.h, this.s, this.v,
-      {final Percent alpha = Percent.max, final int? hexId})
-      : super(hexId ?? HsvColor.toHexId(h, s, v, alpha), a: alpha);
+      {final Percent alpha = Percent.max,
+      final int? hexId,
+      final List<String>? names})
+      : super(hexId ?? HsvColor.toHexId(h, s, v, alpha.val),
+            a: alpha, names: names ?? const <String>[]);
 
   /// Creates a 32-bit integer ARGB value from HSV components.
   ///
@@ -39,46 +45,42 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
   /// [alpha] is the alpha channel, specified as a value between 0.0 and 1.0.
   static int toHexId(final double h, final double s, final double v,
       [final double alpha = 1.0]) {
-    final double c = v * s;
-    final double x = c * (1 - ((h / 60) % 2 - 1).abs());
-    final double m = v - c;
+    final double chroma = s * v;
+    final double secondary = chroma * (1.0 - (((h / 60.0) % 2.0) - 1.0).abs());
+    final double match = v - chroma;
 
-    double r = 0, g = 0, b = 0;
-    if (h < 60) {
-      r = c;
-      g = x;
-      b = 0;
-    } else if (h < 120) {
-      r = x;
-      g = c;
-      b = 0;
-    } else if (h < 180) {
-      r = 0;
-      g = c;
-      b = x;
-    } else if (h < 240) {
-      r = 0;
-      g = x;
-      b = c;
-    } else if (h < 300) {
-      r = x;
-      g = 0;
-      b = c;
-    } else {
-      r = c;
-      g = 0;
-      b = x;
-    }
+    return colorFromHue(alpha, h, chroma, secondary, match).value;
+  }
 
-    final int argb = ((alpha * 255).round() << 24) |
-        (((r + m) * 255).round().clamp(0, 255) << 16) |
-        (((g + m) * 255).round().clamp(0, 255) << 8) |
-        ((b + m) * 255).round().clamp(0, 255);
-    return argb;
+  /// This constructor does not necessarily round-trip with [toColor] because
+  /// of floating point imprecision.
+  static HsvColor fromInt(final int hexId) {
+    final double red = hexId.r;
+    final double green = hexId.g;
+    final double blue = hexId.b;
+
+    final double max = math.max(red, math.max(green, blue));
+    final double min = math.min(red, math.min(green, blue));
+    final double delta = max - min;
+
+    final Percent alpha = hexId.a2;
+    final double hue = getHue(red, green, blue, max, delta);
+    final double saturation = max == 0.0 ? 0.0 : delta / max;
+
+    return HsvColor.alt(hue, saturation, max, alpha: alpha);
   }
 
   @override
-  ColorIQ toColor() => ColorIQ(toHexId(h, s, v, alpha));
+  ColorIQ toColor() => ColorIQ(value);
+
+  /// Returns this color in RGB.
+  ColorIQ toColor2() {
+    final double chroma = s * v;
+    final double secondary = chroma * (1.0 - (((h / 60.0) % 2.0) - 1.0).abs());
+    final double match = v - chroma;
+
+    return colorFromHue(alpha, h, chroma, secondary, match);
+  }
 
   @override
   HsvColor darken([final double amount = 20]) {
@@ -87,9 +89,6 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   HsvColor get inverted => toColor().inverted.toHsv();
-
-  @override
-  HsvColor get grayscale => toColor().grayscale.toHsv();
 
   @override
   HsvColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
@@ -272,9 +271,6 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
       toColor().contrastWith(other);
 
   @override
-  ColorSlice closestColorSlice() => toColor().closestColorSlice();
-
-  @override
   bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) =>
       toColor().isWithinGamut(gamut);
 
@@ -292,10 +288,6 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   String toString() => 'HsvColor(h: ${h.toStrTrimZeros(3)}, ' //
       's: ${s.toStringAsFixed(2)}, v: ${v.toStringAsFixed(2)}, a: ${alpha.toStringAsFixed(2)})';
-
-  @override
-  double distanceTo(final ColorSpacesIQ other) =>
-      toCam16().distance(other.toCam16());
 
   @override
   ColorSpacesIQ fromHct(final HctColor hct) {

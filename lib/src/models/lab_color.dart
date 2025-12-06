@@ -34,13 +34,17 @@ class LabColor extends ColorSpacesIQ with ColorModelsMixin {
   const LabColor(this.l, this.aLab, this.bLab,
       {required final int hexId,
       final Percent? lrv,
-      final Percent alpha = Percent.max})
+      final Percent alpha = Percent.max,
+      final List<String>? names})
       : assert(l >= 0 && l <= 100, 'L must be between 0 and 100'),
-        super(hexId, lrv: lrv, a: alpha);
+        super(hexId, lrv: lrv, a: alpha, names: names ?? const <String>[]);
   LabColor.alt(this.l, this.aLab, this.bLab,
-      {final int? hexId, final Percent alpha = Percent.max})
+      {final int? hexId,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
       : assert(l >= 0 && l <= 100, 'L must be between 0 and 100'),
-        super(hexId ?? LabColor.toHexId(l, aLab, bLab), a: alpha);
+        super(hexId ?? LabColor.toHexId(l, aLab, bLab),
+            a: alpha, names: names ?? const <String>[]);
 
   static LabColor fromInt(final int hexId) {
     final List<double> lab = labFromArgb(hexId);
@@ -76,9 +80,6 @@ class LabColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   LabColor get inverted => toColor().inverted.toLab();
-
-  @override
-  LabColor get grayscale => toColor().grayscale.toLab();
 
   @override
   LabColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);

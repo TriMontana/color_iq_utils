@@ -35,15 +35,18 @@ class LchColor extends ColorSpacesIQ with ColorModelsMixin {
   const LchColor(this.l, this.c, this.h,
       {required final int hexId,
       final Percent alpha = Percent.max,
-      final Percent? lrv})
-      : super(hexId, a: alpha, lrv: lrv);
+      final Percent? lrv,
+      final List<String>? names})
+      : super(hexId, a: alpha, lrv: lrv, names: names ?? const <String>[]);
   LchColor.alt(
     this.l,
     this.c,
     this.h, {
     final int? hexId,
     final Percent alpha = Percent.max,
-  }) : super(hexId ?? LchColor.lchToHexID(l, c, h), a: alpha);
+    final List<String>? names,
+  }) : super(hexId ?? LchColor.lchToHexID(l, c, h),
+            a: alpha, names: names ?? const <String>[]);
 
   /// Converts CIELCH components to a 32-bit ARGB integer (Color ID).
   /// This implementation relies on the standard CIELab/CIEXYZ transformations.
@@ -117,9 +120,6 @@ class LchColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   LchColor get inverted => toColor().inverted.toLch();
-
-  @override
-  LchColor get grayscale => toColor().grayscale.toLch();
 
   @override
   LchColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
@@ -289,14 +289,8 @@ class LchColor extends ColorSpacesIQ with ColorModelsMixin {
       .toList();
 
   @override
-  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
-
-  @override
   double contrastWith(final ColorSpacesIQ other) =>
       toColor().contrastWith(other);
-
-  @override
-  ColorSlice closestColorSlice() => toColor().closestColorSlice();
 
   @override
   bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) {

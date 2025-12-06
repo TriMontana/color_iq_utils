@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
@@ -780,6 +781,41 @@ double labInvf(final double ft) {
     // if ft^3 <= ε, the inverse is (116 * ft - 16) / κ
     return (116 * ft - 16) / kKappa;
   }
+}
+
+/// Represents the non-linearly compressed LMS values (L', M', S').
+class LmsPrime {
+  final double lPrime, mPrime, sPrime;
+  LmsPrime(this.lPrime, this.mPrime, this.sPrime);
+}
+
+/// Converts linear (gamma-corrected) sRGB components [0.0 - 1.0]
+/// into the non-linear L'M'S' space for Oklab calculation.
+///
+/// @param lr Linear Red component.
+/// @param lg Linear Green component.
+/// @param lb Linear Blue component.
+LmsPrime linearRgbToLmsPrime(
+    final double lr, final double lg, final double lb) {
+  // --- Stage 1: Linear sRGB to LMS (Long, Medium, Short) ---
+  // This matrix transforms light intensities into values related to the
+  // human eye's cone responses (photoreceptors).
+  final double L =
+      (0.4121656120 * lr) + (0.5362752080 * lg) + (0.0514570080 * lb);
+  final double M =
+      (0.2118591070 * lr) + (0.6807189584 * lg) + (0.1074061555 * lb);
+  final double S =
+      (0.0883097947 * lr) + (0.2818474174 * lg) + (0.6300096956 * lb);
+
+  // --- Stage 2: Non-linear Compression (Cube Root) ---
+  // This compression step is crucial for achieving perceptual uniformity.
+  // It stabilizes the color space, making steps in L', M', S' correspond
+  // more closely to steps in human perception.
+  final double lPrime = math.pow(L, 1.0 / 3.0).toDouble();
+  final double mPrime = math.pow(M, 1.0 / 3.0).toDouble();
+  final double sPrime = math.pow(S, 1.0 / 3.0).toDouble();
+
+  return LmsPrime(lPrime, mPrime, sPrime);
 }
 
 /// aka IsShortHex, aka is 8Bit, is8Bit isTwoDigitHex

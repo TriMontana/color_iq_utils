@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
@@ -19,35 +20,75 @@ import 'package:color_iq_utils/src/models/ok_lab_color.dart';
 /// [h] is the hue angle (0-360).
 /// [alpha] is the transparency (0-1).
 class OkLchColor extends ColorSpacesIQ with ColorModelsMixin {
-  final double l;
+  final Percent l;
   final double c;
   final double h;
-  Percent get alpha => super.a;
+  final Percent alpha;
 
   const OkLchColor(this.l, this.c, this.h,
-      {final Percent alpha = Percent.max, required final int hexId})
+      {this.alpha = Percent.max,
+      required final int hexId,
+      final List<String>? names})
       : assert(l >= 0 && l <= 1, 'L must be between 0 and 1'),
         assert(c >= 0, 'C must be non-negative'),
         assert(h >= 0 && h <= 360, 'H must be between 0 and 360'),
-        super(hexId, a: alpha);
+        super(hexId, a: alpha, names: names ?? const <String>[]);
 
   OkLchColor.alt(this.l, this.c, this.h,
-      {final Percent alpha = Percent.max, final int? hexId})
+      {this.alpha = Percent.max, final int? hexId, final List<String>? names})
       : assert(l >= 0 && l <= 1, 'L must be between 0 and 1'),
         assert(c >= 0, 'C must be non-negative'),
         assert(h >= 0 && h <= 360, 'H must be between 0 and 360'),
-        super(hexId ?? toHexID(l, c, h, alpha: alpha), a: alpha);
+        super(hexId ?? toHexID(l, c, h, alpha: alpha),
+            a: alpha, names: names ?? const <String>[]);
 
   /// Creates a 32-bit ARGB hex value from Oklch values.
   ///
   /// This is a stand-alone static method that converts Oklch color
   /// components directly to an integer representation of an ARGB color.
-  static int toHexID(final double l, final double c, final double h,
+  static int toHexID(final Percent l, final double c, final double h,
       {final Percent alpha = Percent.max}) {
     final double hRad = h * pi / 180;
     final OkLabColor okLab =
         OkLabColor.alt(l, c * cos(hRad), c * sin(hRad), alpha: alpha);
-    return okLab.toColor().value;
+    return okLab.value;
+  }
+
+  /// Converts a 32-bit ARGB color ID to OkLCH components.
+  static OkLchColor fromInt(final int argb32) {
+    final double lr = argb32.redLinearized;
+    final double lg = argb32.greenLinearized;
+    final double lb = argb32.blueLinearized;
+
+    final LmsPrime lmsPrime = linearRgbToLmsPrime(lr, lg, lb);
+
+    // 4. Convert L' M' S' to Oklab (L, a, b)
+    // Oklab Matrix
+    final double oklabL = 0.2104542553 * lmsPrime.lPrime +
+        0.7936177850 * lmsPrime.mPrime -
+        0.0040720468 * lmsPrime.sPrime;
+    final double oklabA = 1.9779984951 * lmsPrime.lPrime -
+        2.4285922050 * lmsPrime.mPrime +
+        0.4505937102 * lmsPrime.sPrime;
+    final double oklabB = 0.0259040371 * lmsPrime.lPrime +
+        0.7827717662 * lmsPrime.mPrime -
+        0.8086757660 * lmsPrime.sPrime;
+
+    // 5. Convert Oklab (L, a, b) to OkLCH (L, C, H)
+    // L is Lightness [0, 1].
+    // C is Chroma (Euclidean distance from origin).
+    final double c = math.sqrt(oklabA * oklabA + oklabB * oklabB);
+
+    // H is Hue angle (using atan2 for correct quadrant)
+    double h = math.atan2(oklabB, oklabA) * 180.0 / math.pi;
+
+    // Normalize Hue to the range [0.0, 360.0)
+    if (h < 0) {
+      h += 360.0;
+    }
+
+    return OkLchColor(Percent(oklabL.clamp(0.0, 1.0)), c, h,
+        alpha: argb32.a2, hexId: argb32);
   }
 
   @override
@@ -57,11 +98,10 @@ class OkLchColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  ColorIQ toColor() => toOkLab().toColor();
-
-  @override
-  OkLchColor darken([final double amount = 20]) =>
-      copyWith(l: max(0.0, l - amount / 100));
+  OkLchColor darken([final double amount = 20]) {
+    final double x = max(0.0, l.value - amount / 100);
+    return copyWith(l: Percent(x));
+  }
 
   @override
   OkLchColor get inverted => toColor().inverted.toOkLch();
@@ -97,14 +137,14 @@ class OkLchColor extends ColorSpacesIQ with ColorModelsMixin {
       newHue = h;
     } else {
       return OkLchColor.alt(
-        lerpDouble(l, otherOkLch.l, t),
+        l.lerpTo(otherOkLch.l, t),
         lerpDouble(c, otherOkLch.c, t),
         lerpHue(h, otherOkLch.h, t),
       );
     }
 
     return OkLchColor.alt(
-      lerpDouble(l, otherOkLch.l, t),
+      l.lerpTo(otherOkLch.l, t),
       lerpDouble(c, otherOkLch.c, t),
       newHue,
     );
@@ -112,7 +152,8 @@ class OkLchColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   OkLchColor lighten([final double amount = 20]) {
-    return OkLchColor.alt(min(1.0, l + amount / 100), c, h, alpha: alpha);
+    final double x = min(1.0, l.value + amount / 100);
+    return copyWith(l: Percent(x));
   }
 
   @override
@@ -166,7 +207,7 @@ class OkLchColor extends ColorSpacesIQ with ColorModelsMixin {
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   OkLchColor copyWith({
-    final double? l,
+    final Percent? l,
     final double? c,
     final double? h,
     final Percent? alpha,
@@ -256,16 +297,16 @@ class OkLchColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   List<OkLchColor> tonesPalette() {
     return <OkLchColor>[
-      OkLchColor.alt(0.95, c, h, alpha: alpha), // 50
-      OkLchColor.alt(0.9, c, h, alpha: alpha), // 100
-      OkLchColor.alt(0.8, c, h, alpha: alpha), // 200
-      OkLchColor.alt(0.7, c, h, alpha: alpha), // 300
-      OkLchColor.alt(0.6, c, h, alpha: alpha), // 400
-      OkLchColor.alt(0.5, c, h, alpha: alpha), // 500
-      OkLchColor.alt(0.4, c, h, alpha: alpha), // 600
-      OkLchColor.alt(0.3, c, h, alpha: alpha), // 700
-      OkLchColor.alt(0.2, c, h, alpha: alpha), // 800
-      OkLchColor.alt(0.1, c, h, alpha: alpha), // 900
+      OkLchColor.alt(const Percent(0.95), c, h, alpha: alpha), // 50
+      OkLchColor.alt(const Percent(0.9), c, h, alpha: alpha), // 100
+      OkLchColor.alt(const Percent(0.8), c, h, alpha: alpha), // 200
+      OkLchColor.alt(const Percent(0.7), c, h, alpha: alpha), // 300
+      OkLchColor.alt(const Percent(0.6), c, h, alpha: alpha), // 400
+      OkLchColor.alt(const Percent(0.5), c, h, alpha: alpha), // 500
+      OkLchColor.alt(const Percent(0.4), c, h, alpha: alpha), // 600
+      OkLchColor.alt(const Percent(0.3), c, h, alpha: alpha), // 700
+      OkLchColor.alt(const Percent(0.2), c, h, alpha: alpha), // 800
+      OkLchColor.alt(const Percent(0.1), c, h, alpha: alpha), // 900
     ];
   }
 

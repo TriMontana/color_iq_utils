@@ -31,7 +31,8 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
   final double bLab;
 
   /// The alpha value (opacity) of the color, from 0.0 (transparent) to 1.0 (opaque).
-  Percent get alpha => super.a;
+  /// The alpha value (opacity) of the color, from 0.0 (transparent) to 1.0 (opaque).
+  final Percent alpha;
 
   /// Creates an [OkLabColor].
   ///
@@ -40,20 +41,21 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
   /// - [b]: Blue-yellow component.
   /// - [alpha]: Opacity, defaults to 1.0 (fully opaque).
   const OkLabColor(this.l, this.aLab, this.bLab,
-      {final Percent alpha = Percent.max, required final int hexId})
+      {this.alpha = Percent.max,
+      required final int hexId,
+      final List<String>? names})
       : assert(l >= 0 && l <= 1, 'L must be between 0 and 1'),
         assert(aLab >= -1 && aLab <= 1, 'A must be between -1 and 1'),
         assert(bLab >= -1 && bLab <= 1, 'B must be between -1 and 1'),
-        assert(alpha >= 0 && alpha <= 1, 'Alpha must be between 0 and 1'),
-        super(hexId, a: alpha);
+        super(hexId, a: alpha, names: names ?? const <String>[]);
 
   OkLabColor.alt(this.l, this.aLab, this.bLab,
-      {final Percent alpha = Percent.max, final int? hexId})
+      {this.alpha = Percent.max, final int? hexId, final List<String>? names})
       : assert(l >= 0 && l <= 1, 'L must be between 0 and 1'),
         assert(aLab >= -1 && aLab <= 1, 'A must be between -1 and 1'),
         assert(bLab >= -1 && bLab <= 1, 'B must be between -1 and 1'),
-        assert(alpha >= 0 && alpha <= 1, 'Alpha must be between 0 and 1'),
-        super(hexId ?? OkLabColor.toHexID(l, aLab, bLab, alpha), a: alpha);
+        super(hexId ?? OkLabColor.toHexID(l, aLab, bLab, alpha.val),
+            a: alpha, names: names ?? const <String>[]);
 
   /// A stand-alone static method to create a 32-bit hexID/ARGB from this
   /// class's properties.
@@ -152,9 +154,6 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
     );
   }
 
-  @override
-  int get value => toColor().value;
-
   OkLchColor toOkLch() {
     final double c = sqrt(aLab * aLab + bLab * bLab);
     double h = atan2(bLab, aLab);
@@ -162,12 +161,12 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
     if (h < 0) {
       h += 360;
     }
-    return OkLchColor.alt(l, c, h, alpha: alpha);
+    return OkLchColor.alt(Percent(l), c, h, alpha: alpha);
   }
 
   OkHslColor toOkHsl() {
     final OkLchColor lch = toOkLch();
-    double s = (lch.l == 0 || lch.l == 1) ? 0 : lch.c / 0.4;
+    double s = (lch.l.val == 0 || lch.l.val == 1) ? 0 : lch.c / 0.4;
     if (s > 1) s = 1;
     return OkHslColor.alt(
       lch.h,
@@ -180,7 +179,7 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
 
   OkHsvColor toOkHsv() {
     final OkLchColor lch = toOkLch();
-    double v = lch.l + lch.c / 0.4;
+    double v = lch.l.val + lch.c / 0.4;
     if (v > 1) {
       v = 1;
     }
@@ -193,9 +192,6 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   OkLabColor get inverted => toColor().inverted.toOkLab();
-
-  @override
-  OkLabColor get grayscale => toColor().grayscale.toOkLab();
 
   @override
   OkLabColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
@@ -318,12 +314,6 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
-
-  @override
-  double get luminance => toColor().luminance;
-
-  @override
-  Brightness get brightness => toColor().brightness;
 
   @override
   bool get isDark => brightness == Brightness.dark;

@@ -27,11 +27,16 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
   final double b;
 
   const HsbColor(this.h, this.s, this.b,
-      {required final int hexId, final Percent alpha = Percent.max})
-      : super(hexId, a: alpha);
+      {required final int hexId,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
+      : super(hexId, a: alpha, names: names ?? const <String>[]);
   HsbColor.alt(this.h, this.s, this.b,
-      {final int? hexId, final Percent alpha = Percent.max})
-      : super(hexId ?? HsbColor.argbFromHsb(h, s, b), a: alpha);
+      {final int? hexId,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
+      : super(hexId ?? HsbColor.argbFromHsb(h, s, b),
+            a: alpha, names: names ?? const <String>[]);
 
 // Note: THERE are two methods to convert HSB to ARGB
 // This function takes hue (0-360 degrees), saturation (0-1), and brightness (0-1) as inputs and returns a 32-bit integer in ARGB format (with full opacity). If you're using this in a context like Flutter, you can pass the result to Color(value) for rendering.

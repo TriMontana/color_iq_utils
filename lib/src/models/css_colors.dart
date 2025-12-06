@@ -262,6 +262,6 @@ class CssColor {
       }
     }
 
-    return OkLchColor.alt(l, c, h, alpha: alpha);
+    return OkLchColor.alt(Percent(l), c, h, alpha: alpha);
   }
 }

@@ -26,17 +26,22 @@ class Cam16Color extends ColorSpacesIQ with ColorModelsMixin {
   final double s;
 
   const Cam16Color(this.hue, this.chroma, this.j, this.q, this.m, this.s,
-      {final Percent alpha = Percent.max, required final int hexId})
-      : super(hexId, a: alpha);
+      {final Percent alpha = Percent.max,
+      required final int hexId,
+      final List<String>? names})
+      : super(hexId, a: alpha, names: names ?? const <String>[]);
 
   Cam16Color.alt(this.hue, this.chroma, this.j, this.q, this.m, this.s,
-      {final Percent alpha = Percent.max, final int? hexId})
-      : super(hexId ?? mcu.Cam16.fromJch(j, chroma, hue).toInt(), a: alpha);
+      {final Percent alpha = Percent.max,
+      final int? hexId,
+      final List<String>? names})
+      : super(hexId ?? mcu.Cam16.fromJch(j, chroma, hue).toInt(),
+            a: alpha, names: names ?? const <String>[]);
 
-  static Cam16Color fromInt(final int hexId) {
+  static Cam16Color fromInt(final int hexId, {final List<String>? names}) {
     final mcu.Cam16 c1 = mcu.Cam16.fromInt(hexId);
     return Cam16Color(c1.hue, c1.chroma, c1.j, c1.q, c1.m, c1.s,
-        alpha: hexId.a2, hexId: hexId);
+        alpha: hexId.a2, hexId: hexId, names: names ?? const <String>[]);
   }
 
   @override
@@ -82,9 +87,6 @@ class Cam16Color extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   Cam16Color get inverted => toColor().inverted.toCam16Color();
-
-  @override
-  Cam16Color get grayscale => copyWith(chroma: 0);
 
   @override
   Cam16Color whiten([final double amount = 20]) => lerp(cWhite, amount / 100);

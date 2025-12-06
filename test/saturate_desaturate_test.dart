@@ -31,7 +31,7 @@ void main() {
     });
 
     test('OkLchColor saturate/desaturate', () {
-      final OkLchColor oklch = OkLchColor.alt(0.5, 0.1, 0);
+      final OkLchColor oklch = OkLchColor.alt(const Percent(0.5), 0.1, 0);
       final OkLchColor saturated = oklch.saturate(25);
       // 0.1 + 25/100 = 0.35
       expect(saturated.c, closeTo(0.35, 0.01));

@@ -69,6 +69,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     final int? blue,
     final Percent? luminance,
     this.colorSpace = ColorSpace.sRGB,
+    final List<String>? names,
   })  : alpha = alpha != null
             ? alpha.assertRange0to255('ColorIQ-COTR-alpha')
             : (value >> 24 & 0xFF),
@@ -92,7 +93,8 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
                 : ((value >> 8 & 0xFF) / 255).clamp0to1,
             b: b != null
                 ? b.assertRange0to1('ColorIQ()-b')
-                : ((value & 0xFF) / 255).clamp0to1);
+                : ((value & 0xFF) / 255).clamp0to1,
+            names: names ?? const <String>[]);
 
   /// Construct a color from 4 integers, a, r, g, b.
   ColorIQ.fromARGB(
@@ -106,29 +108,30 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     final double? b,
     final Percent? luminance,
     this.colorSpace = ColorSpace.sRGB,
+    final List<String>? names,
   })  : assert(red >= 0 && red <= 255, 'Invalid Red 0-255 value: $red'),
         assert(green >= 0 && green <= 255, 'Invalid Green 0-255 value: $green'),
         assert(blue >= 0 && blue <= 255, 'Invalid Blue 0-255 value: $blue'),
         assert(alpha >= 0 && alpha <= 255, 'Invalid Alpha 0-255 value: $alpha'),
         super.alt(
-          value: (((alpha & 0xff) << 24) |
-                  ((red & 0xff) << 16) |
-                  ((green & 0xff) << 8) |
-                  ((blue & 0xff) << 0)) &
-              0xFFFFFFFF,
-          a: a ?? alpha.normalized,
-          r: r != null
-              ? r.assertRange0to1('ColorIQ.fromARGB-Red')
-              : red.normalized,
-          redIntVal: red,
-          g: g != null
-              ? g.assertRange0to1('ColorIQ.fromARGB-Green')
-              : green.normalized,
-          b: b != null
-              ? b.assertRange0to1('ColorIQ.fromARGB-Blue')
-              : (blue / 255.0).clamp0to1,
-          lrv: luminance ?? computeLuminanceViaInts(red, green, blue),
-        );
+            value: (((alpha & 0xff) << 24) |
+                    ((red & 0xff) << 16) |
+                    ((green & 0xff) << 8) |
+                    ((blue & 0xff) << 0)) &
+                0xFFFFFFFF,
+            a: a ?? alpha.normalized,
+            r: r != null
+                ? r.assertRange0to1('ColorIQ.fromARGB-Red')
+                : red.normalized,
+            redIntVal: red,
+            g: g != null
+                ? g.assertRange0to1('ColorIQ.fromARGB-Green')
+                : green.normalized,
+            b: b != null
+                ? b.assertRange0to1('ColorIQ.fromARGB-Blue')
+                : (blue / 255.0).clamp0to1,
+            lrv: luminance ?? computeLuminanceViaInts(red, green, blue),
+            names: names ?? const <String>[]);
 
   /// Construct a color from sRGB delinearized values a, r, g, b (0.0 to 1.0)
   factory ColorIQ.fromSrgb({
@@ -143,6 +146,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     int? argb,
     Percent? luminance,
     final ColorSpace colorSpace = ColorSpace.sRGB,
+    final List<String>? names,
   }) {
     a.assertRange0to1('ColorIQ.fromSrgb--a');
     r.assertRange0to1('ColorIQ.fromSrgb--r');
@@ -172,11 +176,12 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
         a: a,
         r: r,
         g: g,
-        b: b);
+        b: b,
+        names: names ?? const <String>[]);
   }
 
   /// Accepts hex like "#RRGGBB" or "RRGGBB" or "AARRGGBB".
-  factory ColorIQ.fromHexStr(final String hexStr) {
+  factory ColorIQ.fromHexStr(final String hexStr, {final List<String>? names}) {
     String hex = hexStr.replaceAll('#', '').toUpperCase();
     // hex = hex.substring(1);
     if (hex.length == 3) {
@@ -185,7 +190,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
 
     if (hex.length == 6) {
       hex = 'FF$hex';
-      return ColorIQ(int.parse(hex, radix: 16));
+      return ColorIQ(int.parse(hex, radix: 16), names: names);
     }
 
     if (hex.length == 8) {
@@ -198,7 +203,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
       final String b = hex.substring(4, 6);
       final String a = hex.substring(6, 8);
       hex = '$a$r$g$b';
-      return ColorIQ(int.parse(hex, radix: 16));
+      return ColorIQ(int.parse(hex, radix: 16), names: names);
     }
 
     throw FormatException('Invalid hex color: #$hex');
@@ -849,36 +854,37 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   double distanceTo(final ColorSpacesIQ other) {
-    // Convert both to HCT to approximate Cam16 distance.
-    // Ideally we use Cam16-UCS, but HCT is a good proxy for perceptual distance.
-    // Using simple Euclidean distance in HCT space for now as a fallback if MCU doesn't expose UCS directly.
-    // Wait, MCU's Hct class might not expose distance.
-    // Let's use the HCT values (Hue, Chroma, Tone).
-    // Hue is circular, so we need to handle that.
+    return toCam16().distance(other.toCam16());
+    // // Convert both to HCT to approximate Cam16 distance.
+    // // Ideally we use Cam16-UCS, but HCT is a good proxy for perceptual distance.
+    // // Using simple Euclidean distance in HCT space for now as a fallback if MCU doesn't expose UCS directly.
+    // // Wait, MCU's Hct class might not expose distance.
+    // // Let's use the HCT values (Hue, Chroma, Tone).
+    // // Hue is circular, so we need to handle that.
 
-    final HctColor hct1 = toHctColor();
-    final HctColor hct2 = other.toHctColor();
+    // final HctColor hct1 = toHctColor();
+    // final HctColor hct2 = other.toHctColor();
 
-    // Simple Euclidean distance in HCT cylinder?
-    // Or better: convert to Lab-like coordinates.
-    // HCT is similar to LCH.
-    // dE = sqrt((dL)^2 + (da)^2 + (db)^2)
-    // a = C * cos(H)
-    // b = C * sin(H)
+    // // Simple Euclidean distance in HCT cylinder?
+    // // Or better: convert to Lab-like coordinates.
+    // // HCT is similar to LCH.
+    // // dE = sqrt((dL)^2 + (da)^2 + (db)^2)
+    // // a = C * cos(H)
+    // // b = C * sin(H)
 
-    final double h1Rad = hct1.hue * pi / 180;
-    final double h2Rad = hct2.hue * pi / 180;
+    // final double h1Rad = hct1.hue * pi / 180;
+    // final double h2Rad = hct2.hue * pi / 180;
 
-    final double a1 = hct1.chroma * cos(h1Rad);
-    final double b1 = hct1.chroma * sin(h1Rad);
-    final double a2 = hct2.chroma * cos(h2Rad);
-    final double b2 = hct2.chroma * sin(h2Rad);
+    // final double a1 = hct1.chroma * cos(h1Rad);
+    // final double b1 = hct1.chroma * sin(h1Rad);
+    // final double a2 = hct2.chroma * cos(h2Rad);
+    // final double b2 = hct2.chroma * sin(h2Rad);
 
-    final double dTone = hct1.tone - hct2.tone;
-    final double da = a1 - a2;
-    final double db = b1 - b2;
+    // final double dTone = hct1.tone - hct2.tone;
+    // final double da = a1 - a2;
+    // final double db = b1 - b2;
 
-    return sqrt(dTone * dTone + da * da + db * db);
+    // return sqrt(dTone * dTone + da * da + db * db);
   }
 
   @override

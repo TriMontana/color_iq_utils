@@ -6,7 +6,6 @@ import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/hsv_color.dart';
-import 'package:material_color_utilities/hct/cam16.dart';
 
 /// A representation of color in the HWB (Hue, Whiteness, Blackness) color model.
 ///
@@ -38,11 +37,16 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
   Percent get alpha => super.a;
 
   const HwbColor(this.h, this.w, this.b,
-      {final Percent alpha = Percent.max, required final int hexId})
-      : super(hexId, a: alpha);
+      {final Percent alpha = Percent.max,
+      required final int hexId,
+      final List<String>? names})
+      : super(hexId, a: alpha, names: names ?? const <String>[]);
   HwbColor.alt(this.h, this.w, this.b,
-      {final Percent alpha = Percent.max, final int? hexId})
-      : super(hexId ?? HwbColor.hwbToHex(h, w, b, alpha), a: alpha);
+      {final Percent alpha = Percent.max,
+      final int? hexId,
+      final List<String>? names})
+      : super(hexId ?? HwbColor.hwbToHex(h, w, b, alpha),
+            a: alpha, names: names ?? const <String>[]);
 
   /// Creates a 32-bit hex ID (ARGB) from HWB values.
   ///
@@ -150,9 +154,6 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   HwbColor get inverted => toColor().inverted.toHwb();
-
-  @override
-  HwbColor get grayscale => toColor().grayscale.toHwb();
 
   @override
   HwbColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
@@ -327,21 +328,12 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
       .toList();
 
   @override
-  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
-
-  @override
   double contrastWith(final ColorSpacesIQ other) =>
       toColor().contrastWith(other);
 
   @override
-  ColorSlice closestColorSlice() => toColor().closestColorSlice();
-
-  @override
   bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) =>
       toColor().isWithinGamut(gamut);
-
-  @override
-  List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
 
   @override
   Map<String, dynamic> toJson() {
@@ -357,7 +349,4 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   String toString() =>
       'HwbColor(h: ${h.toStrTrimZeros(3)}, w: ${w.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)}, alpha: ${alpha.toStringAsFixed(2)})';
-
-  @override
-  Cam16 toCam16() => Cam16.fromInt(value);
 }

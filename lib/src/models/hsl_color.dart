@@ -31,22 +31,27 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
   /// All values are clamped to their respective ranges.
   /// Requires a `hexId` to be passed for the underlying [ColorSpacesIQ] representation.
   const HslColor(this.h, this.s, this.l,
-      {final Percent alpha = Percent.max, required final int hexId})
+      {final Percent alpha = Percent.max,
+      required final int hexId,
+      final List<String>? names})
       : assert(
             h >= 0.0 && h <= 360.0, 'Invalid hue, range must be 0 to 360: $h'),
         assert(s >= 0.0 && s <= 1.0,
             'Invalid saturation, range must be 0 to 1: $s'),
         assert(l >= 0.0 && l <= 1.0,
             'Invalid lightness, range must be 0 to 1: $l'),
-        super(hexId, a: alpha);
+        super(hexId, a: alpha, names: names ?? const <String>[]);
 
   /// Creates an HSL color and calculates the `hexId` automatically.
   ///
   /// This is a convenience constructor that calculates the integer hex value
   /// from the provided HSL and alpha values.
   HslColor.alt(this.h, this.s, this.l,
-      {final Percent alpha = Percent.max, final int? hexId})
-      : super(hexId ?? HslColor.toHexID(h, s, l, alpha: alpha), a: alpha);
+      {final Percent alpha = Percent.max,
+      final int? hexId,
+      final List<String>? names})
+      : super(hexId ?? HslColor.toHexID(h, s, l, alpha: alpha),
+            a: alpha, names: names ?? const <String>[]);
 
   /// Creates an [HslColor] from an RGB [Color].
   ///
@@ -412,13 +417,35 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   ColorSlice closestColorSlice() {
-    // TODO: implement closestColorSlice
-    throw UnimplementedError();
+    final String name = getColorNameFromHue(h);
+    final int index = (h / 6).round() % 60;
+    final double startAngle = index * 6.0;
+    final double endAngle = (index + 1) * 6.0;
+    final double centerAngle = startAngle + 3.0;
+
+    return ColorSlice(
+      color: HslColor.alt(centerAngle, 1.0, 0.5),
+      startAngle: startAngle,
+      endAngle: endAngle,
+      name: name,
+    );
+  }
+
+  @override
+  double get luminance {
+    final int argb = HslColor.toHexID(h, s, l, alpha: alpha);
+    final int r = (argb >> 16) & 0xFF;
+    final int g = (argb >> 8) & 0xFF;
+    final int b = argb & 0xFF;
+    return computeLuminanceViaInts(r, g, b);
   }
 
   @override
   double contrastWith(final ColorSpacesIQ other) {
-    // TODO: implement contrastWith
-    throw UnimplementedError();
+    final double l1 = luminance;
+    final double l2 = other.toLRV;
+    final double lighter = max(l1, l2);
+    final double darker = min(l1, l2);
+    return (lighter + 0.05) / (darker + 0.05);
   }
 }

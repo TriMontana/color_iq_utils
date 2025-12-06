@@ -16,6 +16,7 @@ abstract class ColorSpacesIQ {
   final double b;
   final int redInt;
   final Percent? lrv;
+  final List<String> names;
 
   /// Constructs a color from an integer.
   const ColorSpacesIQ(this.value,
@@ -24,7 +25,8 @@ abstract class ColorSpacesIQ {
       final double? g,
       final double? b,
       this.lrv,
-      final int? redIntVal})
+      final int? redIntVal,
+      this.names = const <String>[]})
       : r = r ?? (value >> 16 & 0xFF) / 255.0,
         g = g ?? (value >> 8 & 0xFF) / 255.0,
         b = b ?? (value & 0xFF) / 255.0,
@@ -37,6 +39,7 @@ abstract class ColorSpacesIQ {
     final double? b,
     this.lrv,
     final int? redIntVal,
+    this.names = const <String>[],
   })  : // a = a ?? (value >> 24 & 0xFF) / 255.0,
         r = r ?? (value >> 16 & 0xFF) / 255.0,
         g = g ?? (value >> 8 & 0xFF) / 255.0,
@@ -88,6 +91,55 @@ abstract class ColorSpacesIQ {
     return GrayscaleConverter.toGrayscale(value, method: method);
   }
 
+  ColorSpacesIQ get grayscale => toHctColor().withChroma(0);
+
+  /// Converts the color to the standard ARGB [ColorIQ] format.
+  ColorIQ toColor() => ColorIQ(value);
+
+  /// Converts this color to HCTColor.
+  HctColor toHctColor() => HctColor.fromInt(value);
+
+  ColorSpacesIQ fromHct(final HctColor hct);
+
+  /// Converts this color to the CAM16 color space.
+  /// CAM16 is a color appearance model used for calculating perceptual
+  /// attributes like hue, chroma, and lightness.  Note: This uses
+  /// [Cam16] from MaterialColorUtilities (not Cam16Color), as it is frequently
+  /// used for distance computations
+  Cam16 toCam16() => Cam16.fromInt(value);
+
+  /// Converts this color to HSL (Hue, Saturation, Lightness).
+  HslColor toHslColor() => HslColor.fromInt(value);
+
+  /// Converts this color to HSV (Hue, Saturation, Value).
+  HsvColor toHsvColor() => HsvColor.fromInt(value);
+
+  XyzColor toXyyColor() => XyzColor.fromInt(value);
+
+  /// Converts this color to the Oklab color space.
+  OkLabColor toOkLab() => OkLabColor.fromInt(value);
+
+  OkLchColor toOklch() => OkLchColor.fromInt(value);
+
+  /// Returns the closest color slice from the HCT color wheel.
+  ColorSlice closestColorSlice() {
+    ColorSlice? closest;
+    double minDistance = double.infinity;
+
+    for (final ColorSlice slice in hctSlices) {
+      final double dist = distanceTo(slice.color);
+      if (dist < minDistance) {
+        minDistance = dist;
+        closest = slice;
+      }
+    }
+    return closest!;
+  }
+
+  /// Returns the white point of the color space (XYZ values).
+  /// Default is D65.
+  List<double> get whitePoint => kWhitePointD65;
+
   /// Lightens the color by the given [amount] (0-100).
   ColorSpacesIQ lighten([final double amount = 20]);
 
@@ -107,9 +159,6 @@ abstract class ColorSpacesIQ {
   /// Returns the inverted color.
   ColorSpacesIQ get inverted;
 
-  /// Returns the grayscale version of this color.
-  ColorSpacesIQ get grayscale;
-
   /// Whitens the color by mixing with white. [amount] is 0-100.
   ColorSpacesIQ whiten([final double amount = 20]);
 
@@ -121,27 +170,6 @@ abstract class ColorSpacesIQ {
 
   /// Adjusts the transparency of the color. [amount] is 0-100.
   ColorSpacesIQ adjustTransparency([final double amount = 20]);
-
-  /// Converts the color to the standard ARGB [ColorIQ] format.
-  ColorIQ toColor();
-
-  /// Converts this color to HCTColor.
-  HctColor toHctColor();
-
-  ColorSpacesIQ fromHct(final HctColor hct);
-
-  /// Converts this color to the CAM16 color space.
-  /// CAM16 is a color appearance model used for calculating perceptual
-  /// attributes like hue, chroma, and lightness.  Note: This uses
-  /// [Cam16] from MaterialColorUtilities (not Cam16Color), as it is frequently
-  /// used for distance computations
-  Cam16 toCam16();
-
-  /// Converts this color to HSL (Hue, Saturation, Lightness).
-  HslColor toHslColor();
-
-  /// Converts this color to the Oklab color space.
-  OkLabColor toOkLab();
 
   /// Creates a new instance of this color type from an HCT color.
   /// Intensifies the color by increasing chroma and slightly decreasing tone.
@@ -160,7 +188,7 @@ abstract class ColorSpacesIQ {
   /// Returns the transparency (alpha) as a double (0.0-1.0).
   double get transparency;
 
-  /// Returns the color temperature (Warm or Cool).
+  /// Returns the color temperature (Warm or Cool), as determined by the color space
   ColorTemperature get temperature;
 
   /// Returns a monochromatic palette.
@@ -232,21 +260,15 @@ abstract class ColorSpacesIQ {
   List<ColorSpacesIQ> tetrad({final double offset = 60});
 
   /// Calculates the distance to another color using Cam16-UCS.
-  double distanceTo(final ColorSpacesIQ other);
+  double distanceTo(final ColorSpacesIQ other) =>
+      toCam16().distance(other.toCam16());
 
   /// Calculates the contrast ratio with another color (1.0 to 21.0).
   double contrastWith(final ColorSpacesIQ other);
 
-  /// Returns the closest color slice from the HCT color wheel.
-  ColorSlice closestColorSlice();
-
   /// Checks if the color is within the specified gamut.
   /// Default is [Gamut.sRGB].
   bool isWithinGamut([final Gamut gamut = Gamut.sRGB]);
-
-  /// Returns the white point of the color space (XYZ values).
-  /// Default is D65.
-  List<double> get whitePoint;
 
   /// Converts the color to a JSON map.
   Map<String, dynamic> toJson();

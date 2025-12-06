@@ -31,23 +31,28 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
   ///
   /// [c], [m], [y], and [k] must be between 0.0 and 1.0.
   const CmykColor(this.c, this.m, this.y, this.k,
-      {required final int value, final Percent alpha = Percent.max})
+      {required final int value,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
       : assert(c >= 0 && c <= 1, 'Invalid C value: $c'),
         assert(m >= 0 && m <= 1, 'Invalid M value: $m'),
         assert(y >= 0 && y <= 1, 'Invalid Y value: $y'),
         assert(k >= 0 && k <= 1, 'Invalid K value: $k'),
-        super(value, a: alpha);
+        super(value, a: alpha, names: names ?? const <String>[]);
 
   /// Alternative constructor for creating a CMYK color, optionally calculating the hex ID if not provided.
   ///
   /// [c], [m], [y], and [k] must be between 0.0 and 1.0.
   CmykColor.alt(this.c, this.m, this.y, this.k,
-      {final int? value, final Percent alpha = Percent.max})
+      {final int? value,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
       : assert(c >= 0 && c <= 1, 'Invalid C value: $c'),
         assert(m >= 0 && m <= 1, 'Invalid M value: $m'),
         assert(y >= 0 && y <= 1, 'Invalid Y value: $y'),
         assert(k >= 0 && k <= 1, 'Invalid K value: $k'),
-        super(value ?? CmykColor.hexFromCmyk(c, m, y, k), a: alpha);
+        super(value ?? CmykColor.hexFromCmyk(c, m, y, k),
+            a: alpha, names: names ?? const <String>[]);
 
   /// Converts this CMYK color to the sRGB color space.
   @override

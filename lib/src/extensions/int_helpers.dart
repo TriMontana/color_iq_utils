@@ -49,10 +49,10 @@ extension IntHelperIQ on int {
   LinRGB get redLinearized => srgbToLinear(r2);
   double get g => (green / kMax8bit).clamp0to1;
   double get g2 => (((this >> 8) & 0xFF) / 255.0).clamp0to1;
-  double get greenLinearized => srgbToLinear(g2);
+  LinRGB get greenLinearized => srgbToLinear(g2);
   double get b => (blue / kMax8bit).clamp0to1;
   double get b2 => ((this & 0xFF) / 255.0).clamp0to1;
-  double get blueLinearized => srgbToLinear(b2);
+  LinRGB get blueLinearized => srgbToLinear(b2);
 
   Percent get toLRV => computeLuminanceViaLinearized(
       redLinearized, greenLinearized, blueLinearized);

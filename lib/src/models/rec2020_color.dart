@@ -22,12 +22,17 @@ class Rec2020Color extends ColorSpacesIQ with ColorModelsMixin {
   final double b;
 
   const Rec2020Color(this.r, this.g, this.b,
-      {required final int hexId, final Percent alpha = Percent.max})
-      : super(hexId, a: alpha);
+      {required final int hexId,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
+      : super(hexId, a: alpha, names: names ?? const <String>[]);
 
   Rec2020Color.alt(this.r, this.g, this.b,
-      {final int? hexId, final Percent alpha = Percent.max})
-      : super(hexId ?? toHexID(r, g, b), a: alpha);
+      {final int? hexId,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
+      : super(hexId ?? toHexID(r, g, b),
+            a: alpha, names: names ?? const <String>[]);
 
   /// Creates a 32-bit hex ARGB value from the properties of this class.
   ///
@@ -63,9 +68,9 @@ class Rec2020Color extends ColorSpacesIQ with ColorModelsMixin {
     // sRGB Linear to sRGB (Gamma encoded)
 
     return ColorIQ.fromSrgb(
-      r: rS.gammaCorrect,
-      g: gS.gammaCorrect,
-      b: bS.gammaCorrect,
+      r: rS.clamp(0.0, 1.0).gammaCorrect,
+      g: gS.clamp(0.0, 1.0).gammaCorrect,
+      b: bS.clamp(0.0, 1.0).gammaCorrect,
     ).value;
   }
 
@@ -114,9 +119,6 @@ class Rec2020Color extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   Rec2020Color get inverted => toColor().inverted.toRec2020();
-
-  @override
-  Rec2020Color get grayscale => toColor().grayscale.toRec2020();
 
   @override
   Rec2020Color whiten([final double amount = 20]) => lerp(cWhite, amount / 100);

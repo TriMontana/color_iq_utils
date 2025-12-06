@@ -27,12 +27,17 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
   final double b;
 
   const DisplayP3Color(this.r, this.g, this.b,
-      {required final int hexId, final Percent alpha = Percent.max})
-      : super(hexId, a: alpha);
+      {required final int hexId,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
+      : super(hexId, a: alpha, names: names ?? const <String>[]);
 
   DisplayP3Color.alt(this.r, this.g, this.b,
-      {final int? hexId, final Percent alpha = Percent.max})
-      : super(hexId ?? DisplayP3Color.toHexId(r, g, b), a: alpha);
+      {final int? hexId,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
+      : super(hexId ?? DisplayP3Color.toHexId(r, g, b),
+            a: alpha, names: names ?? const <String>[]);
 
   static DisplayP3Color fromInt(final int hexId) {
     final XyzColor xyz = XyzColor.xyzFromRgbLinearized(

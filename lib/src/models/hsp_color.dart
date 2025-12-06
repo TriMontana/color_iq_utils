@@ -34,13 +34,18 @@ class HspColor extends ColorSpacesIQ with ColorModelsMixin {
 
   /// Creates a new `HspColor`.
   const HspColor(this.h, this.s, this.p,
-      {final Percent alpha = Percent.max, required final int hexId})
-      : super(hexId, a: alpha);
+      {final Percent alpha = Percent.max,
+      required final int hexId,
+      final List<String>? names})
+      : super(hexId, a: alpha, names: names ?? const <String>[]);
 
   /// Creates a new `HspColor`.
   HspColor.alt(this.h, this.s, this.p,
-      {final Percent alpha = Percent.max, final int? hexId})
-      : super(hexId ?? toHex(h, s, p, alpha), a: alpha);
+      {final Percent alpha = Percent.max,
+      final int? hexId,
+      final List<String>? names})
+      : super(hexId ?? toHex(h, s, p, alpha),
+            a: alpha, names: names ?? const <String>[]);
 
   /// Creates a 32-bit hex ID/ARGB from this class's properties.
   /// This is a standalone static method for conversion.
@@ -410,9 +415,6 @@ class HspColor extends ColorSpacesIQ with ColorModelsMixin {
   HspColor get inverted => toColor().inverted.toHsp();
 
   @override
-  HspColor get grayscale => toColor().grayscale.toHsp();
-
-  @override
   HspColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
@@ -549,14 +551,8 @@ class HspColor extends ColorSpacesIQ with ColorModelsMixin {
       .toList();
 
   @override
-  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
-
-  @override
   double contrastWith(final ColorSpacesIQ other) =>
       toColor().contrastWith(other);
-
-  @override
-  ColorSlice closestColorSlice() => toColor().closestColorSlice();
 
   @override
   bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) =>

@@ -32,14 +32,16 @@ class HctColor extends ColorSpacesIQ with ColorModelsMixin {
   /// Primary constructor.
   /// credit: Adapted from material_color_utilities
   const HctColor(this.hue, this.chroma, this.tone, final int argb,
-      {final Percent? lrv, final Percent alpha = Percent.max})
+      {final Percent? lrv,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
       : assert(tone >= kMinTone && tone <= kMaxTone, 'Invalid Tone: $tone'),
         assert(
           chroma >= kMinChroma && chroma <= kMaxChroma,
           'Invalid Chroma: $chroma',
         ),
         assert(hue >= 0.0 && hue <= 360.0, 'Invalid Hue: $hue'),
-        super(argb, lrv: lrv, a: alpha);
+        super(argb, lrv: lrv, a: alpha, names: names ?? const <String>[]);
 
   factory HctColor.fromInt(
     final int argb, {
@@ -47,13 +49,15 @@ class HctColor extends ColorSpacesIQ with ColorModelsMixin {
     final double? c,
     final double? t,
     final Percent? lrv,
+    final List<String>? names,
   }) {
     final Cam16 cam16 = Cam16.fromInt(argb);
     final double hue = h?.assertRangeHue('fromInt') ?? cam16.hue;
     final double chroma = c?.assertRangeChroma('fromInt') ?? cam16.chroma;
     final double tone =
         t?.assertRange0to100('fromInt') ?? ColorUtils.lstarFromArgb(argb);
-    return HctColor(hue, chroma, tone, argb, lrv: lrv);
+    return HctColor(hue, chroma, tone, argb,
+        lrv: lrv, names: names ?? const <String>[]);
   }
 
   factory HctColor.alt(
@@ -62,18 +66,21 @@ class HctColor extends ColorSpacesIQ with ColorModelsMixin {
     final double t, {
     final int? argb,
     final Percent? lrv,
+    final List<String>? names,
   }) {
     final double hue = h.assertRangeHue('HctColor.alt');
     final double chroma = c.assertRangeChroma('HctColor.alt');
     final double tone = t.assertRange0to100('HctColor.alt');
     final int hexID = argb ?? HctSolver.solveToInt(hue, chroma, tone);
     final Percent luminance = lrv ?? hexID.toLRV;
-    return HctColor(hue, chroma, tone, hexID, lrv: luminance);
+    return HctColor(hue, chroma, tone, hexID,
+        lrv: luminance, names: names ?? const <String>[]);
   }
 
-  /// Converts this HCT color to a [ColorIQ] color.
-  @override
-  ColorIQ toColor() => ColorIQ(value);
+  HctColor withChroma(final double nuChroma,
+          {final Percent? lrv, final List<String>? names}) =>
+      HctColor(hue, nuChroma, tone, value,
+          lrv: lrv, names: names ?? const <String>[]);
 
   /// Converts this HCT color to a [CmykColor].
   CmykColor toCMYK() => CmykColor.fromInt(value);
@@ -196,7 +203,7 @@ class HctColor extends ColorSpacesIQ with ColorModelsMixin {
   HctColor get inverted => toColor().inverted.toHctColor();
 
   @override
-  HctColor get grayscale => toColor().grayscale.toHctColor();
+  HctColor get grayscale => HctColor(hue, 0, tone, value);
 
   @override
   HctColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
@@ -383,9 +390,6 @@ class HctColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   double contrastWith(final ColorSpacesIQ other) =>
       toColor().contrastWith(other);
-
-  @override
-  ColorSlice closestColorSlice() => toColor().closestColorSlice();
 
   @override
   bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) =>

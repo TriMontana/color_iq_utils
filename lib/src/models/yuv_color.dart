@@ -32,11 +32,16 @@ class YuvColor extends ColorSpacesIQ with ColorModelsMixin {
   final double v;
 
   const YuvColor(this.y, this.u, this.v,
-      {required final int val, final Percent alpha = Percent.max})
-      : super(val, a: alpha);
+      {required final int val,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
+      : super(val, a: alpha, names: names ?? const <String>[]);
   YuvColor.alt(this.y, this.u, this.v,
-      {final int? val, final Percent alpha = Percent.max})
-      : super(val ?? YuvColor.toHexId(y, u, v), a: alpha);
+      {final int? val,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
+      : super(val ?? YuvColor.toHexId(y, u, v),
+            a: alpha, names: names ?? const <String>[]);
 
   /// Creates a [YuvColor] instance from a 32-bit hex value.
   factory YuvColor.fromHexId(final int hex) {
@@ -115,9 +120,6 @@ class YuvColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   YuvColor get inverted => toColor().inverted.toYuv();
-
-  @override
-  YuvColor get grayscale => toColor().grayscale.toYuv();
 
   @override
   YuvColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);

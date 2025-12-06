@@ -27,11 +27,16 @@ class XyzColor extends ColorSpacesIQ with ColorModelsMixin {
   final double z;
 
   const XyzColor(this.x, this.y, this.z,
-      {required final int hexId, final Percent alpha = Percent.max})
-      : super(hexId, a: alpha);
+      {required final int hexId,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
+      : super(hexId, a: alpha, names: names ?? const <String>[]);
   XyzColor.alt(this.x, this.y, this.z,
-      {final int? hexId, final Percent alpha = Percent.max})
-      : super(hexId ?? argbFromXyz(x, y, z), a: alpha);
+      {final int? hexId,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
+      : super(hexId ?? argbFromXyz(x, y, z),
+            a: alpha, names: names ?? const <String>[]);
   factory XyzColor.fromInt(final int hexId) {
     final List<double> lst = xyzFromArgb(hexId);
     return XyzColor(lst[0], lst[1], lst[2], hexId: hexId);
@@ -106,9 +111,6 @@ class XyzColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   XyzColor get inverted => toColor().inverted.toXyz();
-
-  @override
-  XyzColor get grayscale => toColor().grayscale.toXyz();
 
   @override
   XyzColor whiten([final double amount = 20]) =>

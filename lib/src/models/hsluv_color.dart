@@ -28,15 +28,20 @@ class HsluvColor extends ColorSpacesIQ with ColorModelsMixin {
   final double l;
 
   const HsluvColor(this.h, this.s, this.l,
-      {required final int hexId, final Percent alpha = Percent.max})
+      {required final int hexId,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
       : assert(h >= 0.0 && h <= 360.0, 'Hue must be between 0 and 360'),
         assert(s >= 0.0 && s <= 100.0, 'Saturation must be between 0 and 100'),
         assert(l >= 0.0 && l <= 100.0, 'Lightness must be between 0 and 100'),
-        super(hexId, a: alpha);
+        super(hexId, a: alpha, names: names ?? const <String>[]);
 
   HsluvColor.alt(this.h, this.s, this.l,
-      {final int? hexId, final Percent alpha = Percent.max})
-      : super(hexId ?? toHex(h: h, s: s, l: l), a: alpha);
+      {final int? hexId,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
+      : super(hexId ?? toHex(h: h, s: s, l: l),
+            a: alpha, names: names ?? const <String>[]);
 
   /// Creates a 32-bit ARGB hex value from HSLuv components.
   ///

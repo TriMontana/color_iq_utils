@@ -33,11 +33,16 @@ class LuvColor extends ColorSpacesIQ with ColorModelsMixin {
 
   /// Creates a new `LuvColor`.
   const LuvColor(this.l, this.u, this.v,
-      {required final int hexId, final Percent alpha = Percent.max})
-      : super(hexId, a: alpha);
+      {required final int hexId,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
+      : super(hexId, a: alpha, names: names ?? const <String>[]);
   LuvColor.alt(this.l, this.u, this.v,
-      {final int? hexId, final Percent alpha = Percent.max})
-      : super(hexId ?? LuvColor.toHexId(l, u, v), a: alpha);
+      {final int? hexId,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
+      : super(hexId ?? LuvColor.toHexId(l, u, v),
+            a: alpha, names: names ?? const <String>[]);
 
   /// Creates a [LuvColor] from a 32-bit integer ARGB value.
   factory LuvColor.fromInt(final int argb) {
@@ -87,9 +92,6 @@ class LuvColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   LuvColor get inverted => toColor().inverted.toLuv();
-
-  @override
-  LuvColor get grayscale => toColor().grayscale.toLuv();
 
   @override
   LuvColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);

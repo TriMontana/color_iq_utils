@@ -30,13 +30,17 @@ class MunsellColor extends ColorSpacesIQ with ColorModelsMixin {
   final double chroma;
 
   const MunsellColor(this.hue, this.munsellValue, this.chroma,
-      {required final int hexId, final Percent alpha = Percent.max})
-      : super(hexId, a: alpha);
+      {required final int hexId,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
+      : super(hexId, a: alpha, names: names ?? const <String>[]);
 
   MunsellColor.alt(this.hue, this.munsellValue, this.chroma,
-      {final int? hexId, final Percent alpha = Percent.max})
+      {final int? hexId,
+      final Percent alpha = Percent.max,
+      final List<String>? names})
       : super(hexId ?? MunsellColor.toHexId(hue, munsellValue, chroma),
-            a: alpha);
+            a: alpha, names: names ?? const <String>[]);
 
   /// Creates a 32-bit hex ID from the Munsell properties.
   ///
@@ -149,9 +153,6 @@ class MunsellColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   MunsellColor get inverted => toColor().inverted.toMunsell();
-
-  @override
-  MunsellColor get grayscale => toColor().grayscale.toMunsell();
 
   @override
   MunsellColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
