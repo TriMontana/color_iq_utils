@@ -50,7 +50,19 @@ extension NullableStringExtensions on String? {
   String get orEmpty => this ?? kEmptyStr;
 }
 
-/// TODO: Add detailed documentation describing the purpose and usage of this code selection.
+/// Adds a collection of String utilities used throughout the package for common
+/// text manipulation tasks such as trimming underscores, removing prefixes,
+/// normalizing decimals, and rendering safe display snippets.
+///
+/// Usage examples:
+/// ```dart
+/// 'foo_bar'.stripUnderscores;      // -> 'foobar'
+/// 'prefix:value'.removePrefix('prefix:'); // -> 'value'
+/// '12.3400'.removeTrailingZeroes();      // -> '12.34'
+/// 'A'.getHexLiteral();                   // -> r'\x41'
+/// ```
+/// These helpers aim to reduce repeated boilerplate and keep string handling
+/// readable across the codebase.
 extension StringHelpers on String {
   String get stripUnderscores => replaceAll("_", kEmptyStr).trim();
 
