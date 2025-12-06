@@ -22,6 +22,7 @@ Map<int, ColorIQ> colorFamilyRegistry = <int, ColorIQ>{
   hxCornSilk: cCornSilk,
   hxCornflowerBlue: cCornflowerBlue,
   hxCrimson: cCrimson,
+  // hxCyan: cCyan,  // same as hxAqua
   hxDarkBlue: cDarkBlue,
   hxDarkCyan: cDarkCyan,
   hxDarkGoldenRod: cDarkGoldenRod,
