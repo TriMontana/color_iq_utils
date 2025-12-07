@@ -27,6 +27,14 @@ extension DoubleHelpersNullableIQ on double? {
 
 /// Extension for doubles
 extension DoubleHelpersIQ on double {
+  int get toInt0to255 {
+    if (this < 0.0 || this > 1.0) {
+      throw RangeError('Must be in range of 0.0 to 1.0 ' //
+          'to use this function-toInt0to255-doublesHelper-$this');
+    }
+    return (this * 255).round().clamp(0, 255);
+  }
+
   double get clampHue => clampDouble(this, min: kMinHue, max: kMaxHue);
   double get clampChromaHct =>
       clampDouble(this, min: kMinChroma, max: kMaxChroma);

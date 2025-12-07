@@ -24,38 +24,39 @@ import 'package:color_iq_utils/src/utils/error_handling.dart';
 ///
 /// This type is not typically instantiated directly by consumers. Instead, one
 /// of its subtypes should be used.
-extension type const FltType._(double _) implements double {
+extension type const FloatIQ._(double _) implements double {
   /// Constant constructor
-  const FltType(final double val) : this._(val);
+  const FloatIQ(final double val) : this._(val);
 
-  const factory FltType.percent(final double value) = SRGB;
+  const factory FloatIQ.percent(final double value) = Percent;
 
-  const factory FltType.zeroTo1(final double value) = SRGB;
+  const factory FloatIQ.zeroTo1(final double value) = Percent;
 
-  const factory FltType.factored(final double value) = SRGB;
+  const factory FloatIQ.factored(final double value) = Percent;
 
-  const factory FltType.srgb(final double value) = SRGB;
+  const factory FloatIQ.srgb(final double value) = Percent;
 
-  const factory FltType.fractionalized(final double value) = SRGB;
+  const factory FloatIQ.fractionalized(final double value) = Percent;
 
-  const factory FltType.linearized(final double value) = LinRGB;
+  const factory FloatIQ.linearized(final double value) = LinRGB;
+  const factory FloatIQ.linearize(final double value) = LinRGB;
 
-  const factory FltType.lightnessHsl(final double value) = Percent;
+  const factory FloatIQ.lightnessHsl(final double value) = Percent;
 
-  const factory FltType.saturation(final double value) = Percent;
+  const factory FloatIQ.saturation(final double value) = Percent;
 
-  const factory FltType.valueHsv(final double value) = Percent;
+  const factory FloatIQ.valueHsv(final double value) = Percent;
 
-  const factory FltType.lrv(final double value) = Percent;
+  const factory FloatIQ.lrv(final double value) = Percent;
 
-  const factory FltType.xyzX(final double value) = Xxyz;
+  const factory FloatIQ.xyzX(final double value) = Xxyz;
 
-  const factory FltType.xyzY(final double value) = Yxyz;
+  const factory FloatIQ.xyzY(final double value) = Yxyz;
 
-  const factory FltType.xyzZ(final double value) = Zxyz;
+  const factory FloatIQ.xyzZ(final double value) = Zxyz;
 
   /// Takes a max val and assumes 0 for minimum
-  const FltType.fromUnchecked(
+  const FloatIQ.fromUnchecked(
     final double vl,
     final double maxVal, {
     final String? msg,
@@ -65,15 +66,15 @@ extension type const FltType._(double _) implements double {
           'FxFloat.fromUnchecked: ${msg ?? ''}-"$vl"',
         );
 
-  factory FltType.clampBetween(
+  factory FloatIQ.clampBetween(
     final double val,
     final double minVal,
     final double maxVal,
   ) =>
-      FltType(clampDouble(val, min: minVal, max: maxVal));
+      FloatIQ(clampDouble(val, min: minVal, max: maxVal));
 
-  factory FltType.clampInRange(final double val, final RangeIQ<double> range) =>
-      FltType(
+  factory FloatIQ.clampInRange(final double val, final RangeIQ<double> range) =>
+      FloatIQ(
         clampDouble(
           val,
           min: range.lowerLimit,
@@ -81,7 +82,7 @@ extension type const FltType._(double _) implements double {
         ),
       );
 
-  factory FltType.assertBetween(
+  factory FloatIQ.assertBetween(
     final double val,
     final double minVal,
     final double maxVal, {
@@ -95,40 +96,40 @@ extension type const FltType._(double _) implements double {
       msg: msg,
       source: source,
     );
-    return FltType(valNum);
+    return FloatIQ(valNum);
   }
 
   /// The value for this double
   double get val => _;
 
   static const double minValFxFloat = 0.0;
-  static const FltType zero = FltType(0.0);
-  static const FltType minInstance = FltType.zero;
+  static const FloatIQ zero = FloatIQ(0.0);
+  static const FloatIQ minInstance = FloatIQ.zero;
 
-  double get toMinVal => FltType.minInstance._;
+  double get toMinVal => FloatIQ.minInstance._;
 
-  FltType operator +(final FltType otherVal) => FltType(_ + otherVal._);
+  FloatIQ operator +(final FloatIQ otherVal) => FloatIQ(_ + otherVal._);
 
-  /// "Minus" operator. Results are returned in type of [FltType].
+  /// "Minus" operator. Results are returned in type of [FloatIQ].
   /// These operators are typically overridden by the more-specific subtypes.
   /// This will NOT clamp the value so it best handled by the API client.
-  FltType operator -(final FltType otherVal) => FltType(_ - otherVal._);
+  FloatIQ operator -(final FloatIQ otherVal) => FloatIQ(_ - otherVal._);
 
-  /// A general "Multiply" operator. Results are returned in type of [FltType].
+  /// A general "Multiply" operator. Results are returned in type of [FloatIQ].
   /// These operators are typically overridden by the more-specific subtypes.
-  FltType operator *(final FltType otherVal) =>
-      FltType((_ * otherVal._).clamp(0.0, fxFloat8bitInfinity));
+  FloatIQ operator *(final FloatIQ otherVal) =>
+      FloatIQ((_ * otherVal._).clamp(0.0, fxFloat8bitInfinity));
 
-  /// A general "Division" operator. Results are returned in type of [FltType].
+  /// A general "Division" operator. Results are returned in type of [FloatIQ].
   /// These operators are typically overridden by the more-specific subtypes.
-  FltType operator /(final FltType otherVal) =>
-      FltType((_ / otherVal._).clamp(0.0, fxFloat8bitInfinity));
+  FloatIQ operator /(final FloatIQ otherVal) =>
+      FloatIQ((_ / otherVal._).clamp(0.0, fxFloat8bitInfinity));
 
-  /// A general "Modulus" operator. Results are returned in type of [FltType].
-  /// Returns the remainder in [FltType] format when a number is divided
+  /// A general "Modulus" operator. Results are returned in type of [FloatIQ].
+  /// Returns the remainder in [FloatIQ] format when a number is divided
   /// by another number.  (It's essentially the "leftover" after dividing).
-  FltType operator %(final FltType otherVal) =>
-      FltType((_ % otherVal._).clamp(0.0, 1.0));
+  FloatIQ operator %(final FloatIQ otherVal) =>
+      FloatIQ((_ % otherVal._).clamp(0.0, 1.0));
 
   String toStringAsFixed([final int decimals = 5]) =>
       _.toStringAsFixed(decimals);
@@ -136,15 +137,15 @@ extension type const FltType._(double _) implements double {
   static const String name = "FltType";
 }
 
-extension MapStringToFloatHelper on Map<String, FltType> {
+extension MapStringToFloatHelper on Map<String, FloatIQ> {
   String get asStr4Printing {
     return toStrings.join(kSemiColonNL);
   }
 
   List<String> get toStrings {
     final List<String> strs = List<String>.empty(growable: true);
-    final Iterable<MapEntry<String, FltType>> ents = entries;
-    for (final MapEntry<String, FltType> e in ents) {
+    final Iterable<MapEntry<String, FloatIQ>> ents = entries;
+    for (final MapEntry<String, FloatIQ> e in ents) {
       strs.add('${e.key}: ${e.value.toString()}');
     }
     return strs;
@@ -153,7 +154,7 @@ extension MapStringToFloatHelper on Map<String, FltType> {
 
 /// An extension type representing a percentage value in the range of 0.0 to 1.0.
 ///
-/// `Percent` is a specialized version of [FltType] that ensures its underlying
+/// `Percent` is a specialized version of [FloatIQ] that ensures its underlying
 /// [double] value is always within the [0.0, 1.0] range. It is used as a base
 /// type for various color channel components that are expressed as fractions,
 /// such as saturation, lightness, and RGB channel values.
@@ -169,10 +170,10 @@ extension MapStringToFloatHelper on Map<String, FltType> {
 ///   like `zero`, `midInst` (0.5), and `max` (1.0) for efficiency and
 ///   readability.
 ///
-/// It serves as the supertype for more specific fractional types like [SRGB]
+/// It serves as the supertype for more specific fractional types for gamma correction
 /// (non-linear, gamma-corrected RGB) and [LinRGB] (linear RGB), inheriting
 /// its constraints and base functionality.
-extension type const Percent._(double _) implements FltType {
+extension type const Percent._(double _) implements FloatIQ {
   /// Constant constructor.
   const Percent(final double val, {final String? msg})
       : assert(
@@ -196,6 +197,61 @@ extension type const Percent._(double _) implements FltType {
       tolerance: tolerance,
       msg: msg,
     );
+  }
+
+  /// Constructor to clamp and create [SRGB] from a linear RGB; i.e.
+  /// from a NON-gamma-corrected, non-SRGB value. In other words, when
+  /// the linear-to-srgb transformation has NOT yet taken place.
+  /// [linear0to1Float] 0.0 <= linear0to1Float <= 1.0, represents linearRGB
+  ///
+  /// This constructor returns the sRGB color space value in range [0.0-1.0]
+  /// for [linearVal], assuming [linearVal] is in linear RGB in range [0.0-1.0].
+  factory Percent.fromLinRGB(
+    final LinRGB linear0to1Float, {
+    final String? msg,
+    final double? tolerance,
+  }) {
+    if (linear0to1Float.isInfinite ||
+        linear0to1Float.isNaN ||
+        linear0to1Float.isNegative) {
+      throw Error0to1(linear0to1Float, source: name, msg: msg);
+    }
+    assertTrue(
+      0.0 <= linear0to1Float && linear0to1Float <= 1.0,
+      'Invalid Percent at validate0to1$kRightwardsSquiggleArrow' //
+      '"$linear0to1Float" -- ' //
+      '$errorMsgFloat0to1--${msg.orEmpty}',
+    );
+    final double correctedVal = applyGamma(linear0to1Float);
+    return Percent(
+      Percent._legend.clampedWithEncoding(
+        correctedVal,
+        tolerance: tolerance,
+        msg: msg,
+      ),
+    );
+  }
+
+  /// Constructor to clamp and create [SRGB] from a linear RGB; i.e.
+  /// from a NON-gamma-corrected, non-SRGB value. In other words, when
+  /// the linear-to-srgb transformation has NOT yet taken place.
+  /// [linear0to1Float] 0.0 <= linear0to1Float <= 1.0, represents linearRGB
+  ///
+  /// This constructor returns the sRGB color space value in range [0.0-1.0]
+  /// for [linearVal], assuming [linearVal] is in linear RGB in range [0.0-1.0].
+  factory Percent.fromLinear(
+    final double linear0to1Float, {
+    final String? msg,
+    final double? tolerance,
+  }) {
+    if (linear0to1Float.isInfinite ||
+        linear0to1Float.isNaN ||
+        linear0to1Float.isNegative) {
+      throw Error0to1(linear0to1Float, source: name, msg: msg);
+    }
+
+    final double correctedVal = applyGamma(linear0to1Float.clamp(0.0, 1.0));
+    return Percent(correctedVal);
   }
 
   Percent replace(final double val) => Percent(val);
@@ -239,29 +295,81 @@ extension type const Percent._(double _) implements FltType {
         ),
         _ = val;
 
+  /// Delinearize. Constructor to clamp and create [SRGB] from a linear RGB,
+  /// aka NON-gamma-corrected, non-SRGB value -- when the linear-to-srgb
+  /// transformation has NOT yet taken place.
+  /// [linear0to100Float] 0.0 <= linear0to100Float <= 100.0, represents linear
+  /// R/G/B channel
+  /// This constructor returns the sRGB color space value in range [0.0-1.0]
+  /// for [linearVal], assuming [linearVal] is in linear RGB in range [0.0-100.0].
+  factory Percent.delinearizeFrom0to100float(
+    final double linear0to100Float, {
+    final String? msg,
+    final double? tolerance,
+    final bool applyClamp = false,
+  }) {
+    final double correctedVal = applyGamma(
+      applyClamp
+          ? (linear0to100Float / 100.0).clamp(0.0, 1.0)
+          : (linear0to100Float / 100.0),
+    );
+    return Percent(
+      Percent._legend.clampedWithEncoding(
+        correctedVal,
+        tolerance: tolerance,
+        msg: msg,
+      ),
+    );
+  }
+
   double get val => _;
   double get value => _;
 
+  /// Adds another [Percent] value, clamping the result to the `0.0-1.0` range.
   Percent operator +(final Percent otherVal) => Percent(_ + otherVal._);
 
+  /// Multiplies this percentage by a [double].
+  ///
+  /// Note: The result is a raw [double] and is not clamped or validated
+  /// as a [Percent].
   double operator *(final double otherVal) => (_ * otherVal);
 
+  /// Converts this percentage to an 8-bit integer (`0` to `255`).
+  ///
+  /// The percentage (0.0 to 1.0) is scaled by 255, rounded, and clamped
+  /// to ensure it falls within the valid 8-bit range.
   int get toInt0to255 => (_ * 255).round().clamp(0, 255);
+
+  /// Creates a new [Percent] instance representing the inverse of the given
+  /// `val` (1.0 - val).
+  ///
+  /// Asserts that the input `val` is within the `0.0-1.0` range.
   static Percent toInvertFactored(final double val, {final String? msg}) =>
       Percent(1 - val.assertRange0to1(msg));
 
+  /// Returns the inverse of this percentage (1.0 - this).
   Percent get inverted => Percent.toInvertFactored(_);
 
+  /// Flips the percentage value around the 50% mark.
+  ///
+  /// For example, `0.2` becomes `0.8`, and `0.7` becomes `0.3`. This is
+  /// equivalent to `inverted`.
   Percent get flipAround50percent => Percent(1 - _);
 
+  /// Returns the name of the type, used for identification and error messages.
   static String get name => 'PercentType';
 
+  /// Converts the percentage to a string representation, trimming trailing zeros.
+  ///
+  /// [decimals] specifies the maximum number of decimal places.
   String toPercentString([final int decimals = 4]) =>
       _.toStrTrimZeros(decimals);
 
   /// The legend to use for validation
   static const PercentsLegend _legend = legendPercent;
 
+  /// Gets the [PercentsLegend] descriptor for this type, which contains
+  /// metadata like range and validation functions.
   PercentsLegend get toDescriptor => Percent._legend;
 
   /// Linearly interpolate from this value to the target value.
@@ -349,285 +457,6 @@ extension type const Percent._(double _) implements FltType {
   static const Percent v85 = Percent(0.85);
   static const Percent v87 = Percent(0.87);
 }
-
-/// An extension type representing a non-linear, gamma-corrected RGB channel
-/// value in the range of 0.0 to 1.0.
-///
-/// `SRGB` (Standard Red Green Blue) values are what are typically used for
-/// direct display on screens. They have a non-linear relationship with light
-/// intensity due to "gamma correction" (more accurately, an opto-electronic
-/// transfer function or OETF).
-///
-/// For color calculations and transformations, it's often necessary to work
-/// with linear RGB values. This type provides a `toLinearRGB` getter to
-/// convert this non-linear `SRGB` value to its linear equivalent, [LinRGB],
-/// by removing the gamma correction.
-///
-/// - **`SRGB`**: Non-linear, gamma-corrected, for display. Also known as
-///   "delinearized".
-/// - **[LinRGB]**: Linear, for mathematical operations. Also known as
-///   "normalized", "factored", or "linearized".
-///
-/// Both the [LinRGB] and [SRGB] types have options to clamp a
-/// [double] within the 0.0-to-1.0 range or to throw an exception if the
-/// value exceeds the bounds.
-///
-/// This type also includes predefined constants for common values, improving
-/// performance and readability.
-extension type const SRGB._(double _) implements Percent {
-  /// Constant constructor. Important: this constructor assumes the
-  /// input value is already a gamma-corrected (non-linear) sRGB value.
-  /// the linear-to-srgb transformation HAS already taken place.
-  const SRGB(final double gammaCorrectedVal, {final String? msg})
-      : assert(
-          gammaCorrectedVal >= SRGB.minVal &&
-              gammaCorrectedVal <= LinRGB.maxVal,
-          '$errorMsgFloat0to1-"$gammaCorrectedVal"--${msg ?? //
-              'Error: Constructor-Non-Linear sRGB'}',
-        ),
-        _ = gammaCorrectedVal;
-
-  /// Constructor for a number that ALREADY has the gamma-correction.
-  /// [valWithGammaFix] 0.0 <= valWithGammaFix <= 1.0, represents linearRGB
-  ///
-  /// This constructor returns the sRGB color space value in range [0.0-1.0].
-  factory SRGB.clamped(
-    final num valWithGammaFix, {
-    final String? msg,
-    final Object? source,
-    final double? tolerance,
-  }) {
-    if (valWithGammaFix.isInfinite || valWithGammaFix.isNaN) {
-      throw Error0to1(valWithGammaFix, source: name, msg: msg);
-    }
-    return SRGB(
-      valWithGammaFix.toDouble().clamp(_legend.minVal, _legend.maxVal!),
-    );
-  }
-
-  /// Constructor to clamp and create [SRGB] from a linear RGB; i.e.
-  /// from a NON-gamma-corrected, non-SRGB value. In other words, when
-  /// the linear-to-srgb transformation has NOT yet taken place.
-  /// [linear0to1Float] 0.0 <= linear0to1Float <= 1.0, represents linearRGB
-  ///
-  /// This constructor returns the sRGB color space value in range [0.0-1.0]
-  /// for [linearVal], assuming [linearVal] is in linear RGB in range [0.0-1.0].
-  factory SRGB.delinearizeFrom0to1float(
-    final double linear0to1Float, {
-    final String? msg,
-    final double? tolerance,
-  }) {
-    if (linear0to1Float.isInfinite ||
-        linear0to1Float.isNaN ||
-        linear0to1Float.isNegative) {
-      throw Error0to1(linear0to1Float, source: name, msg: msg);
-    }
-    assertTrue(
-      0.0 <= linear0to1Float && linear0to1Float <= 1.0,
-      'Invalid Percent at validate0to1$kRightwardsSquiggleArrow' //
-      '"$linear0to1Float" -- ' //
-      '$errorMsgFloat0to1--${msg.orEmpty}',
-    );
-    final double correctedVal = applyGamma(linear0to1Float);
-    return SRGB(
-      SRGB._legend.clampedWithEncoding(
-        correctedVal,
-        tolerance: tolerance,
-        msg: msg,
-      ),
-    );
-  }
-
-  /// Constructor to clamp and create [SRGB] from a linear RGB; i.e.
-  /// from a NON-gamma-corrected, non-SRGB value. In other words, when
-  /// the linear-to-srgb transformation has NOT yet taken place.
-  /// [linear0to1Float] 0.0 <= linear0to1Float <= 1.0, represents linearRGB
-  ///
-  /// This constructor returns the sRGB color space value in range [0.0-1.0]
-  /// for [linearVal], assuming [linearVal] is in linear RGB in range [0.0-1.0].
-  factory SRGB.fromLinear(
-    final double linear0to1Float, {
-    final String? msg,
-    final double? tolerance,
-  }) {
-    if (linear0to1Float.isInfinite ||
-        linear0to1Float.isNaN ||
-        linear0to1Float.isNegative) {
-      throw Error0to1(linear0to1Float, source: name, msg: msg);
-    }
-
-    final double correctedVal = applyGamma(linear0to1Float.clamp(0.0, 1.0));
-    return SRGB(correctedVal);
-  }
-
-  /// Delinearize. Constructor to clamp and create [SRGB] from a linear RGB,
-  /// aka NON-gamma-corrected, non-SRGB value -- when the linear-to-srgb
-  /// transformation has NOT yet taken place.
-  /// [linear0to100Float] 0.0 <= linear0to100Float <= 100.0, represents linear
-  /// R/G/B channel
-  /// This constructor returns the sRGB color space value in range [0.0-1.0]
-  /// for [linearVal], assuming [linearVal] is in linear RGB in range [0.0-100.0].
-  factory SRGB.delinearizeFrom0to100float(
-    final double linear0to100Float, {
-    final String? msg,
-    final double? tolerance,
-    final bool applyClamp = false,
-  }) {
-    final double correctedVal = applyGamma(
-      applyClamp
-          ? (linear0to100Float / 100.0).clamp(0.0, 1.0)
-          : (linear0to100Float / 100.0),
-    );
-    return SRGB(
-      SRGB._legend.clampedWithEncoding(
-        correctedVal,
-        tolerance: tolerance,
-        msg: msg,
-      ),
-    );
-  }
-
-  /// Static method to create [SRGB] from a ShortInt [int]
-  static SRGB fromInt(
-    final int intVal, {
-    final String? msg,
-    final bool useChannels = false,
-  }) {
-    if (intVal < 0 || intVal > 255) {
-      throw RangeError.value(
-        intVal,
-        LinRGB.clName,
-        'Invalid int $intVal-$errorMsg0to255-${msg.orEmpty}',
-      );
-    }
-    final double factored = ((intVal & 0xff) / 255).clamp(0.0, 1.0);
-    return SRGB.delinearizeFrom0to1float(factored);
-  }
-
-  /// A named constant constructor that is used as functional pointer in
-  /// assert casts by [PropertyLegend].  Important: this constructor assumes the
-  /// input value has already been gamma corrected (delinearized)!!
-  /// i.e. the linear-to-srgb transformation HAS already taken place.
-  const SRGB._fromGammaTransformed(
-    final double gammaCorrectedVal, {
-    final Object? source,
-    final String? msg,
-  })  : assert(
-          gammaCorrectedVal >= LinRGB.minVal &&
-              gammaCorrectedVal <= LinRGB.maxVal,
-          '$errorMsgFloat0to1-"$gammaCorrectedVal"--' //
-          '${msg ?? 'Error: Constructor '
-              '(fromUnchecked)-Non-Linear sRGB'}-${source ?? ''}',
-        ),
-        _ = gammaCorrectedVal;
-
-  String to100PercentStr([final int decimals = 4]) =>
-      (_ * 100).toStrTrimZeros(decimals) + kPercentSign;
-
-  /// To factored (aka RGB percents or normalized) string
-  String toStringDetailed({
-    final int decimals = 6,
-    final String? msg,
-    final String delimiter = kDivisionSlash,
-  }) =>
-      'SRGB:${_.toStrTrimZeros(decimals)}'
-      '$delimiter'
-      'LinRGB:${toLinearRGB.toStrTrimZeros(decimals)}';
-
-  /// Get the Linearized (normalized) value, i.e. without gamma in a range
-  /// of 0.0 to 1.0
-  LinRGB get toLinearRGB => removeGamma(_);
-
-  /// Linearly interpolate to minimum
-  SRGB lerpToMin(
-    final double percent, {
-    final String? msg,
-    final ChannelAdjustMode lerpMode = ChannelAdjustMode.interpolate,
-  }) =>
-      SRGB._legend.lerpToMin(
-        this,
-        percent.assertPercentage(msg: msg),
-        lerpMode: lerpMode,
-      );
-
-  // https://dart.dev/language/extension-types
-  /// Multiplies [otherVal] by this number. Clamps values that are
-  /// out of range.
-  SRGB operator *(final SRGB otherVal) =>
-      SRGB.delinearizeFrom0to1float(_ * otherVal._);
-
-  // https://dart.dev/language/extension-types
-  /// Division operator.  See also [*] operator
-  SRGB operator /(final SRGB otherVal) => SRGB(_ / otherVal._);
-
-  /// "Modulus" operator.  Returns the remainder in [SRGB] format
-  /// when a number is divided
-  SRGB operator %(final num otherVal) => SRGB(_ % otherVal);
-
-  /// Subtracts [otherVal] from this number. NOTE: the result
-  /// will be automatically clamped by the constructor. Thus, it's best
-  /// to use the *val getter to control the actual math operations outside
-  /// the boundaries.
-  /// See also multiplication operator [*], addition operator [+]
-  SRGB operator -(final SRGB otherVal) =>
-      SRGB.delinearizeFrom0to1float(_ - otherVal._);
-
-  // https://dart.dev/language/extension-types
-  /// Addition operator. Adds [otherVal] to this number. NOTE:
-  /// Clamps values that are out of range in the constructor. it's best
-  /// to use the *val getter to control the actual math operations outside
-  /// the boundaries.
-  /// See also minus operator [-] assert(2 + 3 == 5);
-  SRGB operator +(final SRGB otherVal) =>
-      SRGB.delinearizeFrom0to1float(_ + otherVal._);
-
-  /// Invert a factored float (aka RGB percent or ARGB normalized)
-  SRGB get complement => SRGB._fromGammaTransformed(1 - _);
-
-  static SRGB toInvertFactored(final double val, {final String? msg}) =>
-      SRGB(1 - val.assertPercentage(msg: msg));
-
-  SRGB get inverted => SRGB.toInvertFactored(_);
-
-  /// Similar to plus operator but acts on any [num]
-  SRGB plus(final num otherVal) =>
-      SRGB.delinearizeFrom0to1float(_ + otherVal.toDouble());
-
-  /// Similar to minus operator but acts on any [num]
-  SRGB minus(final num otherVal) =>
-      SRGB.delinearizeFrom0to1float(_ - otherVal.toDouble());
-
-  double get val => _;
-
-  static String get name => 'Non-Linear sRGB';
-
-  /// The legend to use for validation
-  static const SRGBLegend _legend = legendSRGB0to1;
-
-  SRGBLegend get toDescriptor => _legend;
-
-  /// static method to determine if the parameter is valid
-  static bool isValid(final double val) => _legend.isValid(val);
-  static const double minVal = 0.0;
-  static const double midVal = 0.5;
-  static const double maxVal = 1.0;
-
-  /// precompiled constant values for efficiency
-  static const SRGB minInst = SRGB(SRGB.minVal); // 0% or 0.0
-  static const SRGB maxInst = SRGB(SRGB.maxVal); // 100% or 1.0
-  static const SRGB v0 = SRGB.minInst; // 0%
-  static const SRGB zero = SRGB.minInst; // 0%
-  static const SRGB v15 = SRGB(0.15); // 15%
-  static const SRGB v25 = SRGB(0.25); // 25%  // v is for value
-  static const SRGB v50 = SRGB(0.50); // 50%
-  static const SRGB midInst = v50; // 50% or 0.5
-  static const SRGB v54 = SRGB(0.54);
-  static const SRGB v75 = SRGB(0.75); // 75%
-  static const SRGB v100 = SRGB.maxInst; // 100%
-
-  static SRGB getSumOfList(final List<SRGB> inList) =>
-      inList.reduce((final SRGB a, final SRGB b) => a + b);
-} // ------------------- End of Extension type ----------------------
 
 /// An extension type representing a linear RGB channel value in the range of
 /// 0.0 to 1.0.
@@ -812,7 +641,7 @@ extension type const LinRGB._(double _) implements Percent {
   // LinRGB get inverted => _.invertFactored();
 
   /// Get the delinearized (non-linear) value (sRGB)
-  SRGB get linearToSrgb => SRGB(applyGamma(_));
+  Percent get linearToSrgb => Percent(applyGamma(_));
 
   /// Similar to plus operator but acts on any [num]
   LinRGB plus(final num otherVal) => LinRGB.clamped(_ + otherVal.toDouble());
@@ -838,7 +667,7 @@ extension type const LinRGB._(double _) implements Percent {
 /// SRGB. The input value is assumed to a LinearRGB value in the
 /// range of 0 to 1.0, i.e. one that is often called 'normalized',
 /// as 'RGB Percent,' or 'LinearRGB.
-SRGB oetf(
+Percent oetf(
   double linearRgbFloat0to1, {
   final String? msg,
   final double tolerance = 0.0003, // epsilon ??
@@ -850,9 +679,10 @@ SRGB oetf(
   // the Gamma threshold - breakpoint
   if (linearRgbFloat0to1 >= kGammaDelinearize) {
     // 0.0031308) {
-    return SRGB(1.055 * math.pow(linearRgbFloat0to1, 1.0 / kGammaVal) - 0.055);
+    return Percent(
+        1.055 * math.pow(linearRgbFloat0to1, 1.0 / kGammaVal) - 0.055);
   } else {
-    return SRGB(12.92 * linearRgbFloat0to1);
+    return Percent(12.92 * linearRgbFloat0to1);
   }
 }
 
@@ -1137,11 +967,11 @@ sealed class PropertyLegend<T extends num> {
 }
 
 // -------------------------- Subclass Definitions --------------------
-final class FloatLegend extends PropertyLegend<FltType> {
+final class FloatLegend extends PropertyLegend<FloatIQ> {
   const FloatLegend({
     required final String name,
     required super.range,
-    required final TdCheckCastFN<FltType> checkAndCast,
+    required final TdCheckCastFN<FloatIQ> checkAndCast,
   }) : super(label: name, checkAndCastFN: checkAndCast);
 }
 
@@ -1174,19 +1004,19 @@ final class LinearRGBLegend extends PropertyLegend<LinRGB> {
         );
 }
 
-/// SRGBLegend class
-final class SRGBLegend extends PropertyLegend<SRGB> {
-  const SRGBLegend({
-    final String? name,
-    final RangeIQ<SRGB>? range,
-    final TdCheckCastFN<SRGB>? checkAndCast,
-  }) : super(
-          label:
-              name ?? 'rangeSRGB Percent 0.0 to 1.0 (aka factored, normalized)',
-          range: range ?? rangeSRGB,
-          checkAndCastFN: checkAndCast ?? SRGB.clamped as TdCheckCastFN<SRGB>,
-        );
-}
+// /// SRGBLegend class
+// final class SRGBLegend extends PropertyLegend<SRGB> {
+//   const SRGBLegend({
+//     final String? name,
+//     final RangeIQ<SRGB>? range,
+//     final TdCheckCastFN<SRGB>? checkAndCast,
+//   }) : super(
+//           label:
+//               name ?? 'rangeSRGB Percent 0.0 to 1.0 (aka factored, normalized)',
+//           range: range ?? rangeSRGB,
+//           checkAndCastFN: checkAndCast ?? SRGB.clamped as TdCheckCastFN<SRGB>,
+//         );
+// }
 
 /// Constant Instance here
 const LinearRGBLegend legendLinearRGB = LinearRGBLegend(
@@ -1198,8 +1028,8 @@ const PercentsLegend legendPercent = PercentsLegend(
   name: 'percent legend- 0.0 to 1.0',
 );
 
-/// Constant Instance here
-const SRGBLegend legendSRGB0to1 = SRGBLegend(name: 'SRGB 0.0 to 1.0');
+// /// Constant Instance here
+// const SRGBLegend legendSRGB0to1 = SRGBLegend(name: 'SRGB 0.0 to 1.0');
 
 // https://dart.dev/language/extension-types
 // https://ildysilva.medium.com/what-are-flutter-and-dart-extension-types-896eda0a3ddf
@@ -1209,7 +1039,7 @@ const SRGBLegend legendSRGB0to1 = SRGBLegend(name: 'SRGB 0.0 to 1.0');
 /// green wavelengths.
 /// Ranges from `0` to `95.05` in the normal sRGB spectrum, but colors
 /// outside of the sRGB spectrum are upwardly unbounded.
-extension type const Xxyz._(double _) implements FltType {
+extension type const Xxyz._(double _) implements FloatIQ {
   const Xxyz(final double vl)
       : assert(
           vl >= Xxyz.minXyzX && vl <= Xxyz.maxXyzX,
@@ -1230,12 +1060,12 @@ extension type const Xxyz._(double _) implements FltType {
 
   static const FloatLegend xLegend = FloatLegend(
     name: capitalLetterX,
-    range: RangeIQ<FltType>(
-      Xxyz.minInst as FltType,
-      Xxyz.maxInst as FltType,
+    range: RangeIQ<FloatIQ>(
+      Xxyz.minInst as FloatIQ,
+      Xxyz.maxInst as FloatIQ,
       rangeType: RangeType.standard,
     ),
-    checkAndCast: Xxyz.fromUnchecked as TdCheckCastFN<FltType>,
+    checkAndCast: Xxyz.fromUnchecked as TdCheckCastFN<FloatIQ>,
   );
 
   // https://www.sttmedia.com/colormodel-xyz/colormodels
@@ -1253,7 +1083,7 @@ extension type const Xxyz._(double _) implements FltType {
 /// color, and is often considered the most important parameter.
 /// Ranges from `0` to `108.883` in the normal sRGB spectrum, but colors
 /// outside of the sRGB spectrum are upwardly unbounded.
-extension type const Yxyz._(double _) implements FltType {
+extension type const Yxyz._(double _) implements FloatIQ {
   const Yxyz(final double vl)
       : assert(
           vl >= Yxyz.minXyzY && vl <= Yxyz.maxXyzY,
@@ -1299,7 +1129,7 @@ extension type const Yxyz._(double _) implements FltType {
 /// The Z value in [XYZ].  Z: Primarily represents the human eye's response to
 /// blue wavelengths. Ranges from `0` to `108.883` in the normal sRGB spectrum,
 /// but colors outside of the sRGB spectrum are upwardly unbounded.
-extension type const Zxyz._(double _) implements FltType {
+extension type const Zxyz._(double _) implements FloatIQ {
   const Zxyz(final double vl)
       : assert(
           vl >= Zxyz.minZval && vl <= Zxyz.maxZval,
@@ -1341,12 +1171,12 @@ extension type const Zxyz._(double _) implements FltType {
 
   static const FloatLegend zLegend = FloatLegend(
     name: capitalLetterZ,
-    range: RangeIQ<FltType>(
-      Zxyz.minInst as FltType,
-      Zxyz.maxInst as FltType,
+    range: RangeIQ<FloatIQ>(
+      Zxyz.minInst as FloatIQ,
+      Zxyz.maxInst as FloatIQ,
       rangeType: RangeType.standard,
     ),
-    checkAndCast: Zxyz.fromUnchecked as TdCheckCastFN<FltType>,
+    checkAndCast: Zxyz.fromUnchecked as TdCheckCastFN<FloatIQ>,
   );
 
   /// Division operator

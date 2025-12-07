@@ -1,5 +1,5 @@
-import 'dart:math';
 import 'dart:math' as math;
+import 'dart:math';
 
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
@@ -12,7 +12,7 @@ const double Function(double linearComponent) fromLinear = linearToSrgb;
 const double Function(double srgbComponent) linearize = srgbToLinear;
 const double Function(double srgbComponent) toLinear = srgbToLinear;
 const LinRGB Function(double nonLinearVal, {String? msg}) removeGamma = eotf;
-const SRGB Function(double linearRgb, {String? msg}) applyGamma = oetf;
+const Percent Function(double linearRgb, {String? msg}) applyGamma = oetf;
 
 // -------------------------------------------------------------------
 // ARGB & Component Extraction
@@ -439,7 +439,7 @@ double lerpHueB(final double start, final double end, final double t) {
 }
 
 /// Linearly interpolates between two numbers.
-///
+/// CREDIT: Dart.ui library
 /// Similar to `lerpDouble` from Flutter's `dart:ui` library.
 ///
 /// [a] is the starting value.
@@ -461,8 +461,27 @@ double lerpDouble(final double a, final double b, final double t) {
   return a * (1.0 - t) + b * t;
 }
 
+/// Linearly interpolate between two doubles.
+/// CREDIT: Dart.ui library
+/// Same as [lerpDouble] but specialized for non-null `double` type.
 double lerpDoubleB(final double start, final double end, final double t) =>
     start + (end - start) * t;
+
+/// Linearly interpolate between two doubles.
+/// CREDIT: Dart.ui library
+/// Same as [lerpDouble] but specialized for non-null `double` type.
+double lerpDoubleDart(final double a, final double b, final double t) {
+  // This doesn't match _lerpInt to preserve specific behaviors when dealing
+  // with infinity and nan.
+  return a * (1.0 - t) + b * t;
+}
+
+/// Linearly interpolate between two integers.
+/// CREDIT: Dart.ui library
+/// Same as [lerpDouble] but specialized for non-null `int` type.
+double lerpInt(final int a, final int b, final double t) {
+  return a + (b - a) * t;
+}
 
 // -------------------------------------------------------------------
 // Clamping & Math Helpers
@@ -479,6 +498,26 @@ double clampDouble(
   required final double min,
   required final double max,
 }) {
+  assert(min <= max && !max.isNaN && !min.isNaN);
+  if (x < min) {
+    return min;
+  }
+  if (x > max) {
+    return max;
+  }
+  if (x.isNaN) {
+    return max;
+  }
+  return x;
+}
+
+/// Same as [num.clamp] but optimized for a non-null [double].
+/// CREDIT: Dart.ui Color Class
+/// This is faster because it avoids polymorphism, boxing, and special cases for
+/// floating point numbers.
+//
+// See also: //dev/benchmarks/microbenchmarks/lib/foundation/clamp.dart
+double clampDoubleDart(final double x, final double min, final double max) {
   assert(min <= max && !max.isNaN && !min.isNaN);
   if (x < min) {
     return min;

@@ -33,9 +33,10 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
   HslColor(this.h, this.s, this.l,
       {final Percent alpha = Percent.max,
       final int? hexId,
+      final Percent? lrv,
       final List<String>? names})
-      : super.alt(hexId ?? HslColor.toHexID(h, s, l, alpha: alpha),
-            a: alpha, names: names ?? const <String>[]);
+      : super.alt(hexId ?? HslColor.hexIdFromHSL(h, s, l, alpha: alpha),
+            lrv: lrv, a: alpha, names: names ?? const <String>[]);
 
   /// Creates an [HslColor] from an RGB [Color].
   ///
@@ -70,7 +71,7 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
   /// [s] is in the range of 0.0-1.0.
   /// [l] is in the range of 0.0-1.0.
   /// [alpha] is in the range of 0.0-1.0.
-  static int toHexID(final double h, final double s, final double l,
+  static int hexIdFromHSL(final double h, final double s, final double l,
       {final Percent alpha = Percent.max}) {
     final double c = (1 - (2 * l - 1).abs()) * s;
     final double x = c * (1 - ((h / 60) % 2 - 1).abs());
@@ -116,7 +117,7 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   HslColor saturate([final double amount = 25]) {
-    return HslColor(h, min(1.0, s + amount / 100), l, alpha: alpha);
+    return copyWith(saturation: min(1.0, s + amount / 100));
   }
 
   @override
@@ -144,10 +145,10 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
   HslColor get inverted => flipHue();
 
   /// Flip the hue by 180 degrees.
-  HslColor flipHue() => HslColor(_wrapHue(h + 180), s, l, alpha: alpha);
+  HslColor flipHue() => copyWith(hue: _wrapHue(h + 180));
 
   @override
-  HslColor get grayscale => HslColor(h, 0.0, l, alpha: alpha);
+  HslColor get grayscale => copyWith(saturation: Percent.zero);
 
   @override
   HslColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
@@ -413,7 +414,7 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   double get luminance {
-    final int argb = HslColor.toHexID(h, s, l, alpha: alpha);
+    final int argb = HslColor.hexIdFromHSL(h, s, l, alpha: alpha);
     final int r = (argb >> 16) & 0xFF;
     final int g = (argb >> 8) & 0xFF;
     final int b = argb & 0xFF;

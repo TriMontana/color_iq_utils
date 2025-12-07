@@ -1,7 +1,6 @@
 import 'package:color_iq_utils/src/color_models_lib.dart';
 import 'package:color_iq_utils/src/colors/encycolorpedia.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
-import 'package:color_iq_utils/src/naming/names.dart';
 
 /// Color family categories for HTML colors
 enum ColorFamilyHTML {
@@ -341,7 +340,7 @@ final ColorIQ cWheat = ColorIQ(hxWheat, names: kWheat);
 const int hxWhite = 0xFFFFFFFF;
 final ColorIQ cWhite = ColorIQ(hxWhite, names: kWhite);
 final HslColor kHslWhite =
-    HslColor(0, Percent.zero, Percent.max, hexId: hxWhite);
+    HslColor(0, Percent.zero, Percent.max, hexId: hxWhite, lrv: Percent.max);
 final CmykColor cmykWhite = CmykColor(0, 0, 0, 0, value: hxWhite); // White
 
 const int hxWhiteSmoke = 0xFFF5F5F5;

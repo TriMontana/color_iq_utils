@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('HsbColor Methods Tests', () {
     test('grayscale converts to grayscale correctly', () {
-      final HsbColor color = HsbColor(0, 1.0, 1.0);
+      final HsbColor color = HsbColor(0, 1.0, Percent.max);
       final HsbColor gray = color.grayscale;
 
       expect(gray.s, equals(0.0));
@@ -22,7 +22,7 @@ void main() {
     });
 
     test('simulate returns same color for none', () {
-      final HsbColor color = HsbColor(120, 0.5, 0.8);
+      final HsbColor color = HsbColor(120, 0.5, Percent.v80);
       final HsbColor simulated = color.simulate(ColorBlindnessType.none);
 
       expect(simulated.h, closeTo(color.h, 0.1));
@@ -69,7 +69,7 @@ void main() {
     });
 
     test('random generates valid HsbColor', () {
-      final HsbColor color = HsbColor(0, 0, 0);
+      final HsbColor color = HsbColor(0, 0, Percent.zero);
       final ColorSpacesIQ randomColor = color.random;
       expect(randomColor, isA<HsbColor>());
       final HsbColor hsb = randomColor as HsbColor;

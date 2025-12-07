@@ -129,9 +129,9 @@ class Rec2020Color extends ColorSpacesIQ with ColorModelsMixin {
     if (t == 1.0) return otherRec;
 
     return Rec2020Color(
-      lerpDouble(r, otherRec.r, t),
-      lerpDouble(g, otherRec.g, t),
-      lerpDouble(b, otherRec.b, t),
+      r.lerpTo(otherRec.r, t),
+      g.lerpTo(otherRec.g, t),
+      b.lerpTo(otherRec.b, t),
     );
   }
 

@@ -313,7 +313,7 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   HsbColor copyWith({final double? h, final double? s, final Percent? b}) {
-    return HsbColor(h ?? this.h, s ?? this.s, b ?? this.brightnessHsb);
+    return HsbColor(h ?? this.h, s ?? this.s, b ?? brightnessHsb);
   }
 
   @override

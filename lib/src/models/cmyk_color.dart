@@ -183,7 +183,7 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
         other is CmykColor ? other : CmykColor.fromColorSpacesIQ(other);
     if (t == 1.0) return otherCmyk;
 
-    return CmykColor.alt(
+    return CmykColor(
       lerpDouble(c, otherCmyk.c, t),
       lerpDouble(m, otherCmyk.m, t),
       lerpDouble(y, otherCmyk.y, t),

@@ -16,6 +16,8 @@ extension IntHelperIQ on int {
   RgbaInts get rgbaInts => hexIdToComponents(this);
   RgbaDoubles get rgbaDoubles => hexIdToNormalizedComponents(this);
 
+  int get clamp0to255 => clampInt(this, min: 0, max: 255);
+
   /// Returns the closest color slice from the HCT color wheel.
   ColorSlice closestColorSlice() {
     ColorSlice? closest;
@@ -88,7 +90,7 @@ extension IntHelperIQ on int {
 
   int assertRange0to255([final String? message]) {
     if (this < 0 || this > 255) {
-      throw ArgumentError(message ?? 'Value must be between 0 and 255--$this');
+      throw ArgumentError(message ?? '$errorMsg0to255--$this');
     }
     return this;
   }

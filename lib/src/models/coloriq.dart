@@ -428,19 +428,15 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     // or Apple's specs.
     // Using standard P3 D65 matrix.
 
-    double rP3 = x * 2.4934969 + y * -0.9313836 + z * -0.4027107;
-    double gP3 = x * -0.8294889 + y * 1.7626640 + z * 0.0236246;
+    final double rP3 = x * 2.4934969 + y * -0.9313836 + z * -0.4027107;
+    final double gP3 = x * -0.8294889 + y * 1.7626640 + z * 0.0236246;
     double bP3 = x * 0.0358458 + y * -0.0761723 + z * 0.9568845;
 
     // Gamma correction (Transfer function) for Display P3 is sRGB curve.
-    rP3 =
-        (rP3 > 0.0031308) ? (1.055 * pow(rP3, 1 / 2.4) - 0.055) : (12.92 * rP3);
-    gP3 =
-        (gP3 > 0.0031308) ? (1.055 * pow(gP3, 1 / 2.4) - 0.055) : (12.92 * gP3);
     bP3 =
         (bP3 > 0.0031308) ? (1.055 * pow(bP3, 1 / 2.4) - 0.055) : (12.92 * bP3);
 
-    return DisplayP3Color.alt(Percent(rP3), Percent(gP3), Percent(bP3));
+    return DisplayP3Color(rP3.gammaCorrect, gP3.gammaCorrect, Percent(bP3));
   }
 
   /// Converts this color to Rec. 2020.
@@ -472,9 +468,9 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     // alpha = 1.099, beta = 0.018, delta = ?
     // Actually: if L < 0.018: 4.5 * L, else 1.099 * L^0.45 - 0.099
 
-    double transfer(final double v) {
-      if (v < 0.018) return 4.5 * v;
-      return 1.099 * pow(v, 0.45) - 0.099;
+    Percent transfer(final double v) {
+      if (v < 0.018) return Percent(4.5 * v);
+      return Percent(1.099 * pow(v, 0.45) - 0.099);
     }
 
     return Rec2020Color(transfer(r2020), transfer(g2020), transfer(b2020));

@@ -488,11 +488,11 @@ const RangeIQ<Percent> rangePercents = RangeIQ<Percent>(
   rangeType: RangeType.standard,
 );
 
-/// Range for RGBLinear percents, (factored, normalized), etc.
-const RangeIQ<SRGB> rangeSRGB = RangeIQ<SRGB>(
-  SRGB.minInst,
-  SRGB.maxInst,
-  centerPoint: SRGB.midInst,
+/// Range for percents, (factored, normalized), etc.
+const RangeIQ<Percent> rangeSRGB = RangeIQ<Percent>(
+  Percent.min,
+  Percent.max,
+  centerPoint: Percent.mid,
   rangeType: RangeType.standard,
 );
 

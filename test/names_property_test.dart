@@ -24,15 +24,15 @@ void main() {
     });
 
     test('HsvColor stores names', () {
-      final HsvColor color = HsvColor(0, 1.0, 1.0, names: testNames);
+      final HsvColor color = HsvColor(0, 1.0, Percent.max, names: testNames);
       expect(color.names, equals(testNames));
-      expect(HsvColor(0, 1.0, 1.0).names, isEmpty);
+      expect(HsvColor(0, 1.0, Percent.max).names, isEmpty);
     });
 
     test('HsbColor stores names', () {
-      final HsbColor color = HsbColor(0, 1.0, 1.0, names: testNames);
+      final HsbColor color = HsbColor(0, 1.0, Percent.max, names: testNames);
       expect(color.names, equals(testNames));
-      expect(HsbColor(0, 1.0, 1.0).names, isEmpty);
+      expect(HsbColor(0, 1.0, Percent.max).names, isEmpty);
     });
 
     test('HwbColor stores names', () {
@@ -72,9 +72,9 @@ void main() {
     });
 
     test('OkLchColor stores names', () {
-      final OkLCH color = OkLCH(0.5, 0, 0, names: testNames);
+      final OkLCH color = OkLCH(Percent.mid, 0, 0, names: testNames);
       expect(color.names, equals(testNames));
-      expect(OkLCH(0.5, 0, 0).names, isEmpty);
+      expect(OkLCH(Percent.mid, 0, 0).names, isEmpty);
     });
 
     test('OkHslColor stores names', () {
@@ -96,9 +96,12 @@ void main() {
     });
 
     test('DisplayP3Color stores names', () {
-      final DisplayP3Color color = DisplayP3Color(1, 0, 0, names: testNames);
+      final DisplayP3Color color = DisplayP3Color(
+          Percent.max, Percent.zero, Percent.zero,
+          names: testNames);
       expect(color.names, equals(testNames));
-      expect(DisplayP3Color(1, 0, 0).names, isEmpty);
+      expect(DisplayP3Color(Percent.max, Percent.zero, Percent.zero).names,
+          isEmpty);
     });
 
     test('HsluvColor stores names', () {
@@ -132,8 +135,9 @@ void main() {
     });
 
     test('Rec2020Color stores names', () {
-      final Rec2020Color color =
-          Rec2020Color(Percent.max, 0, 0, names: testNames);
+      final Rec2020Color color = Rec2020Color(
+          Percent.max, Percent.zero, Percent.zero,
+          names: testNames);
       expect(color.names, equals(testNames));
       expect(
           Rec2020Color(Percent.max, Percent.zero, Percent.zero).names, isEmpty);
