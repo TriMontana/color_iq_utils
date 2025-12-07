@@ -15,23 +15,17 @@ import 'package:color_iq_utils/src/models/hct_color.dart';
 /// The [r], [g], and [b] values are typically in the range of 0.0 to 1.0.
 class Rec2020Color extends ColorSpacesIQ with ColorModelsMixin {
   @override
-  final double r;
+  final Percent r;
   @override
-  final double g;
+  final Percent g;
   @override
-  final double b;
+  final Percent b;
 
-  const Rec2020Color(this.r, this.g, this.b,
-      {required final int hexId,
-      final Percent alpha = Percent.max,
-      final List<String>? names})
-      : super(hexId, a: alpha, names: names ?? const <String>[]);
-
-  Rec2020Color.alt(this.r, this.g, this.b,
+  Rec2020Color(this.r, this.g, this.b,
       {final int? hexId,
       final Percent alpha = Percent.max,
       final List<String>? names})
-      : super(hexId ?? toHexID(r, g, b),
+      : super.alt(hexId ?? toHexID(r, g, b),
             a: alpha, names: names ?? const <String>[]);
 
   /// Creates a 32-bit hex ARGB value from the properties of this class.
@@ -134,7 +128,7 @@ class Rec2020Color extends ColorSpacesIQ with ColorModelsMixin {
         other is Rec2020Color ? other : other.toColor().toRec2020();
     if (t == 1.0) return otherRec;
 
-    return Rec2020Color.alt(
+    return Rec2020Color(
       lerpDouble(r, otherRec.r, t),
       lerpDouble(g, otherRec.g, t),
       lerpDouble(b, otherRec.b, t),
@@ -159,12 +153,10 @@ class Rec2020Color extends ColorSpacesIQ with ColorModelsMixin {
 
   double get opacity => 1.0 - transparency;
 
-  @override
-  ColorTemperature get temperature => toColor().temperature;
-
   /// Creates a copy of this color with the given fields replaced with the new values.
-  Rec2020Color copyWith({final double? r, final double? g, final double? b}) {
-    return Rec2020Color.alt(r ?? this.r, g ?? this.g, b ?? this.b);
+  Rec2020Color copyWith(
+      {final Percent? r, final Percent? g, final Percent? b}) {
+    return Rec2020Color(r ?? this.r, g ?? this.g, b ?? this.b);
   }
 
   @override

@@ -11,9 +11,10 @@ abstract class ColorSpacesIQ {
   /// The 32-bit alpha-red-green-blue integer value.
   final int value;
   final Percent a;
-  final double r;
-  final double g;
-  final double b;
+  final Percent r;
+  final Percent g;
+  final Percent b;
+  final int alphaInt;
   final int redInt;
   final int greenInt;
   final int blueInt;
@@ -23,58 +24,53 @@ abstract class ColorSpacesIQ {
   /// Constructs a color from an integer.
   const ColorSpacesIQ(this.value,
       {required this.a,
-      final double? r,
-      final double? g,
-      final double? b,
+      required this.r,
+      required this.g,
+      required this.b,
       this.lrv,
+      final int? alphaIntVal,
       final int? redIntVal,
       final int? greenIntVal,
       final int? blueIntVal,
       this.names = const <String>[]})
-      : r = r ?? (value >> 16 & 0xFF) / 255.0,
-        g = g ?? (value >> 8 & 0xFF) / 255.0,
-        b = b ?? (value & 0xFF) / 255.0,
+      : alphaInt = alphaIntVal ?? (value >> 24 & 0xFF),
         redInt = redIntVal ?? (value >> 16 & 0xFF),
         greenInt = greenIntVal ?? (value >> 8 & 0xFF),
         blueInt = blueIntVal ?? (value & 0xFF);
-  const ColorSpacesIQ.alt({
-    required this.value,
-    required this.a,
-    final double? r,
-    final double? g,
-    final double? b,
+
+  /// Alternate Constructor, non-const
+  ColorSpacesIQ.alt(
+    this.value, {
+    final Percent? a,
+    final Percent? r,
+    final Percent? g,
+    final Percent? b,
     this.lrv,
+    final int? alphaIntVal,
     final int? redIntVal,
     final int? greenIntVal,
     final int? blueIntVal,
     this.names = const <String>[],
-  })  : // a = a ?? (value >> 24 & 0xFF) / 255.0,
-        r = r ?? (value >> 16 & 0xFF) / 255.0,
-        g = g ?? (value >> 8 & 0xFF) / 255.0,
-        b = b ?? (value & 0xFF) / 255.0,
+  })  : a = a ?? Percent(((value >> 24 & 0xFF) / 255.0).clamp0to1),
+        r = r ?? Percent(((value >> 16 & 0xFF) / 255.0).clamp0to1),
+        g = g ?? Percent(((value >> 8 & 0xFF) / 255.0).clamp0to1),
+        b = b ?? Percent(((value & 0xFF) / 255.0).clamp0to1),
+        alphaInt = alphaIntVal ?? (value >> 24 & 0xFF),
         redInt = redIntVal ?? (value >> 16 & 0xFF),
         greenInt = greenIntVal ?? (value >> 8 & 0xFF),
         blueInt = blueIntVal ?? (value & 0xFF);
 
   double get alphaLinearized => linearizeColorComponentDart(a);
-  double get redLinearized => linearizeColorComponentDart(r);
-  double get greenLinearized => linearizeColorComponentDart(g);
-  double get blueLinearized => linearizeColorComponentDart(b);
-  int get alphaInt => value >> 24 & 0xFF;
+  LinRGB get redLinearized => linearizeColorComponentDart(r);
+  LinRGB get greenLinearized => linearizeColorComponentDart(g);
+  LinRGB get blueLinearized => linearizeColorComponentDart(b);
 
   List<int> get argb255Ints => <int>[alphaInt, redInt, greenInt, blueInt];
-  List<int> get rgba255Ints => <int>[redInt, greenInt, blueInt, alphaInt];
-  List<int> get rgb255Ints => <int>[redInt, greenInt, blueInt];
-  List<double> get rgbaLinearized =>
-      <double>[redLinearized, greenLinearized, blueLinearized, alphaLinearized];
-  RgbaDoubles get rgbasNormalized => (r: r, g: g, b: b, a: a);
-  RgbaInts get rgbaInts => (
-        alpha: value.alphaInt,
-        red: redInt,
-        green: value.greenInt,
-        blue: value.blueInt
-      );
-  RgbaDoubles get rgbaDoubles => (a: a, r: r, g: g, b: b);
+  RgbaDoubles get rgbasNormalized => (r: r.val, g: g.val, b: b.val, a: a.val);
+  RgbaInts get rgbaInts =>
+      (alpha: alphaInt, red: redInt, green: greenInt, blue: blueInt);
+  RgbInts get rgbInts => (red: redInt, green: greenInt, blue: blueInt);
+  RgbaDoubles get rgbaDoubles => (a: a.val, r: r.val, g: g.val, b: b.val);
 
   /// Returns the relative luminance of this color (0.0 - 1.0).
   Percent get toLRV => lrv ?? mapLRVs.getOrCreate(value);
@@ -104,6 +100,7 @@ abstract class ColorSpacesIQ {
   /// Returns the grayscale version of the color.
   ColorSpacesIQ get grayscale => toHctColor().withChroma(0);
 
+  /// Returns the inverted version of the color.
   ColorSpacesIQ get inverted {
     return ColorIQ.fromARGB(
         alphaInt, 255 - redInt, 255 - greenInt, 255 - blueInt);

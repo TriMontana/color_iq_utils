@@ -28,7 +28,7 @@ void main() {
     });
 
     test('toJson and fromJson for HsvColor', () {
-      final HsvColor hsv = HsvColor.alt(120, 0.5, 0.8);
+      final HsvColor hsv = HsvColor(120, 0.5, Percent.v80);
       final Map<String, dynamic> json = hsv.toJson();
       expect(json['type'], 'HsvColor');
       expect(json['hue'], 120);
@@ -42,7 +42,7 @@ void main() {
     });
 
     test('toJson and fromJson for HslColor', () {
-      final HslColor hsl = HslColor.alt(240, 0.6, 0.4);
+      final HslColor hsl = HslColor(240, 0.6, Percent.v40);
       final Map<String, dynamic> json = hsl.toJson();
       expect(json['type'], 'HslColor');
       expect(json['hue'], 240);
@@ -56,7 +56,7 @@ void main() {
     });
 
     test('toJson and fromJson for LabColor', () {
-      final LabColor lab = LabColor.alt(50, 10, -20);
+      final LabColor lab = LabColor(50, 10, -20);
       final Map<String, dynamic> json = lab.toJson();
       expect(json['type'], 'LabColor');
       expect(json['l'], 50);
@@ -70,7 +70,7 @@ void main() {
     });
 
     test('toJson and fromJson for XyzColor', () {
-      final XYZ xyz = XYZ.alt(20, 30, 40);
+      final XYZ xyz = XYZ(20, 30, 40);
       final Map<String, dynamic> json = xyz.toJson();
       expect(json['type'], 'XyzColor');
       expect(json['x'], 20);
@@ -84,7 +84,7 @@ void main() {
     });
 
     test('toJson and fromJson for CmykColor', () {
-      final CmykColor cmyk = CmykColor.alt(0.1, 0.2, 0.3, 0.4);
+      final CmykColor cmyk = CmykColor(0.1, 0.2, 0.3, 0.4);
       final Map<String, dynamic> json = cmyk.toJson();
       expect(json['type'], 'CmykColor');
       expect(json['c'], 0.1);
@@ -100,7 +100,7 @@ void main() {
     });
 
     test('toJson and fromJson for LchColor', () {
-      final LchColor lch = LchColor.alt(60, 30, 180);
+      final LchColor lch = LchColor(60, 30, 180);
       final Map<String, dynamic> json = lch.toJson();
       expect(json['type'], 'LchColor');
       expect(json['l'], 60);
@@ -114,7 +114,8 @@ void main() {
     });
 
     test('Rec2020Color toJson', () {
-      final Rec2020Color rec2020 = Rec2020Color.alt(0.1, 0.2, 0.3);
+      final Rec2020Color rec2020 =
+          Rec2020Color(Percent.v10, Percent.v20, Percent.v30);
       final Map<String, dynamic> json = rec2020.toJson();
       expect(json['type'], 'Rec2020Color');
       expect(json['r'], 0.1);
@@ -123,7 +124,8 @@ void main() {
     });
 
     test('DisplayP3Color toJson', () {
-      final DisplayP3Color p3 = DisplayP3Color.alt(0.4, 0.5, 0.6);
+      final DisplayP3Color p3 =
+          DisplayP3Color(Percent.v40, Percent.v50, Percent.v60);
       final Map<String, dynamic> json = p3.toJson();
       expect(json['type'], 'DisplayP3Color');
       expect(json['r'], 0.4);

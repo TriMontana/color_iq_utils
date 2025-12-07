@@ -22,8 +22,12 @@ class ColorDescriptor {
         return "White";
       }
       if (l < 0.02) return "Black";
-      if (l > 0.80) return "Very Light Gray";
-      if (l > 0.60) return "Light Gray";
+      if (l > 0.80) {
+        return "Very Light Gray";
+      }
+      if (l > 0.60) {
+        return "Light Gray";
+      }
       if (l > 0.40) return "Gray";
       if (l > 0.20) return "Dark Gray";
       return "Very Dark Gray";
@@ -31,7 +35,7 @@ class ColorDescriptor {
 
     // 2. Get the base hue name
     // 2. Get the base hue name
-    final String hueName = getColorNameFromHue(h);
+    final String hueName = getColorNameFromHue(h)[0];
 
     // 3. Determine Adjectives
     String adjective = "";

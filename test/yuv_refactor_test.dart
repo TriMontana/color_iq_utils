@@ -4,22 +4,22 @@ import 'package:test/test.dart';
 void main() {
   group('YuvColor Refactor Tests', () {
     test('whiten increases brightness', () {
-      final YuvColor color = YuvColor.alt(0.5, 0.0, 0.0); // Gray
+      final YuvColor color = YuvColor(0.5, 0.0, 0.0); // Gray
       final YuvColor whitened = color.whiten(50);
 
       expect(whitened.y, greaterThan(color.y));
     });
 
     test('blacken decreases brightness', () {
-      final YuvColor color = YuvColor.alt(0.5, 0.0, 0.0); // Gray
+      final YuvColor color = YuvColor(0.5, 0.0, 0.0); // Gray
       final YuvColor blackened = color.blacken(50);
 
       expect(blackened.y, lessThan(color.y));
     });
 
     test('lerp interpolates correctly', () {
-      final YuvColor start = YuvColor.alt(0.5, 0.0, 0.0); // Gray
-      final YuvColor end = YuvColor.alt(1.0, 0.0, 0.0); // White
+      final YuvColor start = YuvColor(0.5, 0.0, 0.0); // Gray
+      final YuvColor end = YuvColor(1.0, 0.0, 0.0); // White
       final YuvColor mid = start.lerp(end, 0.5);
 
       expect(mid.y, closeTo(0.75, 0.01));
@@ -28,7 +28,7 @@ void main() {
     });
 
     test('saturate increases chrominance', () {
-      final YuvColor color = YuvColor.alt(0.5, 0.1, 0.1);
+      final YuvColor color = YuvColor(0.5, 0.1, 0.1);
       final YuvColor saturated = color.saturate(50);
 
       expect(saturated.u.abs(), greaterThan(color.u.abs()));
@@ -36,7 +36,7 @@ void main() {
     });
 
     test('desaturate decreases chrominance', () {
-      final YuvColor color = YuvColor.alt(0.5, 0.1, 0.1);
+      final YuvColor color = YuvColor(0.5, 0.1, 0.1);
       final YuvColor desaturated = color.desaturate(50);
 
       expect(desaturated.u.abs(), lessThan(color.u.abs()));

@@ -3,6 +3,32 @@ const List<String> kAliceBlue = <String>[
   'Alice Blue',
   'Azul-Alice',
 ];
+const List<String> kAlabaster = <String>[
+  'Alabaster',
+  'Alabastro',
+];
+const List<String> kAlloy = <String>[
+  'Alloy',
+  'Aleación',
+];
+const List<String> kAmaranth = <String>[
+  'Amaranth',
+  'Amaranto',
+  'Bledo',
+  'Kiwicha',
+];
+const List<String> kAmethyst = <String>[
+  'Amethyst',
+  'Ametista',
+];
+const List<String> kAlmond = <String>[
+  'Almond',
+  'Almendra',
+];
+const List<String> kAluminum = <String>[
+  'Aluminum',
+  'Alumínio',
+];
 const List<String> kAmber = <String>[
   'Amber',
   'Ámbar',
@@ -21,10 +47,27 @@ const List<String> kAquamarine = <String>[
   'Aquamarina',
   'Água-Mar',
 ];
-const List<String> kAzure = <String>['Azure', 'Azul-claro', 'Azul-escuro'];
+const List<String> kAzure = <String>[
+  'Azure',
+  'Azur',
+  'Azul-claro',
+  'Azul-escuro'
+];
 const List<String> kBabyBlue = <String>[
   'Baby Blue',
   'Azul-Bebê',
+];
+const List<String> kBarnRed = <String>[
+  'Barn Red',
+  'Vermelho-Barn',
+];
+const List<String> kBeaver = <String>[
+  'Beaver',
+  'Castor',
+];
+const List<String> kBeer = <String>[
+  'Beer',
+  'Cerveza',
 ];
 const List<String> kBeige = <String>[
   'Beige',
@@ -39,7 +82,10 @@ const List<String> kBlanchedAlmond = <String>[
   'Blanched Almond',
   'Almendra Blanca',
 ];
-const List<String> kBlue = <String>['Blue', 'Azul', 'Azul-escuro'];
+const List<String> kBlue = <String>[
+  'Blue',
+  'Azul',
+];
 const List<String> kBlueViolet = <String>[
   'Blue Violet',
   'Violeta Azul',
@@ -63,6 +109,14 @@ const List<String> kCadetBlue = <String>[
   'Cadet Blue',
   'Azul-Cadete',
 ];
+const List<String> kCadetGrey = <String>[
+  'Cadet Grey',
+  'Azul-Cadete',
+];
+const List<String> kCerulean = <String>[
+  'Cerulean',
+  'Ceruliano',
+];
 const List<String> kChampagne = <String>[
   'Champagne',
   'Champaña',
@@ -75,6 +129,22 @@ const List<String> kChocolate = <String>[
   'Chocolate',
   'Chocolate',
 ];
+const List<String> kChromeYellow = <String>[
+  'Chrome Yellow',
+  'Naranja Chrome',
+];
+const List<String> kCinnabar = <String>[
+  'Cinnabar',
+  'Cinabro',
+];
+const List<String> kCobalt = <String>[
+  'Cobalt',
+  'Cobalto',
+];
+const List<String> kCocoaBrown = <String>[
+  'Cocoa Brown',
+  'Marrón-Cocoa',
+];
 const List<String> kCopper = <String>[
   'Copper',
   'Cobre',
@@ -83,8 +153,14 @@ const List<String> kCoral = <String>[
   'Coral',
   'Coral',
 ];
+const List<String> kCornflower = <String>[
+  'Cornflower',
+  'Coroza',
+];
 const List<String> kCornflowerBlue = <String>[
   'Cornflower Blue',
+  'Azul Aciano',
+  'Azul centáurea',
   'Azul-Coroa',
 ];
 const List<String> kCornsilk = <String>[
@@ -181,9 +257,54 @@ const List<String> kDarkViolet = <String>[
   'Dark Violet',
   'Violeta-Escuro',
 ];
+const List<String> kDarkYellow = <String>[
+  'Dark Yellow',
+  'Amarelo-Escuro',
+];
+const List<String> kDeepCyan = <String>[
+  'Deep Cyan',
+  'Ciano-Profundo',
+];
+const List<String> kDeepGreen = <String>[
+  'Deep Green',
+  'Verde-Profundo',
+];
+const List<String> kDeepLavender = <String>[
+  'Deep Lavender',
+  'Lavanda-Profundo',
+];
+const List<String> kDeepLilac = <String>[
+  'Deep Lilac',
+  'Lilá-Profundo',
+];
+const List<String> kDeepMagenta = <String>[
+  'Deep Magenta',
+  'Magenta-Profundo',
+];
+const List<String> kDeepOrange = <String>[
+  'Deep Orange',
+  'Naranja Intenso',
+  'Laranja-Profundo',
+];
 const List<String> kDeepPink = <String>[
   'Deep Pink',
   'Rosa-Profundo',
+];
+const List<String> kDeepPurple = <String>[
+  'Deep Purple',
+  'Violeta-Profundo',
+];
+const List<String> kDeepRed = <String>[
+  'Deep Red',
+  'Vermelho-Profundo',
+];
+const List<String> kDeepSalmon = <String>[
+  'Deep Salmon',
+  'Salmão-Profundo',
+];
+const List<String> kDeepSeaGreen = <String>[
+  'Deep Sea Green',
+  'Verde-Mar-Profundo',
 ];
 const List<String> kDeepSkyBlue = <String>[
   'Deep Sky Blue',
@@ -197,6 +318,14 @@ const List<String> kDeepViolet = <String>[
   'Deep Violet',
   'Violeta-Profundo',
 ];
+const List<String> kDeepYellow = <String>[
+  'Deep Yellow',
+  'Amarelo-Profundo',
+];
+const List<String> kDenim = <String>[
+  'Denim',
+  'Dril',
+];
 const List<String> kDimGray = <String>[
   'Dim Gray',
   'Cinza-Escuro',
@@ -209,6 +338,23 @@ const List<String> kDodgerBlue = <String>[
   'Dodger Blue',
   'Azul-Dodger',
 ];
+const List<String> kEmerald = <String>[
+  'Emerald',
+  'Esmeralda',
+];
+const List<String> kElectricPurple = <String>[
+  'Electric Purple',
+  'Violeta-Electrica',
+];
+const List<String> kElectricViolet = <String>[
+  'Electric Violet',
+  'Violeta-Electrica',
+];
+const List<String> kElectricYellow = <String>[
+  'Electric Yellow',
+  'Amarelo-Electrico',
+];
+
 const List<String> kFireBrick = <String>[
   'Fire Brick',
   'Vermelho-Fogo',
@@ -238,6 +384,10 @@ const List<String> kGoldenRod = <String>[
   'Golden Rod',
   'Oro-Rod',
 ];
+const List<String> kGoldenYellow = <String>[
+  'Golden Yellow',
+  'Oro-Amarelo',
+];
 const List<String> kGray = <String>[
   'Gray',
   'Gris',
@@ -252,8 +402,15 @@ const List<String> kGreenYellow = <String>[
   'Green Yellow',
   'Verde-Amarelo',
 ];
+const List<String> kHarlequin = <String>[
+  'Harlequin',
+  'Arlequín',
+];
 const List<String> kHoneydew = <String>[
   'Honeydew',
+  'El melón',
+  'Melón chino',
+  'Gotas de miel',
   'Mé',
 ];
 const List<String> kHoneyDew = kHoneydew;
@@ -274,6 +431,26 @@ const List<String> kIvory = <String>[
   'Marfil',
   'Ébano',
 ];
+const List<String> kJade = <String>[
+  'Jade',
+  'Jade',
+];
+const List<String> kJasper = <String>[
+  'Jasper',
+  'Jasper',
+];
+const List<String> kJet = <String>[
+  'Jet',
+  'Jeta',
+];
+const List<String> kJetBlack = <String>[
+  'Jet Black',
+  'Jeta Negra',
+];
+const List<String> kJungleGreen = <String>[
+  'Jungle Green',
+  'Verde-Jungla',
+];
 const List<String> kKhaki = <String>[
   'Khaki',
   'Caqui',
@@ -290,9 +467,14 @@ const List<String> kLawnGreen = <String>[
   'Lawn Green',
   'Verde-Pátio',
 ];
+const List<String> kLemon = <String>[
+  'Lemon',
+  'Limón',
+  'Limão',
+];
 const List<String> kLemonChiffon = <String>[
   'Lemon Chiffon',
-  'Limão-Claro',
+  'Limón-Claro',
 ];
 const List<String> kLightBlue = <String>[
   'Light Blue',
@@ -375,7 +557,6 @@ const List<String> kMagenta = <String>[
 const List<String> kMaroon = <String>[
   'Maroon',
   'Marrón',
-  'Marron',
 ];
 const List<String> kMauve = <String>[
   'Mauve',
@@ -388,6 +569,14 @@ const List<String> kMediumAquaMarine = <String>[
 const List<String> kMediumBlue = <String>[
   'Medium Blue',
   'Azul-Médio',
+];
+const List<String> kMediumCyan = <String>[
+  'Medium Cyan',
+  'Ciano-Médio',
+];
+const List<String> kMediumGreen = <String>[
+  'Medium Green',
+  'Verde-Médio',
 ];
 const List<String> kMediumOrchid = <String>[
   'Medium Orchid',
@@ -420,6 +609,14 @@ const List<String> kMediumVioletRed = <String>[
 const List<String> kMidnightBlue = <String>[
   'Midnight Blue',
   'Azul-Noturno',
+];
+const List<String> kMidnightBlack = <String>[
+  'Midnight Black',
+  'Negro-Noturno',
+];
+const List<String> kMint = <String>[
+  'Mint',
+  'Menta',
 ];
 const List<String> kMintCream = <String>[
   'Mint Cream',
@@ -512,6 +709,15 @@ const List<String> kPeru = <String>[
   'Peru',
   'Péro',
 ];
+const List<String> kPeriwinkle = <String>[
+  'Periwinkle',
+  'Periánkilo',
+];
+const List<String> kPhlox = <String>[
+  'Phlox',
+  'Flox',
+  'Polemonio',
+];
 const List<String> kPink = <String>[
   'Pink',
   'Rosa',
@@ -538,6 +744,26 @@ const List<String> kPurple = <String>[
   'Morado',
   'Purpura',
 ];
+const List<String> kPurpleHeart = <String>[
+  'Purple Heart',
+  'Morado-Corazón',
+];
+const List<String> kPurpleViolet = <String>[
+  'Purple Violet',
+  'Morado-Violeta',
+];
+const List<String> kPurpleIndigo = <String>[
+  'Purple Indigo',
+  'Morado-Indigo',
+];
+const List<String> kPurpleMagenta = <String>[
+  'Purple Magenta',
+  'Morado-Magenta',
+];
+const List<String> kRaspberry = <String>[
+  'Raspberry',
+  'Frambuesa',
+];
 const List<String> kRebeccaPurple = <String>[
   'Rebecca Purple',
   'Purpura-Rebecca',
@@ -546,6 +772,21 @@ const List<String> kRed = <String>[
   'Red',
   'Rojo',
   'Vermelho',
+];
+const List<String> kRedOrange = <String>[
+  'Red Orange',
+  'Rojo-Naranja',
+  'Vermelho-Naranja',
+];
+
+const List<String> kRedViolet = <String>[
+  'Red Violet',
+  'Rojo-Violeta',
+  'Vermelho-Violeta',
+];
+const List<String> kRose = <String>[
+  'Rose',
+  'Rosa',
 ];
 const List<String> kRosyBrown = <String>[
   'Rosy Brown',
@@ -629,7 +870,7 @@ const List<String> kSteelBlue = <String>[
   'Steel Blue',
   'Azul-Aço',
 ];
-const List<String> kTan = <String>['Tan', 'Tan', 'Tan-claro', 'Tan-escuro'];
+const List<String> kTan = <String>['Tan', 'Tan', 'So'];
 const List<String> kTeal = <String>[
   'Teal',
   'Verde-Azulado',
@@ -645,6 +886,30 @@ const List<String> kTomato = <String>[
 const List<String> kTurquoise = <String>[
   'Turquoise',
   'Turquesa',
+];
+const List<String> kTurquoiseGreen = <String>[
+  'Turquoise Green',
+  'Verde-Turquesa',
+];
+const List<String> kTurquoiseBlue = <String>[
+  'Turquoise Blue',
+  'Azul-Turquesa',
+];
+const List<String> kTurquoiseRed = <String>[
+  'Turquoise Red',
+  'Rojo-Turquesa',
+];
+const List<String> kTurquoiseYellow = <String>[
+  'Turquoise Yellow',
+  'Amarelo-Turquesa',
+];
+const List<String> kTurquoiseOrange = <String>[
+  'Turquoise Orange',
+  'Naranja-Turquesa',
+];
+const List<String> kVermilion = <String>[
+  'Vermilion',
+  'Vermelhão',
 ];
 const List<String> kViolet = <String>[
   'Violet',

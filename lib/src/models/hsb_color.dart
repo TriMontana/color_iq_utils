@@ -23,23 +23,23 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
   final double s;
 
   /// The brightness component of the color, ranging from 0.0 to 1.0.
-  @override
-  final double b;
 
-  const HsbColor(this.h, this.s, this.b,
-      {required final int hexId,
+  final Percent brightnessHsb;
+
+  /// Creates a new HSB color from its component values.
+  ///
+  /// `h` is hue (0-360), `s` is saturation (0-1), and `b` is brightness (0-1).
+  /// An optional `alpha` (0-255) can be provided. Defaults to 255 (opaque).
+  HsbColor(this.h, this.s, this.brightnessHsb,
+      {final int? argb,
       final Percent alpha = Percent.max,
       final List<String>? names})
-      : super(hexId, a: alpha, names: names ?? const <String>[]);
-  HsbColor.alt(this.h, this.s, this.b,
-      {final int? hexId,
-      final Percent alpha = Percent.max,
-      final List<String>? names})
-      : super(hexId ?? HsbColor.argbFromHsb(h, s, b),
+      : super.alt(argb ?? HsbColor.argbFromHsb(h, s, brightnessHsb),
             a: alpha, names: names ?? const <String>[]);
 
 // Note: THERE are two methods to convert HSB to ARGB
-// This function takes hue (0-360 degrees), saturation (0-1), and brightness (0-1) as inputs and returns a 32-bit integer in ARGB format (with full opacity). If you're using this in a context like Flutter, you can pass the result to Color(value) for rendering.
+// This function takes hue (0-360 degrees), saturation (0-1), and
+// brightness (0-1) as inputs and returns a 32-bit integer in ARGB format (with full opacity). If you're using this in a context like Flutter, you can pass the result to Color(value) for rendering.
   static int hsbToHexId(
       double hue, final double saturation, final double brightness) {
     // Normalize hue to 0-360
@@ -189,36 +189,39 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
       saturation = (maxVal == 0) ? 0 : delta / maxVal;
     }
 
-    return HsbColor(hue, saturation, brightness, hexId: color);
+    return HsbColor(hue, saturation, Percent(brightness), argb: color);
   }
 
   @override
   ColorIQ toColor() => ColorIQ(value);
 
   @override
-  HsbColor darken([final double amount = 20]) =>
-      HsbColor.alt(h, s, max(0.0, b - amount / 100));
+  HsbColor darken([final double amount = 20]) {
+    final double q = max(0.0, brightnessHsb.val - amount / 100);
+    return copyWith(b: Percent(q));
+  }
 
   @override
   HsbColor brighten([final double amount = 20]) {
-    return HsbColor.alt(h, s, min(1.0, b + amount / 100));
+    final double q = min(1.0, brightnessHsb.val + amount / 100);
+    return copyWith(b: Percent(q));
   }
 
   @override
   HsbColor saturate([final double amount = 25]) =>
-      HsbColor.alt(h, min(1.0, s + amount / 100), b);
+      HsbColor(h, min(1.0, s + amount / 100), b);
 
   @override
   HsbColor desaturate([final double amount = 25]) =>
-      HsbColor.alt(h, max(0.0, s - amount / 100), b);
+      HsbColor(h, max(0.0, s - amount / 100), b);
 
   @override
   HsbColor intensify([final double amount = 10]) =>
-      HsbColor.alt(h, min(1.0, s + amount / 100), b);
+      HsbColor(h, min(1.0, s + amount / 100), b);
 
   @override
   HsbColor deintensify([final double amount = 10]) =>
-      HsbColor.alt(h, max(0.0, s - amount / 100), b);
+      HsbColor(h, max(0.0, s - amount / 100), b);
 
   @override
   HsbColor accented([final double amount = 15]) => intensify(amount);
@@ -260,7 +263,8 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  HsbColor get grayscale => HsbColor.alt(0, 0, b * (1 - s / 2));
+  HsbColor get grayscale =>
+      HsbColor(0, 0, Percent(brightnessHsb.val * (1 - s / 2)));
 
   @override
   HsbColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
@@ -277,16 +281,16 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
         other is HsbColor ? other : other.toColor().toHsb();
     if (t == 1.0) return otherHsb;
 
-    return HsbColor.alt(
+    return HsbColor(
       lerpHue(h, otherHsb.h, t),
       lerpDouble(s, otherHsb.s, t),
-      lerpDouble(b, otherHsb.b, t),
+      brightnessHsb.lerpTo(otherHsb.brightnessHsb.val, t),
     );
   }
 
   @override
   HsbColor lighten([final double amount = 20]) =>
-      HsbColor.alt(h, s, min(1.0, b + amount / 100));
+      HsbColor(h, s, Percent(min(1.0, brightnessHsb.val + amount / 100)));
 
   @override
   HsbColor adjustTransparency([final double amount = 20]) {
@@ -308,8 +312,8 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  HsbColor copyWith({final double? h, final double? s, final double? b}) {
-    return HsbColor.alt(h ?? this.h, s ?? this.s, b ?? this.b);
+  HsbColor copyWith({final double? h, final double? s, final Percent? b}) {
+    return HsbColor(h ?? this.h, s ?? this.s, b ?? this.brightnessHsb);
   }
 
   @override
@@ -320,7 +324,7 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
       // -2, -1, 0, 1, 2
       final double delta = (i - 2) * 10.0;
       final double newB = (b * 100 + delta).clamp(0.0, 100.0);
-      results.add(HsbColor.alt(h, s, newB / 100));
+      results.add(HsbColor(h, s, Percent(newB / 100)));
     }
     return results;
   }
@@ -350,10 +354,10 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   ColorSpacesIQ get random {
     final Random rng = Random();
-    return HsbColor.alt(
+    return HsbColor(
       rng.nextDouble() * 360,
       rng.nextDouble(),
-      rng.nextDouble(),
+      Percent(rng.nextDouble()),
     );
   }
 
@@ -383,16 +387,16 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
     final int newAlpha =
         (currentAlpha + (amount / 100 * 255)).round().clamp(0, 255);
     final int newHexId = HsbColor.argbFromHsb(h, s, b, newAlpha);
-    return HsbColor.alt(h, s, b, hexId: newHexId);
+    return HsbColor(h, s, b, argb: newHexId);
   }
 
   @override
   HsbColor adjustHue([final double amount = 20]) {
-    return HsbColor.alt((h + amount) % 360, s, b);
+    return HsbColor((h + amount) % 360, s, b);
   }
 
   @override
-  HsbColor get complementary => HsbColor.alt((h + 180) % 360, s, b);
+  HsbColor get complementary => HsbColor((h + 180) % 360, s, b);
 
   @override
   HsbColor warmer([final double amount = 20]) {
@@ -400,7 +404,7 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
     final double diff = differenceDegrees(targetHue, h);
     final double direction = rotationDirection(h, targetHue);
     final double newHue = h + (diff * amount / 100 * direction);
-    return HsbColor.alt(newHue % 360, s, b);
+    return HsbColor(newHue % 360, s, b);
   }
 
   @override
@@ -409,7 +413,7 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
     final double diff = differenceDegrees(targetHue, h);
     final double direction = rotationDirection(h, targetHue);
     final double newHue = h + (diff * amount / 100 * direction);
-    return HsbColor.alt(newHue % 360, s, b);
+    return HsbColor(newHue % 360, s, b);
   }
 
   @override
@@ -426,7 +430,7 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   List<HsbColor> tonesPalette() {
     // Mix with gray (0, 0, 0.5) which corresponds to 0xFF808080
-    final HsbColor gray = HsbColor.alt(0, 0, 0.5);
+    final HsbColor gray = HsbColor(0, 0, const Percent(0.5));
     return <HsbColor>[
       this,
       lerp(gray, 0.15),
@@ -444,7 +448,7 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
 
     for (int i = 0; i < count; i++) {
       final double newHue = (startHue + step * i) % 360;
-      results.add(HsbColor.alt(newHue, s, b));
+      results.add(HsbColor(newHue, s, b));
     }
     return results;
   }
@@ -453,9 +457,9 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
   List<HsbColor> square() {
     return <HsbColor>[
       this,
-      HsbColor.alt((h + 90) % 360, s, b),
-      HsbColor.alt((h + 180) % 360, s, b),
-      HsbColor.alt((h + 270) % 360, s, b),
+      HsbColor((h + 90) % 360, s, b),
+      HsbColor((h + 180) % 360, s, b),
+      HsbColor((h + 270) % 360, s, b),
     ];
   }
 
@@ -463,9 +467,9 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
   List<HsbColor> tetrad({final double offset = 60}) {
     return <HsbColor>[
       this,
-      HsbColor.alt((h + offset) % 360, s, b),
-      HsbColor.alt((h + 180) % 360, s, b),
-      HsbColor.alt((h + 180 + offset) % 360, s, b),
+      HsbColor((h + offset) % 360, s, b),
+      HsbColor((h + 180) % 360, s, b),
+      HsbColor((h + 180 + offset) % 360, s, b),
     ];
   }
 
@@ -549,6 +553,6 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
       h /= 6;
     }
 
-    return HsbColor.alt(h * 360, s, v);
+    return HsbColor(h * 360, s, Percent(v));
   }
 }

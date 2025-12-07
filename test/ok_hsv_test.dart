@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('OkHsvColor Tests', () {
     test('intensify increases saturation and decreases value', () {
-      final OkHsvColor color = OkHsvColor.alt(180.0, 0.5, 0.5);
+      final OkHsvColor color = OkHsvColor(180.0, 0.5, 0.5);
       final OkHsvColor intensified = color.intensify(20);
       // S: 0.5 + 0.2 = 0.7
       // V: 0.5 - 0.1 = 0.4
@@ -13,7 +13,7 @@ void main() {
     });
 
     test('deintensify decreases saturation and increases value', () {
-      final OkHsvColor color = OkHsvColor.alt(180.0, 0.5, 0.5);
+      final OkHsvColor color = OkHsvColor(180.0, 0.5, 0.5);
       final OkHsvColor deintensified = color.deintensify(20);
       // S: 0.5 - 0.2 = 0.3
       // V: 0.5 + 0.1 = 0.6
@@ -22,7 +22,7 @@ void main() {
     });
 
     test('accented increases saturation and increases value', () {
-      final OkHsvColor color = OkHsvColor.alt(180.0, 0.5, 0.5);
+      final OkHsvColor color = OkHsvColor(180.0, 0.5, 0.5);
       final OkHsvColor accented = color.accented(20);
       // S: 0.5 + 0.2 = 0.7
       // V: 0.5 + 0.1 = 0.6
@@ -31,7 +31,7 @@ void main() {
     });
 
     test('whiten moves towards white', () {
-      final OkHsvColor color = OkHsvColor.alt(0.0, 1.0, 0.0); // Black/Red
+      final OkHsvColor color = OkHsvColor(0.0, 1.0, 0.0); // Black/Red
       final OkHsvColor whitened = color.whiten(50);
       // White is S=0, V=1
       // Lerp 50% from S=1, V=0 to S=0, V=1
@@ -42,7 +42,7 @@ void main() {
     });
 
     test('blacken moves towards black', () {
-      final OkHsvColor color = OkHsvColor.alt(0.0, 0.0, 1.0); // White
+      final OkHsvColor color = OkHsvColor(0.0, 0.0, 1.0); // White
       final OkHsvColor blackened = color.blacken(50);
       // Black is V=0
       // Lerp 50% from V=1 to V=0 -> V=0.5
@@ -50,8 +50,8 @@ void main() {
     });
 
     test('lerp interpolates correctly', () {
-      final OkHsvColor color1 = OkHsvColor.alt(0.0, 0.0, 0.0);
-      final OkHsvColor color2 = OkHsvColor.alt(100.0, 1.0, 1.0);
+      final OkHsvColor color1 = OkHsvColor(0.0, 0.0, 0.0);
+      final OkHsvColor color2 = OkHsvColor(100.0, 1.0, 1.0);
       final OkHsvColor lerped = color1.lerp(color2, 0.5);
       expect(lerped.hue, closeTo(50.0, 0.001));
       expect(lerped.saturation, closeTo(0.5, 0.001));
@@ -59,7 +59,7 @@ void main() {
     });
 
     test('monochromatic generates 5 colors', () {
-      final OkHsvColor color = OkHsvColor.alt(180.0, 0.5, 0.5);
+      final OkHsvColor color = OkHsvColor(180.0, 0.5, 0.5);
       final List<ColorSpacesIQ> palette = color.monochromatic;
       expect(palette.length, 5);
       expect(palette[2].value, equals(color.value));
@@ -69,7 +69,7 @@ void main() {
     });
 
     test('lighterPalette generates lighter colors', () {
-      final OkHsvColor color = OkHsvColor.alt(180.0, 0.5, 0.5);
+      final OkHsvColor color = OkHsvColor(180.0, 0.5, 0.5);
       final List<ColorSpacesIQ> palette = color.lighterPalette(10);
       expect(palette.length, 5);
       expect((palette[0] as OkHsvColor).val, closeTo(0.6, 0.001));
@@ -77,7 +77,7 @@ void main() {
     });
 
     test('darkerPalette generates darker colors', () {
-      final OkHsvColor color = OkHsvColor.alt(180.0, 0.5, 0.5);
+      final OkHsvColor color = OkHsvColor(180.0, 0.5, 0.5);
       final List<ColorSpacesIQ> palette = color.darkerPalette(10);
       expect(palette.length, 5);
       expect((palette[0] as OkHsvColor).val, closeTo(0.4, 0.001));
@@ -85,7 +85,7 @@ void main() {
     });
 
     test('random generates valid color', () {
-      final OkHsvColor color = OkHsvColor.alt(0.0, 0.0, 0.0);
+      final OkHsvColor color = OkHsvColor(0.0, 0.0, 0.0);
       final ColorSpacesIQ randomColor = color.random;
       expect(randomColor, isA<OkHsvColor>());
       final OkHsvColor okHsv = randomColor as OkHsvColor;

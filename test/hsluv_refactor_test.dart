@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('HsluvColor Refactor Tests', () {
     test('whiten increases lightness and desaturates', () {
-      final HsluvColor color = HsluvColor.alt(0, 100, 50); // Red
+      final HsluvColor color = HsluvColor(0, 100, 50); // Red
       final HsluvColor whitened = color.whiten(50);
 
       expect(whitened.l, greaterThan(color.l));
@@ -12,7 +12,7 @@ void main() {
     });
 
     test('blacken decreases lightness and desaturates', () {
-      final HsluvColor color = HsluvColor.alt(0, 100, 50); // Red
+      final HsluvColor color = HsluvColor(0, 100, 50); // Red
       final HsluvColor blackened = color.blacken(50);
 
       expect(blackened.l, lessThan(color.l));
@@ -20,8 +20,8 @@ void main() {
     });
 
     test('lerp interpolates correctly', () {
-      final HsluvColor start = HsluvColor.alt(0, 100, 50); // Red
-      final HsluvColor end = HsluvColor.alt(120, 100, 50); // Green
+      final HsluvColor start = HsluvColor(0, 100, 50); // Red
+      final HsluvColor end = HsluvColor(120, 100, 50); // Green
       final HsluvColor mid = start.lerp(end, 0.5);
 
       expect(mid.h, closeTo(60, 0.1)); // Yellow
@@ -30,7 +30,7 @@ void main() {
     });
 
     test('grayscale sets saturation to 0', () {
-      final HsluvColor color = HsluvColor.alt(0, 100, 50);
+      final HsluvColor color = HsluvColor(0, 100, 50);
       final HsluvColor gray = color.grayscale;
 
       expect(gray.s, equals(0));

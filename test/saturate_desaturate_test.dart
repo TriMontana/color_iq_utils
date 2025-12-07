@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('Saturate/Desaturate Tests', () {
     test('HslColor saturate/desaturate', () {
-      final HslColor hsl = HslColor.alt(0, 0.5, 0.5);
+      final HslColor hsl = HslColor(0, 0.5, 0.5);
       final HslColor saturated = hsl.saturate(25);
       expect(saturated.s, closeTo(0.75, 0.01));
 
@@ -13,7 +13,7 @@ void main() {
     });
 
     test('HsvColor saturate/desaturate', () {
-      final HsvColor hsv = HsvColor.alt(0, 0.5, 0.5);
+      final HsvColor hsv = HsvColor(0, 0.5, Percent.mid);
       final HsvColor saturated = hsv.saturate(25);
       expect(saturated.s, closeTo(0.75, 0.01));
 
@@ -22,7 +22,7 @@ void main() {
     });
 
     test('LchColor saturate/desaturate', () {
-      final LchColor lch = LchColor.alt(50, 50, 0);
+      final LchColor lch = LchColor(50, 50, 0);
       final LchColor saturated = lch.saturate(25);
       expect(saturated.c, closeTo(75, 0.01));
 
@@ -31,7 +31,7 @@ void main() {
     });
 
     test('OkLchColor saturate/desaturate', () {
-      final OkLCH oklch = OkLCH.alt(const Percent(0.5), 0.1, 0);
+      final OkLCH oklch = OkLCH(Percent.mid, 0.1, 0);
       final OkLCH saturated = oklch.saturate(25);
       // 0.1 + 25/100 = 0.35
       expect(saturated.c, closeTo(0.35, 0.01));
@@ -52,7 +52,7 @@ void main() {
 
     test('LabColor saturate/desaturate (via Lch)', () {
       // Lab(50, 50, 0) -> Lch(50, 50, 0)
-      final LabColor lab = LabColor.alt(50, 50, 0);
+      final LabColor lab = LabColor(Percent.mid, 50, 0);
       final LabColor saturated = lab.saturate(25);
       // Lch(50, 75, 0) -> Lab(50, 75, 0)
       expect(saturated.aLab, closeTo(75, 0.01));
@@ -60,7 +60,7 @@ void main() {
     });
 
     test('HsluvColor saturate/desaturate', () {
-      final HsluvColor hsluv = HsluvColor.alt(0, 50, 50);
+      final HsluvColor hsluv = HsluvColor(0, 50, 50);
       final HsluvColor saturated = hsluv.saturate(25);
       expect(saturated.s, closeTo(75, 0.01));
 
@@ -69,7 +69,7 @@ void main() {
     });
 
     test('Clamping', () {
-      final HslColor hsl = HslColor.alt(0, 0.9, 0.5);
+      final HslColor hsl = HslColor(0, 0.9, 0.5);
       final HslColor saturated = hsl.saturate(25);
       expect(saturated.s, 1.0);
 

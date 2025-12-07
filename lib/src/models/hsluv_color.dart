@@ -27,36 +27,16 @@ class HsluvColor extends ColorSpacesIQ with ColorModelsMixin {
   final double s;
   final double l;
 
-  const HsluvColor(this.h, this.s, this.l,
-      {required final int hexId,
-      final Percent alpha = Percent.max,
-      final List<String>? names})
-      : assert(h >= 0.0 && h <= 360.0, 'Hue must be between 0 and 360'),
-        assert(s >= 0.0 && s <= 100.0, 'Saturation must be between 0 and 100'),
-        assert(l >= 0.0 && l <= 100.0, 'Lightness must be between 0 and 100'),
-        super(hexId, a: alpha, names: names ?? const <String>[]);
-
-  HsluvColor.alt(this.h, this.s, this.l,
+  HsluvColor(this.h, this.s, this.l,
       {final int? hexId,
       final Percent alpha = Percent.max,
       final List<String>? names})
-      : super(hexId ?? toHex(h: h, s: s, l: l),
+      : super.alt(hexId ?? HsluvColor.hexIdFromHSLuv(h: h, s: s, l: l),
             a: alpha, names: names ?? const <String>[]);
 
   /// Creates a 32-bit ARGB hex value from HSLuv components.
-  ///
-  /// HSLuv to ARGB Conversion FlowThe conversion relies on the
-  /// official HSLuv algorithm, which ensures the perceived lightness
-  /// and saturation are consistent.HSLuv $\to$ CIELuv: The HSLuv
-  /// coordinates (Hue, Saturation, Lightness) are converted into the
-  /// Cartesian coordinates of the CIELuv space ($L*, u*, v*$).CIELuv $\to$ CIEXYZ: The
-  /// CIELuv coordinates are transformed into the device-independent CIEXYZ color space.
-  /// CIEXYZ $\to$ Linear sRGB: The $X, Y, Z$ values are mapped onto the Linear sRGB color
-  /// cube.Linear sRGB $\to$ sRGB (Gamma): The color is then gamma-corrected (delinearized)
-  /// to standard sRGB values ($\text{R, G, B}$).sRGB $\to$ 32-bit ARGB:
-  /// The final $\text{R, G, B}$ values are combined with the Alpha channel (255 for full opacity)
-  /// into a 32-bit integer.
-  static int toHex(
+
+  static int hexIdFromHSLuv(
       {required final double h,
       required final double s,
       required final double l}) {
@@ -73,18 +53,15 @@ class HsluvColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  int get value => toColor().value;
-
-  @override
   HsluvColor darken([final double amount = 20]) {
-    return HsluvColor.alt(h, s, max(0.0, l - amount));
+    return HsluvColor(h, s, max(0.0, l - amount));
   }
 
   @override
   HsluvColor get inverted => toColor().inverted.toHsluv();
 
   @override
-  HsluvColor get grayscale => HsluvColor.alt(h, 0, l);
+  HsluvColor get grayscale => HsluvColor(h, 0, l);
 
   @override
   HsluvColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
@@ -99,7 +76,7 @@ class HsluvColor extends ColorSpacesIQ with ColorModelsMixin {
         other is HsluvColor ? other : other.toColor().toHsluv();
     if (t == 1.0) return otherHsluv;
 
-    return HsluvColor.alt(
+    return HsluvColor(
       lerpHue(h, otherHsluv.h, t),
       lerpDouble(s, otherHsluv.s, t),
       lerpDouble(l, otherHsluv.l, t),
@@ -108,7 +85,7 @@ class HsluvColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   HsluvColor lighten([final double amount = 20]) {
-    return HsluvColor.alt(h, s, min(100.0, l + amount));
+    return HsluvColor(h, s, min(100.0, l + amount));
   }
 
   @override
@@ -118,12 +95,12 @@ class HsluvColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   HsluvColor saturate([final double amount = 25]) {
-    return HsluvColor.alt(h, min(100.0, s + amount), l);
+    return HsluvColor(h, min(100.0, s + amount), l);
   }
 
   @override
   HsluvColor desaturate([final double amount = 25]) {
-    return HsluvColor.alt(h, max(0.0, s - amount), l);
+    return HsluvColor(h, max(0.0, s - amount), l);
   }
 
   @override
@@ -160,12 +137,9 @@ class HsluvColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   double get transparency => toColor().transparency;
 
-  @override
-  ColorTemperature get temperature => toColor().temperature;
-
   /// Creates a copy of this color with the given fields replaced with the new values.
   HsluvColor copyWith({final double? h, final double? s, final double? l}) {
-    return HsluvColor.alt(h ?? this.h, s ?? this.s, l ?? this.l);
+    return HsluvColor(h ?? this.h, s ?? this.s, l ?? this.l);
   }
 
   @override
@@ -197,12 +171,6 @@ class HsluvColor extends ColorSpacesIQ with ColorModelsMixin {
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
 
   @override
-  double get luminance => toColor().luminance;
-
-  @override
-  Brightness get brightness => toColor().brightness;
-
-  @override
   bool get isDark => brightness == Brightness.dark;
 
   @override
@@ -220,7 +188,7 @@ class HsluvColor extends ColorSpacesIQ with ColorModelsMixin {
   HsluvColor adjustHue([final double amount = 20]) {
     double newHue = (h + amount) % 360;
     if (newHue < 0) newHue += 360;
-    return HsluvColor.alt(newHue, s, l);
+    return HsluvColor(newHue, s, l);
   }
 
   @override

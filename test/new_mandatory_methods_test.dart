@@ -9,7 +9,7 @@ void main() {
       expect(random, isA<ColorIQ>());
       expect(random.value, isNot(0xFF000000)); // Unlikely to be black again
 
-      final HslColor hsl = HslColor.alt(0, 0, 0);
+      final HslColor hsl = HslColor(0, 0, 0);
       final HslColor randomHsl = hsl.random as HslColor;
       expect(randomHsl, isA<HslColor>());
 
@@ -48,7 +48,7 @@ void main() {
       // Red luminance: 0.2126
       expect(cRed.luminance, closeTo(0.2126, 0.01));
 
-      final HslColor hslWhite = HslColor.alt(0, 0, 1.0);
+      final HslColor hslWhite = HslColor(0, 0, 1.0);
       expect(hslWhite.luminance, closeTo(1.0, 0.01));
 
       print('✓ Luminance test completed');

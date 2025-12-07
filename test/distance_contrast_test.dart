@@ -26,8 +26,8 @@ void main() {
     });
 
     test('contrastWith delegates correctly', () {
-      final CmykColor cmyk = CmykColor.alt(0, 0, 0, 0); // White
-      const HslColor hsl = kHslBlack; // Black
+      final CmykColor cmyk = CmykColor(0, 0, 0, 0); // White
+      final HslColor hsl = kHslBlack; // Black
       expect(cmyk.contrastWith(hsl), closeTo(21.0, 0.1));
     });
   });
@@ -47,7 +47,7 @@ void main() {
     });
 
     test('Delegation works', () {
-      final HsvColor hsv = HsvColor.alt(0, 1.0, 1.0); // Red
+      final HsvColor hsv = HsvColor(0, Percent.max, Percent.max); // Red
       final ColorSlice slice = hsv.closestColorSlice();
       expect(slice.name, equals(kRed));
     });

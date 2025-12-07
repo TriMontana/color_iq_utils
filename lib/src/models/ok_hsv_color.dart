@@ -27,17 +27,11 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
   final double val;
   Percent get alpha => super.a;
 
-  const OkHsvColor(this.hue, this.saturation, this.val,
-      {final Percent alpha = Percent.max,
-      required final int hexId,
-      final List<String>? names})
-      : super(hexId, a: alpha, names: names ?? const <String>[]);
-
-  OkHsvColor.alt(this.hue, this.saturation, this.val,
+  OkHsvColor(this.hue, this.saturation, this.val,
       {final Percent alpha = Percent.max,
       final int? hexId,
       final List<String>? names})
-      : super(
+      : super.alt(
             hexId ?? OkHsvColor.hexIdFromOkHSV(hue, saturation, val, alpha.val),
             a: alpha,
             names: names ??
@@ -124,7 +118,7 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
     final double value = oklabL.clamp(0.0, 1.0);
 
     // H is Hue [0, 360)
-    return OkHsvColor.alt(h, saturation, value);
+    return OkHsvColor(h, saturation, value);
   }
 
   @override
@@ -138,24 +132,24 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
     final double c = saturation * val * 0.4;
     final double l = val * (1 - saturation);
     final double hRad = hue * pi / 180;
-    return OkLabColor.alt(l, c * cos(hRad), c * sin(hRad), alpha: alpha);
+    return OkLabColor(l, c * cos(hRad), c * sin(hRad), alpha: alpha);
   }
 
   @override
   OkHsvColor darken([final double amount = 20]) {
-    return OkHsvColor.alt(hue, saturation, max(0.0, val - amount / 100),
+    return OkHsvColor(hue, saturation, max(0.0, val - amount / 100),
         alpha: alpha);
   }
 
   @override
   OkHsvColor brighten([final double amount = 20]) {
-    return OkHsvColor.alt(hue, saturation, min(1.0, val + amount / 100),
+    return OkHsvColor(hue, saturation, min(1.0, val + amount / 100),
         alpha: alpha);
   }
 
   @override
   OkHsvColor saturate([final double amount = 25]) {
-    return OkHsvColor.alt(hue, min(1.0, saturation + amount / 100), val,
+    return OkHsvColor(hue, min(1.0, saturation + amount / 100), val,
         alpha: alpha);
   }
 
@@ -165,7 +159,7 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   OkHsvColor intensify([final double amount = 10]) {
-    return OkHsvColor.alt(
+    return OkHsvColor(
       hue,
       min(1.0, saturation + amount / 100),
       max(0.0, val - (amount / 200)),
@@ -175,7 +169,7 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   OkHsvColor deintensify([final double amount = 10]) {
-    return OkHsvColor.alt(
+    return OkHsvColor(
       hue,
       max(0.0, saturation - amount / 100),
       min(1.0, val + (amount / 200)),
@@ -185,7 +179,7 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   OkHsvColor accented([final double amount = 15]) {
-    return OkHsvColor.alt(
+    return OkHsvColor(
       hue,
       min(1.0, saturation + amount / 100),
       min(1.0, val + (amount / 200)),
@@ -208,7 +202,7 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
   OkHsvColor lerp(final ColorSpacesIQ other, final double t) {
     final OkHsvColor otherOkHsv =
         other is OkHsvColor ? other : other.toColor().toOkHsv();
-    return OkHsvColor.alt(
+    return OkHsvColor(
       lerpHue(hue, otherOkHsv.hue, t),
       lerpDouble(saturation, otherOkHsv.saturation, t),
       lerpDouble(val, otherOkHsv.val, t),
@@ -217,7 +211,7 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   OkHsvColor lighten([final double amount = 20]) {
-    return OkHsvColor.alt(hue, saturation, min(1.0, val + amount / 100),
+    return OkHsvColor(hue, saturation, min(1.0, val + amount / 100),
         alpha: alpha);
   }
 
@@ -233,15 +227,6 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
     return copyWith(alpha: Percent(z));
   }
 
-  @override
-  ColorTemperature get temperature {
-    if (hue >= 90 && hue < 270) {
-      return ColorTemperature.cool;
-    } else {
-      return ColorTemperature.warm;
-    }
-  }
-
   /// Creates a copy of this color with the given fields replaced with the new values.
   OkHsvColor copyWith({
     final double? hue,
@@ -249,7 +234,7 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
     final double? v,
     final Percent? alpha,
   }) {
-    return OkHsvColor.alt(
+    return OkHsvColor(
       hue ?? this.hue,
       saturation ?? this.saturation,
       v ?? val,
@@ -263,7 +248,7 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
     for (int i = 0; i < 5; i++) {
       final double delta = (i - 2) * 0.1;
       final double newVal = (val + delta).clamp(0.0, 1.0);
-      results.add(OkHsvColor.alt(hue, saturation, newVal, alpha: alpha));
+      results.add(OkHsvColor(hue, saturation, newVal, alpha: alpha));
     }
     return results;
   }
@@ -295,7 +280,7 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   ColorSpacesIQ get random {
     final Random rng = Random();
-    return OkHsvColor.alt(
+    return OkHsvColor(
       rng.nextDouble() * 360.0,
       rng.nextDouble(),
       rng.nextDouble(),
@@ -339,7 +324,7 @@ class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
     final double blendedValue = _clamp01(val + (target.val - val) * t);
     final double blendedAlpha =
         _clamp01(alpha.val + (target.alpha.val - alpha.val) * t);
-    return OkHsvColor.alt(
+    return OkHsvColor(
       blendedHue,
       blendedSaturation,
       blendedValue,

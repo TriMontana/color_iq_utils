@@ -1,6 +1,10 @@
 import 'package:color_iq_utils/src/color_interfaces.dart';
+import 'package:color_iq_utils/src/colors_lib.dart';
+import 'package:color_iq_utils/src/foundation_lib.dart';
+import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/hsv_color.dart';
+import 'package:color_iq_utils/src/naming/names.dart';
 
 /// Represents a slice of a color wheel.
 class ColorSlice {
@@ -14,7 +18,7 @@ class ColorSlice {
   final double endAngle;
 
   /// The name of the color range.
-  final String name;
+  final List<String> name;
 
   const ColorSlice({
     required this.color,
@@ -31,7 +35,8 @@ List<ColorSlice> generateHsvWheel({
   final double value = 100,
 }) {
   return _generateWheel(
-    (final double hue) => HsvColor.alt(hue, saturation / 100, value / 100),
+    (final double hue) =>
+        HsvColor(hue, Percent(saturation / 100), Percent(value / 100)),
     saturation,
     value,
   );
@@ -48,7 +53,7 @@ Map<String, ColorSlice> getHsvWheelMap({
     value: value,
   );
   return <String, ColorSlice>{
-    for (ColorSlice slice in wheel) slice.name: slice,
+    for (ColorSlice slice in wheel) slice.name[0]: slice,
   };
 }
 
@@ -74,7 +79,7 @@ Map<String, ColorSlice> getHctWheelMap({
 }) {
   final List<ColorSlice> wheel = generateHctWheel(chroma: chroma, tone: tone);
   return <String, ColorSlice>{
-    for (ColorSlice slice in wheel) slice.name: slice,
+    for (ColorSlice slice in wheel) slice.name[0]: slice,
   };
 }
 
@@ -85,11 +90,12 @@ List<ColorSlice> _generateWheel(
   final ColorSpacesIQ Function(double hue) colorFactory,
   final double param1,
   final double param2, {
-  final String Function(int index)? nameProvider,
+  final List<String> Function(int index)? nameProvider,
 }) {
   final List<ColorSlice> slices = <ColorSlice>[];
   const double step = 6.0; // 360 / 60
-  final String Function(int index) getName = nameProvider ?? _getColorName;
+  final List<String> Function(int index) getName =
+      nameProvider ?? _getColorName;
 
   for (int i = 0; i < 60; i++) {
     final double startAngle = i * step;
@@ -109,50 +115,86 @@ List<ColorSlice> _generateWheel(
 }
 
 /// Returns a name for the given hue (0-360).
-String getColorNameFromHue(final double hue) {
+List<String> getColorNameFromHue(final double hue) {
   final int index = (hue / 6).round() % 60;
   return _getColorName(index);
 }
 
 /// Returns a name for one of the 60 color sections.
-String _getColorName(final int index) {
+List<String> _getColorName(final int index) {
   // ... (existing list)
-  const List<String> finalNames = <String>[
+  const List<List<String>> finalNames = <List<String>>[
     // 0-4 (Red -> Orange)
-    "Red", "Red-Orange", "Vermilion", "Scarlet", "Orange-Red",
+    kRed, kRedOrange, kVermilion, kScarlet, kOrangeRed,
     // 5-9 (Orange -> Yellow)
-    "Orange", "Deep Orange", "Amber", "Chrome Yellow", "Golden Yellow",
+    kOrange, kDeepOrange, kAmber, kChromeYellow, kGoldenYellow,
     // 10-14 (Yellow -> Green-Yellow)
-    "Yellow", "Lemon", "Lime", "Chartreuse", "Lawn Green",
+    kYellow, kLemon, kLime, kChartreuse, kLawnGreen,
     // 15-19 (Green-Yellow -> Green)
-    "Spring Green", "Harlequin", "Lime Green", "Pale Green", "Light Green",
+    kSpringGreen, kHarlequin, kLimeGreen, kPaleGreen, kLightGreen,
     // 20-24 (Green -> Cyan-Green)
-    "Green", "Medium Green", "Forest Green", "Emerald", "Jungle Green",
+    kGreen, kMediumGreen, kForestGreen, kEmerald, kJungleGreen,
     // 25-29 (Cyan-Green -> Cyan)
-    "Mint", "Teal", "Aqua", "Turquoise", "Sky Blue",
+    kMint, kTeal, kAqua, kTurquoise, kSkyBlue,
     // 30-34 (Cyan -> Blue-Cyan)
-    "Cyan", "Cerulean", "Azure", "Cobalt", "Cornflower",
+    kCyan, kCerulean, kAzure, kCobalt, kCornflower,
     // 35-39 (Blue-Cyan -> Blue)
-    "Royal Blue", "Dodger Blue", "Deep Sky Blue", "Steel Blue", "Denim",
+    kRoyalBlue, kDodgerBlue, kDeepSkyBlue, kSteelBlue, kDenim,
     // 40-44 (Blue -> Magenta-Blue)
-    "Blue", "Medium Blue", "Dark Blue", "Indigo", "Blue-Violet",
+    kBlue, kMediumBlue, kDarkBlue, kIndigo, kBlueViolet,
     // 45-49 (Magenta-Blue -> Magenta)
-    "Violet", "Purple", "Electric Purple", "Deep Purple", "Phlox",
+    kViolet, kPurple, kElectricPurple, kDeepPurple, kPhlox,
     // 50-54 (Magenta -> Red-Magenta)
-    "Magenta", "Fuchsia", "Orchid", "Deep Pink", "Hot Pink",
+    kMagenta, kFuchsia, kOrchid, kDeepPink, kHotPink,
     // 55-59 (Red-Magenta -> Red)
-    "Rose", "Raspberry", "Crimson", "Amaranth", "Ruby",
+    kRose, kRaspberry, kCrimson, kAmaranth, kRuby,
   ];
 
   if (index >= 0 && index < finalNames.length) {
     return finalNames[index];
   }
-  return "Unknown";
+  return <String>["Unknown", 'Desconocido'];
+}
+
+/// Returns a name for one of the 60 color sections.
+ColorIQ getColorBySectionIndex(final int index) {
+  // ... (existing list)
+  final List<ColorIQ> finalNames = <ColorIQ>[
+    // 0-4 (Red -> Orange)
+    cRed, cRedOrange, cVermilion, cScarlet, cOrangeRed,
+    // 5-9 (Orange -> Yellow)
+    cOrange, cDeepOrange, cAmber, cChromeYellow, cGoldenYellow,
+    // 10-14 (Yellow -> Green-Yellow)
+    cYellow, cLemon, cLime, cChartreuse, cLawnGreen,
+    // 15-19 (Green-Yellow -> Green)
+    cSpringGreen, cHarlequin, cLimeGreen, cPaleGreen, cLightGreen,
+    // 20-24 (Green -> Cyan-Green)
+    cGreen, cMediumGreen, cForestGreen, cEmerald, cJungleGreen,
+    // 25-29 (Cyan-Green -> Cyan)
+    cMint, cTeal, cAqua, cTurquoise, cSkyBlue,
+    // 30-34 (Cyan -> Blue-Cyan)
+    cCyan, cCerulean, cAzure, cCobalt, cCornflower,
+    // 35-39 (Blue-Cyan -> Blue)
+    cRoyalBlue, cDodgerBlue, cDeepSkyBlue, cSteelBlue, cDenim,
+    // 40-44 (Blue -> Magenta-Blue)
+    cBlue, cMediumBlue, cDarkBlue, cIndigo, cBlueViolet,
+    // 45-49 (Magenta-Blue -> Magenta)
+    cViolet, cPurple, cElectricPurple, cDeepPurple, cPhlox,
+    // 50-54 (Magenta -> Red-Magenta)
+    cMagenta, cFuchsia, cOrchid, cDeepPink, cHotPink,
+    // 55-59 (Red-Magenta -> Red)
+    cRose, cRaspberry, cCrimson, cAmaranth, cRuby,
+  ];
+
+  if (index >= 0 && index < finalNames.length) {
+    return finalNames[index];
+  }
+  return cBlack;
 }
 
 /// Returns a name for one of the 60 HCT color sections.
 /// HCT Red is around 27 degrees, so we shift the names.
-String _getHctColorName(final int index) {
+List<String> _getHctColorName(final int index) {
   // Shift by -4 indices (approx 24 degrees) so that HCT 27 (Index 4) maps to "Red" (Index 0).
   // (4 - 4) = 0.
   // We need to handle wrap around.

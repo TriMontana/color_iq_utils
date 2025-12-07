@@ -25,17 +25,11 @@ class HunterLabColor extends ColorSpacesIQ with ColorModelsMixin {
   final double aLab;
   final double bLab;
 
-  const HunterLabColor(this.l, this.aLab, this.bLab,
-      {required final int hexId,
-      final Percent alpha = Percent.max,
-      final List<String>? names})
-      : super(hexId, a: alpha, names: names ?? const <String>[]);
-
-  HunterLabColor.alt(this.l, this.aLab, this.bLab,
+  HunterLabColor(this.l, this.aLab, this.bLab,
       {final int? hexId,
       final Percent alpha = Percent.max,
       final List<String>? names})
-      : super(hexId ?? toARGB(l, aLab, bLab),
+      : super.alt(hexId ?? toARGB(l, aLab, bLab),
             a: alpha, names: names ?? const <String>[]);
 
   /// A stand-alone static method to create a 32-bit hexID/ARGB from l, aLab, bLab.
@@ -80,19 +74,19 @@ class HunterLabColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   HunterLabColor darken([final double amount = 20]) {
-    return HunterLabColor.alt(max(0, l - amount), aLab, bLab);
+    return HunterLabColor(max(0, l - amount), aLab, bLab);
   }
 
   @override
   HunterLabColor saturate([final double amount = 25]) {
     final double scale = 1.0 + (amount / 100.0);
-    return HunterLabColor.alt(l, aLab * scale, bLab * scale);
+    return HunterLabColor(l, aLab * scale, bLab * scale);
   }
 
   @override
   HunterLabColor desaturate([final double amount = 25]) {
     final double scale = 1.0 - (amount / 100.0);
-    return HunterLabColor.alt(l, aLab * scale, bLab * scale);
+    return HunterLabColor(l, aLab * scale, bLab * scale);
   }
 
   @override
@@ -131,7 +125,7 @@ class HunterLabColor extends ColorSpacesIQ with ColorModelsMixin {
         other is HunterLabColor ? other : other.toColor().toHunterLab();
     if (t == 1.0) return otherLab;
 
-    return HunterLabColor.alt(
+    return HunterLabColor(
       lerpDouble(l, otherLab.l, t),
       lerpDouble(aLab, otherLab.aLab, t),
       lerpDouble(bLab, otherLab.bLab, t),
@@ -140,12 +134,12 @@ class HunterLabColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   HunterLabColor lighten([final double amount = 20]) {
-    return HunterLabColor.alt(min(100, l + amount), aLab, bLab);
+    return HunterLabColor(min(100, l + amount), aLab, bLab);
   }
 
   @override
   HunterLabColor brighten([final double amount = 20]) {
-    return HunterLabColor.alt(l, max(100, aLab + amount), bLab);
+    return HunterLabColor(l, max(100, aLab + amount), bLab);
   }
 
   @override
@@ -156,16 +150,10 @@ class HunterLabColor extends ColorSpacesIQ with ColorModelsMixin {
     return toColor().adjustTransparency(amount).toHunterLab();
   }
 
-  @override
-  double get transparency => toColor().transparency;
-
-  @override
-  ColorTemperature get temperature => toColor().temperature;
-
   /// Creates a copy of this color with the given fields replaced with the new values.
   HunterLabColor copyWith(
       {final double? lStar, final double? aStar, final double? bStar}) {
-    return HunterLabColor.alt(lStar ?? l, aStar ?? aLab, bStar ?? bLab);
+    return HunterLabColor(lStar ?? l, aStar ?? aLab, bStar ?? bLab);
   }
 
   @override

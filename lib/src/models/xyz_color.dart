@@ -26,16 +26,11 @@ class XYZ extends ColorSpacesIQ with ColorModelsMixin {
   final double y;
   final double z;
 
-  const XYZ(this.x, this.y, this.z,
-      {required final int hexId,
-      final Percent alpha = Percent.max,
-      final List<String>? names})
-      : super(hexId, a: alpha, names: names ?? const <String>[]);
-  XYZ.alt(this.x, this.y, this.z,
+  XYZ(this.x, this.y, this.z,
       {final int? hexId,
       final Percent alpha = Percent.max,
       final List<String>? names})
-      : super(hexId ?? argbFromXyz(x, y, z),
+      : super.alt(hexId ?? argbFromXyz(x, y, z),
             a: alpha, names: names ?? const <String>[]);
   factory XYZ.fromInt(final int hexId) {
     final List<double> lst = xyzFromArgb(hexId);
@@ -106,7 +101,7 @@ class XYZ extends ColorSpacesIQ with ColorModelsMixin {
       vOut = 0;
     }
 
-    return LuvColor.alt(l, uOut, vOut);
+    return LuvColor(l, uOut, vOut);
   }
 
   @override
@@ -175,20 +170,13 @@ class XYZ extends ColorSpacesIQ with ColorModelsMixin {
     return toColor().adjustTransparency(amount).xyz;
   }
 
-  @override
-  double get transparency => toColor().transparency;
-
-  @override
-  ColorTemperature get temperature => toColor().temperature;
-
   /// Creates a copy of this color with the given fields replaced with the new values.
   XYZ copyWith(
       {final double? x,
       final double? y,
       final double? z,
       final Percent? alpha}) {
-    return XYZ.alt(x ?? this.x, y ?? this.y, z ?? this.z,
-        alpha: alpha ?? super.a);
+    return XYZ(x ?? this.x, y ?? this.y, z ?? this.z, alpha: alpha ?? super.a);
   }
 
   @override

@@ -31,17 +31,11 @@ class LuvColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The blue-yellow component of the color.
   final double v;
 
-  /// Creates a new `LuvColor`.
-  const LuvColor(this.l, this.u, this.v,
-      {required final int hexId,
-      final Percent alpha = Percent.max,
-      final List<String>? names})
-      : super(hexId, a: alpha, names: names ?? const <String>[]);
-  LuvColor.alt(this.l, this.u, this.v,
+  LuvColor(this.l, this.u, this.v,
       {final int? hexId,
       final Percent alpha = Percent.max,
       final List<String>? names})
-      : super(hexId ?? LuvColor.toHexId(l, u, v),
+      : super.alt(hexId ?? LuvColor.toHexId(l, u, v),
             a: alpha, names: names ?? const <String>[]);
 
   /// Creates a [LuvColor] from a 32-bit integer ARGB value.
@@ -84,7 +78,7 @@ class LuvColor extends ColorSpacesIQ with ColorModelsMixin {
       z = (9 * y / vPrime - x - 15 * y) / 3;
     }
 
-    return XYZ.alt(x, y, z).value;
+    return XYZ(x, y, z).value;
   }
 
   @override
@@ -105,7 +99,7 @@ class LuvColor extends ColorSpacesIQ with ColorModelsMixin {
         (other is LuvColor) ? other : other.toColor().toLuv();
     if (t == 1.0) return otherLuv;
 
-    return LuvColor.alt(
+    return LuvColor(
       l + (otherLuv.l - l) * t,
       u + (otherLuv.u - u) * t,
       v + (otherLuv.v - v) * t,
@@ -114,7 +108,7 @@ class LuvColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   LuvColor darken([final double amount = 20]) {
-    return LuvColor.alt(max(0, l - amount), u, v);
+    return LuvColor(max(0, l - amount), u, v);
   }
 
   @override
@@ -154,7 +148,7 @@ class LuvColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   LuvColor lighten([final double amount = 20]) {
-    return LuvColor.alt(min(100, l + amount), u, v);
+    return LuvColor(min(100, l + amount), u, v);
   }
 
   @override
@@ -168,15 +162,9 @@ class LuvColor extends ColorSpacesIQ with ColorModelsMixin {
     return toColor().adjustTransparency(amount).toLuv();
   }
 
-  @override
-  double get transparency => toColor().transparency;
-
-  @override
-  ColorTemperature get temperature => toColor().temperature;
-
   /// Creates a copy of this color with the given fields replaced with the new values.
   LuvColor copyWith({final double? l, final double? u, final double? v}) {
-    return LuvColor.alt(l ?? this.l, u ?? this.u, v ?? this.v);
+    return LuvColor(l ?? this.l, u ?? this.u, v ?? this.v);
   }
 
   @override

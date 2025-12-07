@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('HsbColor Methods Tests', () {
     test('grayscale converts to grayscale correctly', () {
-      final HsbColor color = HsbColor.alt(0, 1.0, 1.0);
+      final HsbColor color = HsbColor(0, 1.0, 1.0);
       final HsbColor gray = color.grayscale;
 
       expect(gray.s, equals(0.0));
@@ -13,7 +13,7 @@ void main() {
     });
 
     test('inverted inverts color correctly', () {
-      final HsbColor color = HsbColor.alt(0, 1.0, 1.0);
+      final HsbColor color = HsbColor(0, 1.0, Percent.max);
       final HsbColor inverted = color.inverted;
 
       expect(inverted.h, closeTo(180, 0.1));
@@ -22,7 +22,7 @@ void main() {
     });
 
     test('simulate returns same color for none', () {
-      final HsbColor color = HsbColor.alt(120, 0.5, 0.8);
+      final HsbColor color = HsbColor(120, 0.5, 0.8);
       final HsbColor simulated = color.simulate(ColorBlindnessType.none);
 
       expect(simulated.h, closeTo(color.h, 0.1));
@@ -31,7 +31,7 @@ void main() {
     });
 
     test('simulate achromatopsia results in grayscale', () {
-      final HsbColor color = HsbColor.alt(0, 1.0, 1.0); // Red
+      final HsbColor color = HsbColor(0, 1.0, Percent.max); // Red
       final HsbColor simulated =
           color.simulate(ColorBlindnessType.achromatopsia);
 
@@ -40,7 +40,7 @@ void main() {
     });
 
     test('monochromatic generates 5 colors', () {
-      final HsbColor color = HsbColor.alt(120, 0.5, 0.5);
+      final HsbColor color = HsbColor(120, 0.5, Percent.mid);
       final List<ColorSpacesIQ> palette = color.monochromatic;
       expect(palette.length, 5);
       expect(palette[2], isA<HsbColor>());
@@ -51,7 +51,7 @@ void main() {
     });
 
     test('lighterPalette generates lighter colors', () {
-      final HsbColor color = HsbColor.alt(120, 0.5, 0.5);
+      final HsbColor color = HsbColor(120, 0.5, Percent.mid);
       final List<ColorSpacesIQ> palette = color.lighterPalette(10);
       expect(palette.length, 3);
       for (ColorSpacesIQ c in palette) {
@@ -60,7 +60,7 @@ void main() {
     });
 
     test('darkerPalette generates darker colors', () {
-      final HsbColor color = HsbColor.alt(120, 0.5, 0.5);
+      final HsbColor color = HsbColor(120, 0.5, Percent.mid);
       final List<ColorSpacesIQ> palette = color.darkerPalette(10);
       expect(palette.length, 3);
       for (ColorSpacesIQ c in palette) {
@@ -69,7 +69,7 @@ void main() {
     });
 
     test('random generates valid HsbColor', () {
-      final HsbColor color = HsbColor.alt(0, 0, 0);
+      final HsbColor color = HsbColor(0, 0, 0);
       final ColorSpacesIQ randomColor = color.random;
       expect(randomColor, isA<HsbColor>());
       final HsbColor hsb = randomColor as HsbColor;
@@ -79,9 +79,9 @@ void main() {
     });
 
     test('isEqual compares correctly', () {
-      final HsbColor c1 = HsbColor.alt(100, 0.5, 0.5);
-      final HsbColor c2 = HsbColor.alt(100, 0.5, 0.5);
-      final HsbColor c3 = HsbColor.alt(101, 0.5, 0.5);
+      final HsbColor c1 = HsbColor(100, 0.5, Percent.mid);
+      final HsbColor c2 = HsbColor(100, 0.5, Percent.mid);
+      final HsbColor c3 = HsbColor(101, 0.5, Percent.mid);
 
       expect(c1.isEqual(c2), isTrue);
       expect(c1.isEqual(c3), isFalse);

@@ -31,18 +31,11 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The lightness component of the color, ranging from 0.0 to 1.0.
   final double l;
 
-  /// Creates an `OkHslColor` instance.
-  const OkHslColor(this.h, this.s, this.l,
-      {required final int hexId,
-      final Percent alpha = Percent.max,
-      final List<String>? names})
-      : super(hexId, a: alpha, names: names ?? const <String>[]);
-
-  OkHslColor.alt(this.h, this.s, this.l,
+  OkHslColor(this.h, this.s, this.l,
       {final int? hexId,
       final Percent alpha = Percent.max,
       final List<String>? names})
-      : super(hexId ?? OkHslColor.hexIdFromHsl(h, s, l),
+      : super.alt(hexId ?? OkHslColor.hexIdFromHsl(h, s, l),
             a: alpha,
             names: names ??
                 <String>[
@@ -67,7 +60,7 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
     final double C = s * 0.4; // Approximation
     final double hue = h;
 
-    return OkLCH.alt(Percent(l), C, hue).value;
+    return OkLCH(Percent(l), C, hue).value;
   }
 
   /// Converts a 32-bit ARGB color ID to OkHSL components.
@@ -114,7 +107,7 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   OkHslColor darken([final double amount = 20]) {
-    return OkHslColor.alt(h, s, max(0.0, l - amount / 100));
+    return OkHslColor(h, s, max(0.0, l - amount / 100));
   }
 
   @override
@@ -165,7 +158,7 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
       newHue += 360;
     }
 
-    return OkHslColor.alt(
+    return OkHslColor(
       newHue,
       thisS + (otherS - thisS) * t,
       l + (otherOkHsl.l - l) * t,
@@ -174,7 +167,7 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   OkHslColor lighten([final double amount = 20]) {
-    return OkHslColor.alt(h, s, min(1.0, l + amount / 100));
+    return OkHslColor(h, s, min(1.0, l + amount / 100));
   }
 
   @override
@@ -184,7 +177,7 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   OkHslColor saturate([final double amount = 25]) {
-    return OkHslColor.alt(h, min(1.0, s + amount / 100), l);
+    return copyWith(s: min(1.0, s + amount / 100));
   }
 
   @override
@@ -219,19 +212,13 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
     return toColor().adjustTransparency(amount).toOkHsl();
   }
 
-  @override
-  double get transparency => toColor().transparency;
-
-  @override
-  ColorTemperature get temperature => toColor().temperature;
-
   /// Creates a copy of this color with the given fields replaced with the new values.
   OkHslColor copyWith(
       {final double? hue,
       final double? s,
       final double? l,
       final Percent? alpha}) {
-    return OkHslColor.alt(hue ?? h, s ?? this.s, l ?? this.l,
+    return OkHslColor(hue ?? h, s ?? this.s, l ?? this.l,
         alpha: alpha ?? super.a);
   }
 
@@ -275,7 +262,7 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
   OkHslColor adjustHue([final double amount = 20]) {
     double newHue = (h + amount) % 360;
     if (newHue < 0) newHue += 360;
-    return OkHslColor.alt(newHue, s, l);
+    return OkHslColor(newHue, s, l);
   }
 
   @override

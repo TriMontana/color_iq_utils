@@ -26,31 +26,15 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The alpha value (opacity) of the color.
   Percent get alpha => super.a;
 
-  /// Creates an HSL color.
-  ///
-  /// All values are clamped to their respective ranges.
-  /// Requires a `hexId` to be passed for the underlying [ColorSpacesIQ] representation.
-  const HslColor(this.h, this.s, this.l,
-      {final Percent alpha = Percent.max,
-      required final int hexId,
-      final List<String>? names})
-      : assert(
-            h >= 0.0 && h <= 360.0, 'Invalid hue, range must be 0 to 360: $h'),
-        assert(s >= 0.0 && s <= 1.0,
-            'Invalid saturation, range must be 0 to 1: $s'),
-        assert(l >= 0.0 && l <= 1.0,
-            'Invalid lightness, range must be 0 to 1: $l'),
-        super(hexId, a: alpha, names: names ?? const <String>[]);
-
   /// Creates an HSL color and calculates the `hexId` automatically.
   ///
   /// This is a convenience constructor that calculates the integer hex value
   /// from the provided HSL and alpha values.
-  HslColor.alt(this.h, this.s, this.l,
+  HslColor(this.h, this.s, this.l,
       {final Percent alpha = Percent.max,
       final int? hexId,
       final List<String>? names})
-      : super(hexId ?? HslColor.toHexID(h, s, l, alpha: alpha),
+      : super.alt(hexId ?? HslColor.toHexID(h, s, l, alpha: alpha),
             a: alpha, names: names ?? const <String>[]);
 
   /// Creates an [HslColor] from an RGB [Color].
@@ -77,11 +61,8 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
             min: 0.0,
             max: 1.0,
           );
-    return HslColor.alt(hue, saturation, lightness, alpha: alpha);
+    return HslColor(hue, saturation, lightness, alpha: alpha);
   }
-
-  @override
-  ColorIQ toColor() => ColorIQ(value);
 
   /// Creates a 32-bit ARGB hex value from HSL values.
   ///
@@ -135,7 +116,7 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   HslColor saturate([final double amount = 25]) {
-    return HslColor.alt(h, min(1.0, s + amount / 100), l, alpha: alpha);
+    return HslColor(h, min(1.0, s + amount / 100), l, alpha: alpha);
   }
 
   @override
@@ -144,7 +125,7 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   HslColor intensify([final double amount = 10]) {
-    return HslColor.alt(h, min(1.0, s + amount / 100), l, alpha: alpha);
+    return HslColor(h, min(1.0, s + amount / 100), l, alpha: alpha);
   }
 
   @override
@@ -163,10 +144,10 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
   HslColor get inverted => flipHue();
 
   /// Flip the hue by 180 degrees.
-  HslColor flipHue() => HslColor.alt(_wrapHue(h + 180), s, l, alpha: alpha);
+  HslColor flipHue() => HslColor(_wrapHue(h + 180), s, l, alpha: alpha);
 
   @override
-  HslColor get grayscale => HslColor.alt(h, 0.0, l, alpha: alpha);
+  HslColor get grayscale => HslColor(h, 0.0, l, alpha: alpha);
 
   @override
   HslColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
@@ -181,7 +162,7 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
         other is HslColor ? other : other.toColor().toHsl();
     if (t == 1.0) return otherHsl;
 
-    return HslColor.alt(
+    return HslColor(
       lerpHue(h, otherHsl.h, t),
       lerpDouble(s, otherHsl.s, t),
       lerpDouble(l, otherHsl.l, t),
@@ -191,7 +172,7 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   HslColor lighten([final double amount = 20]) {
-    return HslColor.alt(h, s, min(1.0, l + amount / 100), alpha: alpha);
+    return HslColor(h, s, min(1.0, l + amount / 100), alpha: alpha);
   }
 
   @override
@@ -223,7 +204,7 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
     final double? lightness,
     final Percent? alpha,
   }) {
-    return HslColor.alt(hue ?? h, saturation ?? s, lightness ?? l,
+    return HslColor(hue ?? h, saturation ?? s, lightness ?? l,
         alpha: alpha ?? this.alpha);
   }
 
@@ -234,7 +215,7 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
     for (int i = 0; i < 5; i++) {
       final double delta = (i - 2) * 0.1; // 10%
       final double newL = (l + delta).clamp(0.0, 1.0);
-      results.add(HslColor.alt(h, s, newL, alpha: alpha));
+      results.add(HslColor(h, s, newL, alpha: alpha));
     }
     return results;
   }
@@ -251,7 +232,7 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
 
     for (int i = 1; i <= 5; i++) {
       final double newL = (l + delta * i).clamp(0.0, 1.0);
-      results.add(HslColor.alt(h, s, newL, alpha: alpha));
+      results.add(HslColor(h, s, newL, alpha: alpha));
     }
     return results;
   }
@@ -268,7 +249,7 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
 
     for (int i = 1; i <= 5; i++) {
       final double newL = (l - delta * i).clamp(0.0, 1.0);
-      results.add(HslColor.alt(h, s, newL, alpha: alpha));
+      results.add(HslColor(h, s, newL, alpha: alpha));
     }
     return results;
   }
@@ -290,7 +271,7 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
     final HslColor target = other is HslColor ? other : other.toHslColor();
     final double t = (amount / 100).clamp(0.0, 1.0).toDouble();
 
-    return HslColor.alt(
+    return HslColor(
       lerpHueB(h, target.h, t),
       clamp01(lerpDoubleB(s, target.s, t)),
       clamp01(lerpDoubleB(l, target.l, t)),
@@ -301,25 +282,24 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   HslColor opaquer([final double amount = 20]) {
     final double factor = (amount / 100).clamp(0.0, 1.0).toDouble();
-    return HslColor.alt(h, s, l,
+    return HslColor(h, s, l,
         alpha: Percent(clamp01(alpha.value + (1 - alpha.value) * factor)));
   }
 
   @override
   HslColor adjustHue([final double amount = 20]) =>
-      HslColor.alt(_wrapHue(h + amount), s, l, alpha: alpha);
+      copyWith(hue: _wrapHue(h + amount));
 
   @override
-  HslColor get complementary =>
-      HslColor.alt(_wrapHue(h + 180.0), s, l, alpha: alpha);
+  HslColor get complementary => copyWith(hue: _wrapHue(h + 180.0));
 
   @override
   HslColor warmer([final double amount = 20]) =>
-      HslColor.alt(_wrapHue(h - amount), s, l, alpha: alpha);
+      copyWith(hue: _wrapHue(h - amount));
 
   @override
   HslColor cooler([final double amount = 20]) =>
-      HslColor.alt(_wrapHue(h + amount), s, l, alpha: alpha);
+      copyWith(hue: _wrapHue(h + amount));
 
   @override
   List<HslColor> generateBasicPalette() {
@@ -327,7 +307,7 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
     const List<double> lightnessOffsets = <double>[-0.2, -0.1, 0.0, 0.1, 0.2];
 
     return List<HslColor>.generate(saturationOffsets.length, (final int index) {
-      return HslColor.alt(
+      return HslColor(
         h,
         clamp01(s + saturationOffsets[index]),
         clamp01(l + lightnessOffsets[index]),
@@ -342,7 +322,7 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
     return toneOffsets
         .map(
           (final double delta) =>
-              HslColor.alt(h, s, (l + delta).clamp(0.0, 1.0), alpha: alpha),
+              HslColor(h, s, (l + delta).clamp(0.0, 1.0), alpha: alpha),
         )
         .toList();
   }
@@ -356,7 +336,7 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
     final double pivot = (count - 1) / 2;
     for (int i = 0; i < count; i++) {
       final double delta = (i - pivot) * offset;
-      palette.add(HslColor.alt(_wrapHue(h + delta), s, l, alpha: alpha));
+      palette.add(HslColor(_wrapHue(h + delta), s, l, alpha: alpha));
     }
     return palette;
   }
@@ -365,16 +345,16 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
   List<HslColor> square() => List<HslColor>.generate(
         4,
         (final int index) =>
-            HslColor.alt(_wrapHue(h + 90.0 * index), s, l, alpha: alpha),
+            HslColor(_wrapHue(h + 90.0 * index), s, l, alpha: alpha),
         growable: false,
       );
 
   @override
   List<HslColor> tetrad({final double offset = 60}) => <HslColor>[
-        HslColor.alt(h, s, l, alpha: alpha),
-        HslColor.alt(_wrapHue(h + offset), s, l, alpha: alpha),
-        HslColor.alt(_wrapHue(h + 180.0), s, l, alpha: alpha),
-        HslColor.alt(_wrapHue(h + 180.0 + offset), s, l, alpha: alpha),
+        HslColor(h, s, l, alpha: alpha),
+        HslColor(_wrapHue(h + offset), s, l, alpha: alpha),
+        HslColor(_wrapHue(h + 180.0), s, l, alpha: alpha),
+        HslColor(_wrapHue(h + 180.0 + offset), s, l, alpha: alpha),
       ];
 
   double _wrapHue(final double hue) {
@@ -417,17 +397,17 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   ColorSlice closestColorSlice() {
-    final String name = getColorNameFromHue(h);
+    final List<String> names = getColorNameFromHue(h);
     final int index = (h / 6).round() % 60;
     final double startAngle = index * 6.0;
     final double endAngle = (index + 1) * 6.0;
     final double centerAngle = startAngle + 3.0;
 
     return ColorSlice(
-      color: HslColor.alt(centerAngle, 1.0, 0.5),
+      color: HslColor(centerAngle, 1.0, 0.5),
       startAngle: startAngle,
       endAngle: endAngle,
-      name: name,
+      name: names,
     );
   }
 

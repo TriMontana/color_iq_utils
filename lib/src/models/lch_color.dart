@@ -31,21 +31,14 @@ class LchColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The hue component of the color in degrees (0-360).
   final double h;
 
-  /// Creates a new `LchColor`.
-  const LchColor(this.l, this.c, this.h,
-      {required final int hexId,
-      final Percent alpha = Percent.max,
-      final Percent? lrv,
-      final List<String>? names})
-      : super(hexId, a: alpha, lrv: lrv, names: names ?? const <String>[]);
-  LchColor.alt(
+  LchColor(
     this.l,
     this.c,
     this.h, {
     final int? hexId,
     final Percent alpha = Percent.max,
     final List<String>? names,
-  }) : super(hexId ?? LchColor.lchToHexID(l, c, h),
+  }) : super.alt(hexId ?? LchColor.lchToHexID(l, c, h),
             a: alpha, names: names ?? const <String>[]);
 
   /// Converts CIELCH components to a 32-bit ARGB integer (Color ID).
@@ -82,7 +75,7 @@ class LchColor extends ColorSpacesIQ with ColorModelsMixin {
     final double hRad = h * pi / 180;
     final double a = c * cos(hRad);
     final double b = c * sin(hRad);
-    return LabColor.alt(l, a, b);
+    return LabColor(l, a, b);
   }
 
   @override
@@ -90,12 +83,12 @@ class LchColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   LchColor saturate([final double amount = 25]) {
-    return LchColor.alt(l, c + amount, h);
+    return LchColor(l, c + amount, h);
   }
 
   @override
   LchColor desaturate([final double amount = 25]) {
-    return LchColor.alt(l, max(0, c - amount), h);
+    return LchColor(l, max(0, c - amount), h);
   }
 
   @override
@@ -166,7 +159,7 @@ class LchColor extends ColorSpacesIQ with ColorModelsMixin {
     newHue %= 360;
     if (newHue < 0) newHue += 360;
 
-    return LchColor.alt(
+    return LchColor(
       l + (otherLch.l - l) * t,
       thisC + (otherC - thisC) * t,
       newHue,
@@ -178,12 +171,12 @@ class LchColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   LchColor darken([final double amount = 20]) {
-    return LchColor.alt(max(0.0, l - amount), c, h);
+    return LchColor(max(0.0, l - amount), c, h);
   }
 
   @override
   LchColor lighten([final double amount = 20]) {
-    return LchColor.alt(min(100.0, l + amount), c, h);
+    return LchColor(min(100.0, l + amount), c, h);
   }
 
   @override
@@ -199,15 +192,9 @@ class LchColor extends ColorSpacesIQ with ColorModelsMixin {
     return toColor().adjustTransparency(amount).toLch();
   }
 
-  @override
-  double get transparency => toColor().transparency;
-
-  @override
-  ColorTemperature get temperature => toColor().temperature;
-
   /// Creates a copy of this color with the given fields replaced with the new values.
   LchColor copyWith({final double? l, final double? c, final double? h}) {
-    return LchColor.alt(l ?? this.l, c ?? this.c, h ?? this.h);
+    return LchColor(l ?? this.l, c ?? this.c, h ?? this.h);
   }
 
   @override

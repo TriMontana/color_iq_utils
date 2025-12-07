@@ -29,17 +29,11 @@ class MunsellColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The Munsell chroma (saturation), starting from 0 for neutral gray.
   final double chroma;
 
-  const MunsellColor(this.hue, this.munsellValue, this.chroma,
-      {required final int hexId,
-      final Percent alpha = Percent.max,
-      final List<String>? names})
-      : super(hexId, a: alpha, names: names ?? const <String>[]);
-
-  MunsellColor.alt(this.hue, this.munsellValue, this.chroma,
+  MunsellColor(this.hue, this.munsellValue, this.chroma,
       {final int? hexId,
       final Percent alpha = Percent.max,
       final List<String>? names})
-      : super(hexId ?? MunsellColor.toHexId(hue, munsellValue, chroma),
+      : super.alt(hexId ?? MunsellColor.toHexId(hue, munsellValue, chroma),
             a: alpha, names: names ?? const <String>[]);
 
   /// Creates a 32-bit hex ID from the Munsell properties.
@@ -80,7 +74,7 @@ class MunsellColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   MunsellColor darken([final double amount = 20]) {
     // Decrease Value
-    return MunsellColor.alt(
+    return MunsellColor(
       hue,
       (munsellValue - (amount / 10)).clamp(0.0, 10.0),
       chroma,
@@ -90,7 +84,7 @@ class MunsellColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   MunsellColor brighten([final double amount = 20]) {
     // Increase Value
-    return MunsellColor.alt(
+    return MunsellColor(
       hue,
       (munsellValue + (amount / 10)).clamp(0.0, 10.0),
       chroma,
@@ -100,7 +94,7 @@ class MunsellColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   MunsellColor saturate([final double amount = 25]) {
     // Increase Chroma
-    return MunsellColor.alt(
+    return MunsellColor(
       hue,
       munsellValue,
       chroma + (amount / 5),
@@ -110,7 +104,7 @@ class MunsellColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   MunsellColor desaturate([final double amount = 25]) {
     // Decrease Chroma
-    return MunsellColor.alt(hue, munsellValue, max(0.0, chroma - (amount / 5)));
+    return MunsellColor(hue, munsellValue, max(0.0, chroma - (amount / 5)));
   }
 
   @override
@@ -170,16 +164,16 @@ class MunsellColor extends ColorSpacesIQ with ColorModelsMixin {
     if (other is MunsellColor) {
       otherMunsell = other;
     } else if (other.isEqual(cWhite)) {
-      otherMunsell = MunsellColor.alt('N', 10.0, 0.0);
+      otherMunsell = MunsellColor('N', 10.0, 0.0);
     } else if (other.isEqual(cBlack)) {
-      otherMunsell = MunsellColor.alt('N', 0.0, 0.0);
+      otherMunsell = MunsellColor('N', 0.0, 0.0);
     } else {
       otherMunsell = other.toColor().toMunsell();
     }
 
     if (t == 1.0) return otherMunsell;
 
-    return MunsellColor.alt(
+    return MunsellColor(
       t < 0.5 ? hue : otherMunsell.hue,
       lerpDouble(munsellValue, otherMunsell.munsellValue, t),
       lerpDouble(chroma, otherMunsell.chroma, t),
@@ -189,7 +183,7 @@ class MunsellColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   MunsellColor lighten([final double amount = 20]) {
     // Increase Value
-    return MunsellColor.alt(
+    return MunsellColor(
       hue,
       (munsellValue + (amount / 10)).clamp(0.0, 10.0),
       chroma,
@@ -207,19 +201,13 @@ class MunsellColor extends ColorSpacesIQ with ColorModelsMixin {
     return this;
   }
 
-  @override
-  double get transparency => 0.0;
-
-  @override
-  ColorTemperature get temperature => toColor().temperature;
-
   /// Creates a copy of this color with the given fields replaced with the new values.
   MunsellColor copyWith({
     final String? hue,
     final double? munsellValue,
     final double? chroma,
   }) {
-    return MunsellColor.alt(
+    return MunsellColor(
       hue ?? this.hue,
       munsellValue ?? this.munsellValue,
       chroma ?? this.chroma,

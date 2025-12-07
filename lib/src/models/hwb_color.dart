@@ -31,28 +31,22 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
   final double w;
 
   /// The blackness component of the color, ranging from 0.0 to 1.0.
-  @override
-  final double b;
+  final double blackness;
 
   /// The alpha (transparency) component of the color, ranging from 0.0 to 1.0.
   Percent get alpha => super.a;
 
-  const HwbColor(this.h, this.w, this.b,
-      {final Percent alpha = Percent.max,
-      required final int hexId,
-      final List<String>? names})
-      : super(hexId, a: alpha, names: names ?? const <String>[]);
-  HwbColor.alt(this.h, this.w, this.b,
+  HwbColor(this.h, this.w, this.blackness,
       {final Percent alpha = Percent.max,
       final int? hexId,
       final List<String>? names})
-      : super(hexId ?? HwbColor.hexIdFromHWB(h, w, b, alpha),
+      : super.alt(hexId ?? HwbColor.hexIdFromHWB(h, w, blackness, alpha),
             a: alpha,
             names: names ??
                 names ??
                 <String>[
                   ColorNames.generateDefaultNameFromInt(
-                      hexId ?? HwbColor.hexIdFromHWB(h, w, b, alpha))
+                      hexId ?? HwbColor.hexIdFromHWB(h, w, blackness, alpha))
                 ]);
 
   /// Creates a 32-bit hex ID (ARGB) from HWB values.
@@ -78,7 +72,7 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
     final double v = 1 - bNorm;
     final double s = (v == 0) ? 0 : 1 - wNorm / v;
 
-    return HsvColor.alt(h, s, v, alpha: alpha).value;
+    return HsvColor(h, s, Percent(v), alpha: alpha).value;
   }
 
 // /// Represents a color in the HWB color space.
@@ -150,7 +144,7 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
     // HWB requires W + B + C_pure <= 1.0, where C_pure = 1 - W - B = delta
     // Since we derived W and B from min and max, W + B + delta == 1 is guaranteed.
 
-    return HwbColor.alt(
+    return HwbColor(
       hue.clamp(0.0, 360.0),
       whiteness.clamp(0.0, 1.0),
       blackness.clamp(0.0, 1.0),
@@ -170,17 +164,17 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
     final double v = 1 - bNorm;
     final double s = (v == 0) ? 0 : 1 - wNorm / v;
 
-    return HsvColor.alt(h, s, v, alpha: alpha).toColor();
+    return HsvColor(h, s, Percent(v), alpha: alpha).toColor();
   }
 
   @override
   HwbColor darken([final double amount = 20]) {
-    return copyWith(b: (b + amount / 100).clamp(0.0, 1.0));
+    return copyWith(b: (blackness + amount / 100).clamp(0.0, 1.0));
   }
 
   @override
   HwbColor brighten([final double amount = 20]) {
-    return copyWith(b: (b - amount / 100).clamp(0.0, 1.0));
+    return copyWith(b: (blackness - amount / 100).clamp(0.0, 1.0));
   }
 
   @override
@@ -189,7 +183,7 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
     // To saturate, we decrease w and b.
     // Let's scale them down.
     final double scale = 1.0 - (amount / 100.0);
-    return HwbColor.alt(h, w * scale, b * scale, alpha: alpha);
+    return HwbColor(h, w * scale, blackness * scale, alpha: alpha);
   }
 
   @override
@@ -209,7 +203,7 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
     if (gap <= 0) return this;
 
     final double add = gap * (amount / 100.0) * 0.5;
-    return HwbColor.alt(h, w + add, b + add, alpha: alpha);
+    return HwbColor(h, w + add, blackness + add, alpha: alpha);
   }
 
   @override
@@ -247,10 +241,10 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
       return otherHwb;
     }
 
-    return HwbColor.alt(
+    return HwbColor(
       lerpHue(h, otherHwb.h, t),
       lerpDouble(w, otherHwb.w, t),
-      lerpDouble(b, otherHwb.b, t),
+      lerpDouble(blackness, otherHwb.blackness, t),
     );
   }
 
@@ -291,7 +285,7 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
     final double? b,
     final Percent? alpha,
   }) {
-    return HwbColor.alt(h ?? this.h, whiteness ?? w, b ?? this.b,
+    return HwbColor(h ?? this.h, whiteness ?? w, b ?? blackness,
         alpha: alpha ?? super.a);
   }
 
@@ -336,17 +330,11 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
     // b must be <= 1 - w to be valid HWB, but constructor handles normalization if needed.
     // However, generating valid HWB is better.
     final double b = rng.nextDouble() * (1.0 - w);
-    return HwbColor.alt(h, w, b);
+    return HwbColor(h, w, b);
   }
 
   @override
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
-
-  @override
-  double get luminance => toColor().luminance;
-
-  @override
-  Brightness get brightness => toColor().brightness;
 
   @override
   bool get isDark => brightness == Brightness.dark;

@@ -55,8 +55,7 @@ final ColorIQ cAlabamaCrimson =
     ColorIQ(hxAlabamaCrimson, names: const <String>['Alabama crimson']);
 
 const int hxAlabaster = 0xFFF2F0E6;
-final ColorIQ cAlabaster =
-    ColorIQ(hxAlabaster, names: const <String>['Alabaster']);
+final ColorIQ cAlabaster = ColorIQ(hxAlabaster, names: kAlabaster);
 
 const int hxAlizarinCrimson = 0xFFE32636;
 final ColorIQ cAlizarinCrimson =
@@ -67,7 +66,7 @@ final ColorIQ cAlloyOrange =
     ColorIQ(hxAlloyOrange, names: const <String>['Alloy orange']);
 
 const int hxAlmond = 0xFFEFDECD;
-final ColorIQ cAlmond = ColorIQ(hxAlmond, names: const <String>['Almond']);
+final ColorIQ cAlmond = ColorIQ(hxAlmond, names: kAlmond);
 
 const int hxAloeswoodBrownTonocha = 0xFF5A6457;
 final ColorIQ cAloeswoodBrownTonocha = ColorIQ(hxAloeswoodBrownTonocha,
@@ -82,12 +81,10 @@ final ColorIQ cAluminum =
     ColorIQ(hxAluminum, names: const <String>['Aluminum']);
 
 const int hxAluminumFoil = 0xFFD2D9DB;
-final ColorIQ cAluminumFoil =
-    ColorIQ(hxAluminumFoil, names: const <String>['Aluminum foil']);
+final ColorIQ cAluminumFoil = ColorIQ(hxAluminumFoil, names: kAluminumFoil);
 
 const int hxAmaranth = 0xFFE52B50;
-final ColorIQ cAmaranth =
-    ColorIQ(hxAmaranth, names: const <String>['Amaranth']);
+final ColorIQ cAmaranth = ColorIQ(hxAmaranth, names: kAmaranth);
 
 const int hxAmaranthDeepPurple = 0xFF9F2B68;
 final ColorIQ cAmaranthDeepPurple = ColorIQ(hxAmaranthDeepPurple,
@@ -106,10 +103,10 @@ final ColorIQ cAmaranthRed =
     ColorIQ(hxAmaranthRed, names: const <String>['Amaranth red']);
 
 const int hxAmazon = 0xFF3B7A57;
-final ColorIQ cAmazon = ColorIQ(hxAmazon, names: const <String>['Amazon']);
+final ColorIQ cAmazon = ColorIQ(hxAmazon, names: kAmazon);
 
 const int hxAmber = 0xFFFFBF00;
-final ColorIQ cAmber = ColorIQ(hxAmber, names: const <String>['Amber']);
+final ColorIQ cAmber = ColorIQ(hxAmber, names: kAmber);
 
 const int hxAmberKohakuIro = 0xFFCA6924;
 final ColorIQ cAmberKohakuIro =
@@ -172,8 +169,7 @@ final ColorIQ cAmericanYellow =
     ColorIQ(hxAmericanYellow, names: const <String>['American yellow']);
 
 const int hxAmethyst = 0xFF9966CC;
-final ColorIQ cAmethyst =
-    ColorIQ(hxAmethyst, names: const <String>['Amethyst']);
+final ColorIQ cAmethyst = ColorIQ(hxAmethyst, names: kAmethyst);
 
 const int hxAmurCorkTree = 0xFFF3C13A;
 final ColorIQ cAmurCorkTree = ColorIQ(hxAmurCorkTree,
@@ -281,10 +277,10 @@ final ColorIQ cAurometalsaurus =
     ColorIQ(hxAurometalsaurus, names: const <String>['AuroMetalSaurus']);
 
 const int hxAvocado = 0xFF568203;
-final ColorIQ cAvocado = ColorIQ(hxAvocado, names: const <String>['Avocado']);
+final ColorIQ cAvocado = ColorIQ(hxAvocado, names: kAvocado);
 
 const int hxAwesome = 0xFFFF2052;
-final ColorIQ cAwesome = ColorIQ(hxAwesome, names: const <String>['Awesome']);
+final ColorIQ cAwesome = ColorIQ(hxAwesome, names: kAwesome);
 
 const int hxAxolotl = 0xFF63775B;
 final ColorIQ cAxolotl = ColorIQ(hxAxolotl, names: const <String>['Axolotl']);
@@ -305,12 +301,10 @@ final ColorIQ cBabyBlue =
     ColorIQ(hxBabyBlue, names: const <String>['Baby blue']);
 
 const int hxBabyBlueEyes = 0xFFA1CAF1;
-final ColorIQ cBabyBlueEyes =
-    ColorIQ(hxBabyBlueEyes, names: const <String>['Baby blue eyes']);
+final ColorIQ cBabyBlueEyes = ColorIQ(hxBabyBlueEyes, names: kBabyBlueEyes);
 
 const int hxBabyPink = 0xFFF4C2C2;
-final ColorIQ cBabyPink =
-    ColorIQ(hxBabyPink, names: const <String>['Baby pink']);
+final ColorIQ cBabyPink = ColorIQ(hxBabyPink, names: kBabyPink);
 
 const int hxBabyPowder = 0xFFFEFEFA;
 final ColorIQ cBabyPowder =
@@ -329,8 +323,7 @@ final ColorIQ cBallBlue =
     ColorIQ(hxBallBlue, names: const <String>['Ball blue']);
 
 const int hxBananaMania = 0xFFFAE7B5;
-final ColorIQ cBananaMania =
-    ColorIQ(hxBananaMania, names: const <String>['Banana Mania']);
+const ColorIQ cBananaMania = ColorIQ(hxBananaMania, names: kBananaMania);
 
 const int hxBananaYellow = 0xFFFFE135;
 final ColorIQ cBananaYellow =
@@ -369,7 +362,7 @@ final ColorIQ cBarbiePink20052009 = ColorIQ(hxBarbiePink20052009,
     names: const <String>['Barbie Pink (2005-2009)']);
 
 const int hxBarnRed = 0xFF7C0A02;
-final ColorIQ cBarnRed = ColorIQ(hxBarnRed, names: const <String>['Barn red']);
+final ColorIQ cBarnRed = ColorIQ(hxBarnRed, names: kBarnRed);
 
 const int hxBatteryChargedBlue = 0xFF1DACD6;
 final ColorIQ cBatteryChargedBlue = ColorIQ(hxBatteryChargedBlue,
@@ -390,10 +383,10 @@ final ColorIQ cBeauBlue =
     ColorIQ(hxBeauBlue, names: const <String>['Beau blue']);
 
 const int hxBeaver = 0xFF9F8170;
-final ColorIQ cBeaver = ColorIQ(hxBeaver, names: const <String>['Beaver']);
+final ColorIQ cBeaver = ColorIQ(hxBeaver, names: kBeaver);
 
 const int hxBeer = 0xFFF28E1C;
-final ColorIQ cBeer = ColorIQ(hxBeer, names: const <String>['Beer']);
+final ColorIQ cBeer = ColorIQ(hxBeer, names: kBeer);
 
 const int hxBegonia = 0xFFFA6E79;
 final ColorIQ cBegonia = ColorIQ(hxBegonia, names: const <String>['Begonia']);
@@ -419,7 +412,7 @@ final ColorIQ cBirchBrownKabacha = ColorIQ(hxBirchBrownKabacha,
     names: const <String>['Birch brown (Kabacha)']);
 
 const int hxBistre = 0xFF3D2B1F;
-final ColorIQ cBistre = ColorIQ(hxBistre, names: const <String>['Bistre']);
+final ColorIQ cBistre = ColorIQ(hxBistre, names: kBistre);
 
 const int hxBistreBrown = 0xFF967117;
 final ColorIQ cBistreBrown =
@@ -651,10 +644,10 @@ final ColorIQ cBrandeisBlue =
     ColorIQ(hxBrandeisBlue, names: const <String>['Brandeis blue']);
 
 const int hxBrandy = 0xFF87413F;
-final ColorIQ cBrandy = ColorIQ(hxBrandy, names: const <String>['Brandy']);
+final ColorIQ cBrandy = ColorIQ(hxBrandy, names: kBrandy);
 
 const int hxBrass = 0xFFB5A642;
-final ColorIQ cBrass = ColorIQ(hxBrass, names: const <String>['Brass']);
+final ColorIQ cBrass = ColorIQ(hxBrass, names: kBrass);
 
 const int hxBraveOrange = 0xFFFF631C;
 final ColorIQ cBraveOrange =
@@ -722,8 +715,7 @@ final ColorIQ cBrilliantRose =
     ColorIQ(hxBrilliantRose, names: const <String>['Brilliant rose']);
 
 const int hxBrinkPink = 0xFFFB607F;
-final ColorIQ cBrinkPink =
-    ColorIQ(hxBrinkPink, names: const <String>['Brink pink']);
+final ColorIQ cBrinkPink = ColorIQ(hxBrinkPink, names: kBrinkPink);
 
 const int hxBritishRacingGreen = 0xFF004225;
 final ColorIQ cBritishRacingGreen = ColorIQ(hxBritishRacingGreen,
@@ -737,11 +729,10 @@ final ColorIQ cBronze2 = ColorIQ(hxBronze2, names: const <String>['Bronze']);
 
 const int hxBronzeMetallic = 0xFFB08D57;
 final ColorIQ cBronzeMetallic =
-    ColorIQ(hxBronzeMetallic, names: const <String>['Bronze (metallic)']);
+    ColorIQ(hxBronzeMetallic, names: kBronzeMetallic);
 
 const int hxBronzeYellow = 0xFF737000;
-final ColorIQ cBronzeYellow =
-    ColorIQ(hxBronzeYellow, names: const <String>['Bronze yellow']);
+final ColorIQ cBronzeYellow = ColorIQ(hxBronzeYellow, names: kBronzeYellow);
 
 const int hxBrown = 0xFF993300;
 final ColorIQ cBrown = ColorIQ(hxBrown, names: kBrown);
@@ -780,7 +771,7 @@ final ColorIQ cBrownNose =
 
 const int hxBrunswickGreen = 0xFF1B4D3E;
 final ColorIQ cBrunswickGreen =
-    ColorIQ(hxBrunswickGreen, names: const <String>['Brunswick green']);
+    ColorIQ(hxBrunswickGreen, names: kBrunswickGreen);
 
 const int hxBrushwoodDyedFushizome = 0xFF8C5939;
 final ColorIQ cBrushwoodDyedFushizome = ColorIQ(hxBrushwoodDyedFushizome,
@@ -801,16 +792,14 @@ const int hxBuff = 0xFFF0DC82;
 final ColorIQ cBuff = ColorIQ(hxBuff, names: const <String>['Buff']);
 
 const int hxBulgarianRose = 0xFF480607;
-final ColorIQ cBulgarianRose =
-    ColorIQ(hxBulgarianRose, names: const <String>['Bulgarian rose']);
+final ColorIQ cBulgarianRose = ColorIQ(hxBulgarianRose, names: kBulgarianRose);
 
 const int hxBurgundy = 0xFF800020;
-final ColorIQ cBurgundy =
-    ColorIQ(hxBurgundy, names: const <String>['Burgundy']);
+final ColorIQ cBurgundy = ColorIQ(hxBurgundy, names: kBurgundy);
 
 const int hxBurnishedBrown = 0xFFA17A74;
 final ColorIQ cBurnishedBrown =
-    ColorIQ(hxBurnishedBrown, names: const <String>['Burnished brown']);
+    ColorIQ(hxBurnishedBrown, names: kBurnishedBrown);
 
 const int hxBurntOrange = 0xFFCC5500;
 final ColorIQ cBurntOrange =
@@ -829,15 +818,13 @@ final ColorIQ cButtonBlue =
     ColorIQ(hxButtonBlue, names: const <String>['Button blue']);
 
 const int hxByzantine = 0xFFBD33A4;
-final ColorIQ cByzantine =
-    ColorIQ(hxByzantine, names: const <String>['Byzantine']);
+final ColorIQ cByzantine = ColorIQ(hxByzantine, names: kByzantine);
 
 const int hxByzantium = 0xFF702963;
-final ColorIQ cByzantium =
-    ColorIQ(hxByzantium, names: const <String>['Byzantium']);
+final ColorIQ cByzantium = ColorIQ(hxByzantium, names: kByzantium);
 
 const int hxCadet = 0xFF536872;
-final ColorIQ cCadet = ColorIQ(hxCadet, names: const <String>['Cadet']);
+final ColorIQ cCadet = ColorIQ(hxCadet, names: kCadet);
 
 const int hxCadetBlueCrayola = 0xFFA9B2C3;
 final ColorIQ cCadetBlueCrayola =
@@ -945,7 +932,7 @@ final ColorIQ cCaribbeanGreen =
     ColorIQ(hxCaribbeanGreen, names: const <String>['Caribbean green']);
 
 const int hxCarmine = 0xFF960018;
-final ColorIQ cCarmine = ColorIQ(hxCarmine, names: const <String>['Carmine']);
+final ColorIQ cCarmine = ColorIQ(hxCarmine, names: kCarmine);
 
 const int hxCarmineMP = 0xFFD70040;
 final ColorIQ cCarmineMP =
@@ -1062,8 +1049,7 @@ final ColorIQ cChampagnePink =
     ColorIQ(hxChampagnePink, names: const <String>['Champagne pink']);
 
 const int hxCharcoal = 0xFF36454F;
-final ColorIQ cCharcoal =
-    ColorIQ(hxCharcoal, names: const <String>['Charcoal']);
+final ColorIQ cCharcoal = ColorIQ(hxCharcoal, names: kCharcoal);
 
 const int hxCharlestonGreen = 0xFF232B2B;
 final ColorIQ cCharlestonGreen =
@@ -1224,7 +1210,7 @@ final ColorIQ cCinnamonSatin =
     ColorIQ(hxCinnamonSatin, names: const <String>['Cinnamon Satin']);
 
 const int hxCitrine = 0xFFE4D00A;
-final ColorIQ cCitrine = ColorIQ(hxCitrine, names: const <String>['Citrine']);
+final ColorIQ cCitrine = ColorIQ(hxCitrine, names: kCitrine);
 
 const int hxCitrineBrown = 0xFF933709;
 final ColorIQ cCitrineBrown =
@@ -1269,7 +1255,7 @@ final ColorIQ cCodiumFragileSeaweedColorMiruIro = ColorIQ(
     names: const <String>['Codium fragile seaweed color (Miru-iro)']);
 
 const int hxCoffee = 0xFF6F4E37;
-final ColorIQ cCoffee = ColorIQ(hxCoffee, names: const <String>['Coffee']);
+final ColorIQ cCoffee = ColorIQ(hxCoffee, names: kCoffee);
 
 const int hxCola = 0xFF3C3024;
 final ColorIQ cCola = ColorIQ(hxCola, names: const <String>['Cola']);
@@ -1911,16 +1897,12 @@ const int hxDutchWhite = 0xFFEFDFBB;
 final ColorIQ cDutchWhite =
     ColorIQ(hxDutchWhite, names: const <String>['Dutch white']);
 
-const int
-    hxDyestalkRedLitTheColorFromDyingWithTheStalkOfTheBeniPlantBengaraIro =
-    0xFF913225;
+const int hxDyestalkRedLit = 0xFF913225;
 final ColorIQ
     cDyestalkRedLitTheColorFromDyingWithTheStalkOfTheBeniPlantBengaraIro =
-    ColorIQ(
-        hxDyestalkRedLitTheColorFromDyingWithTheStalkOfTheBeniPlantBengaraIro,
-        names: const <String>[
-      'Dyestalk red (lit. the color from dying with the stalk of the beni plant) (Bengara-iro)'
-    ]);
+    ColorIQ(hxDyestalkRedLit, names: const <String>[
+  'Dyestalk red (lit. the color from dying with the stalk of the beni plant) (Bengara-iro)'
+]);
 
 const int hxEarthYellow = 0xFFE1A95F;
 final ColorIQ cEarthYellow =
@@ -1940,9 +1922,9 @@ const int hxEerieBlack = 0xFF1B1B1B;
 final ColorIQ cEerieBlack =
     ColorIQ(hxEerieBlack, names: const <String>['Eerie black']);
 
-const int hxEggColoredTamagoIro = 0xFFFFA631;
-final ColorIQ cEggColoredTamagoIro = ColorIQ(hxEggColoredTamagoIro,
-    names: const <String>['Egg-colored (Tamago-iro)']);
+const int hxEggColored = 0xFFFFA631;
+final ColorIQ cEggColoredTamagoIro =
+    ColorIQ(hxEggColored, names: const <String>['Egg-colored (Tamago-iro)']);
 
 const int hxEggplant = 0xFF614051;
 final ColorIQ cEggplant =
@@ -2051,9 +2033,8 @@ const int hxFacebookBlue = 0xFF39569C;
 final ColorIQ cFacebookBlue =
     ColorIQ(hxFacebookBlue, names: const <String>['Facebook Blue']);
 
-const int hxFadedSenNoRikyuSTeaRikyShiracha = 0xFFB0927A;
-final ColorIQ cFadedSenNoRikyuSTeaRikyShiracha = ColorIQ(
-    hxFadedSenNoRikyuSTeaRikyShiracha,
+const int hxFadedSenTea = 0xFFB0927A;
+final ColorIQ cFadedSenNoRikyuSTeaRikyShiracha = ColorIQ(hxFadedSenTea,
     names: const <String>['Faded Sen no Rikyu\'s tea (Rikyūshiracha)']);
 
 const int hxFadedSpicyRedBrownSDenkaracha = 0xFF9B533F;
@@ -2107,9 +2088,8 @@ const int hxFieryRose = 0xFFFF5470;
 final ColorIQ cFieryRose =
     ColorIQ(hxFieryRose, names: const <String>['Fiery rose']);
 
-const int hxFinchBrownCarduelineFinchHiwacha = 0xFF957B38;
-final ColorIQ cFinchBrownCarduelineFinchHiwacha = ColorIQ(
-    hxFinchBrownCarduelineFinchHiwacha,
+const int hxFinchBrown = 0xFF957B38;
+final ColorIQ cFinchBrownCarduelineFinchHiwacha = ColorIQ(hxFinchBrown,
     names: const <String>['Finch-brown (Cardueline finch) (Hiwacha)']);
 
 const int hxFireEngineRed = 0xFFCE2029;
@@ -3015,7 +2995,8 @@ final ColorIQ cLightCrimson =
     ColorIQ(hxLightCrimson, names: const <String>['Light crimson']);
 
 const int hxLightCyan = 0xFFE0FFFF;
-final ColorIQ cLightCyan = ColorIQ(hxLightCyan, names: kLightCyan);
+final ColorIQ cLightCyan =
+    ColorIQ(hxLightCyan, names: const <String>['Light cyan']);
 
 const int hxLightDeepPink = 0xFFFF5CCD;
 final ColorIQ cLightDeepPink =
@@ -4418,7 +4399,7 @@ final ColorIQ cPureCrimsonDyeAkabeni = ColorIQ(hxPureCrimsonDye,
     names: const <String>['Pure crimson (dye) (Akabeni)']);
 
 const int hxPurple = 0xFF6A0DAD;
-final ColorIQ cPurple = ColorIQ(hxPurple, names: kPurple);
+final ColorIQ cPurple = ColorIQ(hxPurple, names: const <String>['Purple']);
 
 const int hxPurpleMunsell = 0xFF9F00C5;
 final ColorIQ cPurpleMunsell =
@@ -5246,9 +5227,9 @@ const int hxStPatrickSBlue = 0xFF23297A;
 final ColorIQ cStPatrickSBlue =
     ColorIQ(hxStPatrickSBlue, names: const <String>['St. Patrick\'s blue']);
 
-const int hxStainedRedBenimidori = 0xFF78779B;
-final ColorIQ cStainedRedBenimidori = ColorIQ(hxStainedRedBenimidori,
-    names: const <String>['Stained red (Benimidori)']);
+const int hxStainedRed = 0xFF78779B;
+final ColorIQ cStainedRedBenimidori =
+    ColorIQ(hxStainedRed, names: const <String>['Stained red (Benimidori)']);
 
 const int hxStarCommandBlue = 0xFF007BB8;
 final ColorIQ cStarCommandBlue =

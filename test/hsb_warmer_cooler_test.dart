@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('HsbColor Warmer/Cooler Tests', () {
     test('warmer shifts hue towards 30 degrees', () {
-      final HsbColor color = HsbColor.alt(180, 1.0, 1.0); // Cyan
+      final HsbColor color = HsbColor(180, 1.0, Percent.max); // Cyan
       final HsbColor warmed = color.warmer(20);
 
       // Target is 30. 180 -> 30 shortest path is via 0/360? No, 180-30 = 150.
@@ -18,7 +18,7 @@ void main() {
     });
 
     test('cooler shifts hue towards 210 degrees', () {
-      final HsbColor color = HsbColor.alt(30, 1.0, 1.0); // Orange
+      final HsbColor color = HsbColor(30, 1.0, Percent.max); // Orange
       color.cooler(20);
 
       // Target is 210. 30 -> 210. Diff = 180.
@@ -28,7 +28,7 @@ void main() {
       // Diff = 210 - 0 = 210. > 180 -> 210 - 360 = -150.
       // NewHue = 0 + (-150 * 0.2) = -30 -> 330.
 
-      final HsbColor red = HsbColor.alt(0, 1.0, 1.0);
+      final HsbColor red = HsbColor(0, 1.0, Percent.max);
       final HsbColor cooledRed = red.cooler(20);
       expect(cooledRed.h, closeTo(330, 0.1));
     });

@@ -2,10 +2,7 @@ import 'dart:developer' as developer;
 import 'dart:io';
 import 'dart:math' as math;
 
-import 'package:color_iq_utils/src/extensions/string_helpers.dart';
-import 'package:color_iq_utils/src/foundation/constants.dart';
-import 'package:color_iq_utils/src/foundation/enums.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
+import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/utils/error_handling.dart';
 
 /// Extension for doubles
@@ -86,7 +83,7 @@ extension DoubleHelpersIQ on double {
   }
 
   /// Convert a normalized double (0.0-1.0) to an int (0-255), aka factored float to int
-  int normalizedTo255int([final String? msg]) {
+  int int255FromNormalized0to1([final String? msg]) {
     if (this < 0.0 || this > 1.0) {
       throw RangeError(
         'Range Error: Value must be between 0 and 1.0 -- ' //
@@ -98,7 +95,7 @@ extension DoubleHelpersIQ on double {
 
 // sRGB Linear to sRGB (Gamma encoded), aka gamma correction, delinearization
   // Gamma correction (Transfer function) for Display P3 is sRGB curve.
-  double get gammaCorrect {
+  Percent get gammaCorrect {
     assertRange0to1('gammaCorrect-$this');
     return linearToSrgb(this);
   }

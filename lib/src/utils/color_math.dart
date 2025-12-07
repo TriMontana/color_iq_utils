@@ -220,13 +220,14 @@ Percent computeLuminanceViaInts(
 
 // See <https://www.w3.org/TR/WCAG20/#relativeluminancedef>
 // This is Dart specific; it uses a different cutoff
-double linearizeColorComponentDart(final double srgbComponent) {
+LinRGB linearizeColorComponentDart(final double srgbComponent) {
   // clamp within specified tolerance
   srgbComponent.assertRange0to1('linearizeColorComponentDart');
   if (srgbComponent <= 0.03928) {
-    return (srgbComponent / 12.92).clamp(0.0, 1.0);
+    return LinRGB((srgbComponent / 12.92).clamp(0.0, 1.0));
   }
-  return pow((srgbComponent + 0.055) / 1.055, 2.4).toDouble().clamp(0.0, 1.0);
+  return LinRGB(
+      pow((srgbComponent + 0.055) / 1.055, 2.4).toDouble().clamp(0.0, 1.0));
 }
 
 /// Converts a normalized sRGB (gamma-encoded) double component [0.0 - 1.0]
@@ -253,16 +254,17 @@ LinRGB srgbToLinear(final double srgbComponent) {
 /// back to a gamma-encoded (delinearized) sRGB double component [0.0 - 1.0].
 ///
 /// This is also known as 'delinearize' or "gamma correction."
-double linearToSrgb(final double linearComponent) {
+Percent linearToSrgb(final double linearComponent) {
   // clamp within specified tolerance
   linearComponent.assertRange0to1('linearToSrgb');
   // sRGB standard defines the inverse of the linearization function.
   if (linearComponent <= 0.0031308) {
     // Inverse linear segment: c * 12.92
-    return (linearComponent * 12.92).clamp(0.0, 1.0);
+    return Percent((linearComponent * 12.92).clamp(0.0, 1.0));
   }
   // Inverse non-linear segment: 1.055 * c^(1/2.4) - 0.055
-  return (1.055 * pow(linearComponent, 1.0 / 2.4) - 0.055).clamp(0.0, 1.0);
+  return Percent(
+      (1.055 * pow(linearComponent, 1.0 / 2.4) - 0.055).clamp(0.0, 1.0));
 }
 
 /// Converts an sRGB color (with 8-bit integer components) to a list
@@ -666,7 +668,7 @@ XYZ labToXYZ(final double l, final double a, final double b) {
   final double x = xNormalized * kWhitePointD65[0];
   final double y = yNormalized * kWhitePointD65[1];
   final double z = zNormalized * kWhitePointD65[2];
-  return XYZ.alt(x, y, z);
+  return XYZ(x, y, z);
 }
 
 /// Converts a color from ARGB to XYZ.

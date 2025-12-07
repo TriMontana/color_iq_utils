@@ -53,7 +53,7 @@ void main() {
     });
 
     test('Other models delegation (HslColor)', () {
-      const HslColor hsl = kHslRed; // Red
+      final HslColor hsl = HslColor(0, Percent.max, Percent.mid); // Red
       expect(hsl.argb255Ints, <int>[255, 255, 0, 0]);
       expect(hsl.rgbaLinearized, <double>[1.0, 0.0, 0.0, 1.0]);
 
@@ -65,7 +65,7 @@ void main() {
 
     test('Other models delegation (LabColor)', () {
       // Lab approx for Red
-      final LabColor lab = LabColor.alt(53.24, 80.09, 67.20);
+      final LabColor lab = LabColor(53.24, 80.09, 67.20);
       final List<int> srgb = lab.argb255Ints;
       // Precision might vary slightly due to conversions
       expect(srgb[1], closeTo(255, 2));

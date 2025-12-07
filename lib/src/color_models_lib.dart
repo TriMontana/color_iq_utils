@@ -12,6 +12,7 @@ export 'models/hsl_color.dart';
 export 'models/hsluv_color.dart';
 export 'models/hsp_color.dart';
 export 'models/hsv_color.dart';
+export 'models/html_color.dart';
 export 'models/hunter_lab_color.dart';
 export 'models/hwb_color.dart';
 export 'models/lab_color.dart';

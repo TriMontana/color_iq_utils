@@ -40,27 +40,12 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
   /// - [a]: Green-red component.
   /// - [b]: Blue-yellow component.
   /// - [alpha]: Opacity, defaults to 1.0 (fully opaque).
-  const OkLabColor(this.l, this.aLab, this.bLab,
-      {this.alpha = Percent.max,
-      required final int hexId,
-      final List<String>? names})
-      : assert(l >= 0 && l <= 1, 'L must be between 0 and 1'),
-        assert(aLab >= -1 && aLab <= 1, 'A must be between -1 and 1'),
-        assert(bLab >= -1 && bLab <= 1, 'B must be between -1 and 1'),
-        super(hexId, a: alpha, names: names ?? const <String>[]);
-
-  /// Creates an [OkLabColor].
-  ///
-  /// - [l]: Lightness, must be between 0.0 and 1.0.
-  /// - [a]: Green-red component.
-  /// - [b]: Blue-yellow component.
-  /// - [alpha]: Opacity, defaults to 1.0 (fully opaque).
-  OkLabColor.alt(this.l, this.aLab, this.bLab,
+  OkLabColor(this.l, this.aLab, this.bLab,
       {this.alpha = Percent.max, final int? hexId, final List<String>? names})
       : assert(l >= 0 && l <= 1, 'L must be between 0 and 1'),
         assert(aLab >= -1 && aLab <= 1, 'A must be between -1 and 1'),
         assert(bLab >= -1 && bLab <= 1, 'B must be between -1 and 1'),
-        super(hexId ?? OkLabColor.toHexID(l, aLab, bLab, alpha.val),
+        super.alt(hexId ?? OkLabColor.toHexID(l, aLab, bLab, alpha.val),
             a: alpha, names: names ?? const <String>[]);
 
   /// A stand-alone static method to create a 32-bit hexID/ARGB from this
@@ -117,7 +102,7 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
         0.7827717662 * lmsPrime.mPrime -
         0.8086757660 * lmsPrime.sPrime;
 
-    return OkLabColor.alt(labL, labA, labB, alpha: alpha);
+    return OkLabColor(labL, labA, labB, alpha: alpha);
   }
 
   /// Creates an [OkLabColor] from another [ColorSpacesIQ] instance.
@@ -140,17 +125,18 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
     if (h < 0) {
       h += 360;
     }
-    return OkLCH.alt(Percent(l), c, h, alpha: alpha);
+    return OkLCH(Percent(l), c, h, alpha: alpha);
   }
 
   OkHslColor toOkHsl() {
     final OkLCH lch = toOkLch();
     double s = (lch.l.val == 0 || lch.l.val == 1) ? 0 : lch.c / 0.4;
     if (s > 1) s = 1;
-    return OkHslColor.alt(
+    return OkHslColor(
       lch.h,
       s,
       lch.l,
+      alpha: alpha,
     ); // OkHslColor doesn't have alpha in constructor yet? Wait, I fixed it.
     // Wait, OkHslColor constructor is (h, s, l, [alpha]).
     // So I should pass alpha.
@@ -166,7 +152,7 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
     if (s > 1) {
       s = 1;
     }
-    return OkHsvColor.alt(lch.h, s, v, alpha: alpha);
+    return OkHsvColor(lch.h, s, v, alpha: alpha);
   }
 
   @override
@@ -185,7 +171,7 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
         other is OkLabColor ? other : other.toColor().toOkLab();
     if (t == 1.0) return otherLab;
 
-    return OkLabColor.alt(
+    return OkLabColor(
       lerpDouble(l, otherLab.l, t),
       lerpDouble(aLab, otherLab.aLab, t),
       lerpDouble(bLab, otherLab.bLab, t),
@@ -204,7 +190,7 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   OkLabColor darken([final double amount = 20]) {
-    return OkLabColor.alt(max(0.0, l - amount / 100), aLab, bLab, alpha: alpha);
+    return OkLabColor(max(0.0, l - amount / 100), aLab, bLab, alpha: alpha);
   }
 
   @override
@@ -245,12 +231,6 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
     return toColor().adjustTransparency(amount).toOkLab();
   }
 
-  @override
-  double get transparency => toColor().transparency;
-
-  @override
-  ColorTemperature get temperature => toColor().temperature;
-
   /// Creates a copy of this color with the given fields replaced with the new values.
   OkLabColor copyWith({
     final double? l,
@@ -258,7 +238,7 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
     final double? b,
     final Percent? alpha,
   }) {
-    return OkLabColor.alt(
+    return OkLabColor(
       l ?? this.l,
       a ?? aLab,
       b ?? bLab,

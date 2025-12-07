@@ -1,14 +1,13 @@
-import 'package:color_iq_utils/src/color_interfaces.dart';
-import 'package:color_iq_utils/src/extensions/float_ext_type.dart';
-import 'package:color_iq_utils/src/extensions/int_helpers.dart';
+import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/cmyk_color.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/hsl_color.dart';
 import 'package:color_iq_utils/src/models/luv_color.dart';
 import 'package:color_iq_utils/src/models/ok_lab_color.dart';
-import 'package:color_iq_utils/src/utils_lib.dart';
-import 'package:material_color_utilities/hct/cam16.dart';
+import 'package:color_iq_utils/src/models/ok_lch_color.dart';
+import 'package:material_color_utilities/hct/cam16.dart' as mcu;
 
+/// A mixin that provides common color model conversion methods.
 mixin ColorModelsMixin {
   /// Returns the 32-bit integer ID (ARGB) of this color.
   int get value;
@@ -18,22 +17,20 @@ mixin ColorModelsMixin {
   int get green => value.greenInt;
   int get blue => value.blueInt;
   Percent get a => value.a2;
-  double get r => value.r2;
-  double get g => value.g2;
-  double get b => value.b2;
-  double get redLinearized => value.redLinearized;
-  double get greenLinearized => value.greenLinearized;
-  double get blueLinearized => value.blueLinearized;
-  double get alphaLinearized => value.alphaLinearized;
+  Percent get r => value.r2;
+  Percent get g => value.g2;
+  Percent get b => value.b2;
+  LinRGB get redLinearized => value.redLinearized;
+  LinRGB get greenLinearized => value.greenLinearized;
+  LinRGB get blueLinearized => value.blueLinearized;
+  LinRGB get alphaLinearized => value.alphaLinearized;
 
-  List<int> get argb255Ints =>
-      <int>[alphaInt, value.redInt, value.greenInt, value.blueInt];
-  List<int> get rgba255Ints =>
-      <int>[value.redInt, value.greenInt, value.blueInt, value.alphaInt];
-  List<int> get rgb255Ints =>
-      <int>[value.redInt, value.greenInt, value.blueInt];
-  List<double> get rgbaLinearized =>
-      <double>[redLinearized, greenLinearized, blueLinearized, alphaLinearized];
+  RgbaInts get rgbaInts =>
+      (alpha: alphaInt, red: red, green: green, blue: blue);
+  RgbInts get rgbInts => (red: red, green: green, blue: blue);
+  RgbaDoubles get rgbaDoubles => (a: a, r: r, g: g, b: b);
+  List<LinRGB> get rgbaLinearized =>
+      <LinRGB>[redLinearized, greenLinearized, blueLinearized, alphaLinearized];
   List<double> get linearSrgb =>
       <double>[redLinearized, greenLinearized, blueLinearized];
 
@@ -51,12 +48,12 @@ mixin ColorModelsMixin {
 
   /// Converts this color the Cam16 instance from MaterialColorUtilities,
   /// used extensively for calculating distance
-  Cam16 toCam16() {
-    if (this is Cam16) {
-      return this as Cam16;
+  mcu.Cam16 toCam16() {
+    if (this is mcu.Cam16) {
+      return this as mcu.Cam16;
     }
     // Convert to Cam16 (MaterialColorUtilities)
-    return Cam16.fromInt(value);
+    return mcu.Cam16.fromInt(value);
   }
 
   /// Converts this color to HSL.
@@ -78,6 +75,13 @@ mixin ColorModelsMixin {
     return OkLabColor.fromInt(value);
   }
 
+  OkLCH toOkLch() {
+    if (this is OkLCH) {
+      return this as OkLCH;
+    }
+    return OkLCH.fromInt(value);
+  }
+
   CmykColor toCmyk() {
     if (this is CmykColor) {
       return this as CmykColor;
@@ -97,6 +101,17 @@ mixin ColorModelsMixin {
       return this as LuvColor;
     }
     return LuvColor.fromInt(value);
+  }
+
+  ColorTemperature get temperature {
+    final HslColor hsl = toHslColor();
+    // Warm: 0-90 (Red-Yellow-Greenish) and 270-360 (Purple-Red)
+    // Cool: 90-270 (Green-Cyan-Blue-Purple)
+    if (hsl.h >= 90 && hsl.h < 270) {
+      return ColorTemperature.cool;
+    } else {
+      return ColorTemperature.warm;
+    }
   }
 
   /// A measure of the perceptual difference between two colors.

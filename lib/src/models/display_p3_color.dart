@@ -20,24 +20,16 @@ import 'package:color_iq_utils/src/foundation_lib.dart';
 ///
 class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
   @override
-  final double r;
+  final Percent r;
   @override
-  final double g;
-  @override
-  final double b;
+  final Percent g;
 
-  const DisplayP3Color(this.r, this.g, this.b,
-      {required final int hexId,
-      final Percent alpha = Percent.max,
-      final List<String>? names})
-      : super(hexId, a: alpha, names: names ?? const <String>[]);
-
-  DisplayP3Color.alt(this.r, this.g, this.b,
+  DisplayP3Color(this.r, this.g, final Percent b,
       {final int? hexId,
       final Percent alpha = Percent.max,
       final List<String>? names})
-      : super(hexId ?? DisplayP3Color.toHexId(r, g, b),
-            a: alpha, names: names ?? const <String>[]);
+      : super.alt(hexId ?? DisplayP3Color.toHexId(r, g, b),
+            a: alpha, r: r, g: g, b: b, names: names ?? const <String>[]);
 
   static DisplayP3Color fromInt(final int hexId) {
     final XYZ xyz = XYZ.xyzFromRgbLinearized(
@@ -56,7 +48,7 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
     gP3 = gP3.gammaCorrect;
     bP3 = bP3.gammaCorrect;
 
-    return DisplayP3Color.alt(rP3, gP3, bP3);
+    return DisplayP3Color(Percent(rP3), Percent(gP3), Percent(bP3));
   }
 
   /// Creates a 32-bit integer ARGB value from Display P3 components.
@@ -96,7 +88,7 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
     final double x = rLin * 0.4865709 + gLin * 0.2656677 + bLin * 0.1982173;
     final double y = rLin * 0.2289746 + gLin * 0.6917385 + bLin * 0.0792869;
     final double z = rLin * 0.0000000 + gLin * 0.0451134 + bLin * 1.0439444;
-    return XYZ.alt(x, y, z);
+    return XYZ(x, y, z);
   }
 
   @override
@@ -191,10 +183,10 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
       return otherP3;
     }
 
-    return DisplayP3Color.alt(
-      lerpDouble(r, otherP3.r, t),
-      lerpDouble(g, otherP3.g, t),
-      lerpDouble(b, otherP3.b, t),
+    return DisplayP3Color(
+      Percent(lerpDouble(r, otherP3.r, t)),
+      Percent(lerpDouble(g, otherP3.g, t)),
+      Percent(lerpDouble(b, otherP3.b, t)),
     );
   }
 
@@ -208,15 +200,10 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
     return toColor().adjustTransparency(amount).toDisplayP3();
   }
 
-  @override
-  double get transparency => toColor().transparency;
-
-  @override
-  ColorTemperature get temperature => toColor().temperature;
-
   /// Creates a copy of this color with the given fields replaced with the new values.
-  DisplayP3Color copyWith({final double? r, final double? g, final double? b}) {
-    return DisplayP3Color.alt(r ?? this.r, g ?? this.g, b ?? this.b);
+  DisplayP3Color copyWith(
+      {final Percent? r, final Percent? g, final Percent? b}) {
+    return DisplayP3Color(r ?? this.r, g ?? this.g, b ?? this.b);
   }
 
   @override

@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('HwbColor Refactor Tests', () {
     test('whiten increases whiteness', () {
-      final HwbColor color = HwbColor.alt(0, 0, 0); // Red (pure)
+      final HwbColor color = HwbColor(0, 0, 0); // Red (pure)
       final HwbColor whitened = color.whiten(50);
 
       expect(whitened.w, greaterThan(color.w));
@@ -15,7 +15,7 @@ void main() {
     });
 
     test('blacken increases blackness', () {
-      final HwbColor color = HwbColor.alt(0, 0, 0); // Red (pure)
+      final HwbColor color = HwbColor(0, 0, 0); // Red (pure)
       final HwbColor blackened = color.blacken(50);
 
       expect(blackened.b, greaterThan(color.b));
@@ -25,8 +25,8 @@ void main() {
     });
 
     test('lerp interpolates correctly', () {
-      final HwbColor start = HwbColor.alt(0, 0, 0); // Red
-      final HwbColor end = HwbColor.alt(120, 0.5, 0); // Light Green
+      final HwbColor start = HwbColor(0, 0, 0); // Red
+      final HwbColor end = HwbColor(120, 0.5, 0); // Light Green
       final HwbColor mid = start.lerp(end, 0.5);
 
       expect(mid.h, closeTo(60, 0.1)); // Yellow
@@ -35,7 +35,7 @@ void main() {
     });
 
     test('saturate decreases w and b', () {
-      final HwbColor color = HwbColor.alt(0, 0.5, 0.5); // Grayish
+      final HwbColor color = HwbColor(0, 0.5, 0.5); // Grayish
       final HwbColor saturated = color.saturate(50);
 
       expect(saturated.w, lessThan(color.w));
@@ -43,7 +43,7 @@ void main() {
     });
 
     test('desaturate increases w and b', () {
-      final HwbColor color = HwbColor.alt(0, 0, 0); // Pure Red
+      final HwbColor color = HwbColor(0, 0, 0); // Pure Red
       final HwbColor desaturated = color.desaturate(50);
 
       expect(desaturated.w, greaterThan(color.w));

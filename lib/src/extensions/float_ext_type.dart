@@ -328,17 +328,21 @@ extension type const Percent._(double _) implements FltType {
   static const Percent min = Percent(0.0); // 0% or 0.0
   static const Percent zero = Percent(0.0);
   static const Percent mid = Percent(0.50); // 50% or 0.5
+  static const Percent half = Percent.mid;
   static const Percent max = Percent(1.0);
   static const Percent v0 = Percent(0.0);
   static const Percent v05 = Percent(0.05);
   static const Percent v5 = Percent.v05;
   static const Percent v10 = Percent(0.10);
+  static const Percent tenth = Percent.v10;
   static const Percent v12 = Percent(0.12);
   static const Percent v15 = Percent(0.15);
   static const Percent v20 = Percent(0.20);
   static const Percent v25 = Percent(0.25);
   static const Percent v30 = Percent(0.30); //
+  static const Percent v40 = Percent(0.40);
   static const Percent v50 = Percent(0.50);
+  static const Percent v60 = Percent(0.60);
   static const Percent v70 = Percent(0.70);
   static const Percent v75 = Percent(0.75);
   static const Percent v80 = Percent(0.80);
@@ -646,8 +650,6 @@ extension type const SRGB._(double _) implements Percent {
 /// - **Efficiency**: Predefined constants for common values (e.g., `zero`,
 ///   `midInst`, `maxInst`) improve performance and code readability.
 ///
-/// Credit for [Uint8] and [Uint32]:
-/// https://github.com/matanlurey/binary.dart/blob/main/lib/src/uint32.dart
 /// See also [SRGB]
 extension type const LinRGB._(double _) implements Percent {
   /// Constant constructor NOTE: This assumes no gamma-adjustments are needed

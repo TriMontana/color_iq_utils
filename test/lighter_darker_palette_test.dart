@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('Lighter and Darker Palette Tests', () {
     test('HslColor Lighter Palette (Default Steps)', () {
-      final HslColor hsl = HslColor.alt(0, 1.0, 0.5); // Red
+      final HslColor hsl = HslColor(0, 1.0, 0.5); // Red
       final List<ColorSpacesIQ> palette = hsl.lighterPalette();
       expect(palette.length, 5);
 
@@ -24,7 +24,7 @@ void main() {
     });
 
     test('HslColor Darker Palette (Default Steps)', () {
-      const HslColor hsl = kHslRed; // Red
+      final HslColor hsl = HslColor(0, 1.0, 0.5); // Red
       final List<ColorSpacesIQ> palette = hsl.darkerPalette();
       expect(palette.length, 5);
 

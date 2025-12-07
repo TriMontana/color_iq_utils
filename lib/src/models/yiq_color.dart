@@ -26,17 +26,11 @@ class YiqColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The quadrature chrominance component.
   final double q;
 
-  /// Creates a new `YiqColor`.
-  const YiqColor(this.y, this.i, this.q,
-      {required final int val,
-      final Percent alpha = Percent.max,
-      final List<String>? names})
-      : super(val, a: alpha, names: names ?? const <String>[]);
-  YiqColor.alt(this.y, this.i, this.q,
+  YiqColor(this.y, this.i, this.q,
       {final int? val,
       final Percent alpha = Percent.max,
       final List<String>? names})
-      : super(val ?? YiqColor.argbFromYiq(y, i, q),
+      : super.alt(val ?? YiqColor.argbFromYiq(y, i, q),
             a: alpha, names: names ?? const <String>[]);
 
   /// Converts a 32-bit ARGB color ID (Flutter Color.value) to YIQ components.
@@ -64,7 +58,7 @@ class YiqColor extends ColorSpacesIQ with ColorModelsMixin {
     final double q = (0.211 * r) - (0.523 * g) + (0.312 * b);
 
     // 3. Return the YIQ object
-    return YiqColor.alt(
+    return YiqColor(
         y.clamp(0.0, 1.0), i.clamp(-0.596, 0.596), q.clamp(-0.523, 0.523));
   }
 
@@ -102,13 +96,13 @@ class YiqColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   YiqColor saturate([final double amount = 25]) {
     final double scale = 1.0 + (amount / 100.0);
-    return YiqColor.alt(y, i * scale, q * scale);
+    return YiqColor(y, i * scale, q * scale);
   }
 
   @override
   YiqColor desaturate([final double amount = 25]) {
     final double scale = 1.0 - (amount / 100.0);
-    return YiqColor.alt(y, i * scale, q * scale);
+    return YiqColor(y, i * scale, q * scale);
   }
 
   @override
@@ -145,7 +139,7 @@ class YiqColor extends ColorSpacesIQ with ColorModelsMixin {
         other is YiqColor ? other : other.toColor().toYiq();
     if (t == 1.0) return otherYiq;
 
-    return YiqColor.alt(
+    return YiqColor(
       lerpDouble(y, otherYiq.y, t),
       lerpDouble(i, otherYiq.i, t),
       lerpDouble(q, otherYiq.q, t),
@@ -165,15 +159,9 @@ class YiqColor extends ColorSpacesIQ with ColorModelsMixin {
     return toColor().adjustTransparency(amount).toYiq();
   }
 
-  @override
-  double get transparency => toColor().transparency;
-
-  @override
-  ColorTemperature get temperature => toColor().temperature;
-
   /// Creates a copy of this color with the given fields replaced with the new values.
   YiqColor copyWith({final double? y, final double? i, final double? q}) {
-    return YiqColor.alt(y ?? this.y, i ?? this.i, q ?? this.q);
+    return YiqColor(y ?? this.y, i ?? this.i, q ?? this.q);
   }
 
   @override

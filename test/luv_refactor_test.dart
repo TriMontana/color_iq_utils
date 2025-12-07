@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('LuvColor Refactor Tests', () {
     test('whiten increases lightness', () {
-      final LuvColor color = LuvColor.alt(50, 0, 0); // Middle gray
+      final LuvColor color = LuvColor(50, 0, 0); // Middle gray
       final LuvColor whitened = color.whiten(50);
 
       expect(whitened.l, greaterThan(color.l));
@@ -13,7 +13,7 @@ void main() {
     });
 
     test('blacken decreases lightness', () {
-      final LuvColor color = LuvColor.alt(50, 0, 0); // Middle gray
+      final LuvColor color = LuvColor(50, 0, 0); // Middle gray
       final LuvColor blackened = color.blacken(50);
 
       expect(blackened.l, lessThan(color.l));
@@ -22,8 +22,8 @@ void main() {
     });
 
     test('lerp interpolates correctly', () {
-      const LuvColor start = luvBlack; // Black
-      final LuvColor end = LuvColor.alt(100, 100, 100); // White-ish with color
+      final LuvColor start = luvBlack; // Black
+      final LuvColor end = LuvColor(100, 100, 100); // White-ish with color
       final LuvColor mid = start.lerp(end, 0.5);
 
       expect(mid.l, closeTo(50, 0.1));

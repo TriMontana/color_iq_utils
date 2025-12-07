@@ -48,21 +48,15 @@ import 'package:material_color_utilities/material_color_utilities.dart' as mcu;
 class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
   /// The color space of this color.
   final ColorSpace colorSpace;
-  final int alpha;
-  @override
-  int get red => super.redInt;
-  @override
-  final int green;
-  @override
-  final int blue;
+  HctColor? _hctColor;
 
   /// Construct a color from the lower 32 bits of an [int].
   ColorIQ(
     super.value, {
     final Percent? a,
-    final double? r,
-    final double? g,
-    final double? b,
+    final Percent? r,
+    final Percent? g,
+    final Percent? b,
     final int? alpha,
     final int? red,
     final int? green,
@@ -70,74 +64,69 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     final Percent? luminance,
     this.colorSpace = ColorSpace.sRGB,
     final List<String>? names,
-  })  : alpha = alpha != null
-            ? alpha.assertRange0to255('ColorIQ-COTR-alpha')
-            : (value >> 24 & 0xFF),
-        green = green != null
-            ? green.assertRange0to255('ColorIQ-COTR-green')
-            : (value >> 8 & 0xFF),
-        blue = blue != null
-            ? blue.assertRange0to255('ColorIQ-COTR-blue')
-            : (value & 0xFF),
+    final HctColor? hctColor,
+  })  : _hctColor = hctColor,
         super(
-            lrv: luminance ?? value.toLRV,
+            lrv: luminance,
             a: a ?? Percent(((value >> 24 & 0xFF) / 255).clamp0to1),
-            r: r != null
-                ? r.assertRange0to1('ColorIQ-COTR-r')
-                : ((value >> 16 & 0xFF) / 255).clamp0to1,
+            alphaIntVal: alpha != null
+                ? alpha.assertRange0to255('ColorIQ-COTR-alpha')
+                : (value >> 24 & 0xFF),
+            r: r ?? Percent(((value >> 16 & 0xFF) / 255).clamp0to1),
             redIntVal: red != null
                 ? red.assertRange0to255('ColorIQ-COTR-red')
                 : (value >> 16 & 0xFF),
-            g: g != null
-                ? g.assertRange0to1('ColorIQ-COTR-g')
-                : ((value >> 8 & 0xFF) / 255).clamp0to1,
-            b: b != null
-                ? b.assertRange0to1('ColorIQ()-b')
-                : ((value & 0xFF) / 255).clamp0to1,
+            g: g ?? Percent(((value >> 8 & 0xFF) / 255).clamp0to1),
+            greenIntVal: green != null
+                ? green.assertRange0to255('ColorIQ-COTR-green')
+                : (value >> 8 & 0xFF),
+            b: b ?? Percent(((value & 0xFF) / 255).clamp0to1),
+            blueIntVal: blue != null
+                ? blue.assertRange0to255('ColorIQ()-blue')
+                : (value & 0xFF),
             names: names ?? const <String>[]);
 
   /// Construct a color from 4 integers, a, r, g, b.
   ColorIQ.fromARGB(
-    this.alpha,
+    final int alpha,
     final int red,
-    this.green,
-    this.blue, {
+    final int green,
+    final int blue, {
     final Percent? a,
     final Percent? r,
-    final double? g,
-    final double? b,
+    final Percent? g,
+    final Percent? b,
     final Percent? luminance,
     this.colorSpace = ColorSpace.sRGB,
     final List<String>? names,
+    final HctColor? hctColor,
   })  : assert(red >= 0 && red <= 255, 'Invalid Red 0-255 value: $red'),
         assert(green >= 0 && green <= 255, 'Invalid Green 0-255 value: $green'),
         assert(blue >= 0 && blue <= 255, 'Invalid Blue 0-255 value: $blue'),
         assert(alpha >= 0 && alpha <= 255, 'Invalid Alpha 0-255 value: $alpha'),
+        _hctColor = hctColor,
         super.alt(
-            value: (((alpha & 0xff) << 24) |
+            (((alpha & 0xff) << 24) |
                     ((red & 0xff) << 16) |
                     ((green & 0xff) << 8) |
                     ((blue & 0xff) << 0)) &
                 0xFFFFFFFF,
             a: a ?? alpha.normalized,
-            r: r != null
-                ? r.assertRange0to1('ColorIQ.fromARGB-Red')
-                : red.normalized,
+            alphaIntVal: alpha,
+            r: r ?? red.normalized,
             redIntVal: red,
-            g: g != null
-                ? g.assertRange0to1('ColorIQ.fromARGB-Green')
-                : green.normalized,
-            b: b != null
-                ? b.assertRange0to1('ColorIQ.fromARGB-Blue')
-                : (blue / 255.0).clamp0to1,
+            g: g ?? green.normalized,
+            greenIntVal: green,
+            b: b ?? blue.normalized,
+            blueIntVal: blue,
             lrv: luminance ?? computeLuminanceViaInts(red, green, blue),
             names: names ?? const <String>[]);
 
   /// Construct a color from sRGB delinearized values a, r, g, b (0.0 to 1.0)
   factory ColorIQ.fromSrgb({
-    required final double r,
-    required final double g,
-    required final double b,
+    required final Percent r,
+    required final Percent g,
+    required final Percent b,
     final Percent a = Percent.max,
     int? alphaInt,
     int? redInt,
@@ -147,23 +136,25 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     Percent? luminance,
     final ColorSpace colorSpace = ColorSpace.sRGB,
     final List<String>? names,
+    final HctColor? hctColor,
   }) {
     a.assertRange0to1('ColorIQ.fromSrgb--a');
     r.assertRange0to1('ColorIQ.fromSrgb--r');
     g.assertRange0to1('ColorIQ.fromSrgb--g');
     b.assertRange0to1('ColorIQ.fromSrgb--b');
+
     redInt = redInt != null
         ? redInt.assertRange0to255('ColorIQ.fromSrgb-RedInt')
-        : (r * 255).roundAndClamp0to255int('ColorIQ.fromSrgb-RedInt2');
+        : r.int255FromNormalized0to1('ColorIQ.fromSrgb-RedInt2');
     greenInt = greenInt != null
         ? greenInt.assertRange0to255('ColorIQ.fromSrgb-GreenInt')
-        : g.normalizedTo255int('ColorIQ.fromSrgb-GreenInt2');
+        : g.int255FromNormalized0to1('ColorIQ.fromSrgb-GreenInt2');
     blueInt = blueInt != null
         ? blueInt.assertRange0to255('ColorIQ.fromSrgb-BlueInt')
-        : b.normalizedTo255int('ColorIQ.fromSrgb-BlueInt2');
+        : b.int255FromNormalized0to1('ColorIQ.fromSrgb-BlueInt2');
     alphaInt = alphaInt != null
         ? alphaInt.assertRange0to255('ColorIQ.fromSrgb-AlphaInt')
-        : a.normalizedTo255int('ColorIQ.fromSrgb-A');
+        : a.int255FromNormalized0to1('ColorIQ.fromSrgb-A');
     argb ??= (alphaInt << 24) | (redInt << 16) | (greenInt << 8) | blueInt;
     luminance = luminance ?? computeLuminanceViaInts(redInt, greenInt, blueInt);
     return ColorIQ(argb,
@@ -177,6 +168,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
         r: r,
         g: g,
         b: b,
+        hctColor: hctColor,
         names: names ?? const <String>[]);
   }
 
@@ -209,20 +201,25 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     throw FormatException('Invalid hex color: #$hex');
   }
 
+  int get alpha => super.alphaInt;
+  @override
+  int get red => super.redInt;
+  @override
+  int get green => super.greenInt;
+  @override
+  int get blue => super.blueInt;
+
   @override
   ColorIQ toColor() => this;
 
   /// LAB representation, computed once and cached.
   late final LabColor lab = LabColor.fromInt(value);
-  late final HctColor hct = HctColor.fromInt(value);
+  late final HctColor hct = _hctColor ?? HctColor.fromInt(value);
   late final Cam16Color cam16 = Cam16Color.fromInt(value);
 
   /// Converts this color to XYZ once and cached.
   late final XYZ xyz = XYZ.xyxFromRgb(red, green, blue);
   late final LuvColor luv = xyz.toLuv();
-
-  /// Human-friendly description ("soft blue", "warm neutral", etc.), cached.
-  late final String descriptiveName = ColorNamerSuperSimple.instance.name(this);
 
   @override
   late final double luminance = super.toLRV;
@@ -243,8 +240,11 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     final double i = 0.596 * r - 0.274 * g - 0.322 * b;
     final double q = 0.211 * r - 0.523 * g + 0.312 * b;
 
-    return YiqColor.alt(y, i, q);
+    return YiqColor(y, i, q);
   }
+
+  /// Human-friendly description ("soft blue", "warm neutral", etc.), cached.
+  late final String descriptiveName = ColorNamerSuperSimple.instance.name(this);
 
   /// Converts this color to YUV.
   YuvColor toYuv() {
@@ -256,7 +256,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     final double u = -0.14713 * r - 0.28886 * g + 0.436 * b;
     final double v = 0.615 * r - 0.51499 * g - 0.10001 * b;
 
-    return YuvColor.alt(y, u, v);
+    return YuvColor(y, u, v);
   }
 
   /// Converts this color to OkLch.
@@ -289,7 +289,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
       bOut = 0;
     }
 
-    return HunterLabColor.alt(lOut, aOut, bOut);
+    return HunterLabColor(lOut, aOut, bOut);
   }
 
   /// Converts this color to HSLuv.
@@ -298,12 +298,12 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     final double c = sqrt(luv.u * luv.u + luv.v * luv.v);
     double h = atan2(luv.v, luv.u) * 180 / pi;
     if (h < 0) h += 360;
-    return HsluvColor.alt(h, c, luv.l);
+    return HsluvColor(h, c, luv.l);
   }
 
   /// Converts this color to Munsell.
   MunsellColor toMunsell() {
-    return MunsellColor.alt("N", 0, 0);
+    return MunsellColor("N", 0, 0);
   }
 
   /// Converts this color to HSL.
@@ -331,7 +331,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
       h /= 6;
     }
 
-    return HslColor.alt(h * 360, s, l);
+    return HslColor(h * 360, s, l);
   }
 
   /// Converts this color to HSV.
@@ -360,13 +360,13 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
       h /= 6;
     }
 
-    return HsvColor.alt(h * 360, s, v);
+    return HsvColor(h * 360, s, Percent(v));
   }
 
   /// Converts this color to HSB (Alias for HSV).
   HsbColor toHsb() {
     final HsvColor hsv = toHsv();
-    return HsbColor.alt(hsv.h, hsv.s, hsv.v);
+    return HsbColor(hsv.h, hsv.s, hsv.v);
   }
 
   /// Converts this color to HWB.
@@ -396,7 +396,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     final double w = minVal;
     final double bl = 1 - maxVal;
 
-    return HwbColor.alt(h * 360, w, bl);
+    return HwbColor(h * 360, w, bl);
   }
 
   /// Converts this color to Cam16 (Material Color Utilities).
@@ -440,7 +440,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     bP3 =
         (bP3 > 0.0031308) ? (1.055 * pow(bP3, 1 / 2.4) - 0.055) : (12.92 * bP3);
 
-    return DisplayP3Color.alt(rP3, gP3, bP3);
+    return DisplayP3Color.alt(Percent(rP3), Percent(gP3), Percent(bP3));
   }
 
   /// Converts this color to Rec. 2020.
@@ -477,7 +477,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
       return 1.099 * pow(v, 0.45) - 0.099;
     }
 
-    return Rec2020Color.alt(transfer(r2020), transfer(g2020), transfer(b2020));
+    return Rec2020Color(transfer(r2020), transfer(g2020), transfer(b2020));
   }
 
   @override
@@ -611,18 +611,6 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
   @override
   double get transparency => alpha / 255.0;
 
-  @override
-  ColorTemperature get temperature {
-    final HslColor hsl = toHsl();
-    // Warm: 0-90 (Red-Yellow-Greenish) and 270-360 (Purple-Red)
-    // Cool: 90-270 (Green-Cyan-Blue-Purple)
-    if (hsl.h >= 90 && hsl.h < 270) {
-      return ColorTemperature.cool;
-    } else {
-      return ColorTemperature.warm;
-    }
-  }
-
   ColorIQ withAlpha(final int newA) =>
       ColorIQ.fromARGB(newA.clamp(0, 255), red, green, blue);
 
@@ -654,7 +642,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
       // -2, -1, 0, 1, 2
       final double delta = (i - 2) * 10.0;
       final double newL = (hsl.l * 100 + delta).clamp(0.0, 100.0);
-      results.add(HslColor.alt(hsl.h, hsl.s, newL / 100).toColor());
+      results.add(HslColor(hsl.h, hsl.s, newL / 100).toColor());
     }
     return results;
   }
@@ -714,7 +702,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     final HslColor hsl = toHsl();
     double newHue = (hsl.h + amount) % 360;
     if (newHue < 0) newHue += 360;
-    return HslColor.alt(newHue, hsl.s, hsl.l).toColor();
+    return HslColor(newHue, hsl.s, hsl.l).toColor();
   }
 
   @override
@@ -737,7 +725,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     if (newHue < 0) newHue += 360;
     if (newHue >= 360) newHue -= 360;
 
-    return HslColor.alt(newHue, hsl.s, hsl.l).toColor();
+    return HslColor(newHue, hsl.s, hsl.l).toColor();
   }
 
   @override
@@ -757,7 +745,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     if (newHue < 0) newHue += 360;
     if (newHue >= 360) newHue -= 360;
 
-    return HslColor.alt(newHue, hsl.s, hsl.l).toColor();
+    return HslColor(newHue, hsl.s, hsl.l).toColor();
   }
 
   @override
@@ -903,29 +891,29 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
       case 'ColorIQ':
         return ColorIQ(json[kValue] as int);
       case 'HctColor':
-        return HctColor.alt(json['hue'], json[kChroma], json['tone']);
+        return HctColor(json['hue'], json[kChroma], json['tone']);
       case 'HsvColor':
-        return HsvColor.alt(
+        return HsvColor(
           json['hue'],
           json['saturation'],
           json['value'],
           alpha: json['alpha'] ?? 1.0,
         );
       case 'HslColor':
-        return HslColor.alt(
+        return HslColor(
           json['hue'],
           json['saturation'],
           json['lightness'],
           alpha: json['alpha'] ?? 1.0,
         );
       case 'CmykColor':
-        return CmykColor.alt(json['c'], json['m'], json['y'], json['k']);
+        return CmykColor(json['c'], json['m'], json['y'], json['k']);
       case 'LabColor':
-        return LabColor.alt(json['l'], json['a'], json['b']);
+        return LabColor(json['l'], json['a'], json['b']);
       case 'XyzColor':
-        return XYZ.alt(json['x'], json['y'], json['z']);
+        return XYZ(json['x'], json['y'], json['z']);
       case 'LchColor':
-        return LchColor.alt(json['l'], json['c'], json['h']);
+        return LchColor(json['l'], json['c'], json['h']);
       // Add other cases as needed, defaulting to Color if unknown
       default:
         if (json.containsKey('value')) {

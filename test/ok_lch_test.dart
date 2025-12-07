@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('OkLchColor Tests', () {
     test('grayscale sets chroma to 0', () {
-      final OkLCH color = OkLCH.alt(const Percent(0.5), 0.2, 180.0);
+      final OkLCH color = OkLCH(Percent.mid, 0.2, 180.0);
       final OkLCH gray = color.grayscale;
       expect(gray.l, equals(color.l));
       expect(gray.c, equals(0.0));
@@ -12,7 +12,7 @@ void main() {
     });
 
     test('whiten moves towards white', () {
-      final OkLCH color = OkLCH.alt(const Percent(0.0), 0.0, 0.0); // Black
+      final OkLCH color = OkLCH(Percent.zero, 0.0, 0.0); // Black
       final OkLCH whitened = color.whiten(50);
       // White is approx L=1.0, C=0.0, H=0.0 (or undefined)
       // Lerp 50% from Black (L=0) to White (L=1) -> L=0.5
@@ -20,15 +20,15 @@ void main() {
     });
 
     test('blacken moves towards black', () {
-      final OkLCH color = OkLCH.alt(const Percent(1.0), 0.0, 0.0); // White
+      final OkLCH color = OkLCH(Percent.max, 0.0, 0.0); // White
       final OkLCH blackened = color.blacken(50);
       // Lerp 50% from White (L=1) to Black (L=0) -> L=0.5
       expect(blackened.l, closeTo(0.5, 0.01));
     });
 
     test('lerp interpolates correctly', () {
-      final OkLCH color1 = OkLCH.alt(const Percent(0.0), 0.0, 0.0);
-      final OkLCH color2 = OkLCH.alt(const Percent(1.0), 0.2, 100.0);
+      final OkLCH color1 = OkLCH(Percent.zero, 0.0, 0.0);
+      final OkLCH color2 = OkLCH(Percent.max, 0.2, 100.0);
       final OkLCH lerped = color1.lerp(color2, 0.5);
       expect(lerped.l, closeTo(0.5, 0.001));
       expect(lerped.c, closeTo(0.1, 0.001));

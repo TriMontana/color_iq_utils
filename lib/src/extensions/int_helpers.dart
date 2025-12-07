@@ -67,15 +67,15 @@ extension IntHelperIQ on int {
 
   double get a => (alpha / kMax8bit).clamp0to1;
   Percent get a2 => Percent((((this >> 24) & 0xFF) / 255.0).clamp0to1);
-  double get alphaLinearized => srgbToLinear(a2);
+  LinRGB get alphaLinearized => srgbToLinear(a2);
   double get r => (red / kMax8bit).clamp0to1;
-  double get r2 => (((this >> 16) & 0xFF) / 255.0).clamp0to1;
+  Percent get r2 => Percent((((this >> 16) & 0xFF) / 255.0).clamp0to1);
   LinRGB get redLinearized => srgbToLinear(r2);
   double get g => (green / kMax8bit).clamp0to1;
-  double get g2 => (((this >> 8) & 0xFF) / 255.0).clamp0to1;
+  Percent get g2 => Percent((((this >> 8) & 0xFF) / 255.0).clamp0to1);
   LinRGB get greenLinearized => srgbToLinear(g2);
   double get b => (blue / kMax8bit).clamp0to1;
-  double get b2 => ((this & 0xFF) / 255.0).clamp0to1;
+  Percent get b2 => Percent(((this & 0xFF) / 255.0).clamp0to1);
   LinRGB get blueLinearized => srgbToLinear(b2);
 
   Percent get toLRV => computeLuminanceViaLinearized(
@@ -205,17 +205,17 @@ extension IntHelperIQ on int {
     final HctColor hct1 = thisColor.toHctColor();
 
     // Representative colors for each family (using pure/typical colors)
-    final Map<ColorFamilyHTML, ColorIQ> familyColors =
-        <ColorFamilyHTML, ColorIQ>{
+    final Map<ColorFamilyHTML, HtmlColor> familyColors =
+        <ColorFamilyHTML, HtmlColor>{
       ColorFamilyHTML.red: cRed,
       ColorFamilyHTML.orange: ColorIQ(0xFFFFA500),
       ColorFamilyHTML.yellow: ColorIQ(0xFFFFFF00),
       ColorFamilyHTML.green: cGreenHtml,
-      ColorFamilyHTML.cyan: ColorIQ(0xFF00FFFF),
-      ColorFamilyHTML.blue: ColorIQ(0xFF0000FF),
-      ColorFamilyHTML.purple: ColorIQ(0xFF800080),
-      ColorFamilyHTML.pink: ColorIQ(0xFFFFC0CB),
-      ColorFamilyHTML.brown: ColorIQ(0xFFA52A2A),
+      ColorFamilyHTML.cyan: cCyan,
+      ColorFamilyHTML.blue: cBlue,
+      ColorFamilyHTML.purple: cPurpleHtml,
+      ColorFamilyHTML.pink: cPink,
+      ColorFamilyHTML.brown: cBrownHtml,
       ColorFamilyHTML.white: cWhite,
       ColorFamilyHTML.gray: cGray,
       ColorFamilyHTML.black: cBlack,

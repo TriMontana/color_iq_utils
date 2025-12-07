@@ -31,24 +31,17 @@ class LabColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The blue-yellow component.
   final double bLab;
 
-  const LabColor(this.l, this.aLab, this.bLab,
-      {required final int hexId,
-      final Percent? lrv,
-      final Percent alpha = Percent.max,
-      final List<String>? names})
-      : assert(l >= 0 && l <= 100, 'L must be between 0 and 100'),
-        super(hexId, lrv: lrv, a: alpha, names: names ?? const <String>[]);
-  LabColor.alt(this.l, this.aLab, this.bLab,
+  LabColor(this.l, this.aLab, this.bLab,
       {final int? hexId,
       final Percent alpha = Percent.max,
       final List<String>? names})
       : assert(l >= 0 && l <= 100, 'L must be between 0 and 100'),
-        super(hexId ?? LabColor.toHexId(l, aLab, bLab),
+        super.alt(hexId ?? LabColor.toHexId(l, aLab, bLab),
             a: alpha, names: names ?? const <String>[]);
 
   static LabColor fromInt(final int hexId) {
     final List<double> lab = labFromArgb(hexId);
-    return LabColor.alt(lab[0], lab[1], lab[2], hexId: hexId);
+    return LabColor(lab[0], lab[1], lab[2], hexId: hexId);
   }
 
   /// Creates a 32-bit ARGB hex value from CIE-LAB components.
@@ -75,7 +68,7 @@ class LabColor extends ColorSpacesIQ with ColorModelsMixin {
     if (h < 0) {
       h += 360;
     }
-    return LchColor.alt(l, c, h);
+    return LchColor(l, c, h);
   }
 
   @override
@@ -89,7 +82,7 @@ class LabColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   LabColor lighten([final double amount = 20]) {
-    return LabColor.alt(min(100, l + amount), aLab, bLab);
+    return LabColor(min(100, l + amount), aLab, bLab);
   }
 
   @override
@@ -99,7 +92,7 @@ class LabColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   LabColor darken([final double amount = 20]) {
-    return LabColor.alt(max(0, l - amount), aLab, bLab);
+    return LabColor(max(0, l - amount), aLab, bLab);
   }
 
   @override
@@ -140,7 +133,7 @@ class LabColor extends ColorSpacesIQ with ColorModelsMixin {
       return otherLab;
     }
 
-    return LabColor.alt(
+    return LabColor(
       lerpDouble(l, otherLab.l, t),
       lerpDouble(aLab, otherLab.aLab, t),
       lerpDouble(bLab, otherLab.bLab, t),
@@ -158,20 +151,13 @@ class LabColor extends ColorSpacesIQ with ColorModelsMixin {
     return toColor().adjustTransparency(amount).lab;
   }
 
-  @override
-  double get transparency => toColor().transparency;
-
-  @override
-  ColorTemperature get temperature => toColor().temperature;
-
   /// Creates a copy of this color with the given fields replaced with the new values.
   LabColor copyWith(
       {final double? l,
       final double? a,
       final double? b,
       final Percent? alpha}) {
-    return LabColor.alt(l ?? this.l, a ?? aLab, b ?? bLab,
-        alpha: alpha ?? super.a);
+    return LabColor(l ?? this.l, a ?? aLab, b ?? bLab, alpha: alpha ?? super.a);
   }
 
   @override

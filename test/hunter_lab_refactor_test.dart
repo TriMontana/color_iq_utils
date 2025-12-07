@@ -4,22 +4,22 @@ import 'package:test/test.dart';
 void main() {
   group('HunterLabColor Refactor Tests', () {
     test('whiten increases lightness', () {
-      final HunterLabColor color = HunterLabColor.alt(50.0, 0.0, 0.0); // Gray
+      final HunterLabColor color = HunterLabColor(50.0, 0.0, 0.0); // Gray
       final HunterLabColor whitened = color.whiten(50);
 
       expect(whitened.l, greaterThan(color.l));
     });
 
     test('blacken decreases lightness', () {
-      final HunterLabColor color = HunterLabColor.alt(50.0, 0.0, 0.0); // Gray
+      final HunterLabColor color = HunterLabColor(50.0, 0.0, 0.0); // Gray
       final HunterLabColor blackened = color.blacken(50);
 
       expect(blackened.l, lessThan(color.l));
     });
 
     test('lerp interpolates correctly', () {
-      final HunterLabColor start = HunterLabColor.alt(0.0, 0.0, 0.0); // Black
-      final HunterLabColor end = HunterLabColor.alt(100.0, 0.0, 0.0); // White
+      final HunterLabColor start = HunterLabColor(0.0, 0.0, 0.0); // Black
+      final HunterLabColor end = HunterLabColor(100.0, 0.0, 0.0); // White
       final HunterLabColor mid = start.lerp(end, 0.5);
 
       expect(mid.l, closeTo(50.0, 0.01));
@@ -28,7 +28,7 @@ void main() {
     });
 
     test('saturate increases chrominance', () {
-      final HunterLabColor color = HunterLabColor.alt(50.0, 10.0, 10.0);
+      final HunterLabColor color = HunterLabColor(50.0, 10.0, 10.0);
       final HunterLabColor saturated = color.saturate(50);
 
       expect(saturated.aLab.abs(), greaterThan(color.aLab.abs()));
@@ -36,7 +36,7 @@ void main() {
     });
 
     test('desaturate decreases chrominance', () {
-      final HunterLabColor color = HunterLabColor.alt(50.0, 10.0, 10.0);
+      final HunterLabColor color = HunterLabColor(50.0, 10.0, 10.0);
       final HunterLabColor desaturated = color.desaturate(50);
 
       expect(desaturated.aLab.abs(), lessThan(color.aLab.abs()));

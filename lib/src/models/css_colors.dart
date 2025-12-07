@@ -202,7 +202,7 @@ class CssColor {
       }
     }
 
-    return HslColor.alt(h, sVal, l, alpha: a);
+    return HslColor(h, sVal, l, alpha: a);
   }
 
   static OkLabColor _parseOklab(final String s) {
@@ -232,7 +232,7 @@ class CssColor {
       }
     }
 
-    return OkLabColor.alt(l, aVal, b, alpha: alpha);
+    return OkLabColor(l, aVal, b, alpha: alpha);
   }
 
   static OkLCH _parseOklch(final String s) {
@@ -262,6 +262,6 @@ class CssColor {
       }
     }
 
-    return OkLCH.alt(Percent(l), c, h, alpha: alpha);
+    return OkLCH(Percent(l), c, h, alpha: alpha);
   }
 }

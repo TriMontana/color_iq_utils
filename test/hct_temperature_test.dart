@@ -37,7 +37,7 @@ void main() {
     });
 
     test('Transparency on other models (lossy)', () {
-      final HslColor hsl = HslColor.alt(0, 1, 0.5); // Red
+      final HslColor hsl = HslColor(0, 1, 0.5); // Red
       // Other models don't store alpha, so transparency is always 1.0
       expect(hsl.transparency, 1.0);
 

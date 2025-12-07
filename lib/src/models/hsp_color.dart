@@ -33,23 +33,22 @@ class HspColor extends ColorSpacesIQ with ColorModelsMixin {
   Percent get alpha => super.a;
 
   /// Creates a new `HspColor`.
-  const HspColor(this.h, this.s, this.p,
-      {final Percent alpha = Percent.max,
-      required final int hexId,
-      final List<String>? names})
-      : super(hexId, a: alpha, names: names ?? const <String>[]);
-
-  /// Creates a new `HspColor`.
-  HspColor.alt(this.h, this.s, this.p,
+  HspColor(this.h, this.s, this.p,
       {final Percent alpha = Percent.max,
       final int? hexId,
       final List<String>? names})
-      : super(hexId ?? HspColor.toHexID(h, s, p, alpha),
-            a: alpha, names: names ?? const <String>[]);
+      : super.alt(hexId ?? HspColor.hexIdFromHSP(h, s, p, alpha),
+            a: alpha,
+            names: names ??
+                names ??
+                <String>[
+                  ColorNames.generateDefaultNameFromInt(
+                      hexId ?? HspColor.hexIdFromHSP(h, s, p, alpha))
+                ]);
 
   /// Creates a 32-bit hex ID/ARGB from this class's properties.
   /// This is a standalone static method for conversion.
-  static int toHexID(final double h, final double s, final double p,
+  static int hexIdFromHSP(final double h, final double s, final double p,
       [final double alpha = 1.0]) {
     // http://alienryderflex.com/hsp.html
     double part = 0.0;
@@ -188,14 +187,14 @@ class HspColor extends ColorSpacesIQ with ColorModelsMixin {
 
     final int alphaInt = (alpha * 255).round();
     final int redInt = (r * 255).round().clamp(0, 255);
-    final int greenInt = (g * 255).round().clamp(0, 255);
+    final int greenInt = g.int255FromNormalized0to1();
     final int blueInt = (b * 255).round().clamp(0, 255);
 
     return (alphaInt << 24) | (redInt << 16) | (greenInt << 8) | blueInt;
   }
 
   @override
-  ColorIQ toColor() => ColorIQ(HspColor.toHexID(h, s, p));
+  ColorIQ toColor() => ColorIQ(HspColor.hexIdFromHSP(h, s, p));
 
   /// Converts this color to HSP.
   static HspColor fromInt(final int argb) {
@@ -224,42 +223,42 @@ class HspColor extends ColorSpacesIQ with ColorModelsMixin {
 
     final double s = (maxVal == 0) ? 0 : delta / maxVal;
 
-    return HspColor.alt(h, s, p);
+    return HspColor(h, s, p);
   }
 
   @override
   HspColor darken([final double amount = 20]) {
-    return HspColor.alt(h, s, max(0.0, p - amount / 100), alpha: alpha);
+    return HspColor(h, s, max(0.0, p - amount / 100), alpha: alpha);
   }
 
   @override
   HspColor brighten([final double amount = 20]) {
-    return HspColor.alt(h, s, min(1.0, p + amount / 100), alpha: alpha);
+    return HspColor(h, s, min(1.0, p + amount / 100), alpha: alpha);
   }
 
   @override
   HspColor lighten([final double amount = 20]) {
-    return HspColor.alt(h, s, min(1.0, p + amount / 100), alpha: alpha);
+    return HspColor(h, s, min(1.0, p + amount / 100), alpha: alpha);
   }
 
   @override
   HspColor saturate([final double amount = 25]) {
-    return HspColor.alt(h, min(1.0, s + amount / 100), p, alpha: alpha);
+    return HspColor(h, min(1.0, s + amount / 100), p, alpha: alpha);
   }
 
   @override
   HspColor desaturate([final double amount = 25]) {
-    return HspColor.alt(h, max(0.0, s - amount / 100), p, alpha: alpha);
+    return HspColor(h, max(0.0, s - amount / 100), p, alpha: alpha);
   }
 
   @override
   HspColor intensify([final double amount = 10]) {
-    return HspColor.alt(h, min(1.0, s + amount / 100), p, alpha: alpha);
+    return HspColor(h, min(1.0, s + amount / 100), p, alpha: alpha);
   }
 
   @override
   HspColor deintensify([final double amount = 10]) {
-    return HspColor.alt(h, max(0.0, s - amount / 100), p, alpha: alpha);
+    return HspColor(h, max(0.0, s - amount / 100), p, alpha: alpha);
   }
 
   @override
@@ -290,7 +289,7 @@ class HspColor extends ColorSpacesIQ with ColorModelsMixin {
       return otherHsp;
     }
 
-    return HspColor.alt(
+    return HspColor(
       lerpHue(h, otherHsp.h, t),
       lerpDouble(s, otherHsp.s, t),
       lerpDouble(p, otherHsp.p, t),
@@ -308,9 +307,6 @@ class HspColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   double get transparency => toColor().transparency;
 
-  @override
-  ColorTemperature get temperature => toColor().temperature;
-
   /// Creates a copy of this color with the given fields replaced with the new values.
   HspColor copyWith({
     final double? h,
@@ -318,7 +314,7 @@ class HspColor extends ColorSpacesIQ with ColorModelsMixin {
     final double? p,
     final Percent? alpha,
   }) {
-    return HspColor.alt(h ?? this.h, s ?? this.s, p ?? this.p,
+    return HspColor(h ?? this.h, s ?? this.s, p ?? this.p,
         alpha: alpha ?? super.a);
   }
 

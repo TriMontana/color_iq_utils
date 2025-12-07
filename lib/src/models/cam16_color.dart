@@ -25,18 +25,31 @@ class Cam16Color extends ColorSpacesIQ with ColorModelsMixin {
   final double m;
   final double s;
 
-  const Cam16Color(this.hue, this.chroma, this.j, this.q, this.m, this.s,
-      {final Percent alpha = Percent.max,
-      required final int hexId,
-      final List<String>? names})
-      : super(hexId, a: alpha, names: names ?? const <String>[]);
-
-  Cam16Color.alt(this.hue, this.chroma, this.j, this.q, this.m, this.s,
+  /// Creates a new [Cam16Color] from the given values.
+  ///
+  /// The `hexID` is a 32-bit integer in the format `0xAARRGGBB`.
+  /// The alpha component is ignored in the CAM16 conversion.
+  Cam16Color(this.hue, this.chroma, this.j, this.q, this.m, this.s,
       {final Percent alpha = Percent.max,
       final int? hexId,
       final List<String>? names})
-      : super(hexId ?? mcu.Cam16.fromJch(j, chroma, hue).toInt(),
+      : super.alt(hexId ?? mcu.Cam16.fromJch(j, chroma, hue).toInt(),
             a: alpha, names: names ?? const <String>[]);
+
+  /// Creates a new [Cam16Color] from the given values. This is a pure constant constructor.
+  ///
+  /// The `hexID` is a 32-bit integer in the format `0xAARRGGBB`.
+  /// The alpha component is ignored in the CAM16 conversion.
+  const Cam16Color.fromValues(
+      this.hue, this.chroma, this.j, this.q, this.m, this.s,
+      {final Percent alpha = Percent.max,
+      required final Percent r,
+      required final Percent g,
+      required final Percent b,
+      required final int hexId,
+      final List<String>? names})
+      : super(hexId,
+            a: alpha, r: r, g: g, b: b, names: names ?? const <String>[]);
 
   static Cam16Color fromInt(final int hexId, {final List<String>? names}) {
     final mcu.Cam16 c1 = mcu.Cam16.fromInt(hexId);
@@ -53,8 +66,7 @@ class Cam16Color extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   Cam16Color darken([final double amount = 20]) {
-    return Cam16Color.alt(hue, chroma, max(0, j - amount), q, m, s,
-        alpha: super.a);
+    return Cam16Color(hue, chroma, max(0, j - amount), q, m, s, alpha: super.a);
   }
 
   @override
@@ -62,10 +74,8 @@ class Cam16Color extends ColorSpacesIQ with ColorModelsMixin {
       copyWith(chroma: chroma + amount);
 
   @override
-  Cam16Color desaturate([final double amount = 25]) {
-    return Cam16Color.alt(hue, max(0, chroma - amount), j, q, m, s,
-        alpha: super.a);
-  }
+  Cam16Color desaturate([final double amount = 25]) =>
+      copyWith(chroma: max(0, chroma - amount));
 
   @override
   Cam16Color intensify([final double amount = 10]) =>
@@ -113,7 +123,7 @@ class Cam16Color extends ColorSpacesIQ with ColorModelsMixin {
       }
     }
 
-    return Cam16Color.alt(
+    return Cam16Color(
       (lerpDouble(h1, h2, t) % 360 + 360) % 360,
       lerpDouble(chroma, otherCam16.chroma, t),
       lerpDouble(j, otherCam16.j, t),
@@ -133,18 +143,12 @@ class Cam16Color extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  Cam16Color fromHct(final HctColor hct) => hct.toColor().toCam16Color();
+  Cam16Color fromHct(final HctColor hct) => Cam16Color.fromInt(hct.toInt());
 
   @override
   Cam16Color adjustTransparency([final double amount = 20]) {
     return toColor().adjustTransparency(amount).toCam16Color();
   }
-
-  @override
-  double get transparency => toColor().transparency;
-
-  @override
-  ColorTemperature get temperature => toColor().temperature;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   Cam16Color copyWith({
@@ -156,7 +160,7 @@ class Cam16Color extends ColorSpacesIQ with ColorModelsMixin {
     final double? s,
     final Percent? alpha,
   }) {
-    return Cam16Color.alt(
+    return Cam16Color(
       hue ?? this.hue,
       chroma ?? this.chroma,
       j ?? this.j,
@@ -194,12 +198,6 @@ class Cam16Color extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
-
-  @override
-  double get luminance => toColor().luminance;
-
-  @override
-  bool get isDark => brightness == Brightness.dark;
 
   @override
   bool get isLight => brightness == Brightness.light;
@@ -317,7 +315,4 @@ class Cam16Color extends ColorSpacesIQ with ColorModelsMixin {
       'chroma: ${chroma.toStrTrimZeros(2)}, ' //
       'j: ${j.toStringAsFixed(2)}, ' //
       'alpha: ${super.a.toStringAsFixed(2)})';
-
-  @override
-  mcu.Cam16 toCam16() => mcu.Cam16.fromInt(value);
 }

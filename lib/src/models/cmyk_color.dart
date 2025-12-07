@@ -27,23 +27,10 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
   final double y;
   final double k;
 
-  /// Constructs a CMYK color from normalized cyan, magenta, yellow, and black values.
+  /// Constructor for creating a CMYK color, optionally calculating the hex ID if not provided.
   ///
   /// [c], [m], [y], and [k] must be between 0.0 and 1.0.
-  const CmykColor(this.c, this.m, this.y, this.k,
-      {required final int value,
-      final Percent alpha = Percent.max,
-      final List<String>? names})
-      : assert(c >= 0 && c <= 1, 'Invalid C value: $c'),
-        assert(m >= 0 && m <= 1, 'Invalid M value: $m'),
-        assert(y >= 0 && y <= 1, 'Invalid Y value: $y'),
-        assert(k >= 0 && k <= 1, 'Invalid K value: $k'),
-        super(value, a: alpha, names: names ?? const <String>[]);
-
-  /// Alternative constructor for creating a CMYK color, optionally calculating the hex ID if not provided.
-  ///
-  /// [c], [m], [y], and [k] must be between 0.0 and 1.0.
-  CmykColor.alt(this.c, this.m, this.y, this.k,
+  CmykColor(this.c, this.m, this.y, this.k,
       {final int? value,
       final Percent alpha = Percent.max,
       final List<String>? names})
@@ -51,7 +38,7 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
         assert(m >= 0 && m <= 1, 'Invalid M value: $m'),
         assert(y >= 0 && y <= 1, 'Invalid Y value: $y'),
         assert(k >= 0 && k <= 1, 'Invalid K value: $k'),
-        super(value ?? CmykColor.hexFromCmyk(c, m, y, k),
+        super.alt(value ?? CmykColor.hexFromCmyk(c, m, y, k),
             a: alpha, names: names ?? const <String>[]);
 
   /// Converts this CMYK color to the sRGB color space.
@@ -73,19 +60,19 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The `hexID` is a 32-bit integer in the format `0xAARRGGBB`.
   /// The alpha component is ignored in the CMYK conversion.
   factory CmykColor.fromInt(final int hexID) {
-    final double r = (hexID >> 16 & 0xFF) / 255.0;
+    final double r = hexID.r;
     final double g = (hexID >> 8 & 0xFF) / 255.0;
     final double b = (hexID & 0xFF) / 255.0;
 
     final double k = 1.0 - max(r, max(g, b));
     if (k == 1.0) {
-      return CmykColor.alt(0, 0, 0, 1, value: hexID);
+      return CmykColor(0, 0, 0, 1, value: hexID);
     }
     final double c = (1.0 - r - k) / (1.0 - k);
     final double m = (1.0 - g - k) / (1.0 - k);
     final double y = (1.0 - b - k) / (1.0 - k);
 
-    return CmykColor.alt(c, m, y, k, value: hexID);
+    return CmykColor(c, m, y, k, value: hexID);
   }
 
   /// Converts this color to CMYK.
@@ -96,14 +83,14 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
 
     final double k = 1.0 - max(r, max(g, b));
     if (k == 1.0) {
-      return CmykColor.alt(0, 0, 0, 1);
+      return CmykColor(0, 0, 0, 1);
     }
 
     final double c = (1.0 - r - k) / (1.0 - k);
     final double m = (1.0 - g - k) / (1.0 - k);
     final double y = (1.0 - b - k) / (1.0 - k);
 
-    return CmykColor.alt(c, m, y, k);
+    return CmykColor(c, m, y, k);
   }
 
   /// Converts this color to CMYK.
@@ -113,14 +100,14 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
 
     final double k = 1.0 - max(r, max(g, b));
     if (k == 1.0) {
-      return CmykColor.alt(0, 0, 0, 1);
+      return CmykColor(0, 0, 0, 1);
     }
 
     final double c = (1.0 - r - k) / (1.0 - k);
     final double m = (1.0 - g - k) / (1.0 - k);
     final double y = (1.0 - b - k) / (1.0 - k);
 
-    return CmykColor.alt(c, m, y, k);
+    return CmykColor(c, m, y, k);
   }
 
   @override
@@ -232,9 +219,6 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   double get transparency => toColor().transparency;
 
-  @override
-  ColorTemperature get temperature => toColor().temperature;
-
   /// Creates a copy of this color with the given fields replaced with the new values.
   CmykColor copyWith({
     final double? c,
@@ -242,7 +226,7 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
     final double? y,
     final double? k,
   }) {
-    return CmykColor.alt(c ?? this.c, m ?? this.m, y ?? this.y, k ?? this.k);
+    return CmykColor(c ?? this.c, m ?? this.m, y ?? this.y, k ?? this.k);
   }
 
   @override
@@ -257,7 +241,7 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
     ].map((final double v) => v.clamp(0.0, 1.0)).toList();
 
     return kValues
-        .map((final double kVal) => CmykColor.alt(c, m, y, kVal))
+        .map((final double kVal) => CmykColor(c, m, y, kVal))
         .toList();
   }
 
@@ -296,7 +280,7 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   ColorSpacesIQ get random {
     final Random random = Random();
-    return CmykColor.alt(
+    return CmykColor(
       random.nextDouble(),
       random.nextDouble(),
       random.nextDouble(),
@@ -422,7 +406,7 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
   CmykColor get grayscale {
     // Using a weighted average of C, M, Y to determine the gray value for K
     final double gray = c * 0.3 + m * 0.59 + y * 0.11;
-    return CmykColor.alt(0, 0, 0, (gray + k).clamp(0.0, 1.0));
+    return CmykColor(0, 0, 0, (gray + k).clamp(0.0, 1.0));
   }
 
   @override
