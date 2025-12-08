@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
-import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/lab_color.dart';
@@ -21,7 +20,7 @@ import 'package:color_iq_utils/src/models/xyz_color.dart';
 ///
 /// This class provides methods to convert to and from other color spaces,
 /// perform color manipulations, and generate color palettes.
-class LchColor extends ColorSpacesIQ with ColorModelsMixin {
+class LchColor extends CommonIQ implements ColorSpacesIQ {
   /// The lightness component of the color (0-100).
   final double l;
 
@@ -31,15 +30,17 @@ class LchColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The hue component of the color in degrees (0-360).
   final double h;
 
-  LchColor(
+  const LchColor(
     this.l,
     this.c,
     this.h, {
     final int? hexId,
     final Percent alpha = Percent.max,
     final List<String>? names,
-  }) : super.alt(hexId ?? LchColor.lchToHexID(l, c, h),
-            a: alpha, names: names ?? const <String>[]);
+  }) : super(hexId, alpha: alpha, names: names ?? kEmptyNames);
+
+  @override
+  int get value => super.colorId ?? LchColor.hexIdFromLCH(l, c, h);
 
   /// Converts CIELCH components to a 32-bit ARGB integer (Color ID).
   /// This implementation relies on the standard CIELab/CIEXYZ transformations.
@@ -47,7 +48,7 @@ class LchColor extends ColorSpacesIQ with ColorModelsMixin {
   /// @param c Chroma (0 to ~134)
   /// @param h Hue (0.0 to 360.0)
   /// @param alpha Alpha value (0 to 255)
-  static int lchToHexID(
+  static int hexIdFromLCH(
     final double l,
     final double c,
     final double h, [
@@ -112,9 +113,6 @@ class LchColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  LchColor get inverted => toColor().inverted.toLch();
-
-  @override
   LchColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
@@ -165,9 +163,6 @@ class LchColor extends ColorSpacesIQ with ColorModelsMixin {
       newHue,
     );
   }
-
-  @override
-  int get value => toColor().value;
 
   @override
   LchColor darken([final double amount = 20]) {

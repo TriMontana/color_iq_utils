@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
-import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/hsluv.dart';
@@ -22,19 +21,20 @@ import 'package:color_iq_utils/src/models/hsluv.dart';
 /// - **Saturation (s):** The color's intensity, from 0 (grayscale) to 100 (fully saturated).
 /// - **Lightness (l):** The color's perceived brightness, from 0 (black) to 100 (white).
 ///  CREDIT: https://github.com/hsluv/hsluv-dart
-class HsluvColor extends ColorSpacesIQ with ColorModelsMixin {
+class HsluvColor extends CommonIQ implements ColorSpacesIQ {
   final double h;
   final double s;
   final double l;
 
-  HsluvColor(this.h, this.s, this.l,
+  const HsluvColor(this.h, this.s, this.l,
       {final int? hexId,
       final Percent alpha = Percent.max,
-      final List<String>? names})
-      : super.alt(hexId ?? HsluvColor.hexIdFromHSLuv(h: h, s: s, l: l),
-            a: alpha, names: names ?? const <String>[]);
+      final List<String> names = kEmptyNames})
+      : super(hexId, alpha: alpha, names: names);
 
   /// Creates a 32-bit ARGB hex value from HSLuv components.
+  @override
+  int get value => super.colorId ?? HsluvColor.hexIdFromHSLuv(h: h, s: s, l: l);
 
   static int hexIdFromHSLuv(
       {required final double h,
@@ -48,19 +48,10 @@ class HsluvColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  ColorIQ toColor() {
-    return ColorIQ(Hsluv.hsluvToHex(<double>[h, s, l]).toHexInt());
-  }
-
-  @override
   HsluvColor darken([final double amount = 20]) {
     return HsluvColor(h, s, max(0.0, l - amount));
   }
 
-  @override
-  HsluvColor get inverted => toColor().inverted.toHsluv();
-
-  @override
   HsluvColor get grayscale => HsluvColor(h, 0, l);
 
   @override
@@ -71,10 +62,14 @@ class HsluvColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   HsluvColor lerp(final ColorSpacesIQ other, final double t) {
-    if (t == 0.0) return this;
+    if (t == 0.0) {
+      return this;
+    }
     final HsluvColor otherHsluv =
         other is HsluvColor ? other : other.toColor().toHsluv();
-    if (t == 1.0) return otherHsluv;
+    if (t == 1.0) {
+      return otherHsluv;
+    }
 
     return HsluvColor(
       lerpHue(h, otherHsluv.h, t),
@@ -169,12 +164,6 @@ class HsluvColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
-
-  @override
-  bool get isDark => brightness == Brightness.dark;
-
-  @override
-  bool get isLight => brightness == Brightness.light;
 
   @override
   HsluvColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>

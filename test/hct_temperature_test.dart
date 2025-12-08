@@ -27,7 +27,7 @@ void main() {
         50,
       ); // Reduce opacity by 50%
       expect(transparent.transparency, closeTo(0.5, 0.01));
-      expect(transparent.alpha, closeTo(127, 2));
+      expect(transparent.alphaInt, closeTo(127, 2));
 
       final ColorIQ moreTransparent = color.adjustTransparency(
         80,
@@ -37,7 +37,7 @@ void main() {
     });
 
     test('Transparency on other models (lossy)', () {
-      final HslColor hsl = HslColor(0, 1, 0.5); // Red
+      const HslColor hsl = HslColor(0, 1, 0.5); // Red
       // Other models don't store alpha, so transparency is always 1.0
       expect(hsl.transparency, 1.0);
 

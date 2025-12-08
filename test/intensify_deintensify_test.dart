@@ -65,7 +65,7 @@ void main() {
     });
 
     test('HslColor intensify delegates correctly', () {
-      final HslColor hsl = HslColor(120, 0.5, 0.5);
+      const HslColor hsl = HslColor(120, 0.5, 0.5);
       final HslColor intensified = hsl.intensify(10);
       expect(intensified, isA<HslColor>());
       // Saturation should likely increase

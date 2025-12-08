@@ -4,13 +4,13 @@ import 'package:test/test.dart';
 void main() {
   group('Lighten Tests', () {
     test('HslColor lighten increases lightness', () {
-      final HslColor hsl = HslColor(0, 0, 0.5); // 50% lightness
+      const HslColor hsl = HslColor(0, 0, 0.5); // 50% lightness
       final HslColor lightened = hsl.lighten(20);
       expect(lightened.l, closeTo(0.7, 0.001)); // 50% + 20% = 70%
     });
 
     test('HslColor lighten clamps to 1.0', () {
-      final HslColor hsl = HslColor(0, 0, 0.9);
+      const HslColor hsl = HslColor(0, 0, 0.9);
       final HslColor lightened = hsl.lighten(20);
       expect(lightened.l, 1.0);
     });

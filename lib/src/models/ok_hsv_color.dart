@@ -1,9 +1,8 @@
-import 'dart:math';
 import 'dart:math' as math;
+import 'dart:math';
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
-import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/ok_lab_color.dart';
@@ -20,27 +19,31 @@ import 'package:color_iq_utils/src/models/ok_lab_color.dart';
 /// * `saturation`: The saturation of the color (0-1).
 /// * `val`: The value (brightness) of the color (0-1).
 /// * `alpha`: The alpha (transparency) of the color (0-1).
-class OkHsvColor extends ColorSpacesIQ with ColorModelsMixin {
+class OkHsvColor extends CommonIQ implements ColorSpacesIQ {
   final double hue;
   final double saturation;
   // Renamed from value to val to avoid conflict with ColorSpacesIQ.value
   final double val;
-  Percent get alpha => super.a;
 
-  OkHsvColor(this.hue, this.saturation, this.val,
+  const OkHsvColor(this.hue, this.saturation, this.val,
       {final Percent alpha = Percent.max,
       final int? hexId,
-      final List<String>? names})
-      : super.alt(
-            hexId ?? OkHsvColor.hexIdFromOkHSV(hue, saturation, val, alpha.val),
-            a: alpha,
-            names: names ??
-                names ??
-                <String>[
-                  ColorNames.generateDefaultNameFromInt(hexId ??
-                      OkHsvColor.hexIdFromOkHSV(
-                          hue, saturation, val, alpha.val))
-                ]);
+      final List<String> names = kEmptyNames})
+      : super(hexId, names: names, alpha: alpha);
+  // super.alt(
+  //     hexId ?? OkHsvColor.hexIdFromOkHSV(hue, saturation, val, alpha.val),
+  //     a: alpha,
+  //     names: names ??
+  //         names ??
+  //         <String>[
+  //           ColorNames.generateDefaultNameFromInt(hexId ??
+  //               OkHsvColor.hexIdFromOkHSV(
+  //                   hue, saturation, val, alpha.val))
+  //         ]);
+
+  @override
+  int get value =>
+      super.colorId ?? OkHsvColor.hexIdFromOkHSV(hue, saturation, val, alpha);
 
   /// Generates a 32-bit ARGB hex ID from OkHsv values.
   static int hexIdFromOkHSV(final double hue, final double saturation,

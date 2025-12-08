@@ -1,3 +1,16 @@
+import 'package:color_iq_utils/src/foundation_lib.dart';
+
+/// Returns the brightness of this color (light or dark).
+Brightness calculateBrightness(final Percent lrv) {
+  // Based on ThemeData.estimateBrightnessForColor
+  final double relativeLuminance = lrv.value;
+  const double kThreshold = 0.15;
+  if ((relativeLuminance + 0.05) * (relativeLuminance + 0.05) > kThreshold) {
+    return Brightness.light;
+  }
+  return Brightness.dark;
+}
+
 enum GrayscaleMethod {
   luma, // ITU-R BT.709 weights (0.2126, 0.7152, 0.0722)
   average, // (r + g + b) / 3

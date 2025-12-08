@@ -23,12 +23,12 @@ void main() {
       expect(json['type'], 'ColorIQ');
       expect(json['value'], 0xFF123456);
 
-      final ColorSpacesIQ fromJson = ColorIQ.fromJson(json);
+      final CommonIQ fromJson = ColorIQ.fromJson(json);
       expect(fromJson.toColor().value, color.value);
     });
 
     test('toJson and fromJson for HsvColor', () {
-      final HsvColor hsv = HsvColor(120, 0.5, Percent.v80);
+      const HsvColor hsv = HsvColor(120, 0.5, Percent.v80);
       final Map<String, dynamic> json = hsv.toJson();
       expect(json['type'], 'HsvColor');
       expect(json['hue'], 120);
@@ -42,7 +42,7 @@ void main() {
     });
 
     test('toJson and fromJson for HslColor', () {
-      final HslColor hsl = HslColor(240, 0.6, Percent.v40);
+      const HslColor hsl = HslColor(240, 0.6, Percent.v40);
       final Map<String, dynamic> json = hsl.toJson();
       expect(json['type'], 'HslColor');
       expect(json['hue'], 240);
@@ -70,7 +70,7 @@ void main() {
     });
 
     test('toJson and fromJson for XyzColor', () {
-      final XYZ xyz = XYZ(20, 30, 40);
+      const XYZ xyz = XYZ(20, 30, 40);
       final Map<String, dynamic> json = xyz.toJson();
       expect(json['type'], 'XyzColor');
       expect(json['x'], 20);
@@ -84,7 +84,7 @@ void main() {
     });
 
     test('toJson and fromJson for CmykColor', () {
-      final CmykColor cmyk = CmykColor(0.1, 0.2, 0.3, 0.4);
+      const CmykColor cmyk = CmykColor(0.1, 0.2, 0.3, 0.4);
       final Map<String, dynamic> json = cmyk.toJson();
       expect(json['type'], 'CmykColor');
       expect(json['c'], 0.1);
@@ -100,7 +100,7 @@ void main() {
     });
 
     test('toJson and fromJson for LchColor', () {
-      final LchColor lch = LchColor(60, 30, 180);
+      const LchColor lch = LchColor(60, 30, 180);
       final Map<String, dynamic> json = lch.toJson();
       expect(json['type'], 'LchColor');
       expect(json['l'], 60);
@@ -114,7 +114,7 @@ void main() {
     });
 
     test('Rec2020Color toJson', () {
-      final Rec2020Color rec2020 =
+      const Rec2020Color rec2020 =
           Rec2020Color(Percent.v10, Percent.v20, Percent.v30);
       final Map<String, dynamic> json = rec2020.toJson();
       expect(json['type'], 'Rec2020Color');
@@ -124,7 +124,7 @@ void main() {
     });
 
     test('DisplayP3Color toJson', () {
-      final DisplayP3Color p3 =
+      const DisplayP3Color p3 =
           DisplayP3Color(Percent.v40, Percent.v50, Percent.v60);
       final Map<String, dynamic> json = p3.toJson();
       expect(json['type'], 'DisplayP3Color');

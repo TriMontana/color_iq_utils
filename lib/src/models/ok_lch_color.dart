@@ -1,9 +1,8 @@
-import 'dart:math';
 import 'dart:math' as math;
+import 'dart:math';
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
-import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/ok_lab_color.dart';
@@ -19,25 +18,28 @@ import 'package:color_iq_utils/src/models/ok_lab_color.dart';
 /// [c] is the chroma (distance from the neutral axis, similar to saturation).
 /// [h] is the hue angle (0-360).
 /// [alpha] is the transparency (0-1).
-class OkLCH extends ColorSpacesIQ with ColorModelsMixin {
+class OkLCH extends CommonIQ implements ColorSpacesIQ {
   final Percent l;
   final double c;
   final double h;
-  final Percent alpha;
 
-  OkLCH(this.l, this.c, this.h,
-      {this.alpha = Percent.max, final int? hexId, final List<String>? names})
+  const OkLCH(this.l, this.c, this.h,
+      {final Percent alpha = Percent.max,
+      final int? hexId,
+      final List<String>? names})
       : assert(l >= 0 && l <= 1, 'L must be between 0 and 1'),
         assert(c >= 0, 'C must be non-negative'),
         assert(h >= 0 && h <= 360, 'H must be between 0 and 360'),
-        super.alt(hexId ?? toHexID(l, c, h, alpha: alpha),
-            a: alpha, names: names ?? const <String>[]);
+        super(hexId, alpha: alpha, names: names ?? kEmptyNames);
+
+  @override
+  int get value => super.colorId ?? hexIdFromOkLCH(l, c, h, alpha: alpha);
 
   /// Creates a 32-bit ARGB hex value from Oklch values.
   ///
   /// This is a stand-alone static method that converts Oklch color
   /// components directly to an integer representation of an ARGB color.
-  static int toHexID(final Percent l, final double c, final double h,
+  static int hexIdFromOkLCH(final Percent l, final double c, final double h,
       {final Percent alpha = Percent.max}) {
     final double hRad = h * pi / 180;
     final OkLabColor okLab =
@@ -94,10 +96,6 @@ class OkLCH extends ColorSpacesIQ with ColorModelsMixin {
     return copyWith(l: Percent(x));
   }
 
-  @override
-  OkLCH get inverted => toColor().inverted.toOkLch();
-
-  @override
   OkLCH get grayscale => OkLCH(l, 0.0, h, alpha: alpha);
 
   @override

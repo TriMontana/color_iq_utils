@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
-import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/xyz_color.dart';
@@ -19,7 +18,7 @@ import 'package:color_iq_utils/src/models/xyz_color.dart';
 ///   positive values are reddish.
 /// - `v`: Position on the blue-yellow axis. Negative values are bluish,
 ///   positive values are yellowish.
-class LuvColor extends ColorSpacesIQ with ColorModelsMixin {
+class LuvColor extends CommonIQ implements ColorSpacesIQ {
   /// The lightness component of the color.
   ///
   /// Ranges from 0 (black) to 100 (white).
@@ -31,12 +30,18 @@ class LuvColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The blue-yellow component of the color.
   final double v;
 
-  LuvColor(this.l, this.u, this.v,
+  const LuvColor(this.l, this.u, this.v,
       {final int? hexId,
       final Percent alpha = Percent.max,
-      final List<String>? names})
-      : super.alt(hexId ?? LuvColor.toHexId(l, u, v),
-            a: alpha, names: names ?? const <String>[]);
+      final List<String> names = kEmptyNames})
+      : super(hexId, alpha: alpha, names: names);
+
+  @override
+  int get value => super.colorId ?? LuvColor.toHexId(l, u, v);
+
+  //
+  // super.alt(hexId ?? LuvColor.toHexId(l, u, v),
+  //     a: alpha, names: names ?? const <String>[]);
 
   /// Creates a [LuvColor] from a 32-bit integer ARGB value.
   factory LuvColor.fromInt(final int argb) {

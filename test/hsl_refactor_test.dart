@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('HslColor Refactor Tests', () {
     test('whiten increases lightness and desaturates', () {
-      final HslColor color = HslColor(0, 1.0, Percent.mid); // Red
+      const HslColor color = HslColor(0, 1.0, Percent.mid); // Red
       final HslColor whitened = color.whiten(Percent.mid);
 
       expect(whitened.l, greaterThan(color.l));
@@ -12,7 +12,7 @@ void main() {
     });
 
     test('blacken decreases lightness and desaturates', () {
-      final HslColor color = HslColor(0, 1.0, Percent.mid); // Red
+      const HslColor color = HslColor(0, 1.0, Percent.mid); // Red
       final HslColor blackened = color.blacken(Percent.mid);
 
       expect(blackened.l, lessThan(color.l));
@@ -20,8 +20,8 @@ void main() {
     });
 
     test('lerp interpolates correctly', () {
-      final HslColor start = HslColor(0, 1.0, Percent.mid); // Red
-      final HslColor end = HslColor(120, 1.0, Percent.mid); // Green
+      const HslColor start = HslColor(0, 1.0, Percent.mid); // Red
+      const HslColor end = HslColor(120, 1.0, Percent.mid); // Green
       final HslColor mid = start.lerp(end, 0.5);
 
       expect(mid.h, closeTo(60, 0.1)); // Yellow
@@ -30,14 +30,14 @@ void main() {
     });
 
     test('intensify increases saturation', () {
-      final HslColor color = HslColor(0, Percent.mid, Percent.mid);
+      const HslColor color = HslColor(0, Percent.mid, Percent.mid);
       final HslColor intensified = color.intensify(Percent.v20);
 
       expect(intensified.s, closeTo(0.7, 0.01));
     });
 
     test('deintensify decreases saturation', () {
-      final HslColor color = HslColor(0, Percent.mid, Percent.mid);
+      const HslColor color = HslColor(0, Percent.mid, Percent.mid);
       final HslColor deintensified = color.deintensify(Percent.v20);
 
       expect(deintensified.s, closeTo(0.3, 0.01));

@@ -38,7 +38,7 @@ void main() {
     });
 
     test('Delegation works for other models', () {
-      final HslColor hsl = kHslRed; // Red
+      const HslColor hsl = kHslRed; // Red
       final HslColor simulated = hsl.simulate(ColorBlindnessType.protanopia);
       expect(simulated, isA<HslColor>());
       // Should match the ColorIQ simulation converted back to HSL

@@ -53,7 +53,7 @@ void main() {
     });
 
     test('Other models delegation (HslColor)', () {
-      final HslColor hsl = HslColor(0, Percent.max, Percent.mid); // Red
+      const HslColor hsl = HslColor(0, Percent.max, Percent.mid); // Red
       expect(hsl.argb255Ints, <int>[255, 255, 0, 0]);
       expect(hsl.rgbaLinearized, <double>[1.0, 0.0, 0.0, 1.0]);
 

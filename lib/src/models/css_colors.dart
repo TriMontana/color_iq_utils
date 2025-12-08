@@ -33,7 +33,7 @@ extension CssExtensions on ColorSpacesIQ {
 
   String _toHex() {
     final ColorIQ c = toColor();
-    final int a = c.alpha;
+    final int a = c.alphaInt;
     final String r = c.red.toRadixString(16).padLeft(2, '0');
     final String g = c.green.toRadixString(16).padLeft(2, '0');
     final String b = c.blue.toRadixString(16).padLeft(2, '0');
@@ -48,10 +48,10 @@ extension CssExtensions on ColorSpacesIQ {
 
   String _toRgb() {
     final ColorIQ c = toColor();
-    if (c.alpha == 255) {
+    if (c.alphaInt == 255) {
       return 'rgb(${c.red}, ${c.green}, ${c.blue})';
     } else {
-      final String a = (c.alpha / 255.0)
+      final String a = (c.alphaInt / 255.0)
           .toStringAsFixed(2)
           .replaceAll(RegExp(r'\.?0+$'), '');
       return 'rgba(${c.red}, ${c.green}, ${c.blue}, $a)';

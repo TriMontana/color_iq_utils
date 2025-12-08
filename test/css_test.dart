@@ -23,7 +23,7 @@ void main() {
     });
 
     test('toCssString HSL', () {
-      final HslColor c = HslColor(0, 1.0, Percent.half); // Red
+      const HslColor c = HslColor(0, 1.0, Percent.half); // Red
       expect(
         c.toCssString(space: CssColorSpace.hsl),
         equals('hsl(0, 100%, 50%)'),
@@ -31,7 +31,7 @@ void main() {
     });
 
     test('toCssString OKLAB', () {
-      final OkLabColor c = OkLabColor(0.5, 0.1, -0.1);
+      const OkLabColor c = OkLabColor(0.5, 0.1, -0.1);
       expect(
         c.toCssString(space: CssColorSpace.oklab),
         equals('oklab(0.5 0.1 -0.1)'),
@@ -56,7 +56,7 @@ void main() {
       final ColorSpacesIQ cAlpha = CssColor.fromCssString(
         'rgba(255, 0, 0, 0.5)',
       );
-      expect(cAlpha.toColor().alpha, equals(128));
+      expect(cAlpha.toColor().alphaInt, equals(128));
     });
 
     test('fromCssString HSL', () {

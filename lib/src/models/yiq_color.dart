@@ -1,6 +1,5 @@
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
-import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 
@@ -16,7 +15,7 @@ import 'package:color_iq_utils/src/models/hct_color.dart';
 ///
 /// This class provides methods to convert from and to other color spaces,
 /// as well as to manipulate the color.
-class YiqColor extends ColorSpacesIQ with ColorModelsMixin {
+class YiqColor extends CommonIQ implements ColorSpacesIQ {
   /// The luma component.
   final double y;
 
@@ -26,12 +25,14 @@ class YiqColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The quadrature chrominance component.
   final double q;
 
-  YiqColor(this.y, this.i, this.q,
+  const YiqColor(this.y, this.i, this.q,
       {final int? val,
       final Percent alpha = Percent.max,
       final List<String>? names})
-      : super.alt(val ?? YiqColor.argbFromYiq(y, i, q),
-            a: alpha, names: names ?? const <String>[]);
+      : super(val, alpha: alpha, names: names ?? kEmptyNames);
+
+  @override
+  int get value => super.colorId ?? YiqColor.hexIdFromYiq(y, i, q);
 
   /// Converts a 32-bit ARGB color ID (Flutter Color.value) to YIQ components.
   ///
@@ -67,7 +68,7 @@ class YiqColor extends ColorSpacesIQ with ColorModelsMixin {
   /// [y] - The luma component (0.0 to 1.0).
   /// [i] - The in-phase chrominance component (-0.5957 to 0.5957).
   /// [q] - The quadrature chrominance component (-0.5226 to 0.5226).
-  static int argbFromYiq(final double y, final double i, final double q,
+  static int hexIdFromYiq(final double y, final double i, final double q,
       {final Percent alpha = Percent.max}) {
     final double r = y + 0.956 * i + 0.621 * q;
     final double g = y - 0.272 * i - 0.647 * q;
@@ -111,9 +112,6 @@ class YiqColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  YiqColor deintensify([final double amount = 10]) => desaturate(amount);
-
-  @override
   YiqColor accented([final double amount = 15]) {
     return intensify(amount);
   }
@@ -122,9 +120,6 @@ class YiqColor extends ColorSpacesIQ with ColorModelsMixin {
   YiqColor simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toYiq();
   }
-
-  @override
-  YiqColor get inverted => toColor().inverted.toYiq();
 
   @override
   YiqColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);

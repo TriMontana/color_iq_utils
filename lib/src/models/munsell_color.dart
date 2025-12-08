@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
-import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
@@ -19,7 +18,7 @@ import 'package:material_color_utilities/hct/cam16.dart';
 /// Many methods convert the `MunsellColor` to a `ColorIQ` object first to perform
 /// the operation, and then convert it back. This might lead to precision loss
 /// due to the approximate nature of the Munsell to RGB conversion.
-class MunsellColor extends ColorSpacesIQ with ColorModelsMixin {
+class MunsellColor extends CommonIQ implements ColorSpacesIQ {
   /// The Munsell hue, represented as a string (e.g., "5R", "10GY").
   final String hue;
 
@@ -29,12 +28,15 @@ class MunsellColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The Munsell chroma (saturation), starting from 0 for neutral gray.
   final double chroma;
 
-  MunsellColor(this.hue, this.munsellValue, this.chroma,
+  const MunsellColor(this.hue, this.munsellValue, this.chroma,
       {final int? hexId,
       final Percent alpha = Percent.max,
       final List<String>? names})
-      : super.alt(hexId ?? MunsellColor.toHexId(hue, munsellValue, chroma),
-            a: alpha, names: names ?? const <String>[]);
+      : super(hexId, alpha: alpha, names: names ?? kEmptyNames);
+
+  @override
+  int get value =>
+      super.colorId ?? MunsellColor.toHexId(hue, munsellValue, chroma);
 
   /// Creates a 32-bit hex ID from the Munsell properties.
   ///
@@ -146,9 +148,6 @@ class MunsellColor extends ColorSpacesIQ with ColorModelsMixin {
       toColor().opaquer(amount).toMunsell();
 
   @override
-  MunsellColor get inverted => toColor().inverted.toMunsell();
-
-  @override
   MunsellColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
@@ -164,9 +163,9 @@ class MunsellColor extends ColorSpacesIQ with ColorModelsMixin {
     if (other is MunsellColor) {
       otherMunsell = other;
     } else if (other.isEqual(cWhite)) {
-      otherMunsell = MunsellColor('N', 10.0, 0.0);
+      otherMunsell = const MunsellColor('N', 10.0, 0.0);
     } else if (other.isEqual(cBlack)) {
-      otherMunsell = MunsellColor('N', 0.0, 0.0);
+      otherMunsell = const MunsellColor('N', 0.0, 0.0);
     } else {
       otherMunsell = other.toColor().toMunsell();
     }

@@ -22,35 +22,35 @@ void main() {
     });
 
     test('HslColor darken', () {
-      final HslColor hsl = HslColor(100, 0.5, 0.5);
+      const HslColor hsl = HslColor(100, 0.5, 0.5);
       final HslColor darkened = hsl.darken(20);
       expect(darkened.l, closeTo(0.3, 0.01));
       print('HslColor darken: $darkened');
     });
 
     test('HsvColor darken', () {
-      final HsvColor hsv = HsvColor(100, 0.5, Percent.half);
+      const HsvColor hsv = HsvColor(100, 0.5, Percent.half);
       final HsvColor darkened = hsv.darken(20);
       expect(darkened.v, closeTo(0.3, 0.01));
       print('HsvColor darken: $darkened');
     });
 
     test('OkLabColor darken', () {
-      final OkLabColor oklab = OkLabColor(0.5, 0.1, 0.1);
+      const OkLabColor oklab = OkLabColor(0.5, 0.1, 0.1);
       final OkLabColor darkened = oklab.darken(20);
       expect(darkened.l, closeTo(0.3, 0.01));
       print('OkLabColor darken: $darkened');
     });
 
     test('HctColor darken', () {
-      final HctColor hct = HctColor(100, 50, 50);
+      const HctColor hct = HctColor(100, 50, 50);
       final HctColor darkened = hct.darken(20);
       expect(darkened.tone, closeTo(30, 0.01));
       print('HctColor darken: $darkened');
     });
 
     test('Darken clamping', () {
-      final HslColor hsl = HslColor(0, 0, Percent.tenth);
+      const HslColor hsl = HslColor(0, 0, Percent.tenth);
       final HslColor darkened = hsl.darken(20);
       expect(darkened.l, 0.0);
       print('Darken clamping: $darkened');

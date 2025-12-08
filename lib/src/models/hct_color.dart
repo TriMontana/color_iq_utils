@@ -9,7 +9,7 @@ import 'package:material_color_utilities/utils/color_utils.dart';
 /// accurate color measurement system that can also accurately render what
 /// colors will appear as in different lighting environments.
 /// credit: Adapted from material_color_utilities
-class HctColor extends ColorSpacesIQ with ColorModelsMixin {
+class HctColor extends CommonIQ implements ColorSpacesIQ {
   final double hue;
   final double chroma;
   final double tone;
@@ -23,34 +23,30 @@ class HctColor extends ColorSpacesIQ with ColorModelsMixin {
   static HctColor from(
     final double hue,
     final double chroma,
-    final double tone,
-  ) {
-    final int argb = HctSolver.solveToInt(hue, chroma, tone);
-    return HctColor(hue, chroma, tone, argb: argb);
+    final double tone, {
+    int? argb,
+    final List<String> names = kEmptyNames,
+  }) {
+    argb ??= HctSolver.solveToInt(hue, chroma, tone);
+    return HctColor(hue, chroma, tone, argb: argb, names: names);
   }
+
+  @override
+  int get value => super.colorId ?? HctSolver.solveToInt(hue, chroma, tone);
 
   /// Primary constructor.
   /// credit: Adapted from material_color_utilities
-  HctColor(this.hue, this.chroma, this.tone,
+  const HctColor(this.hue, this.chroma, this.tone,
       {final int? argb,
-      final Percent? lrv,
       final Percent alpha = Percent.max,
-      final List<String>? names})
-      : assert(tone >= kMinTone && tone <= kMaxTone, 'Invalid Tone: $tone'),
-        assert(
-          chroma >= kMinChroma && chroma <= kMaxChroma,
-          'Invalid Chroma: $chroma',
-        ),
-        assert(hue >= 0.0 && hue <= 360.0, 'Invalid Hue: $hue'),
-        super.alt(argb ?? HctSolver.solveToInt(hue, chroma, tone),
-            lrv: lrv, a: alpha, names: names ?? const <String>[]);
+      final List<String> names = kEmptyNames})
+      : super(argb, alpha: alpha, names: names);
 
   factory HctColor.fromInt(
     final int argb, {
     final double? h,
     final double? c,
     final double? t,
-    final Percent? lrv,
     final List<String>? names,
   }) {
     final Cam16 cam16 = Cam16.fromInt(argb);
@@ -58,8 +54,7 @@ class HctColor extends ColorSpacesIQ with ColorModelsMixin {
     final double chroma = c?.assertRangeChroma('fromInt') ?? cam16.chroma;
     final double tone =
         t?.assertRange0to100('fromInt') ?? ColorUtils.lstarFromArgb(argb);
-    return HctColor(hue, chroma, tone,
-        argb: argb, lrv: lrv, names: names ?? const <String>[]);
+    return HctColor(hue, chroma, tone, argb: argb, names: names ?? kEmptyNames);
   }
 
   factory HctColor.alt(
@@ -67,22 +62,19 @@ class HctColor extends ColorSpacesIQ with ColorModelsMixin {
     final double c,
     final double t, {
     final int? argb,
-    final Percent? lrv,
     final List<String>? names,
   }) {
     final double hue = h.assertRangeHue('HctColor.alt');
     final double chroma = c.assertRangeChroma('HctColor.alt');
     final double tone = t.assertRange0to100('HctColor.alt');
     final int hexID = argb ?? HctSolver.solveToInt(hue, chroma, tone);
-    final Percent luminance = lrv ?? hexID.toLRV;
+
     return HctColor(hue, chroma, tone,
-        argb: hexID, lrv: luminance, names: names ?? const <String>[]);
+        argb: hexID, names: names ?? const <String>[]);
   }
 
-  HctColor withChroma(final double nuChroma,
-          {final Percent? lrv, final List<String>? names}) =>
-      HctColor(hue, nuChroma, tone,
-          argb: value, lrv: lrv, names: names ?? const <String>[]);
+  HctColor withChroma(final double nuChroma, {final List<String>? names}) =>
+      HctColor(hue, nuChroma, tone, argb: value, names: names ?? kEmptyNames);
 
   /// Converts this HCT color to a [CmykColor].
   CmykColor toCMYK() => CmykColor.fromInt(value);
@@ -201,10 +193,6 @@ class HctColor extends ColorSpacesIQ with ColorModelsMixin {
     return toColor().simulate(type).toHctColor();
   }
 
-  @override
-  HctColor get inverted => toColor().inverted.toHctColor();
-
-  @override
   HctColor get grayscale => HctColor(hue, 0, tone, argb: value);
 
   @override
@@ -243,11 +231,18 @@ class HctColor extends ColorSpacesIQ with ColorModelsMixin {
     final double? hue,
     final double? chroma,
     final double? tone,
+    final int? argb,
   }) {
+    final double nuHue = hue ?? this.hue;
+    final double nuChroma = chroma ?? this.chroma;
+    final double nuTone = tone ?? this.tone;
+    final int nuArgb = argb ?? HctSolver.solveToInt(nuHue, nuChroma, nuTone);
+
     return HctColor.alt(
-      hue ?? this.hue,
-      chroma ?? this.chroma,
-      tone ?? this.tone,
+      nuHue,
+      nuChroma,
+      nuTone,
+      argb: nuArgb,
     );
   }
 

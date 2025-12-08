@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
-import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 
@@ -20,20 +19,25 @@ import 'package:color_iq_utils/src/models/hct_color.dart';
 /// The `a` and `b` axes are theoretically unbounded but are practically
 /// limited by the gamut of real-world colors.
 ///
-class HunterLabColor extends ColorSpacesIQ with ColorModelsMixin {
+class HunterLabColor extends CommonIQ implements ColorSpacesIQ {
   final double l;
   final double aLab;
   final double bLab;
 
-  HunterLabColor(this.l, this.aLab, this.bLab,
+  const HunterLabColor(this.l, this.aLab, this.bLab,
       {final int? hexId,
       final Percent alpha = Percent.max,
-      final List<String>? names})
-      : super.alt(hexId ?? toARGB(l, aLab, bLab),
-            a: alpha, names: names ?? const <String>[]);
+      final List<String> names = kEmptyNames})
+      : super(hexId, alpha: alpha, names: names);
+
+  @override
+  int get value =>
+      super.colorId ??
+      HunterLabColor.hexIdFromHunter(l, aLab, bLab, alpha: alpha);
 
   /// A stand-alone static method to create a 32-bit hexID/ARGB from l, aLab, bLab.
-  static int toARGB(final double l, final double aLab, final double bLab,
+  static int hexIdFromHunter(
+      final double l, final double aLab, final double bLab,
       {final Percent alpha = Percent.max}) {
     // Using D65 reference values to match sRGB/XYZ white point
     const double xn = 95.047;
@@ -70,9 +74,6 @@ class HunterLabColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  ColorIQ toColor() => ColorIQ(value);
-
-  @override
   HunterLabColor darken([final double amount = 20]) {
     return HunterLabColor(max(0, l - amount), aLab, bLab);
   }
@@ -106,9 +107,6 @@ class HunterLabColor extends ColorSpacesIQ with ColorModelsMixin {
   HunterLabColor simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toHunterLab();
   }
-
-  @override
-  HunterLabColor get inverted => toColor().inverted.toHunterLab();
 
   @override
   HunterLabColor whiten([final double amount = 20]) =>
@@ -183,18 +181,6 @@ class HunterLabColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
-
-  @override
-  double get luminance => toColor().luminance;
-
-  @override
-  Brightness get brightness => toColor().brightness;
-
-  @override
-  bool get isDark => brightness == Brightness.dark;
-
-  @override
-  bool get isLight => brightness == Brightness.light;
 
   @override
   HunterLabColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>

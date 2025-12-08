@@ -13,7 +13,7 @@ import 'package:color_iq_utils/color_iq_utils.dart';
 ///   100% is the full color. It is represented as a double from 0.0 to 1.0.
 /// - **Lightness**: The "brightness" of the color. 0% is black, 100% is white,
 ///   and 50% is the "normal" color. It is represented as a double from 0.0 to 1.0.
-class HslColor extends ColorSpacesIQ with ColorModelsMixin {
+class HslColor extends CommonIQ implements ColorSpacesIQ {
   /// The hue value, ranging from 0.0 to 360.0.
   final double h;
 
@@ -23,20 +23,18 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The lightness value, ranging from 0.0 to 1.0.
   final double l;
 
-  /// The alpha value (opacity) of the color.
-  Percent get alpha => super.a;
-
   /// Creates an HSL color and calculates the `hexId` automatically.
   ///
   /// This is a convenience constructor that calculates the integer hex value
   /// from the provided HSL and alpha values.
-  HslColor(this.h, this.s, this.l,
+  const HslColor(this.h, this.s, this.l,
       {final Percent alpha = Percent.max,
       final int? hexId,
-      final Percent? lrv,
       final List<String>? names})
-      : super.alt(hexId ?? HslColor.hexIdFromHSL(h, s, l, alpha: alpha),
-            lrv: lrv, a: alpha, names: names ?? const <String>[]);
+      : super(hexId, alpha: alpha, names: names ?? kEmptyNames);
+
+  @override
+  int get value => super.colorId ?? hexIdFromHSL(h, s, l, alpha: alpha);
 
   /// Creates an [HslColor] from an RGB [Color].
   ///
@@ -141,13 +139,11 @@ class HslColor extends ColorSpacesIQ with ColorModelsMixin {
     return toColor().simulate(type).toHsl();
   }
 
-  @override
-  HslColor get inverted => flipHue();
+  HslColor get fippedHue => flipHue();
 
   /// Flip the hue by 180 degrees.
   HslColor flipHue() => copyWith(hue: _wrapHue(h + 180));
 
-  @override
   HslColor get grayscale => copyWith(saturation: Percent.zero);
 
   @override

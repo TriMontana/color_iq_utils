@@ -21,7 +21,7 @@ import 'package:color_iq_utils/src/foundation_lib.dart';
 /// It implements the `ColorSpacesIQ` interface, ensuring a consistent API for color operations
 /// across different color models in this library.
 ///
-class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
+class CmykColor extends CommonIQ implements ColorSpacesIQ {
   final double c;
   final double m;
   final double y;
@@ -30,7 +30,7 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
   /// Constructor for creating a CMYK color, optionally calculating the hex ID if not provided.
   ///
   /// [c], [m], [y], and [k] must be between 0.0 and 1.0.
-  CmykColor(this.c, this.m, this.y, this.k,
+  const CmykColor(this.c, this.m, this.y, this.k,
       {final int? value,
       final Percent alpha = Percent.max,
       final List<String>? names})
@@ -38,8 +38,10 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
         assert(m >= 0 && m <= 1, 'Invalid M value: $m'),
         assert(y >= 0 && y <= 1, 'Invalid Y value: $y'),
         assert(k >= 0 && k <= 1, 'Invalid K value: $k'),
-        super.alt(value ?? CmykColor.hexFromCmyk(c, m, y, k),
-            a: alpha, names: names ?? const <String>[]);
+        super(value, alpha: alpha, names: names ?? kEmptyNames);
+
+  @override
+  int get value => super.colorId ?? hexFromCmyk(c, m, y, k);
 
   /// Converts this CMYK color to the sRGB color space.
   @override
@@ -76,14 +78,14 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   /// Converts this color to CMYK.
-  static CmykColor fromColorSpacesIQ(final ColorSpacesIQ clr) {
+  static CmykColor fromColorSpacesIQ(final CommonIQ clr) {
     final double r = clr.r;
     final double g = clr.g;
     final double b = clr.b;
 
     final double k = 1.0 - max(r, max(g, b));
     if (k == 1.0) {
-      return CmykColor(0, 0, 0, 1);
+      return const CmykColor(0, 0, 0, 1);
     }
 
     final double c = (1.0 - r - k) / (1.0 - k);
@@ -100,7 +102,7 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
 
     final double k = 1.0 - max(r, max(g, b));
     if (k == 1.0) {
-      return CmykColor(0, 0, 0, 1);
+      return const CmykColor(0, 0, 0, 1);
     }
 
     final double c = (1.0 - r - k) / (1.0 - k);
@@ -109,9 +111,6 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
 
     return CmykColor(c, m, y, k);
   }
-
-  @override
-  int get value => toColor().value;
 
   @override
   bool operator ==(final Object other) =>
@@ -151,19 +150,7 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  CmykColor desaturate([final double amount = 25]) {
-    return lerp(grayscale, amount / 100);
-  }
-
-  @override
-  CmykColor intensify([final double amount = 10]) {
-    return saturate(amount);
-  }
-
-  @override
-  CmykColor deintensify([final double amount = 10]) {
-    return desaturate(amount);
-  }
+  CmykColor intensify([final double amount = 10]) => saturate(amount);
 
   @override
   CmykColor accented([final double amount = 15]) {
@@ -178,10 +165,14 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   CmykColor lerp(final ColorSpacesIQ other, final double t) {
-    if (t == 0.0) return this;
+    if (t == 0.0) {
+      return this;
+    }
     final CmykColor otherCmyk =
-        other is CmykColor ? other : CmykColor.fromColorSpacesIQ(other);
-    if (t == 1.0) return otherCmyk;
+        other is CmykColor ? other : CmykColor.fromInt(other.value);
+    if (t == 1.0) {
+      return otherCmyk;
+    }
 
     return CmykColor(
       lerpDouble(c, otherCmyk.c, t),
@@ -230,7 +221,7 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic {
+  List<CmykColor> get monochromatic {
     // Generate a simple monochromatic set by varying K while keeping C/M/Y fixed
     final List<double> kValues = <double>[
       k,
@@ -285,7 +276,7 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
       random.nextDouble(),
       random.nextDouble(),
       random.nextDouble(),
-    );
+    ) as ColorSpacesIQ;
   }
 
   @override
@@ -299,12 +290,6 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   Brightness get brightness =>
       luminance > 0.5 ? Brightness.light : Brightness.dark;
-
-  @override
-  bool get isDark => brightness == Brightness.dark;
-
-  @override
-  bool get isLight => brightness == Brightness.light;
 
   /// Blends this color with another color.
   /// The `amount` parameter specifies the percentage of the `other` color to blend.
@@ -402,7 +387,6 @@ class CmykColor extends ColorSpacesIQ with ColorModelsMixin {
         .toList();
   }
 
-  @override
   CmykColor get grayscale {
     // Using a weighted average of C, M, Y to determine the gray value for K
     final double gray = c * 0.3 + m * 0.59 + y * 0.11;

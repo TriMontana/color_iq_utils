@@ -18,18 +18,24 @@ import 'package:color_iq_utils/src/foundation_lib.dart';
 /// integrates with other color models in the library, such as `ColorIQ` (sRGB)
 /// and `HctColor`, by converting to and from `ColorIQ` as an intermediary.
 ///
-class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
+class DisplayP3Color extends CommonIQ implements ColorSpacesIQ {
   @override
   final Percent r;
   @override
   final Percent g;
+  @override
+  final Percent b;
 
-  DisplayP3Color(this.r, this.g, final Percent b,
+  const DisplayP3Color(this.r, this.g, this.b,
       {final int? hexId,
       final Percent alpha = Percent.max,
       final List<String>? names})
-      : super.alt(hexId ?? DisplayP3Color.toHexId(r, g, b),
-            a: alpha, r: r, g: g, b: b, names: names ?? const <String>[]);
+      : super(hexId, alpha: alpha, names: names ?? kEmptyNames);
+
+  @override
+  int get value =>
+      super.colorId ??
+      DisplayP3Color.hexIdFromDisplayP3(r.value, g.value, b.value);
 
   static DisplayP3Color fromInt(final int hexId) {
     final XYZ xyz = XYZ.xyzFromRgbLinearized(
@@ -52,7 +58,8 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   /// Creates a 32-bit integer ARGB value from Display P3 components.
-  static int toHexId(final double r, final double g, final double b) {
+  static int hexIdFromDisplayP3(
+      final double r, final double g, final double b) {
     // Gamma decoding (P3 to Linear), Linearize
     // Gamma decoding (P3 to Linear), Linearize
     final double rLin = srgbToLinear(r.clamp(0.0, 1.0));
@@ -157,12 +164,6 @@ class DisplayP3Color extends ColorSpacesIQ with ColorModelsMixin {
   DisplayP3Color simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toDisplayP3();
   }
-
-  @override
-  DisplayP3Color get inverted => toColor().inverted.toDisplayP3();
-
-  @override
-  DisplayP3Color get grayscale => toColor().grayscale.toDisplayP3();
 
   @override
   DisplayP3Color whiten([final double amount = 20]) =>

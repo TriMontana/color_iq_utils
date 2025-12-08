@@ -1,9 +1,7 @@
 import 'dart:math';
 
 import 'package:color_iq_utils/src/foundation_lib.dart';
-import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/hsluv.dart';
 import 'package:color_iq_utils/src/models/lab_color.dart';
 import 'package:color_iq_utils/src/models/luv_color.dart';
@@ -21,17 +19,20 @@ import 'package:color_iq_utils/src/models/luv_color.dart';
 /// XYZ color space will look the same regardless of the device that is used to display them.
 /// This is in contrast to device-dependent color spaces, such as the RGB color space, where
 /// the colors can vary depending on the device that is used to display them.
-class XYZ extends ColorSpacesIQ with ColorModelsMixin {
+class XYZ extends CommonIQ {
   final double x;
   final double y;
   final double z;
 
-  XYZ(this.x, this.y, this.z,
+  const XYZ(this.x, this.y, this.z,
       {final int? hexId,
       final Percent alpha = Percent.max,
       final List<String>? names})
-      : super.alt(hexId ?? argbFromXyz(x, y, z),
-            a: alpha, names: names ?? const <String>[]);
+      : super(hexId, alpha: alpha, names: names ?? kEmptyNames);
+
+  @override
+  int get value => super.colorId ?? XYZ.hexIdFromXYZ(x, y, z);
+
   factory XYZ.fromInt(final int hexId) {
     final List<double> lst = xyzFromArgb(hexId);
     return XYZ(lst[0], lst[1], lst[2], hexId: hexId);
@@ -39,13 +40,13 @@ class XYZ extends ColorSpacesIQ with ColorModelsMixin {
 
   /// Converts this color to XYZ.
   static XYZ xyxFromRgb(final int red, final int green, final int blue) =>
-      xyzFromRgbLinearized(
+      XYZ.xyzFromRgbLinearized(
           linearized(red), linearized(green), linearized(blue));
 
   /// Converts this color to XYZ.  Values are expected to be in the range of 0.0 to 1.0
   /// and are expected to be in the sRGB color space, not linearized.
-  static XYZ xyxFromSRgb(final double r, final double g, final double b) =>
-      xyzFromRgbLinearized(srgbToLinear(r), srgbToLinear(g), srgbToLinear(b));
+  static XYZ xyxFromSRgb(final double r, final double g, final double b) => XYZ
+      .xyzFromRgbLinearized(srgbToLinear(r), srgbToLinear(g), srgbToLinear(b));
 
   /// Converts this color to XYZ.
   static XYZ xyzFromRgbLinearized(final double redLinearized,
@@ -60,9 +61,8 @@ class XYZ extends ColorSpacesIQ with ColorModelsMixin {
   static ColorIQ xyzToColor(final double x, final double y, final double z) =>
       ColorIQ(argbFromXyz(x, y, z));
 
-  static int xyzToHexId(final double x, final double y, final double z) {
-    return argbFromXyz(x, y, z);
-  }
+  static int hexIdFromXYZ(final double x, final double y, final double z) =>
+      argbFromXyz(x, y, z);
 
   RgbDoubles toRgbTuple() {
     final List<double> lst = Hsluv.xyzToRgb(<double>[x, y, z]);
@@ -104,72 +104,6 @@ class XYZ extends ColorSpacesIQ with ColorModelsMixin {
     return LuvColor(l, uOut, vOut);
   }
 
-  @override
-  XYZ get inverted => toColor().inverted.xyz;
-
-  @override
-  XYZ whiten([final double amount = 20]) => toColor().whiten(amount).xyz;
-
-  @override
-  XYZ blacken([final double amount = 20]) => toColor().blacken(amount).xyz;
-
-  @override
-  XYZ lighten([final double amount = 20]) {
-    return toColor().lighten(amount).xyz;
-  }
-
-  @override
-  XYZ brighten([final double amount = 20]) {
-    return toColor().brighten(amount).xyz;
-  }
-
-  @override
-  XYZ darken([final double amount = 20]) {
-    return toColor().darken(amount).xyz;
-  }
-
-  @override
-  XYZ saturate([final double amount = 25]) {
-    return toColor().saturate(amount).xyz;
-  }
-
-  @override
-  XYZ desaturate([final double amount = 25]) {
-    return toColor().desaturate(amount).xyz;
-  }
-
-  @override
-  XYZ intensify([final double amount = 10]) {
-    return toColor().intensify(amount).xyz;
-  }
-
-  @override
-  XYZ deintensify([final double amount = 10]) {
-    return toColor().deintensify(amount).xyz;
-  }
-
-  @override
-  XYZ accented([final double amount = 15]) {
-    return toColor().accented(amount).xyz;
-  }
-
-  @override
-  XYZ simulate(final ColorBlindnessType type) {
-    return toColor().simulate(type).xyz;
-  }
-
-  @override
-  XYZ lerp(final ColorSpacesIQ other, final double t) =>
-      (toColor().lerp(other, t) as ColorIQ).xyz;
-
-  @override
-  XYZ fromHct(final HctColor hct) => hct.toColor().xyz;
-
-  @override
-  XYZ adjustTransparency([final double amount = 20]) {
-    return toColor().adjustTransparency(amount).xyz;
-  }
-
   /// Creates a copy of this color with the given fields replaced with the new values.
   XYZ copyWith(
       {final double? x,
@@ -180,92 +114,8 @@ class XYZ extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor()
-      .monochromatic
-      .map((final ColorSpacesIQ c) => (c as ColorIQ).xyz)
-      .toList();
-
-  @override
-  List<ColorSpacesIQ> lighterPalette([final double? step]) {
-    return toColor()
-        .lighterPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).xyz)
-        .toList();
-  }
-
-  @override
-  List<ColorSpacesIQ> darkerPalette([final double? step]) {
-    return toColor()
-        .darkerPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).xyz)
-        .toList();
-  }
-
-  @override
-  ColorSpacesIQ get random => (toColor().random as ColorIQ).xyz;
-
-  @override
-  bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
-
-  @override
-  bool get isDark => brightness == Brightness.dark;
-
-  @override
-  bool get isLight => brightness == Brightness.light;
-
-  @override
-  XYZ blend(final ColorSpacesIQ other, [final double amount = 50]) =>
-      toColor().blend(other, amount).xyz;
-
-  @override
-  XYZ opaquer([final double amount = 20]) => toColor().opaquer(amount).xyz;
-
-  @override
-  XYZ adjustHue([final double amount = 20]) => toColor().adjustHue(amount).xyz;
-
-  @override
-  XYZ get complementary => toColor().complementary.xyz;
-
-  @override
-  XYZ warmer([final double amount = 20]) => toColor().warmer(amount).xyz;
-
-  @override
-  XYZ cooler([final double amount = 20]) => toColor().cooler(amount).xyz;
-
-  @override
-  List<XYZ> generateBasicPalette() =>
-      toColor().generateBasicPalette().map((final ColorIQ c) => c.xyz).toList();
-
-  @override
-  List<XYZ> tonesPalette() =>
-      toColor().tonesPalette().map((final ColorIQ c) => c.xyz).toList();
-
-  @override
-  List<XYZ> analogous({final int count = 5, final double offset = 30}) =>
-      toColor()
-          .analogous(count: count, offset: offset)
-          .map((final ColorIQ c) => c.xyz)
-          .toList();
-
-  @override
-  List<XYZ> square() =>
-      toColor().square().map((final ColorIQ c) => c.xyz).toList();
-
-  @override
-  List<XYZ> tetrad({final double offset = 60}) =>
-      toColor().tetrad(offset: offset).map((final ColorIQ c) => c.xyz).toList();
-
-  @override
   double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
 
-  @override
-  double contrastWith(final ColorSpacesIQ other) =>
-      toColor().contrastWith(other);
-
-  @override
-  ColorSlice closestColorSlice() => toColor().closestColorSlice();
-
-  @override
   bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) {
     if (gamut == Gamut.sRGB) {
       // Convert to sRGB linear
@@ -293,15 +143,15 @@ class XYZ extends ColorSpacesIQ with ColorModelsMixin {
     return true;
   }
 
-  @override
   Map<String, dynamic> toJson() {
     return <String, dynamic>{'type': 'XyzColor', 'x': x, 'y': y, 'z': z};
+  }
+
+  XYZ accented([final double amount = 15]) {
+    return toColor().accented(amount).xyz;
   }
 
   @override
   String toString() =>
       'XyzColor(x: ${x.toStrTrimZeros(2)}, y: ${y.toStringAsFixed(2)}, z: ${z.toStringAsFixed(2)})';
-
-  @override
-  ColorIQ toColor() => ColorIQ(value);
 }

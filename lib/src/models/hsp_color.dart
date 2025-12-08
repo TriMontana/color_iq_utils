@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
-import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
@@ -19,7 +18,7 @@ import 'package:material_color_utilities/hct/cam16.dart';
 ///
 /// This model is based on the HSP color model described by Darel Rex Finley.
 /// More details can be found at http://alienryderflex.com/hsp.html
-class HspColor extends ColorSpacesIQ with ColorModelsMixin {
+class HspColor extends CommonIQ implements ColorSpacesIQ {
   /// The hue component of the color, ranging from 0.0 to 1.0.
   final double h;
 
@@ -29,22 +28,24 @@ class HspColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The perceived brightness component of the color, ranging from 0.0 to 1.0.
   final double p;
 
-  /// The alpha channel of the color, ranging from 0.0 (transparent) to 1.0 (opaque).
-  Percent get alpha => super.a;
-
   /// Creates a new `HspColor`.
-  HspColor(this.h, this.s, this.p,
+  const HspColor(this.h, this.s, this.p,
       {final Percent alpha = Percent.max,
       final int? hexId,
-      final List<String>? names})
-      : super.alt(hexId ?? HspColor.hexIdFromHSP(h, s, p, alpha),
-            a: alpha,
-            names: names ??
-                names ??
-                <String>[
-                  ColorNames.generateDefaultNameFromInt(
-                      hexId ?? HspColor.hexIdFromHSP(h, s, p, alpha))
-                ]);
+      final List<String> names = kEmptyNames})
+      : super(hexId, names: names, alpha: alpha);
+
+  @override
+  int get value => super.colorId ?? HspColor.hexIdFromHSP(h, s, p);
+
+  // super.alt(hexId ?? HspColor.hexIdFromHSP(h, s, p, alpha),
+  //     a: alpha,
+  //     names: names ??
+  //         names ??
+  //         <String>[
+  //           ColorNames.generateDefaultNameFromInt(
+  //               hexId ?? HspColor.hexIdFromHSP(h, s, p, alpha))
+  //         ]);
 
   /// Creates a 32-bit hex ID/ARGB from this class's properties.
   /// This is a standalone static method for conversion.
@@ -270,9 +271,6 @@ class HspColor extends ColorSpacesIQ with ColorModelsMixin {
   HspColor simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toHsp();
   }
-
-  @override
-  HspColor get inverted => toColor().inverted.toHsp();
 
   @override
   HspColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);

@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 const int maxUInt32 = 0xFFFFFFFF;
+const List<String> kEmptyNames = <String>[];
 const String versionSep = '-#';
 const String deltaDist = 'ΔE';
 const double twoPI = 2 * math.pi;
@@ -37,8 +38,8 @@ const double chi = 0.040449936; // 0.04045; from MCU
 const double kAlphaGammaVal = 0.055;
 const double kGammaVal = 2.4;
 const double kPhiVal = 12.92;
-const double cMaxApprox =
-    0.37; // Based on Oklab white point D65 max saturation boundary
+// Based on Oklab white point D65 max saturation boundary
+const double cMaxApprox = 0.37;
 
 const double kMaxVisibleChromaHct = 100.0;
 const double kMax8bit = 255.0; // MAX_BYTE

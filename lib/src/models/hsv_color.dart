@@ -1,9 +1,8 @@
-import 'dart:math';
 import 'dart:math' as math;
+import 'dart:math';
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
-import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 
@@ -19,35 +18,24 @@ import 'package:color_iq_utils/src/models/hct_color.dart';
 /// and to perform various color manipulations like adjusting brightness,
 /// saturation, and finding harmonies.
 ///
-class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
+class HsvColor extends CommonIQ implements ColorSpacesIQ {
   final double h;
   final double s;
   final Percent v;
-  Percent get alpha => super.a;
 
-  HsvColor(this.h, this.s, this.v,
+  const HsvColor(this.h, this.s, this.v,
       {final Percent alpha = Percent.max,
       final int? hexId,
       final List<String>? names})
-      : super.alt(hexId ?? HsvColor.hexIdFromHSV(h, s, v, alpha.val),
-            a: alpha,
-            names: names ??
-                names ??
-                <String>[
-                  ColorNames.generateDefaultNameFromInt(
-                      hexId ?? HsvColor.hexIdFromHSV(h, s, v, alpha.val))
-                ]);
+      : super(hexId, alpha: alpha, names: names ?? kEmptyNames);
+  // names ??
+  // <String>[
+  //   ColorNames.generateDefaultNameFromInt(
+  //       hexId ?? HsvColor.hexIdFromHSV(h, s, v, alpha.val))
+  // ]);
 
-  /// Creates a [HsvColor] from RGB components. Pure constant constructor.
-  const HsvColor.alt(this.h, this.s, this.v,
-      {final Percent alpha = Percent.max,
-      required final Percent r,
-      required final Percent g,
-      required final Percent b,
-      required final int hexId,
-      final List<String>? names})
-      : super(hexId,
-            a: alpha, r: r, g: g, b: b, names: names ?? const <String>[]);
+  @override
+  int get value => super.colorId ?? HsvColor.hexIdFromHSV(h, s, v, alpha.val);
 
   /// Creates a 32-bit integer ARGB value from HSV components.
   ///
@@ -79,8 +67,13 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
     final double hue = getHue(red.val, green.val, blue.val, max, delta);
     final double saturation = max == 0.0 ? 0.0 : delta / max;
 
-    return HsvColor.alt(hue, Percent(saturation), Percent(max),
-        alpha: alpha, hexId: hexId, r: red, g: green, b: blue);
+    return HsvColor(
+      hue,
+      Percent(saturation),
+      Percent(max),
+      alpha: alpha,
+      hexId: hexId,
+    );
   }
 
   /// Returns this color in RGB.
@@ -96,9 +89,6 @@ class HsvColor extends ColorSpacesIQ with ColorModelsMixin {
   HsvColor darken([final double amount = 20]) {
     return copyWith(value: Percent(max(0.0, v.val - amount / 100)));
   }
-
-  @override
-  HsvColor get inverted => toColor().inverted.toHsv();
 
   @override
   HsvColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);

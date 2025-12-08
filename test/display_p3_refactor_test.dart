@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('DisplayP3Color Refactor Tests', () {
     test('whiten increases RGB values', () {
-      final DisplayP3Color color =
+      const DisplayP3Color color =
           DisplayP3Color(Percent.half, Percent.zero, Percent.zero); // Dark Red
       final DisplayP3Color whitened = color.whiten(50);
 
@@ -14,7 +14,7 @@ void main() {
     });
 
     test('blacken decreases RGB values', () {
-      final DisplayP3Color color =
+      const DisplayP3Color color =
           DisplayP3Color(Percent.max, Percent.half, Percent.half); // Light Red
       final DisplayP3Color blackened = color.blacken(50);
 
@@ -24,9 +24,9 @@ void main() {
     });
 
     test('lerp interpolates correctly', () {
-      final DisplayP3Color start =
+      const DisplayP3Color start =
           DisplayP3Color(Percent.zero, Percent.zero, Percent.zero); // Black
-      final DisplayP3Color end =
+      const DisplayP3Color end =
           DisplayP3Color(Percent.max, Percent.max, Percent.max); // White
       final DisplayP3Color mid = start.lerp(end, 0.5);
 
@@ -36,7 +36,7 @@ void main() {
     });
 
     test('lighterPalette generates lighter colors', () {
-      final DisplayP3Color color =
+      const DisplayP3Color color =
           DisplayP3Color(Percent.half, Percent.zero, Percent.zero);
       final List<ColorSpacesIQ> palette = color.lighterPalette(10);
 
@@ -50,7 +50,7 @@ void main() {
     });
 
     test('darkerPalette generates darker colors', () {
-      final DisplayP3Color color =
+      const DisplayP3Color color =
           DisplayP3Color(Percent.half, Percent.zero, Percent.zero);
       final List<ColorSpacesIQ> palette = color.darkerPalette(10);
 

@@ -1,9 +1,8 @@
-import 'dart:math';
 import 'dart:math' as math;
+import 'dart:math';
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
-import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/hsv_color.dart';
@@ -23,7 +22,7 @@ import 'package:color_iq_utils/src/models/hsv_color.dart';
 ///
 /// This class provides methods to convert HWB colors to other color spaces,
 /// perform color manipulations (like darkening, saturating), and generate color palettes.
-class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
+class HwbColor extends CommonIQ implements ColorSpacesIQ {
   /// The hue component of the color, ranging from 0 to 360.
   final double h;
 
@@ -33,21 +32,17 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The blackness component of the color, ranging from 0.0 to 1.0.
   final double blackness;
 
-  /// The alpha (transparency) component of the color, ranging from 0.0 to 1.0.
-  Percent get alpha => super.a;
+  const HwbColor(
+    this.h,
+    this.w,
+    this.blackness, {
+    final int? hexId,
+    final List<String> names = kEmptyNames,
+    final Percent alpha = Percent.max,
+  }) : super(hexId, names: names, alpha: alpha);
 
-  HwbColor(this.h, this.w, this.blackness,
-      {final Percent alpha = Percent.max,
-      final int? hexId,
-      final List<String>? names})
-      : super.alt(hexId ?? HwbColor.hexIdFromHWB(h, w, blackness, alpha),
-            a: alpha,
-            names: names ??
-                names ??
-                <String>[
-                  ColorNames.generateDefaultNameFromInt(
-                      hexId ?? HwbColor.hexIdFromHWB(h, w, blackness, alpha))
-                ]);
+  @override
+  int get value => super.colorId ?? HwbColor.hexIdFromHWB(h, w, blackness);
 
   /// Creates a 32-bit hex ID (ARGB) from HWB values.
   ///
@@ -148,6 +143,7 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
       hue.clamp(0.0, 360.0),
       whiteness.clamp(0.0, 1.0),
       blackness.clamp(0.0, 1.0),
+      hexId: argb32,
     );
   }
 
@@ -164,13 +160,12 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
     final double v = 1 - bNorm;
     final double s = (v == 0) ? 0 : 1 - wNorm / v;
 
-    return HsvColor(h, s, Percent(v), alpha: alpha).toColor();
+    return HsvColor(h, s, Percent(v), alpha: a).toColor();
   }
 
   @override
-  HwbColor darken([final double amount = 20]) {
-    return copyWith(b: (blackness + amount / 100).clamp(0.0, 1.0));
-  }
+  HwbColor darken([final double amount = 20]) =>
+      copyWith(b: (blackness + amount / 100).clamp(0.0, 1.0));
 
   @override
   HwbColor brighten([final double amount = 20]) {
@@ -183,27 +178,20 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
     // To saturate, we decrease w and b.
     // Let's scale them down.
     final double scale = 1.0 - (amount / 100.0);
-    return HwbColor(h, w * scale, blackness * scale, alpha: alpha);
+    return copyWith(whiteness: w * scale, b: blackness * scale);
   }
 
   @override
   HwbColor desaturate([final double amount = 25]) {
     // To desaturate, we move towards gray.
-    // Gray has w + b = 1.
-    // We can lerp towards a gray version of this color.
-    // A simple gray version preserves lightness.
-    // For HWB, middle gray is 0.5, 0.5.
-    // Or we can just increase w and b?
-    // Let's use lerp to a grayscale target.
-    // Ideally we'd find the grayscale color with same lightness.
-    // But for simplicity and standard behavior, let's lerp to a neutral gray
-    // or just increase w and b.
-    // Let's try increasing w and b to fill the gap to 1.0.
+
     final double gap = 1.0 - w - b;
-    if (gap <= 0) return this;
+    if (gap <= 0) {
+      return this;
+    }
 
     final double add = gap * (amount / 100.0) * 0.5;
-    return HwbColor(h, w + add, blackness + add, alpha: alpha);
+    return copyWith(whiteness: w + add, b: blackness + add);
   }
 
   @override
@@ -285,8 +273,14 @@ class HwbColor extends ColorSpacesIQ with ColorModelsMixin {
     final double? b,
     final Percent? alpha,
   }) {
+    final double nuHue = h ?? this.h;
+    final double nuWhiteness = whiteness ?? w;
+    final double nuBlackness = b ?? this.b;
+    final Percent nuAlpha = alpha ?? a;
+    final int newColorID =
+        HwbColor.hexIdFromHWB(nuHue, nuWhiteness, nuBlackness, nuAlpha);
     return HwbColor(h ?? this.h, whiteness ?? w, b ?? blackness,
-        alpha: alpha ?? super.a);
+        hexId: newColorID, alpha: alpha ?? super.a);
   }
 
   @override

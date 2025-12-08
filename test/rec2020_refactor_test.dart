@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('Rec2020Color Refactor Tests', () {
     test('whiten increases RGB values', () {
-      final Rec2020Color color =
+      const Rec2020Color color =
           Rec2020Color(Percent.mid, Percent.zero, Percent.zero); // Dark Red
       final Rec2020Color whitened = color.whiten(50);
 
@@ -14,7 +14,7 @@ void main() {
     });
 
     test('blacken decreases RGB values', () {
-      final Rec2020Color color =
+      const Rec2020Color color =
           Rec2020Color(Percent.max, Percent.mid, Percent.mid); // Light Red
       final Rec2020Color blackened = color.blacken(50);
 
@@ -24,9 +24,9 @@ void main() {
     });
 
     test('lerp interpolates correctly', () {
-      final Rec2020Color start =
+      const Rec2020Color start =
           Rec2020Color(Percent.min, Percent.zero, Percent.zero); // Black
-      final Rec2020Color end =
+      const Rec2020Color end =
           Rec2020Color(Percent.max, Percent.max, Percent.max); // White
       final Rec2020Color mid = start.lerp(end, 0.5);
 
@@ -36,7 +36,7 @@ void main() {
     });
 
     test('lighterPalette generates lighter colors', () {
-      final Rec2020Color color =
+      const Rec2020Color color =
           Rec2020Color(Percent.mid, Percent.zero, Percent.zero);
       final List<ColorSpacesIQ> palette = color.lighterPalette(10);
 
@@ -50,7 +50,7 @@ void main() {
     });
 
     test('darkerPalette generates darker colors', () {
-      final Rec2020Color color =
+      const Rec2020Color color =
           Rec2020Color(Percent.mid, Percent.zero, Percent.zero);
       final List<ColorSpacesIQ> palette = color.darkerPalette(10);
 

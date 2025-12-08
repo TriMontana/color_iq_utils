@@ -7,13 +7,13 @@ void main() {
       final ColorIQ color = ColorIQ.fromARGB(255, 100, 150, 200);
       final ColorIQ copy = color.copyWith(red: 255, alpha: 128);
       expect(copy.red, 255);
-      expect(copy.alpha, 128);
+      expect(copy.alphaInt, 128);
       expect(copy.green, 150); // Unchanged
       expect(copy.blue, 200); // Unchanged
     });
 
     test('HslColor copyWith', () {
-      final HslColor hsl = HslColor(180, 0.5, 0.5);
+      const HslColor hsl = HslColor(180, 0.5, 0.5);
       final HslColor copy = hsl.copyWith(hue: 90, lightness: 0.8);
       expect(copy.h, 90);
       expect(copy.l, 0.8);
@@ -21,7 +21,7 @@ void main() {
     });
 
     test('CmykColor copyWith', () {
-      final CmykColor cmyk = CmykColor(0.1, 0.2, 0.3, 0.4);
+      const CmykColor cmyk = CmykColor(0.1, 0.2, 0.3, 0.4);
       final CmykColor copy = cmyk.copyWith(c: 0.5, k: 0.0);
       expect(copy.c, 0.5);
       expect(copy.k, 0.0);
@@ -55,7 +55,7 @@ void main() {
     });
 
     test('HslColor Monochromatic (Native)', () {
-      final HslColor hsl = HslColor(120, 1.0, 0.5); // Green
+      const HslColor hsl = HslColor(120, 1.0, 0.5); // Green
       final List<ColorSpacesIQ> palette = hsl.monochromatic;
       expect(palette.length, 5);
       expect((palette[2] as HslColor).l, 0.5);
@@ -64,7 +64,7 @@ void main() {
     });
 
     test('CmykColor Monochromatic (Delegated)', () {
-      final CmykColor cmyk = CmykColor(0, 0, 0, 0); // White
+      const CmykColor cmyk = CmykColor(0, 0, 0, 0); // White
       final List<ColorSpacesIQ> palette = cmyk.monochromatic;
       expect(palette.length, 5);
       expect(palette.first, isA<CmykColor>());

@@ -12,39 +12,39 @@ void main() {
     });
 
     test('CmykColor stores names', () {
-      final CmykColor color = CmykColor(0, 1, 1, 0, names: testNames);
+      const CmykColor color = CmykColor(0, 1, 1, 0, names: testNames);
       expect(color.names, equals(testNames));
-      expect(CmykColor(0, 1, 1, 0).names, isEmpty);
+      expect(const CmykColor(0, 1, 1, 0).names, isEmpty);
     });
 
     test('HslColor stores names', () {
-      final HslColor color = HslColor(0, 1.0, 0.5, names: testNames);
+      const HslColor color = HslColor(0, 1.0, 0.5, names: testNames);
       expect(color.names, equals(testNames));
-      expect(HslColor(0, 1.0, 0.5).names, isEmpty);
+      expect(const HslColor(0, 1.0, 0.5).names, isEmpty);
     });
 
     test('HsvColor stores names', () {
-      final HsvColor color = HsvColor(0, 1.0, Percent.max, names: testNames);
+      const HsvColor color = HsvColor(0, 1.0, Percent.max, names: testNames);
       expect(color.names, equals(testNames));
-      expect(HsvColor(0, 1.0, Percent.max).names, isEmpty);
+      expect(const HsvColor(0, 1.0, Percent.max).names, isEmpty);
     });
 
     test('HsbColor stores names', () {
-      final HsbColor color = HsbColor(0, 1.0, Percent.max, names: testNames);
+      const HsbColor color = HsbColor(0, 1.0, Percent.max, names: testNames);
       expect(color.names, equals(testNames));
-      expect(HsbColor(0, 1.0, Percent.max).names, isEmpty);
+      expect(const HsbColor(0, 1.0, Percent.max).names, isEmpty);
     });
 
     test('HwbColor stores names', () {
-      final HwbColor color = HwbColor(0, 0, 0, names: testNames);
+      const HwbColor color = HwbColor(0, 0, 0, names: testNames);
       expect(color.names, equals(testNames));
-      expect(HwbColor(0, 0, 0).names, isEmpty);
+      expect(const HwbColor(0, 0, 0).names, isEmpty);
     });
 
     test('HctColor stores names', () {
-      final HctColor color = HctColor(0, 100, 50, names: testNames);
+      const HctColor color = HctColor(0, 100, 50, names: testNames);
       expect(color.names, equals(testNames));
-      expect(HctColor(0, 100, 50).names, isEmpty);
+      expect(const HctColor(0, 100, 50).names, isEmpty);
     });
 
     test('LabColor stores names', () {
@@ -54,105 +54,106 @@ void main() {
     });
 
     test('XyzColor stores names', () {
-      final XYZ color = XYZ(0.5, 0.5, 0.5, names: testNames);
+      const XYZ color = XYZ(0.5, 0.5, 0.5, names: testNames);
       expect(color.names, equals(testNames));
-      expect(XYZ(0.5, 0.5, 0.5).names, isEmpty);
+      expect(const XYZ(0.5, 0.5, 0.5).names, isEmpty);
     });
 
     test('LchColor stores names', () {
-      final LchColor color = LchColor(50, 0, 0, names: testNames);
+      const LchColor color = LchColor(50, 0, 0, names: testNames);
       expect(color.names, equals(testNames));
-      expect(LchColor(50, 0, 0).names, isEmpty);
+      expect(const LchColor(50, 0, 0).names, isEmpty);
     });
 
     test('OkLabColor stores names', () {
-      final OkLabColor color = OkLabColor(0.5, 0, 0, names: testNames);
+      const OkLabColor color = OkLabColor(0.5, 0, 0, names: testNames);
       expect(color.names, equals(testNames));
-      expect(OkLabColor(0.5, 0, 0).names, isEmpty);
+      expect(const OkLabColor(0.5, 0, 0).names, isEmpty);
     });
 
     test('OkLchColor stores names', () {
-      final OkLCH color = OkLCH(Percent.mid, 0, 0, names: testNames);
+      const OkLCH color = OkLCH(Percent.mid, 0, 0, names: testNames);
       expect(color.names, equals(testNames));
-      expect(OkLCH(Percent.mid, 0, 0).names, isEmpty);
+      expect(const OkLCH(Percent.mid, 0, 0).names, isEmpty);
     });
 
     test('OkHslColor stores names', () {
-      final OkHslColor color = OkHslColor(0, 1, 0.5, names: testNames);
+      const OkHslColor color = OkHslColor(0, 1, 0.5, names: testNames);
       expect(color.names, equals(testNames));
-      expect(OkHslColor(0, 1, 0.5).names, isEmpty);
+      expect(const OkHslColor(0, 1, 0.5).names, isEmpty);
     });
 
     test('OkHsvColor stores names', () {
-      final OkHsvColor color = OkHsvColor(0, 1, 1, names: testNames);
+      const OkHsvColor color = OkHsvColor(0, 1, 1, names: testNames);
       expect(color.names, equals(testNames));
-      expect(OkHsvColor(0, 1, 1).names, isEmpty);
+      expect(const OkHsvColor(0, 1, 1).names, isEmpty);
     });
 
     test('Cam16Color stores names', () {
-      final Cam16Color color = Cam16Color(0, 0, 50, 0, 0, 0, names: testNames);
+      const Cam16Color color = Cam16Color(0, 0, 50, 0, 0, 0, names: testNames);
       expect(color.names, equals(testNames));
-      expect(Cam16Color(0, 0, 50, 0, 0, 0).names, isEmpty);
+      expect(const Cam16Color(0, 0, 50, 0, 0, 0).names, isEmpty);
     });
 
     test('DisplayP3Color stores names', () {
-      final DisplayP3Color color = DisplayP3Color(
-          Percent.max, Percent.zero, Percent.zero,
-          names: testNames);
-      expect(color.names, equals(testNames));
-      expect(DisplayP3Color(Percent.max, Percent.zero, Percent.zero).names,
-          isEmpty);
-    });
-
-    test('HsluvColor stores names', () {
-      final HsluvColor color = HsluvColor(0, 100, 50, names: testNames);
-      expect(color.names, equals(testNames));
-      expect(HsluvColor(0, 100, 50).names, isEmpty);
-    });
-
-    test('HspColor stores names', () {
-      final HspColor color = HspColor(0, 1, 1, names: testNames);
-      expect(color.names, equals(testNames));
-      expect(HspColor(0, 1, 1).names, isEmpty);
-    });
-
-    test('HunterLabColor stores names', () {
-      final HunterLabColor color = HunterLabColor(50, 0, 0, names: testNames);
-      expect(color.names, equals(testNames));
-      expect(HunterLabColor(50, 0, 0).names, isEmpty);
-    });
-
-    test('LuvColor stores names', () {
-      final LuvColor color = LuvColor(50, 0, 0, names: testNames);
-      expect(color.names, equals(testNames));
-      expect(LuvColor(50, 0, 0).names, isEmpty);
-    });
-
-    test('MunsellColor stores names', () {
-      final MunsellColor color = MunsellColor('5R', 5, 10, names: testNames);
-      expect(color.names, equals(testNames));
-      expect(MunsellColor('5R', 5, 10).names, isEmpty);
-    });
-
-    test('Rec2020Color stores names', () {
-      final Rec2020Color color = Rec2020Color(
+      const DisplayP3Color color = DisplayP3Color(
           Percent.max, Percent.zero, Percent.zero,
           names: testNames);
       expect(color.names, equals(testNames));
       expect(
-          Rec2020Color(Percent.max, Percent.zero, Percent.zero).names, isEmpty);
+          const DisplayP3Color(Percent.max, Percent.zero, Percent.zero).names,
+          isEmpty);
+    });
+
+    test('HsluvColor stores names', () {
+      const HsluvColor color = HsluvColor(0, 100, 50, names: testNames);
+      expect(color.names, equals(testNames));
+      expect(const HsluvColor(0, 100, 50).names, isEmpty);
+    });
+
+    test('HspColor stores names', () {
+      const HspColor color = HspColor(0, 1, 1, names: testNames);
+      expect(color.names, equals(testNames));
+      expect(const HspColor(0, 1, 1).names, isEmpty);
+    });
+
+    test('HunterLabColor stores names', () {
+      const HunterLabColor color = HunterLabColor(50, 0, 0, names: testNames);
+      expect(color.names, equals(testNames));
+      expect(const HunterLabColor(50, 0, 0).names, isEmpty);
+    });
+
+    test('LuvColor stores names', () {
+      const LuvColor color = LuvColor(50, 0, 0, names: testNames);
+      expect(color.names, equals(testNames));
+      expect(const LuvColor(50, 0, 0).names, isEmpty);
+    });
+
+    test('MunsellColor stores names', () {
+      const MunsellColor color = MunsellColor('5R', 5, 10, names: testNames);
+      expect(color.names, equals(testNames));
+      expect(const MunsellColor('5R', 5, 10).names, isEmpty);
+    });
+
+    test('Rec2020Color stores names', () {
+      const Rec2020Color color = Rec2020Color(
+          Percent.max, Percent.zero, Percent.zero,
+          names: testNames);
+      expect(color.names, equals(testNames));
+      expect(const Rec2020Color(Percent.max, Percent.zero, Percent.zero).names,
+          isEmpty);
     });
 
     test('YiqColor stores names', () {
-      final YiqColor color = YiqColor(0.5, 0, 0, names: testNames);
+      const YiqColor color = YiqColor(0.5, 0, 0, names: testNames);
       expect(color.names, equals(testNames));
-      expect(YiqColor(0.5, 0, 0).names, isEmpty);
+      expect(const YiqColor(0.5, 0, 0).names, isEmpty);
     });
 
     test('YuvColor stores names', () {
-      final YuvColor color = YuvColor(0.5, 0, 0, names: testNames);
+      const YuvColor color = YuvColor(0.5, 0, 0, names: testNames);
       expect(color.names, equals(testNames));
-      expect(YuvColor(0.5, 0, 0).names, isEmpty);
+      expect(const YuvColor(0.5, 0, 0).names, isEmpty);
     });
   });
 }

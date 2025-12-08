@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
-import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
@@ -15,7 +14,7 @@ import 'package:material_color_utilities/hct/cam16.dart';
 /// - `h` (Hue): The type of color, represented as an angle from 0 to 360 degrees.
 /// - `s` (Saturation): The intensity of the color, from 0 (grayscale) to 1 (fully saturated).
 /// - `b` (Brightness): The lightness of the color, from 0 (black) to 1 (full brightness).
-class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
+class HsbColor extends CommonIQ implements ColorSpacesIQ {
   /// The hue component of the color, ranging from 0 to 360.
   final double h;
 
@@ -30,17 +29,20 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
   ///
   /// `h` is hue (0-360), `s` is saturation (0-1), and `b` is brightness (0-1).
   /// An optional `alpha` (0-255) can be provided. Defaults to 255 (opaque).
-  HsbColor(this.h, this.s, this.brightnessHsb,
+  const HsbColor(this.h, this.s, this.brightnessHsb,
       {final int? argb,
       final Percent alpha = Percent.max,
-      final List<String>? names})
-      : super.alt(argb ?? HsbColor.argbFromHsb(h, s, brightnessHsb),
-            a: alpha, names: names ?? const <String>[]);
+      final List<String> names = kEmptyNames})
+      : super(argb, names: names, alpha: alpha);
+
+  @override
+  int get value => super.colorId ?? HsbColor.hexIdFromHsb(h, s, brightnessHsb);
 
 // Note: THERE are two methods to convert HSB to ARGB
 // This function takes hue (0-360 degrees), saturation (0-1), and
-// brightness (0-1) as inputs and returns a 32-bit integer in ARGB format (with full opacity). If you're using this in a context like Flutter, you can pass the result to Color(value) for rendering.
-  static int hsbToHexId(
+// brightness (0-1) as inputs and returns a 32-bit integer in ARGB format (with full opacity). If you're using this in a context
+// like Flutter, you can pass the result to Color(value) for rendering.
+  static int hexIdFromHSB(
       double hue, final double saturation, final double brightness) {
     // Normalize hue to 0-360
     hue = hue % 360;
@@ -112,7 +114,7 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
   ///
   /// `h` is hue (0-360), `s` is saturation (0-1), and `b` is brightness (0-1).
   /// An optional `alpha` (0-255) can be provided. Defaults to 255 (opaque).
-  static int argbFromHsb(double h, double s, double b,
+  static int hexIdFromHsb(double h, double s, double b,
       [final int alpha = 255]) {
     h = h.clamp(0, 360);
     s = s.clamp(0.0, 1.0);
@@ -229,7 +231,7 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   HsbColor simulate(final ColorBlindnessType type) {
     // Convert to RGB
-    final int argb = HsbColor.argbFromHsb(h, s, b);
+    final int argb = HsbColor.hexIdFromHsb(h, s, b);
     final int r = (argb >> 16) & 0xFF;
     final int g = (argb >> 8) & 0xFF;
     final int bVal = argb & 0xFF;
@@ -253,16 +255,6 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
     return _fromRgb(rSim, gSim, bSim);
   }
 
-  @override
-  HsbColor get inverted {
-    final int argb = HsbColor.argbFromHsb(h, s, b);
-    final int r = (argb >> 16) & 0xFF;
-    final int g = (argb >> 8) & 0xFF;
-    final int bVal = argb & 0xFF;
-    return _fromRgb(255 - r, 255 - g, 255 - bVal);
-  }
-
-  @override
   HsbColor get grayscale =>
       HsbColor(0, 0, Percent(brightnessHsb.val * (1 - s / 2)));
 
@@ -386,7 +378,7 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
     final int currentAlpha = (value >> 24) & 0xFF;
     final int newAlpha =
         (currentAlpha + (amount / 100 * 255)).round().clamp(0, 255);
-    final int newHexId = HsbColor.argbFromHsb(h, s, b, newAlpha);
+    final int newHexId = HsbColor.hexIdFromHsb(h, s, b, newAlpha);
     return HsbColor(h, s, b, argb: newHexId);
   }
 
@@ -430,7 +422,7 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
   @override
   List<HsbColor> tonesPalette() {
     // Mix with gray (0, 0, 0.5) which corresponds to 0xFF808080
-    final HsbColor gray = HsbColor(0, 0, const Percent(0.5));
+    const HsbColor gray = HsbColor(0, 0, Percent(0.5));
     return <HsbColor>[
       this,
       lerp(gray, 0.15),
@@ -477,7 +469,7 @@ class HsbColor extends ColorSpacesIQ with ColorModelsMixin {
   double get luminance {
     // Calculate luminance from HSB -> RGB -> Luminance
     // We can use argbFromHsb to get the int, then extract RGB and compute.
-    final int argb = HsbColor.argbFromHsb(h, s, b);
+    final int argb = HsbColor.hexIdFromHsb(h, s, b);
     final int r = (argb >> 16) & 0xFF;
     final int g = (argb >> 8) & 0xFF;
     final int bVal = argb & 0xFF;

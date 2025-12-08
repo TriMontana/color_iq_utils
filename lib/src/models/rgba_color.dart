@@ -63,6 +63,9 @@ class ARGBColor {
   /// The 32-bit colorID
   final int _colorId;
 
+  /// Luminance
+  final double? _lrv;
+
   /// Construct an [ColorSpace.sRGB] color from the lower 32 bits of an [int].
   ///
   /// The bits are interpreted as follows:
@@ -81,9 +84,9 @@ class ARGBColor {
   /// green, and `00` for the blue).
   ///
   const ARGBColor(final int value,
-      {final ColorSpace colorSpace = ColorSpace.sRGB})
+      {final ColorSpace colorSpace = ColorSpace.sRGB, final double? lrv})
       : this._fromARGBC(value >> 24, value >> 16, value >> 8, value, colorSpace,
-            colorId: value);
+            colorId: value, lrv: lrv);
 
   /// Construct a color with floating-point color components.
   ///
@@ -110,11 +113,14 @@ class ARGBColor {
     required final double b,
     this.colorSpace = ColorSpace.sRGB,
     final int? colorId,
+    final double? lrv,
   })  : assert(
             a >= 0.0 && a <= 1.0, 'invalid Opacity $errorMsgFloat0to1 -- $a'),
         assert(r >= 0.0 && r <= 1.0, 'invalid Red $errorMsgFloat0to1 -- $r'),
         assert(g >= 0.0 && g <= 1.0, 'invalid Green $errorMsgFloat0to1 -- $g'),
         assert(b >= 0.0 && b <= 1.0, 'invalid Blue $errorMsgFloat0to1 -- $b'),
+        assert(lrv == null || lrv >= 0.0 && lrv <= 1.0,
+            'invalid lrv $errorMsgFloat0to1 -- $lrv'),
         // see discussion at bottom.  There is a very rare possibility of an edge case
         // where double.round() might be different than bitwise, but that is extremely rare.
         // double.round() goes to the nearest even number, where as truncate goes to the nearest whole.
@@ -127,7 +133,8 @@ class ARGBColor {
         _a = a,
         _r = r,
         _g = g,
-        _b = b;
+        _b = b,
+        _lrv = lrv;
 
   /// Construct an sRGB color from the lower 8 bits of four integers.
   ///
@@ -139,15 +146,34 @@ class ARGBColor {
   ///
   /// Out of range values are brought into range using modulo 255.
   const ARGBColor.fromARGB(
-      final int a, final int redInt, final int greenInt, final int b,
-      {final int? colorId, final ColorSpace colorSpace = ColorSpace.sRGB})
-      : this._fromARGBC(a, redInt, greenInt, b, colorSpace, colorId: colorId);
+    final int alphaInt,
+    final int redInt,
+    final int greenInt,
+    final int blueInt, {
+    final int? colorId,
+    final ColorSpace colorSpace = ColorSpace.sRGB,
+    final double? a,
+    final double? r,
+    final double? g,
+    final double? b,
+    final double? lrv,
+  }) : this._fromARGBC(alphaInt, redInt, greenInt, blueInt, colorSpace,
+            colorId: colorId, a: a, r: r, g: g, b: b, lrv: lrv);
 
-  const ARGBColor._fromARGBC(final int alpha, final int red, final int green,
-      final int blue, final ColorSpace colorSpace,
-      {required final int? colorId})
-      : this._fromRGBOC(red, green, blue, colorSpace,
-            opacity: alpha, colorId: colorId);
+  const ARGBColor._fromARGBC(
+    final int alpha,
+    final int red,
+    final int green,
+    final int blue,
+    final ColorSpace colorSpace, {
+    required final int? colorId,
+    final double? a,
+    final double? r,
+    final double? g,
+    final double? b,
+    final double? lrv,
+  }) : this._fromRGBOC(red, green, blue, colorSpace,
+            opacity: alpha, colorId: colorId, r: r, g: g, b: b, a: a, lrv: lrv);
 
   /// Create an sRGB color from red, green, blue, and opacity, similar to
   /// `rgba()` in CSS.
@@ -161,14 +187,25 @@ class ARGBColor {
   /// Out of range values are brought into range using modulo 255.
   const ARGBColor.fromRGBO(
       final int r, final int greenInt, final int blueInt, final int opacity,
-      {final int? colorId, final ColorSpace colorSpace = ColorSpace.sRGB})
+      {final int? colorId,
+      final ColorSpace colorSpace = ColorSpace.sRGB,
+      final double? lrv})
       : this._fromRGBOC(r, greenInt, blueInt, colorSpace,
-            opacity: opacity, colorId: colorId);
+            opacity: opacity, colorId: colorId, lrv: lrv);
 
   const ARGBColor._fromRGBOC(
-      final int redInt, final int greenInt, final int blueInt, this.colorSpace,
-      {required final int opacity, final int? colorId})
-      : assert(opacity >= 0.0 && opacity <= 255,
+    final int redInt,
+    final int greenInt,
+    final int blueInt,
+    this.colorSpace, {
+    required final int opacity,
+    final int? colorId,
+    final double? a,
+    final double? r,
+    final double? g,
+    final double? b,
+    final double? lrv,
+  })  : assert(opacity >= 0.0 && opacity <= 255,
             'invalid Opacity $opacity-$errorMsg0to255'),
         assert(redInt >= 0 && redInt <= 255,
             'invalid Red $redInt-$errorMsg0to255'),
@@ -176,13 +213,24 @@ class ARGBColor {
             'invalid Green $greenInt-$errorMsg0to255'),
         assert(blueInt >= 0 && blueInt <= 255,
             'invalid Blue $blueInt-$errorMsg0to255'),
+        assert(a == null || a >= 0.0 && a <= 1.0,
+            'invalid Opacity $errorMsgFloat0to1 -- $a'),
+        assert(r == null || r >= 0.0 && r <= 1.0,
+            'invalid Red $errorMsgFloat0to1 -- $r'),
+        assert(g == null || g >= 0.0 && g <= 1.0,
+            'invalid Green $errorMsgFloat0to1 -- $g'),
+        assert(b == null || b >= 0.0 && b <= 1.0,
+            'invalid Blue $errorMsgFloat0to1 -- $b'),
+        assert(lrv == null || lrv >= 0.0 && lrv <= 1.0,
+            'invalid lrv $errorMsgFloat0to1 -- $lrv'),
         _colorId = colorId ??
             (((opacity << 24) | (redInt << 16) | (greenInt << 8) | blueInt) &
                 0xFFFFFFFF),
-        _a = (opacity & 0xFF) / 255,
-        _r = (redInt & 0xff) / 255,
-        _g = (greenInt & 0xff) / 255,
-        _b = (blueInt & 0xff) / 255;
+        _a = a ?? (opacity & 0xFF) / 255,
+        _r = r ?? (redInt & 0xff) / 255,
+        _g = g ?? (greenInt & 0xff) / 255,
+        _b = b ?? (blueInt & 0xff) / 255,
+        _lrv = lrv;
 
   /// A 32 bit value representing this color.
   ///
@@ -318,6 +366,12 @@ class ARGBColor {
   /// Out of range values will have unexpected effects.
   ARGBColor withBlue(final int nuBlue) =>
       ARGBColor.fromARGB(alpha, red, green, nuBlue.assertRange0to255());
+
+  /// Get the luminance
+  Percent get lrv => _lrv != null ? Percent(_lrv) : computeLuminance(r, g, b);
+
+  /// Get the brightness
+  Brightness get brightness => calculateBrightness(lrv);
 
   /// Linearly interpolate between two colors.
   ///

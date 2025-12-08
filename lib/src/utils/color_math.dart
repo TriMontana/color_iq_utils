@@ -6,8 +6,9 @@ import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/xyz_color.dart';
 
 /// Add gamma correction to a linear RGB component, aka delinear or delinearized
-const double Function(double linearComponent) delinearize = linearToSrgb;
-const double Function(double linearComponent) gammaCorrection = linearToSrgb;
+const double Function(double linearComponent) delinearize =
+    linearToSrgb; // aka gammaCorrect
+const double Function(double linearComponent) gammaCorrect = linearToSrgb;
 const double Function(double linearComponent) fromLinear = linearToSrgb;
 const double Function(double srgbComponent) linearize = srgbToLinear;
 const double Function(double srgbComponent) toLinear = srgbToLinear;

@@ -1,9 +1,8 @@
-import 'dart:math';
 import 'dart:math' as math;
+import 'dart:math';
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
-import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/ok_lch_color.dart';
@@ -21,7 +20,7 @@ import 'package:color_iq_utils/src/models/ok_lch_color.dart';
 /// via an approximate conversion to `OkLchColor`. This is because a direct
 /// mathematical formula for `OkHslColor` <-> `ColorIQ` is not as straightforward
 /// as for other models. The approximation is generally very good for most use cases.
-class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
+class OkHslColor extends CommonIQ implements ColorSpacesIQ {
   /// The hue component of the color, ranging from 0 to 360.
   final double h;
 
@@ -31,17 +30,19 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The lightness component of the color, ranging from 0.0 to 1.0.
   final double l;
 
-  OkHslColor(this.h, this.s, this.l,
+  const OkHslColor(this.h, this.s, this.l,
       {final int? hexId,
       final Percent alpha = Percent.max,
       final List<String>? names})
-      : super.alt(hexId ?? OkHslColor.hexIdFromHsl(h, s, l),
-            a: alpha,
-            names: names ??
-                <String>[
-                  ColorNames.generateDefaultNameFromInt(
-                      hexId ?? OkHslColor.hexIdFromHsl(h, s, l))
-                ]);
+      : super(hexId, alpha: alpha, names: names ?? kEmptyNames);
+  // names: names ??
+  //     <String>[
+  //       ColorNames.generateDefaultNameFromInt(
+  //           hexId ?? OkHslColor.hexIdFromHsl(h, s, l))
+  //     ]);
+
+  @override
+  int get value => super.colorId ?? OkHslColor.hexIdFromHsl(h, s, l);
 
   /// Creates a 32-bit integer ARGB representation of an OKHSL color.
   ///
@@ -109,9 +110,6 @@ class OkHslColor extends ColorSpacesIQ with ColorModelsMixin {
   OkHslColor darken([final double amount = 20]) {
     return OkHslColor(h, s, max(0.0, l - amount / 100));
   }
-
-  @override
-  OkHslColor get inverted => toColor().inverted.toOkHsl();
 
   @override
   OkHslColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);

@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
-import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 
@@ -19,7 +18,7 @@ import 'package:color_iq_utils/src/models/hct_color.dart';
 ///
 /// [YuvColor] provides methods to convert to and from other color spaces,
 /// and to perform various color manipulations.
-class YuvColor extends ColorSpacesIQ with ColorModelsMixin {
+class YuvColor extends CommonIQ implements ColorSpacesIQ {
   /// The luma component (brightness).
   ///
   /// Ranges from 0.0 to 1.0.
@@ -31,12 +30,14 @@ class YuvColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The chrominance V component (red projection).
   final double v;
 
-  YuvColor(this.y, this.u, this.v,
+  const YuvColor(this.y, this.u, this.v,
       {final int? val,
       final Percent alpha = Percent.max,
       final List<String>? names})
-      : super.alt(val ?? YuvColor.toHexId(y, u, v),
-            a: alpha, names: names ?? const <String>[]);
+      : super(val, alpha: alpha, names: names ?? kEmptyNames);
+
+  @override
+  int get value => super.colorId ?? YuvColor.hexIdFromYUV(y, u, v);
 
   /// Creates a [YuvColor] instance from a 32-bit hex value.
   factory YuvColor.fromHexId(final int hex) {
@@ -56,7 +57,7 @@ class YuvColor extends ColorSpacesIQ with ColorModelsMixin {
   /// Creates a 32-bit ARGB hex value from [y], [u], and [v] components.
   ///
   /// The alpha value is set to 255 (fully opaque).
-  static int toHexId(final double y, final double u, final double v) {
+  static int hexIdFromYUV(final double y, final double u, final double v) {
     final double r = y + 1.13983 * v;
     final double g = y - 0.39465 * u - 0.58060 * v;
     final double b = y + 2.03211 * u;
@@ -69,7 +70,7 @@ class YuvColor extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   @override
-  ColorIQ toColor() => ColorIQ(toHexId(y, u, v));
+  ColorIQ toColor() => ColorIQ(hexIdFromYUV(y, u, v));
 
   @override
   YuvColor darken([final double amount = 20]) {
@@ -112,9 +113,6 @@ class YuvColor extends ColorSpacesIQ with ColorModelsMixin {
   YuvColor simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toYuv();
   }
-
-  @override
-  YuvColor get inverted => toColor().inverted.toYuv();
 
   @override
   YuvColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);

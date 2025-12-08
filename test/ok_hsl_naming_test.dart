@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('OkHslColor Naming Tests', () {
     test('OkHslColor.alt generates default name when names is null', () {
-      final OkHslColor color = OkHslColor(0, 0, 0); // Black
+      const OkHslColor color = OkHslColor(0, 0, 0); // Black
       // Expect some name validation
       expect(color.names, isNotEmpty);
       // We check for the presence of the Hex ID which is guaranteed by the current generator implementation
@@ -13,7 +13,7 @@ void main() {
     });
 
     test('OkHslColor.alt accepts explicit names', () {
-      final OkHslColor color =
+      const OkHslColor color =
           OkHslColor(0, 0, 0, names: <String>['Custom Name']);
       expect(color.names, equals(<String>['Custom Name']));
     });

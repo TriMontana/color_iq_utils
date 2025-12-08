@@ -4,7 +4,6 @@ import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/cam16_color.dart';
 import 'package:color_iq_utils/src/models/cmyk_color.dart';
-import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/display_p3_color.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/hsb_color.dart';
@@ -21,10 +20,10 @@ import 'package:color_iq_utils/src/models/munsell_color.dart';
 import 'package:color_iq_utils/src/models/ok_hsl_color.dart';
 import 'package:color_iq_utils/src/models/ok_hsv_color.dart';
 import 'package:color_iq_utils/src/models/rec2020_color.dart';
+import 'package:color_iq_utils/src/models/rgba_color.dart';
 import 'package:color_iq_utils/src/models/xyz_color.dart';
 import 'package:color_iq_utils/src/models/yiq_color.dart';
 import 'package:color_iq_utils/src/models/yuv_color.dart';
-import 'package:color_iq_utils/src/utils/misc_utils.dart';
 import 'package:color_iq_utils/src/utils_lib.dart';
 import 'package:material_color_utilities/material_color_utilities.dart' as mcu;
 
@@ -45,135 +44,92 @@ import 'package:material_color_utilities/material_color_utilities.dart' as mcu;
 /// - Generating color palettes (monochromatic, analogous, etc.).
 /// - Simulating color blindness.
 /// - Calculating color properties like luminance, contrast, and perceptual distance.
-class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
-  /// The color space of this color.
+class ColorIQ extends CommonIQ implements ColorSpacesIQ {
+  /// The 32-bit integer representation of the color.
+  final int hexId;
+  final HctColor? _hctColor;
+  final ARGBColor? _argb;
+  final double? _lrv;
   final ColorSpace colorSpace;
-  HctColor? _hctColor;
 
-  /// Construct a color from the lower 32 bits of an [int].
+  /// Constructor
   ColorIQ(
-    super.value, {
-    final Percent? a,
-    final Percent? r,
-    final Percent? g,
-    final Percent? b,
-    final int? alpha,
-    final int? red,
-    final int? green,
-    final int? blue,
-    final Percent? luminance,
+    this.hexId, {
     this.colorSpace = ColorSpace.sRGB,
-    final List<String>? names,
     final HctColor? hctColor,
+    final ARGBColor? argbColor,
+    final List<String> names = kEmptyNames,
+    final double? lrv,
   })  : _hctColor = hctColor,
-        super(
-            lrv: luminance,
-            a: a ?? Percent(((value >> 24 & 0xFF) / 255).clamp0to1),
-            alphaIntVal: alpha != null
-                ? alpha.assertRange0to255('ColorIQ-COTR-alpha')
-                : (value >> 24 & 0xFF),
-            r: r ?? Percent(((value >> 16 & 0xFF) / 255).clamp0to1),
-            redIntVal: red != null
-                ? red.assertRange0to255('ColorIQ-COTR-red')
-                : (value >> 16 & 0xFF),
-            g: g ?? Percent(((value >> 8 & 0xFF) / 255).clamp0to1),
-            greenIntVal: green != null
-                ? green.assertRange0to255('ColorIQ-COTR-green')
-                : (value >> 8 & 0xFF),
-            b: b ?? Percent(((value & 0xFF) / 255).clamp0to1),
-            blueIntVal: blue != null
-                ? blue.assertRange0to255('ColorIQ()-blue')
-                : (value & 0xFF),
-            names: names ?? const <String>[]);
+        _lrv = lrv,
+        _argb = argbColor,
+        super(hexId, names: names, alpha: hexId.a2);
+
+  late final ARGBColor argb = _argb ?? ARGBColor(hexId);
+  late final double lrv = _lrv ?? computeLuminanceViaHexId(hexId);
+  @override
+  int get value => hexId;
+  @override
+  int get red => argb.redInt;
+  @override
+  int get green => argb.greenInt;
+  @override
+  int get blue => argb.blueInt;
+  @override
+  int get alphaInt => argb.alphaInt;
 
   /// Construct a color from 4 integers, a, r, g, b.
-  ColorIQ.fromARGB(
+  factory ColorIQ.fromARGB(
     final int alpha,
     final int red,
     final int green,
     final int blue, {
-    final Percent? a,
-    final Percent? r,
-    final Percent? g,
-    final Percent? b,
-    final Percent? luminance,
-    this.colorSpace = ColorSpace.sRGB,
+    final double? a,
+    final double? r,
+    final double? g,
+    final double? b,
+    final ColorSpace colorSpace = ColorSpace.sRGB,
     final List<String>? names,
+    final double? lrv,
     final HctColor? hctColor,
-  })  : assert(red >= 0 && red <= 255, 'Invalid Red 0-255 value: $red'),
-        assert(green >= 0 && green <= 255, 'Invalid Green 0-255 value: $green'),
-        assert(blue >= 0 && blue <= 255, 'Invalid Blue 0-255 value: $blue'),
-        assert(alpha >= 0 && alpha <= 255, 'Invalid Alpha 0-255 value: $alpha'),
-        _hctColor = hctColor,
-        super.alt(
-            (((alpha & 0xff) << 24) |
-                    ((red & 0xff) << 16) |
-                    ((green & 0xff) << 8) |
-                    ((blue & 0xff) << 0)) &
-                0xFFFFFFFF,
-            a: a ?? alpha.normalized,
-            alphaIntVal: alpha,
-            r: r ?? red.normalized,
-            redIntVal: red,
-            g: g ?? green.normalized,
-            greenIntVal: green,
-            b: b ?? blue.normalized,
-            blueIntVal: blue,
-            lrv: luminance ?? computeLuminanceViaInts(red, green, blue),
-            names: names ?? const <String>[]);
+  }) {
+    final ARGBColor argbColor =
+        ARGBColor.fromARGB(alpha, red, green, blue, a: a, r: r, g: g, b: b);
+    return ColorIQ(
+      argbColor.value,
+      argbColor: argbColor,
+      names: names ?? kEmptyNames,
+      colorSpace: colorSpace,
+      lrv: lrv,
+      hctColor: hctColor,
+    );
+  }
 
   /// Construct a color from sRGB delinearized values a, r, g, b (0.0 to 1.0)
   factory ColorIQ.fromSrgb({
-    required final Percent r,
-    required final Percent g,
-    required final Percent b,
+    required final double r,
+    required final double g,
+    required final double b,
     final Percent a = Percent.max,
-    int? alphaInt,
-    int? redInt,
-    int? greenInt,
-    int? blueInt,
-    int? argb,
     Percent? luminance,
     final ColorSpace colorSpace = ColorSpace.sRGB,
     final List<String>? names,
     final HctColor? hctColor,
+    ARGBColor? argbColor,
   }) {
-    a.assertRange0to1('ColorIQ.fromSrgb--a');
-    r.assertRange0to1('ColorIQ.fromSrgb--r');
-    g.assertRange0to1('ColorIQ.fromSrgb--g');
-    b.assertRange0to1('ColorIQ.fromSrgb--b');
+    argbColor ??= ARGBColor.from(a: a, r: r, g: g, b: b);
 
-    redInt = redInt != null
-        ? redInt.assertRange0to255('ColorIQ.fromSrgb-RedInt')
-        : r.int255FromNormalized0to1('ColorIQ.fromSrgb-RedInt2');
-    greenInt = greenInt != null
-        ? greenInt.assertRange0to255('ColorIQ.fromSrgb-GreenInt')
-        : g.int255FromNormalized0to1('ColorIQ.fromSrgb-GreenInt2');
-    blueInt = blueInt != null
-        ? blueInt.assertRange0to255('ColorIQ.fromSrgb-BlueInt')
-        : b.int255FromNormalized0to1('ColorIQ.fromSrgb-BlueInt2');
-    alphaInt = alphaInt != null
-        ? alphaInt.assertRange0to255('ColorIQ.fromSrgb-AlphaInt')
-        : a.int255FromNormalized0to1('ColorIQ.fromSrgb-A');
-    argb ??= (alphaInt << 24) | (redInt << 16) | (greenInt << 8) | blueInt;
-    luminance = luminance ?? computeLuminanceViaInts(redInt, greenInt, blueInt);
-    return ColorIQ(argb,
-        alpha: alphaInt,
-        red: redInt,
-        green: greenInt,
-        blue: blueInt,
+    luminance = luminance ?? argbColor.lrv;
+    return ColorIQ(argbColor.value,
         colorSpace: colorSpace,
-        luminance: luminance,
-        a: a,
-        r: r,
-        g: g,
-        b: b,
+        lrv: luminance,
         hctColor: hctColor,
-        names: names ?? const <String>[]);
+        names: names ?? kEmptyNames);
   }
 
   /// Accepts hex like "#RRGGBB" or "RRGGBB" or "AARRGGBB".
-  factory ColorIQ.fromHexStr(final String hexStr, {final List<String>? names}) {
+  factory ColorIQ.fromHexStr(final String hexStr,
+      {final List<String> names = kEmptyNames}) {
     String hex = hexStr.replaceAll('#', '').toUpperCase();
     // hex = hex.substring(1);
     if (hex.length == 3) {
@@ -201,28 +157,16 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     throw FormatException('Invalid hex color: #$hex');
   }
 
-  int get alpha => super.alphaInt;
-  @override
-  int get red => super.redInt;
-  @override
-  int get green => super.greenInt;
-  @override
-  int get blue => super.blueInt;
-
   @override
   ColorIQ toColor() => this;
 
-  /// LAB representation, computed once and cached.
-  late final LabColor lab = LabColor.fromInt(value);
-  late final HctColor hct = _hctColor ?? HctColor.fromInt(value);
-  late final Cam16Color cam16 = Cam16Color.fromInt(value);
-
-  /// Converts this color to XYZ once and cached.
-  late final XYZ xyz = XYZ.xyxFromRgb(red, green, blue);
-  late final LuvColor luv = xyz.toLuv();
-
-  @override
-  late final double luminance = super.toLRV;
+  LabColor get lab => mapLAB.getOrCreate(value);
+  HctColor get hct => _hctColor ?? HctColor.fromInt(value);
+  //  final Cam16Color cam16 = Cam16Color.fromInt(value);
+  //
+  // /// Converts this color to XYZ once and cached.
+  XYZ get xyz => XYZ.xyxFromRgb(red, green, blue);
+  // final LuvColor luv = xyz.toLuv();
 
   /// Converts this color to CIELCH.
   LchColor toLch() => lab.toLch();
@@ -244,7 +188,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   /// Human-friendly description ("soft blue", "warm neutral", etc.), cached.
-  late final String descriptiveName = ColorNamerSuperSimple.instance.name(this);
+  // late final String descriptiveName = ColorNamerSuperSimple.instance.name(this);
 
   /// Converts this color to YUV.
   YuvColor toYuv() {
@@ -303,7 +247,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
 
   /// Converts this color to Munsell.
   MunsellColor toMunsell() {
-    return MunsellColor("N", 0, 0);
+    return const MunsellColor("N", 0, 0);
   }
 
   /// Converts this color to HSL.
@@ -540,30 +484,14 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
       lin[2],
       type,
     );
-    // 3. Convert back to sRGB (Gamma Corrected)
-    // We can use a helper or manual conversion.
-    // Let's use manual for now or add a helper if needed.
-    // Actually, we can construct a Color from linear sRGB if we had a constructor,
-    // but we have `linearSrgb` getter. We don't have `fromLinearSrgb`.
-    // Let's implement the gamma correction here.
 
-    double gammaCorrect(final double v) {
-      return (v > 0.0031308) ? (1.055 * pow(v, 1 / 2.4) - 0.055) : (12.92 * v);
-    }
-
-    final int r = (gammaCorrect(sim[0]) * 255).round().clamp(0, 255);
-    final int g = (gammaCorrect(sim[1]) * 255).round().clamp(0, 255);
-    final int b = (gammaCorrect(sim[2]) * 255).round().clamp(0, 255);
-
-    return ColorIQ.fromARGB(alpha, r, g, b);
+    return ColorIQ.fromSrgb(
+        r: gammaCorrect(sim[0]),
+        g: gammaCorrect(sim[1]),
+        b: gammaCorrect(sim[2]),
+        a: a);
   }
 
-  @override
-  ColorIQ get inverted {
-    return ColorIQ.fromARGB(alpha, 255 - red, 255 - green, 255 - blue);
-  }
-
-  @override
   ColorIQ get grayscale => desaturate(100);
 
   @override
@@ -584,7 +512,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
 
     final ColorIQ otherColor = other;
     return ColorIQ.fromARGB(
-      (alpha + (otherColor.alpha - alpha) * t).round(),
+      (alphaInt + (otherColor.alphaInt - alphaInt) * t).round(),
       (red + (otherColor.red - red) * t).round(),
       (green + (otherColor.green - green) * t).round(),
       (blue + (otherColor.blue - blue) * t).round(),
@@ -604,20 +532,17 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
     );
   }
 
-  @override
-  double get transparency => alpha / 255.0;
-
   ColorIQ withAlpha(final int newA) =>
       ColorIQ.fromARGB(newA.clamp(0, 255), red, green, blue);
 
   ColorIQ withRgb({final int? red, final int? green, final int? blue}) =>
       ColorIQ.fromARGB(
-          alpha, red ?? this.red, green ?? this.green, blue ?? this.blue);
+          alphaInt, red ?? this.red, green ?? this.green, blue ?? this.blue);
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   ColorIQ copyWith(
       {final int? alpha, final int? red, final int? green, final int? blue}) {
-    return ColorIQ.fromARGB(alpha ?? this.alpha, red ?? this.red,
+    return ColorIQ.fromARGB(alpha ?? alphaInt, red ?? this.red,
         green ?? this.green, blue ?? this.blue);
   }
 
@@ -689,7 +614,8 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
   @override
   ColorIQ opaquer([final double amount = 20]) {
     // Increase alpha by amount%
-    final int newAlpha = (alpha + (255 * amount / 100)).round().clamp(0, 255);
+    final int newAlpha =
+        (alphaInt + (255 * amount / 100)).round().clamp(0, 255);
     return copyWith(alpha: newAlpha);
   }
 
@@ -697,7 +623,9 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
   ColorIQ adjustHue([final double amount = 20]) {
     final HslColor hsl = toHsl();
     double newHue = (hsl.h + amount) % 360;
-    if (newHue < 0) newHue += 360;
+    if (newHue < 0) {
+      newHue += 360;
+    }
     return HslColor(newHue, hsl.s, hsl.l).toColor();
   }
 
@@ -881,7 +809,7 @@ class ColorIQ extends ColorSpacesIQ with ColorModelsMixin {
   }
 
   /// Creates a ColorSpacesIQ instance from a JSON map.
-  static ColorSpacesIQ fromJson(final Map<String, dynamic> json) {
+  static CommonIQ fromJson(final Map<String, dynamic> json) {
     final String type = json['type'] as String;
     switch (type) {
       case 'ColorIQ':

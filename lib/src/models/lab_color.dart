@@ -2,10 +2,23 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
-import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/lch_color.dart';
+
+Map<int, LabColor> mapLAB = <int, LabColor>{
+  //
+};
+
+extension MapLabColorsExtension on Map<int, LabColor> {
+  LabColor getOrCreate(final int key) {
+    final LabColor? color = this[key];
+    if (color != null) {
+      return color;
+    }
+    return putIfAbsent(key, () => LabColor.fromInt(key));
+  }
+}
 
 /// Represents a color in the CIELAB color space.
 ///
@@ -21,7 +34,7 @@ import 'package:color_iq_utils/src/models/lch_color.dart';
 /// - `l`: Lightness, from 0 (black) to 100 (white).
 /// - `a`: Green to red axis, where negative values indicate green and positive values indicate red.
 /// - `b`: Blue to yellow axis, where negative values indicate blue and positive values indicate yellow.
-class LabColor extends ColorSpacesIQ with ColorModelsMixin {
+class LabColor extends CommonIQ implements ColorSpacesIQ {
   /// The lightness component (0-100).
   final double l;
 
@@ -31,14 +44,27 @@ class LabColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The blue-yellow component.
   final double bLab;
 
+  /// Creates a [LabColor] instance.
+  ///
+  /// - [l]: Lightness component, must be between 0 and 100.
+  /// - [aLab]: The green-red component.
+  /// - [bLab]: The blue-yellow component.
+  /// - [hexId]: Optional 32-bit ARGB hex value. If not provided, it's calculated from the LAB values.
+  /// - [alpha]: Alpha transparency, defaults to 100% opaque.
+  /// - [names]: Optional list of names for the color.
   LabColor(this.l, this.aLab, this.bLab,
       {final int? hexId,
       final Percent alpha = Percent.max,
       final List<String>? names})
       : assert(l >= 0 && l <= 100, 'L must be between 0 and 100'),
-        super.alt(hexId ?? LabColor.toHexId(l, aLab, bLab),
-            a: alpha, names: names ?? const <String>[]);
+        super(hexId, alpha: alpha, names: names ?? kEmptyNames);
 
+  @override
+  int get value => super.colorId ?? LabColor.hexIdFromLAB(l, aLab, bLab);
+
+  /// Creates a [LabColor] instance from a 32-bit ARGB hex value.
+  ///
+  /// The [hexId] is converted to the CIELAB color space.
   static LabColor fromInt(final int hexId) {
     final List<double> lab = labFromArgb(hexId);
     return LabColor(lab[0], lab[1], lab[2], hexId: hexId);
@@ -54,12 +80,13 @@ class LabColor extends ColorSpacesIQ with ColorModelsMixin {
   /// - [bLab]: Blue to yellow axis.
   ///
   /// Returns an integer representing the ARGB color.
-  static int toHexId(final double l, final double aLab, final double bLab) {
+  static int hexIdFromLAB(
+      final double l, final double aLab, final double bLab) {
     return argbFromLab(l, aLab, bLab);
   }
 
   @override
-  ColorIQ toColor() => ColorIQ(LabColor.toHexId(l, aLab, bLab));
+  ColorIQ toColor() => ColorIQ(value);
 
   LchColor toLch() {
     final double c = sqrt(aLab * aLab + bLab * bLab);
@@ -70,9 +97,6 @@ class LabColor extends ColorSpacesIQ with ColorModelsMixin {
     }
     return LchColor(l, c, h);
   }
-
-  @override
-  LabColor get inverted => toColor().inverted.lab;
 
   @override
   LabColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);

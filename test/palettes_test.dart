@@ -25,7 +25,7 @@ void main() {
     });
 
     test('analogous returns correct count and offset', () {
-      final HslColor color = HslColor(180, 1.0, 0.5); // Cyan
+      const HslColor color = HslColor(180, 1.0, 0.5); // Cyan
 
       // Default (count 5, offset 30)
       final List<HslColor> palette5 = color.analogous();
@@ -66,7 +66,7 @@ void main() {
     });
 
     test('square returns 4 colors with 90 degree spacing', () {
-      final HslColor color = HslColor(0, 1.0, 0.5); // Red
+      const HslColor color = HslColor(0, 1.0, 0.5); // Red
       final List<HslColor> palette = color.square();
       expect(palette.length, 4);
       expect(palette[0].h, closeTo(0, 1.0));
@@ -76,7 +76,7 @@ void main() {
     });
 
     test('tetrad returns 4 colors with correct spacing', () {
-      final HslColor color = HslColor(0, 1.0, 0.5); // Red
+      const HslColor color = HslColor(0, 1.0, 0.5); // Red
 
       // Default offset 60
       final List<HslColor> palette = color.tetrad();

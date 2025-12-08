@@ -36,8 +36,8 @@ const int hxBisque = 0xFFFFE4C4;
 final ColorIQ cBisque = ColorIQ(hxBisque, names: kBisque);
 const int hxBlack = 0xFF000000;
 final ColorIQ cBlack = ColorIQ(hxBlack, names: kBlack);
-final HslColor kHslBlack = HslColor(0, 0, 0, hexId: hxBlack, names: kBlack);
-final LuvColor luvBlack = LuvColor(0, 0, 0, hexId: hxBlack, names: kBlack);
+const HslColor kHslBlack = HslColor(0, 0, 0, hexId: hxBlack, names: kBlack);
+const LuvColor luvBlack = LuvColor(0, 0, 0, hexId: hxBlack, names: kBlack);
 const int hxBlanchedAlmond = 0xFFFFEBCD;
 final ColorIQ cBlanchedAlmond =
     ColorIQ(hxBlanchedAlmond, names: kBlanchedAlmond);
@@ -135,9 +135,9 @@ const int hxGrey = hxGray;
 final ColorIQ cGrey = cGray;
 const int hxGreenHtml = 0xFF008000;
 final ColorIQ cGreenHtml = ColorIQ(hxGreenHtml, names: kGreen);
-final HsvColor hsvGreen =
+const HsvColor hsvGreen =
     HsvColor(120, Percent.max, Percent.max, hexId: hxGreenHtml, names: kGreen);
-final HslColor hslGreen =
+const HslColor hslGreen =
     HslColor(120, Percent.max, Percent.mid, hexId: hxGreenHtml, names: kGreen);
 
 const int hxGreenYellow = 0xFFADFF2F;
@@ -256,7 +256,7 @@ final ColorIQ cOrangeHtml = ColorIQ(hxOrangeHtml, names: kOrange);
 const int hxOrangeRedHtml = 0xFFFF4500;
 final HtmlColor cOrangeRedHtml = HtmlColor(hxOrangeRedHtml,
     names: kOrangeRed,
-    hctColor: HctColor(34, 95, 58, hxOrangeRedHtml, names: kOrangeRed));
+    hctColor: const HctColor(34, 95, 58, hxOrangeRedHtml, names: kOrangeRed));
 final HtmlColor cRedOrange = cOrangeRedHtml;
 const int hxOrchid = 0xFFDA70D6;
 final ColorIQ cOrchid = ColorIQ(hxOrchid, names: kOrchid);
@@ -286,10 +286,11 @@ const int hxRebeccaPurple = 0xFF663399;
 final ColorIQ cRebeccaPurple = ColorIQ(hxRebeccaPurple, names: kRebeccaPurple);
 const int hxRed = 0xFFFF0000;
 final HtmlColor cRed = HtmlColor(hxRed,
-    names: kRed, hctColor: HctColor(27, 113, 53, argb: hxRed, names: kRed));
-final HslColor kHslRed =
+    names: kRed,
+    hctColor: const HctColor(27, 113, 53, argb: hxRed, names: kRed));
+const HslColor kHslRed =
     HslColor(0, Percent.max, Percent.mid, hexId: hxRed, names: kRed); // Red
-final HsvColor kHsvRed =
+const HsvColor kHsvRed =
     HsvColor(0, Percent.max, Percent.max, hexId: hxRed, names: kRed);
 const int hxRosyBrown = 0xFFBC8F8F;
 final ColorIQ cRosyBrown = ColorIQ(hxRosyBrown, names: kRosyBrown);
@@ -339,9 +340,9 @@ const int hxWheat = 0xFFF5DEB3;
 final ColorIQ cWheat = ColorIQ(hxWheat, names: kWheat);
 const int hxWhite = 0xFFFFFFFF;
 final ColorIQ cWhite = ColorIQ(hxWhite, names: kWhite);
-final HslColor kHslWhite =
+const HslColor kHslWhite =
     HslColor(0, Percent.zero, Percent.max, hexId: hxWhite, lrv: Percent.max);
-final CmykColor cmykWhite = CmykColor(0, 0, 0, 0, value: hxWhite); // White
+const CmykColor cmykWhite = CmykColor(0, 0, 0, 0, value: hxWhite); // White
 
 const int hxWhiteSmoke = 0xFFF5F5F5;
 final ColorIQ cWhiteSmoke = ColorIQ(hxWhiteSmoke, names: kWhiteSmoke);

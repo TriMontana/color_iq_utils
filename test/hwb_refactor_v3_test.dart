@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('HwbColor Refactor V3 Tests', () {
     test('monochromatic returns correct list', () {
-      final HwbColor color = HwbColor(0.0, 0.5, 0.0);
+      const HwbColor color = HwbColor(0.0, 0.5, 0.0);
       final List<ColorSpacesIQ> palette = color.monochromatic;
 
       expect(palette.length, 5);
@@ -14,7 +14,7 @@ void main() {
     });
 
     test('lighterPalette returns whiter colors', () {
-      final HwbColor color = HwbColor(0.0, 0.0, 0.0);
+      const HwbColor color = HwbColor(0.0, 0.0, 0.0);
       final List<ColorSpacesIQ> palette = color.lighterPalette();
 
       expect(palette.length, 5);
@@ -22,7 +22,7 @@ void main() {
     });
 
     test('darkerPalette returns blacker colors', () {
-      final HwbColor color = HwbColor(0.0, 0.0, 0.0);
+      const HwbColor color = HwbColor(0.0, 0.0, 0.0);
       final List<ColorSpacesIQ> palette = color.darkerPalette();
 
       expect(palette.length, 5);
@@ -30,7 +30,7 @@ void main() {
     });
 
     test('random returns valid HwbColor', () {
-      final HwbColor color = HwbColor(0.0, 0.0, 0.0);
+      const HwbColor color = HwbColor(0.0, 0.0, 0.0);
       final ColorSpacesIQ randomColor = color.random;
 
       expect(randomColor, isA<HwbColor>());

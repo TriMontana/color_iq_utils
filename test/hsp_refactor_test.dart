@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('HspColor Refactor Tests', () {
     test('whiten increases brightness and desaturates', () {
-      final HspColor color = HspColor(0, 1.0, Percent.mid); // Dark Red
+      const HspColor color = HspColor(0, 1.0, Percent.mid); // Dark Red
       final HspColor whitened = color.whiten(Percent.mid);
 
       expect(whitened.p, greaterThan(color.p));
@@ -12,7 +12,7 @@ void main() {
     });
 
     test('blacken decreases brightness and desaturates', () {
-      final HspColor color = HspColor(0, 1.0, Percent.max); // Red
+      const HspColor color = HspColor(0, 1.0, Percent.max); // Red
       final HspColor blackened = color.blacken(Percent.mid);
 
       expect(blackened.p, lessThan(color.p));
@@ -20,8 +20,8 @@ void main() {
     });
 
     test('lerp interpolates correctly', () {
-      final HspColor start = HspColor(0, 1.0, Percent.max); // Red
-      final HspColor end = HspColor(120, 1.0, Percent.max); // Green
+      const HspColor start = HspColor(0, 1.0, Percent.max); // Red
+      const HspColor end = HspColor(120, 1.0, Percent.max); // Green
       final HspColor mid = start.lerp(end, 0.5);
 
       expect(mid.h, closeTo(60, 0.1)); // Yellow
@@ -30,14 +30,14 @@ void main() {
     });
 
     test('intensify increases saturation', () {
-      final HspColor color = HspColor(0, Percent.mid, Percent.max);
+      const HspColor color = HspColor(0, Percent.mid, Percent.max);
       final HspColor intensified = color.intensify(Percent.v20);
 
       expect(intensified.s, closeTo(0.7, 0.01));
     });
 
     test('deintensify decreases saturation', () {
-      final HspColor color = HspColor(0, Percent.mid, Percent.max);
+      const HspColor color = HspColor(0, Percent.mid, Percent.max);
       final HspColor deintensified = color.deintensify(Percent.v20);
 
       expect(deintensified.s, closeTo(0.3, 0.01));

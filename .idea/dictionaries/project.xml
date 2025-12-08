@@ -8,10 +8,13 @@
       <w>deintensify</w>
       <w>endtemplate</w>
       <w>eotf</w>
+      <w>fipped</w>
       <w>hsluv</w>
       <w>invf</w>
       <w>lerp</w>
       <w>linrgb</w>
+      <w>mcucam</w>
+      <w>munsell</w>
       <w>oetf</w>
       <w>oklab</w>
       <w>oklch</w>

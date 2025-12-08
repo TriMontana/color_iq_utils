@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
-import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 
@@ -13,7 +12,7 @@ import 'package:color_iq_utils/src/models/hct_color.dart';
 /// a much wider range of colors than the standard sRGB color space.
 ///
 /// The [r], [g], and [b] values are typically in the range of 0.0 to 1.0.
-class Rec2020Color extends ColorSpacesIQ with ColorModelsMixin {
+class Rec2020Color extends CommonIQ implements ColorSpacesIQ {
   @override
   final Percent r;
   @override
@@ -21,12 +20,14 @@ class Rec2020Color extends ColorSpacesIQ with ColorModelsMixin {
   @override
   final Percent b;
 
-  Rec2020Color(this.r, this.g, this.b,
+  const Rec2020Color(this.r, this.g, this.b,
       {final int? hexId,
       final Percent alpha = Percent.max,
       final List<String>? names})
-      : super.alt(hexId ?? toHexID(r, g, b),
-            a: alpha, names: names ?? const <String>[]);
+      : super(hexId, alpha: alpha, names: names ?? kEmptyNames);
+
+  @override
+  int get value => super.colorId ?? Rec2020Color.toHexID(r, g, b);
 
   /// Creates a 32-bit hex ARGB value from the properties of this class.
   ///
@@ -110,9 +111,6 @@ class Rec2020Color extends ColorSpacesIQ with ColorModelsMixin {
   Rec2020Color simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toRec2020();
   }
-
-  @override
-  Rec2020Color get inverted => toColor().inverted.toRec2020();
 
   @override
   Rec2020Color whiten([final double amount = 20]) => lerp(cWhite, amount / 100);

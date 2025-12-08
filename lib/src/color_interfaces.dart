@@ -5,75 +5,21 @@ import 'package:material_color_utilities/hct/cam16.dart' as mcucam16;
 export 'color_wheels.dart';
 export 'utils/color_blindness.dart';
 
-/// A common parent class and interface for all color models.
-abstract class ColorSpacesIQ {
-  /// Returns the 32-bit integer ID (ARGB) of this color.
-  /// The 32-bit alpha-red-green-blue integer value.
-  final int value;
-  final Percent a;
-  final Percent r;
-  final Percent g;
-  final Percent b;
-  final int alphaInt;
-  final int redInt;
-  final int greenInt;
-  final int blueInt;
-  final Percent? lrv;
+abstract class CommonIQ with ColorModelsMixin {
+  final int? colorId;
   final List<String> names;
+  final Percent alpha;
+  const CommonIQ(this.colorId,
+      {this.alpha = Percent.max, this.names = kEmptyNames});
+}
 
-  /// Constructs a color from an integer.
-  const ColorSpacesIQ(this.value,
-      {required this.a,
-      required this.r,
-      required this.g,
-      required this.b,
-      this.lrv,
-      final int? alphaIntVal,
-      final int? redIntVal,
-      final int? greenIntVal,
-      final int? blueIntVal,
-      this.names = const <String>[]})
-      : alphaInt = alphaIntVal ?? (value >> 24 & 0xFF),
-        redInt = redIntVal ?? (value >> 16 & 0xFF),
-        greenInt = greenIntVal ?? (value >> 8 & 0xFF),
-        blueInt = blueIntVal ?? (value & 0xFF);
-
-  /// Alternate Constructor, non-const
-  ColorSpacesIQ.alt(
-    this.value, {
-    final Percent? a,
-    final Percent? r,
-    final Percent? g,
-    final Percent? b,
-    this.lrv,
-    final int? alphaIntVal,
-    final int? redIntVal,
-    final int? greenIntVal,
-    final int? blueIntVal,
-    this.names = const <String>[],
-  })  : a = a ?? Percent(((value >> 24 & 0xFF) / 255.0).clamp0to1),
-        r = r ?? Percent(((value >> 16 & 0xFF) / 255.0).clamp0to1),
-        g = g ?? Percent(((value >> 8 & 0xFF) / 255.0).clamp0to1),
-        b = b ?? Percent(((value & 0xFF) / 255.0).clamp0to1),
-        alphaInt = alphaIntVal ?? (value >> 24 & 0xFF),
-        redInt = redIntVal ?? (value >> 16 & 0xFF),
-        greenInt = greenIntVal ?? (value >> 8 & 0xFF),
-        blueInt = blueIntVal ?? (value & 0xFF);
-
-  double get alphaLinearized => linearizeColorComponentDart(a);
-  LinRGB get redLinearized => linearizeColorComponentDart(r);
-  LinRGB get greenLinearized => linearizeColorComponentDart(g);
-  LinRGB get blueLinearized => linearizeColorComponentDart(b);
-
-  List<int> get argb255Ints => <int>[alphaInt, redInt, greenInt, blueInt];
-  RgbaDoubles get rgbasNormalized => (r: r.val, g: g.val, b: b.val, a: a.val);
-  RgbaInts get rgbaInts =>
-      (alpha: alphaInt, red: redInt, green: greenInt, blue: blueInt);
-  RgbInts get rgbInts => (red: redInt, green: greenInt, blue: blueInt);
-  RgbaDoubles get rgbaDoubles => (a: a.val, r: r.val, g: g.val, b: b.val);
+/// A common parent class and interface for all color models.
+abstract interface class ColorSpacesIQ {
+  int get value;
+  List<String> get names;
 
   /// Returns the relative luminance of this color (0.0 - 1.0).
-  Percent get toLRV => lrv ?? mapLRVs.getOrCreate(value);
+  Percent get toLRV => mapLRVs.getOrCreate(value);
 
   /// Returns the brightness of this color (light or dark).
   Brightness get brightness {
@@ -95,15 +41,6 @@ abstract class ColorSpacesIQ {
   /// Returns the grayscale value of the color.
   int toGrayscale({final GrayscaleMethod method = GrayscaleMethod.luma}) {
     return GrayscaleConverter.toGrayscale(value, method: method);
-  }
-
-  /// Returns the grayscale version of the color.
-  ColorSpacesIQ get grayscale => toHctColor().withChroma(0);
-
-  /// Returns the inverted version of the color.
-  ColorSpacesIQ get inverted {
-    return ColorIQ.fromARGB(
-        alphaInt, 255 - redInt, 255 - greenInt, 255 - blueInt);
   }
 
   /// Converts the color to the standard ARGB [ColorIQ] format.
@@ -156,7 +93,7 @@ abstract class ColorSpacesIQ {
   }
 
   /// Returns the transparency (alpha) as a double (0.0-1.0).
-  double get transparency => a.val;
+  double get transparency => value.a;
 
   /// Returns the color temperature (Warm or Cool), as determined by the color space
   ColorTemperature get temperature {
@@ -206,7 +143,7 @@ abstract class ColorSpacesIQ {
   /// Intensifies the color by increasing chroma and slightly decreasing tone.
   ColorSpacesIQ intensify([final double amount = 10]);
 
-  /// Deintensifies (mutes) the color by decreasing chroma and slightly increasing tone.
+  /// De-intensifies (mutes) the color by decreasing chroma and slightly increasing tone.
   ColorSpacesIQ deintensify([final double amount = 10]);
 
   /// Creates an accented version of this color.

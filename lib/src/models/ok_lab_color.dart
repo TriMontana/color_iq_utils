@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
-import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/ok_hsl_color.dart';
@@ -20,7 +19,7 @@ import 'package:color_iq_utils/src/models/ok_lch_color.dart';
 /// [aLab] represents the green-red axis.
 /// [b] represents the blue-yellow axis.
 /// [alpha] represents the opacity (from 0.0 for transparent to 1.0 for opaque).
-class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
+class OkLabColor extends CommonIQ implements ColorSpacesIQ {
   /// The lightness component of the color, ranging from 0.0 (black) to 1.0 (white).
   final double l;
 
@@ -30,28 +29,29 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
   /// The 'b' component of the color, representing the blue-yellow axis.
   final double bLab;
 
-  /// The alpha value (opacity) of the color, from 0.0 (transparent) to 1.0 (opaque).
-  /// The alpha value (opacity) of the color, from 0.0 (transparent) to 1.0 (opaque).
-  final Percent alpha;
-
   /// Creates an [OkLabColor].
   ///
   /// - [l]: Lightness, must be between 0.0 and 1.0.
   /// - [a]: Green-red component.
   /// - [b]: Blue-yellow component.
   /// - [alpha]: Opacity, defaults to 1.0 (fully opaque).
-  OkLabColor(this.l, this.aLab, this.bLab,
-      {this.alpha = Percent.max, final int? hexId, final List<String>? names})
+  const OkLabColor(this.l, this.aLab, this.bLab,
+      {final Percent alpha = Percent.max,
+      final int? hexId,
+      final List<String>? names})
       : assert(l >= 0 && l <= 1, 'L must be between 0 and 1'),
         assert(aLab >= -1 && aLab <= 1, 'A must be between -1 and 1'),
         assert(bLab >= -1 && bLab <= 1, 'B must be between -1 and 1'),
-        super.alt(hexId ?? OkLabColor.toHexID(l, aLab, bLab, alpha.val),
-            a: alpha, names: names ?? const <String>[]);
+        super(hexId, alpha: alpha, names: names ?? kEmptyNames);
+
+  @override
+  int get value =>
+      super.colorId ?? OkLabColor.hexIdFromOkLAB(l, aLab, bLab, alpha: alpha);
 
   /// A stand-alone static method to create a 32-bit hexID/ARGB from this
   /// class's properties.
-  static int toHexID(
-      final double l, final double a, final double b, final double alpha) {
+  static int hexIdFromOkLAB(final double l, final double a, final double b,
+      {final Percent alpha = Percent.max}) {
     final LmsPrime lmsPrime = labToLmsPrime(l, a, b);
 
     double r = 4.0767416621 * lmsPrime.lPrime -
@@ -71,7 +71,7 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
         ? (1.055 * pow(bVal, 1 / 2.4) - 0.055)
         : (12.92 * bVal);
 
-    final int alphaInt = (alpha * 255).round();
+    final int alphaInt = (alpha.val * 255).round();
     final int redInt = (r * 255).round().clamp(0, 255);
     final int greenInt = (g * 255).round().clamp(0, 255);
     final int blueInt = (bVal * 255).round().clamp(0, 255);
@@ -113,7 +113,7 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
 
   @override
   ColorIQ toColor() {
-    final int argb = OkLabColor.toHexID(l, aLab, bLab, alpha);
+    final int argb = OkLabColor.hexIdFromOkLAB(l, aLab, bLab, alpha: alpha);
     return ColorIQ(argb);
   }
 
@@ -154,9 +154,6 @@ class OkLabColor extends ColorSpacesIQ with ColorModelsMixin {
     }
     return OkHsvColor(lch.h, s, v, alpha: alpha);
   }
-
-  @override
-  OkLabColor get inverted => toColor().inverted.toOkLab();
 
   @override
   OkLabColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);

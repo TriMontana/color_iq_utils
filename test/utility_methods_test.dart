@@ -5,11 +5,11 @@ void main() {
   group('Utility Methods Tests', () {
     test('ColorIQ inverted', () {
       final ColorIQ color = ColorIQ.fromARGB(255, 0, 100, 200);
-      final ColorIQ inverted = color.inverted;
+      final ColorIQ inverted = ColorIQ(color.inverted);
       expect(inverted.red, 255);
       expect(inverted.green, 155);
       expect(inverted.blue, 55);
-      expect(inverted.alpha, 255);
+      expect(inverted.alphaInt, 255);
     });
 
     test('ColorIQ grayscale', () {
@@ -49,7 +49,7 @@ void main() {
     });
 
     test('HslColor grayscale optimization', () {
-      final HslColor hsl = HslColor(120, 1.0, 0.5); // Green
+      const HslColor hsl = HslColor(120, 1.0, 0.5); // Green
       final HslColor gray = hsl.grayscale;
       expect(gray.s, 0.0);
       expect(gray.h, 120);
@@ -57,7 +57,7 @@ void main() {
     });
 
     test('Other models delegation (CmykColor)', () {
-      final CmykColor cmyk = CmykColor(0, 0, 0, 1); // Black
+      const CmykColor cmyk = CmykColor(0, 0, 0, 1); // Black
       final CmykColor inverted =
           cmyk.inverted as CmykColor; // Should be White (0, 0, 0, 0)
       expect(inverted.k, 0.0);
