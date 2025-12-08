@@ -1,6 +1,5 @@
 library;
 
-export 'models/cam16_color.dart';
 export 'models/cmyk_color.dart';
 export 'models/color_models_mixin.dart';
 export 'models/coloriq.dart';

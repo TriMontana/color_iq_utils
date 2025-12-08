@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/hsluv.dart';
 
 /// A representation of color in the HSLuv color space.
@@ -118,20 +117,6 @@ class HsluvColor extends CommonIQ implements ColorSpacesIQ {
     return toColor().simulate(type).toHsluv();
   }
 
-  @override
-  HctColor toHctColor() => toColor().toHctColor();
-
-  @override
-  HsluvColor fromHct(final HctColor hct) => hct.toColor().toHsluv();
-
-  @override
-  HsluvColor adjustTransparency([final double amount = 20]) {
-    return toColor().adjustTransparency(amount).toHsluv();
-  }
-
-  @override
-  double get transparency => toColor().transparency;
-
   /// Creates a copy of this color with the given fields replaced with the new values.
   HsluvColor copyWith({final double? h, final double? s, final double? l}) {
     return HsluvColor(h ?? this.h, s ?? this.s, l ?? this.l);
@@ -224,9 +209,6 @@ class HsluvColor extends CommonIQ implements ColorSpacesIQ {
   @override
   double contrastWith(final ColorSpacesIQ other) =>
       toColor().contrastWith(other);
-
-  @override
-  ColorSlice closestColorSlice() => toColor().closestColorSlice();
 
   @override
   bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) =>

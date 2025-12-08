@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/ok_hsl_color.dart';
 import 'package:color_iq_utils/src/models/ok_hsv_color.dart';
 import 'package:color_iq_utils/src/models/ok_lch_color.dart';
@@ -218,14 +217,6 @@ class OkLabColor extends CommonIQ implements ColorSpacesIQ {
   @override
   OkLabColor simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toOkLab();
-  }
-
-  @override
-  OkLabColor fromHct(final HctColor hct) => hct.toColor().toOkLab();
-
-  @override
-  OkLabColor adjustTransparency([final double amount = 20]) {
-    return toColor().adjustTransparency(amount).toOkLab();
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.

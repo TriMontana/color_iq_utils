@@ -215,17 +215,6 @@ class HctColor extends CommonIQ implements ColorSpacesIQ {
   @override
   HctColor toHctColor() => this;
 
-  @override
-  HctColor fromHct(final HctColor hct) => hct;
-
-  @override
-  HctColor adjustTransparency([final double amount = 20]) {
-    return toColor().adjustTransparency(amount).toHctColor();
-  }
-
-  @override
-  double get transparency => toColor().transparency;
-
   /// Creates a copy of this color with the given fields replaced with the new values.
   HctColor copyWith({
     final double? hue,

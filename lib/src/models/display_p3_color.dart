@@ -196,11 +196,6 @@ class DisplayP3Color extends CommonIQ implements ColorSpacesIQ {
     return toColor().lighten(amount).toDisplayP3();
   }
 
-  @override
-  DisplayP3Color adjustTransparency([final double amount = 20]) {
-    return toColor().adjustTransparency(amount).toDisplayP3();
-  }
-
   /// Creates a copy of this color with the given fields replaced with the new values.
   DisplayP3Color copyWith(
       {final Percent? r, final Percent? g, final Percent? b}) {
@@ -339,9 +334,4 @@ class DisplayP3Color extends CommonIQ implements ColorSpacesIQ {
       'g: ${g.toStrTrimZeros(4)}, ' //
       'b: ${b.toStringAsFixed(4)}, ' //
       'opacity: ${transparency.toStringAsFixed(2)})';
-
-  @override
-  ColorSpacesIQ fromHct(final HctColor hct) {
-    return DisplayP3Color.fromInt(hct.toInt());
-  }
 }

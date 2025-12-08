@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/xyz_color.dart';
 
 /// A representation of a color in the CIE L*u*v* color space.
@@ -154,17 +153,6 @@ class LuvColor extends CommonIQ implements ColorSpacesIQ {
   @override
   LuvColor lighten([final double amount = 20]) {
     return LuvColor(min(100, l + amount), u, v);
-  }
-
-  @override
-  HctColor toHctColor() => toColor().toHctColor();
-
-  @override
-  LuvColor fromHct(final HctColor hct) => hct.toColor().toLuv();
-
-  @override
-  LuvColor adjustTransparency([final double amount = 20]) {
-    return toColor().adjustTransparency(amount).toLuv();
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.

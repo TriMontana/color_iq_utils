@@ -4,13 +4,13 @@ import 'package:test/test.dart';
 void main() {
   group('HCT and Temperature Tests', () {
     test('Color to HCT and back', () {
-      final ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0); // Red
+      final ColorIQ color = ColorIQ.fromArgbInts(255, 255, 0, 0); // Red
       final HctColor hct = color.toHctColor();
       expect(hct, isA<HctColor>());
       // Hue of red is roughly 27 (in HCT/CAM16) or 0 (in HSL).
       // HCT hue is different from HSL hue.
       // Let's just verify round trip.
-      final ColorIQ back = color.fromHct(hct);
+      final ColorIQ back = ColorIQ(hct.toInt());
       // HCT conversion is not perfectly lossless due to gamut mapping, but should be close.
       // However, for pure sRGB red, it might shift slightly.
       // Let's check if it's close.
@@ -20,7 +20,7 @@ void main() {
     });
 
     test('Transparency Adjustment', () {
-      final ColorIQ color = ColorIQ.fromARGB(255, 100, 150, 200);
+      final ColorIQ color = ColorIQ.fromArgbInts(255, 100, 150, 200);
       expect(color.transparency, 1.0);
 
       final ColorIQ transparent = color.adjustTransparency(
@@ -37,42 +37,42 @@ void main() {
     });
 
     test('Transparency on other models (lossy)', () {
-      const HslColor hsl = HslColor(0, 1, 0.5); // Red
+      const HSL hsl = HSL(0, 1, 0.5, alpha: Percent.max); // Red
       // Other models don't store alpha, so transparency is always 1.0
       expect(hsl.transparency, 1.0);
 
       // adjustTransparency returns the same model, so alpha is lost (reset to 1.0)
-      final HslColor adjusted = hsl.adjustTransparency(50);
-      expect(adjusted, isA<HslColor>());
+      final HSL adjusted = hsl.increaseTransparency(Percent.v50);
+      expect(adjusted, isA<HSL>());
       expect(adjusted.transparency, 1.0);
     });
 
     test('Color Temperature', () {
       // Warm colors
       expect(
-        ColorIQ.fromARGB(255, 255, 0, 0).temperature,
+        ColorIQ.fromArgbInts(255, 255, 0, 0).temperature,
         ColorTemperature.warm,
       ); // Red
       expect(
-        ColorIQ.fromARGB(255, 255, 165, 0).temperature,
+        ColorIQ.fromArgbInts(255, 255, 165, 0).temperature,
         ColorTemperature.warm,
       ); // Orange
       expect(
-        ColorIQ.fromARGB(255, 255, 255, 0).temperature,
+        ColorIQ.fromArgbInts(255, 255, 255, 0).temperature,
         ColorTemperature.warm,
       ); // Yellow
 
       // Cool colors
       expect(
-        ColorIQ.fromARGB(255, 0, 255, 0).temperature,
+        ColorIQ.fromArgbInts(255, 0, 255, 0).temperature,
         ColorTemperature.cool,
       ); // Green
       expect(
-        ColorIQ.fromARGB(255, 0, 0, 255).temperature,
+        ColorIQ.fromArgbInts(255, 0, 0, 255).temperature,
         ColorTemperature.cool,
       ); // Blue
       expect(
-        ColorIQ.fromARGB(255, 0, 255, 255).temperature,
+        ColorIQ.fromArgbInts(255, 0, 255, 255).temperature,
         ColorTemperature.cool,
       ); // Cyan
 
@@ -84,13 +84,13 @@ void main() {
       // "Cool: 90-270 (Green-Cyan-Blue-Purple)"
       // So Purple (300) is Warm.
       expect(
-        ColorIQ.fromARGB(255, 128, 0, 128).temperature,
+        ColorIQ.fromArgbInts(255, 128, 0, 128).temperature,
         ColorTemperature.warm,
       );
 
       // Blue (240) -> Cool.
       expect(
-        ColorIQ.fromARGB(255, 0, 0, 255).temperature,
+        ColorIQ.fromArgbInts(255, 0, 0, 255).temperature,
         ColorTemperature.cool,
       );
     });

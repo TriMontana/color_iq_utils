@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/ok_lab_color.dart';
 
 /// A color model that represents color in the Okhsv color space.
@@ -25,21 +24,12 @@ class OkHsvColor extends CommonIQ implements ColorSpacesIQ {
   // Renamed from value to val to avoid conflict with ColorSpacesIQ.value
   final double val;
 
+  /// Creates a new OkHsvColor.
   const OkHsvColor(this.hue, this.saturation, this.val,
       {final Percent alpha = Percent.max,
       final int? hexId,
       final List<String> names = kEmptyNames})
       : super(hexId, names: names, alpha: alpha);
-  // super.alt(
-  //     hexId ?? OkHsvColor.hexIdFromOkHSV(hue, saturation, val, alpha.val),
-  //     a: alpha,
-  //     names: names ??
-  //         names ??
-  //         <String>[
-  //           ColorNames.generateDefaultNameFromInt(hexId ??
-  //               OkHsvColor.hexIdFromOkHSV(
-  //                   hue, saturation, val, alpha.val))
-  //         ]);
 
   @override
   int get value =>
@@ -74,7 +64,7 @@ class OkHsvColor extends CommonIQ implements ColorSpacesIQ {
     g = g.clamp(0.0, 1.0).gammaCorrect;
     blue = blue.clamp(0.0, 1.0).gammaCorrect;
 
-    // Clamp and convert to 0-255
+    // Clamp and ops to 0-255
     final int rInt = (r.clamp(0.0, 1.0) * 255).round();
     final int gInt = (g.clamp(0.0, 1.0) * 255).round();
     final int bInt = (blue.clamp(0.0, 1.0) * 255).round();
@@ -151,10 +141,8 @@ class OkHsvColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  OkHsvColor saturate([final double amount = 25]) {
-    return OkHsvColor(hue, min(1.0, saturation + amount / 100), val,
-        alpha: alpha);
-  }
+  OkHsvColor saturate([final double amount = 25]) =>
+      copyWith(saturation: min(1.0, saturation + amount / 100));
 
   @override
   OkHsvColor desaturate([final double amount = 25]) =>
@@ -212,29 +200,23 @@ class OkHsvColor extends CommonIQ implements ColorSpacesIQ {
     );
   }
 
+  /// Increases the transparency of a color by moving the Alpha channel closer to 0.
+  /// Maximum Transparency (fully invisible) = Alpha 0x00 (0)
+  //
+  // Minimum Transparency (fully opaque) = Alpha 0xFF (255)
   @override
-  OkHsvColor lighten([final double amount = 20]) {
-    return OkHsvColor(hue, saturation, min(1.0, val + amount / 100),
-        alpha: alpha);
-  }
+  OkHsvColor increaseTransparency([final Percent amount = Percent.v20]) =>
+      copyWith(alpha: a.decreaseBy(amount));
 
   @override
-  HctColor toHctColor() => HctColor.fromInt(value);
-
-  @override
-  OkHsvColor fromHct(final HctColor hct) => OkHsvColor.fromInt(hct.toInt());
-
-  @override
-  OkHsvColor adjustTransparency([final double amount = 20]) {
-    final double z = (alpha.val * (1 - amount / 100)).clamp(0.0, 1.0);
-    return copyWith(alpha: Percent(z));
-  }
+  OkHsvColor lighten([final double amount = 20]) =>
+      copyWith(v: Percent(min(1.0, val + amount / 100)));
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   OkHsvColor copyWith({
     final double? hue,
     final double? saturation,
-    final double? v,
+    final Percent? v,
     final Percent? alpha,
   }) {
     return OkHsvColor(
@@ -364,7 +346,7 @@ class OkHsvColor extends CommonIQ implements ColorSpacesIQ {
   @override
   List<OkHsvColor> tonesPalette() => List<OkHsvColor>.generate(
         6,
-        (final int index) => copyWith(v: _clamp01(index / 5)),
+        (final int index) => copyWith(v: Percent(_clamp01(index / 5))),
       );
 
   @override
@@ -401,9 +383,6 @@ class OkHsvColor extends CommonIQ implements ColorSpacesIQ {
       toColor().contrastWith(other);
 
   @override
-  ColorSlice closestColorSlice() => toColor().closestColorSlice();
-
-  @override
   bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) =>
       toColor().isWithinGamut(gamut);
 
@@ -420,5 +399,6 @@ class OkHsvColor extends CommonIQ implements ColorSpacesIQ {
 
   @override
   String toString() => 'OkHsvColor(h: ${hue.toStrTrimZeros(3)}, ' //
-      's: ${saturation.toStringAsFixed(2)}, v: ${val.toStringAsFixed(2)})';
+      's: ${saturation.toStringAsFixed(2)}, ' //
+      'v: ${val.toStrTrimZeros(2)}); $hexStr';
 }

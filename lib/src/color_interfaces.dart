@@ -1,48 +1,58 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:color_iq_utils/src/maps/lrv_maps.dart';
-import 'package:material_color_utilities/hct/cam16.dart' as mcucam16;
+import 'package:material_color_utilities/hct/cam16.dart' as mcu;
 
 export 'color_wheels.dart';
 export 'utils/color_blindness.dart';
 
+/// An abstract base class providing common properties for color representations.
+///
+/// `CommonIQ` serves as a foundational building block for various color
+/// model implementations within the library. It encapsulates shared attributes
+/// such as a unique color ID, a list of associated names, and an alpha
+/// (transparency) value.
+///
+/// By extending or mixing in `CommonIQ`, concrete color classes inherit a
+/// standardized structure for these common properties.
 abstract class CommonIQ with ColorModelsMixin {
+  /// An optional integer identifier for the color, often used for mapping to
+  /// predefined color palettes or databases.
   final int? colorId;
+
+  /// A list of human-readable names associated with the color (e.g., "Red", "Sky Blue").
   final List<String> names;
+
+  /// The alpha (transparency) value of the color, represented as a [Percent].
   final Percent alpha;
-  final double? lrv;
+
   const CommonIQ(this.colorId,
-      {this.alpha = Percent.max, this.names = kEmptyNames, this.lrv});
+      {this.alpha = Percent.max, this.names = kEmptyNames});
 }
 
 /// A common parent class and interface for all color models.
+///
+/// `ColorSpacesIQ` defines a standard contract for color representations,
+/// enabling seamless conversion and manipulation across various color models.
+/// It ensures that any color object can be converted to other models,
+/// manipulated (e.g., lightened, saturated), and analyzed (e.g., luminance,
+/// contrast) in a consistent manner.
 abstract interface class ColorSpacesIQ {
+  /// The 32-bit integer representing the ARGB color value.
+  ///
+  /// This is the canonical representation used for conversions and interoperability.
   int get value;
+
+  /// A list of names associated with the color, if any.
   List<String> get names;
 
-  /// Returns the relative luminance of this color (0.0 - 1.0).
-  Percent get toLRV => mapLRVs.getOrCreate(value);
+  /// A hex string representation of the color, e.g., "#FF0000" for red.
+  String get hexStr => value.toHexStr;
 
-  /// Returns the brightness of this color (light or dark).
-  Brightness get brightness {
-    // Based on ThemeData.estimateBrightnessForColor
-    final double relativeLuminance = toLRV;
-    const double kThreshold = 0.15;
-    if ((relativeLuminance + 0.05) * (relativeLuminance + 0.05) > kThreshold) {
-      return Brightness.light;
-    }
-    return Brightness.dark;
-  }
-
-  /// Returns true if the color is dark.
-  bool get isDark => brightness == Brightness.dark;
-
-  /// Returns true if the color is light.
-  bool get isLight => brightness == Brightness.light;
-
-  /// Returns the grayscale value of the color.
-  int toGrayscale({final GrayscaleMethod method = GrayscaleMethod.luma}) {
-    return GrayscaleConverter.toGrayscale(value, method: method);
-  }
+  /// The relative luminance of this color.
+  ///
+  /// The value is in a range of `0.0` for darkest black to `1.0` for lightest
+  /// white. This is a linear value, not perceptual. This is typically cached
+  /// because it is expensive to compute.
+  double get luminance => computeLuminanceViaHexId(value);
 
   /// Converts the color to the standard ARGB [ColorIQ] format.
   ColorIQ toColor() => ColorIQ(value);
@@ -50,24 +60,18 @@ abstract interface class ColorSpacesIQ {
   /// Converts this color to HCTColor.
   HctColor toHctColor() => HctColor.fromInt(value);
 
-  /// Converts this color to HCTColor.
-  ColorSpacesIQ fromHct(final HctColor hct);
-
   /// Converts this color to the CAM16 color space.
   /// CAM16 is a color appearance model used for calculating perceptual
   /// attributes like hue, chroma, and lightness.  Note: This uses
   /// [Cam16] from MaterialColorUtilities (not Cam16Color), as it is frequently
   /// used for distance computations
-  mcucam16.Cam16 toCam16() => mcucam16.Cam16.fromInt(value);
-
-  /// Converts this color to CAM16Color.
-  Cam16Color toCam16Color() => Cam16Color.fromInt(value);
+  mcu.Cam16 toCam16() => mcu.Cam16.fromInt(value);
 
   /// Converts this color to HSL (Hue, Saturation, Lightness).
-  HslColor toHslColor() => HslColor.fromInt(value);
+  HSL toHslColor() => HSL.fromInt(value);
 
   /// Converts this color to HSV (Hue, Saturation, Value).
-  HsvColor toHsvColor() => HsvColor.fromInt(value);
+  HSV toHsvColor() => HSV.fromInt(value);
 
   /// Converts this color to XYZ (CIE 1931).
   XYZ toXyyColor() => XYZ.fromInt(value);
@@ -78,39 +82,13 @@ abstract interface class ColorSpacesIQ {
   /// Converts this color to the Oklch color space.
   OkLCH toOkLch() => OkLCH.fromInt(value);
 
-  /// Returns the closest color slice from the HCT color wheel.
-  ColorSlice closestColorSlice() {
-    ColorSlice? closest;
-    double minDistance = double.infinity;
-
-    for (final ColorSlice slice in hctSlices) {
-      final double dist = distanceTo(slice.color);
-      if (dist < minDistance) {
-        minDistance = dist;
-        closest = slice;
-      }
-    }
-    return closest!;
-  }
-
-  /// Returns the transparency (alpha) as a double (0.0-1.0).
-  double get transparency => value.a;
-
-  /// Returns the color temperature (Warm or Cool), as determined by the color space
-  ColorTemperature get temperature {
-    final HslColor hsl = toHslColor();
-    // Warm: 0-90 (Red-Yellow-Greenish) and 270-360 (Purple-Red)
-    // Cool: 90-270 (Green-Cyan-Blue-Purple)
-    if (hsl.h >= 90 && hsl.h < 270) {
-      return ColorTemperature.cool;
-    } else {
-      return ColorTemperature.warm;
-    }
-  }
-
   /// Returns the white point of the color space (XYZ values).
   /// Default is D65.
   List<double> get whitePoint => kWhitePointD65;
+
+  // ======= Methods To Implement =========  //
+
+  ColorSlice closestColorSlice();
 
   /// Lightens the color by the given [amount] (0-100).
   ColorSpacesIQ lighten([final double amount = 20]);
@@ -137,8 +115,11 @@ abstract interface class ColorSpacesIQ {
   /// Linearly interpolates between this color and [other]. [t] is 0.0-1.0.
   ColorSpacesIQ lerp(final ColorSpacesIQ other, final double t);
 
-  /// Adjusts the transparency of the color. [amount] is 0-100.
-  ColorSpacesIQ adjustTransparency([final double amount = 20]);
+  /// Adjusts the transparency of the color.
+  /// Maximum Transparency (fully invisible) = Alpha 0x00 (0)
+  /// Minimum Transparency (fully opaque) = Alpha 0xFF (255)
+  ColorSpacesIQ increaseTransparency([final Percent amount = Percent.v20]);
+  ColorSpacesIQ decreaseTransparency([final Percent amount = Percent.v20]);
 
   /// Creates a new instance of this color type from an HCT color.
   /// Intensifies the color by increasing chroma and slightly decreasing tone.
@@ -226,6 +207,7 @@ abstract interface class ColorSpacesIQ {
   double distanceTo(final ColorSpacesIQ other) =>
       toCam16().distance(other.toCam16());
 
+  /// Calculates the distance to another color ID using Cam16-UCS.
   double distanceToArgb(final int argb) => toCam16().distance(argb.toCam16);
 
   /// Calculates the contrast ratio with another color (1.0 to 21.0).

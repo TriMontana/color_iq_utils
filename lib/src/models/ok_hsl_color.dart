@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/ok_lch_color.dart';
 
 /// A color model that represents colors using Hue, Saturation, and Lightness
@@ -200,14 +199,6 @@ class OkHslColor extends CommonIQ implements ColorSpacesIQ {
   @override
   OkHslColor simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toOkHsl();
-  }
-
-  @override
-  OkHslColor fromHct(final HctColor hct) => OkHslColor.fromInt(hct.toInt());
-
-  @override
-  OkHslColor adjustTransparency([final double amount = 20]) {
-    return toColor().adjustTransparency(amount).toOkHsl();
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.

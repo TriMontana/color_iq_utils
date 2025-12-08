@@ -4,7 +4,7 @@ enum Brightness { dark, light }
 /// Common color gamuts.
 enum Gamut { sRGB, displayP3, rec2020, adobeRgb, proPhotoRgb }
 
-/// Enum to indicate how to convert a [Color] object, from one Color Space
+/// Enum to indicate how to ops a [Color] object, from one Color Space
 /// to another
 enum ChannelAdjustMode {
   // percent of difference between the current RGB value and the target,

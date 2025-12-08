@@ -59,11 +59,11 @@ extension CssExtensions on ColorSpacesIQ {
   }
 
   String _toHsl() {
-    final HslColor hsl;
-    if (this is HslColor) {
-      hsl = this as HslColor;
+    final HSL hsl;
+    if (this is HSL) {
+      hsl = this as HSL;
     } else {
-      hsl = toColor().toHsl();
+      hsl = toColor().hsl;
     }
 
     final String h = hsl.h.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
@@ -173,10 +173,10 @@ class CssColor {
       a = double.parse(parts[3]);
     }
 
-    return ColorIQ.fromARGB((a * 255).round(), r, g, b);
+    return ColorIQ.fromArgbInts((a * 255).round(), r, g, b);
   }
 
-  static HslColor _parseHsl(final String s) {
+  static HSL _parseHsl(final String s) {
     // hsl(h, s%, l%)
     final String content = s.substring(s.indexOf('(') + 1, s.lastIndexOf(')'));
     final List<String> parts = content
@@ -202,7 +202,7 @@ class CssColor {
       }
     }
 
-    return HslColor(h, sVal, l, alpha: a);
+    return HSL(h, sVal, l, alpha: a);
   }
 
   static OkLabColor _parseOklab(final String s) {

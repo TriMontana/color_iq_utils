@@ -652,7 +652,7 @@ extension StringHelpers on String {
   String get removeAfterUnderscore =>
       replaceAll(RegExUtils.kAfterUnderscore, kEmptyStr);
 
-  /// convert the input to an integer, or NAN if the input is not an integer
+  /// ops the input to an integer, or NAN if the input is not an integer
   /// REMEMBER THIS IS BASE 10....nonHex
   /// String to Int parse, must set radix to 16 if using HEX
   /// If no [radix] is given then it defaults to 10.   DEFAULTS to base 10
@@ -1116,7 +1116,7 @@ extension StringHelpers on String {
     return toUpperCase() != this && toLowerCase() != this;
   }
 
-  /// convert the input to a Double Pass-Fail.  Pass = 1, fail = 0
+  /// ops the input to a Double Pass-Fail.  Pass = 1, fail = 0
   /// aka parseBool()
   bool get isAffirmative {
     final String testStr = toUpperCase();

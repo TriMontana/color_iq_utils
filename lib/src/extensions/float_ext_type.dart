@@ -254,25 +254,6 @@ extension type const Percent._(double _) implements FloatIQ {
     return Percent(correctedVal);
   }
 
-  Percent replace(final double val) => Percent(val);
-
-  static Percent? validOrNull(
-    final double? val, {
-    final String? msg,
-    final double? tolerance,
-  }) {
-    if (val == null || val.isInfinite || val.isNaN) {
-      return null;
-    }
-    if (val >= Percent.minVal && val <= Percent.maxVal) {
-      return Percent(val);
-    }
-    if (tolerance == null) {
-      return null;
-    }
-    return Percent._legend.clampValue(val, msg: msg, tolerance: tolerance);
-  }
-
   /// Clamped factory to accept a standard int and send it back as
   /// a Percent or null
   static Percent? fromIntOrNull(final int? val, {final String? msg}) {
@@ -333,6 +314,27 @@ extension type const Percent._(double _) implements FloatIQ {
   /// Note: The result is a raw [double] and is not clamped or validated
   /// as a [Percent].
   double operator *(final double otherVal) => (_ * otherVal);
+
+  Percent replace(final double val) => Percent(val);
+  Percent decreaseBy(final Percent amount) =>
+      Percent((_ - amount.value).clamp(0.0, 1.0));
+
+  static Percent? validOrNull(
+    final double? val, {
+    final String? msg,
+    final double? tolerance,
+  }) {
+    if (val == null || val.isInfinite || val.isNaN) {
+      return null;
+    }
+    if (val >= Percent.minVal && val <= Percent.maxVal) {
+      return Percent(val);
+    }
+    if (tolerance == null) {
+      return null;
+    }
+    return Percent._legend.clampValue(val, msg: msg, tolerance: tolerance);
+  }
 
   /// Converts this percentage to an 8-bit integer (`0` to `255`).
   ///
@@ -474,7 +476,7 @@ extension type const Percent._(double _) implements FloatIQ {
 /// 0.0-to-1.0 range or to throw an exception if the value exceeds
 /// the bounds.
 /// - **Conversion**: The `linearToSrgb` getter provides an easy way to apply
-///   gamma correction and convert a linear value to its non-linear [SRGB]
+///   gamma correction and ops a linear value to its non-linear [SRGB]
 ///   equivalent for display.
 /// - **Efficiency**: Predefined constants for common values (e.g., `zero`,
 ///   `midInst`, `maxInst`) improve performance and code readability.
@@ -663,7 +665,7 @@ extension type const LinRGB._(double _) implements Percent {
       (_ * 100).toStrTrimZeros(decimals) + kPercentSign;
 } // ------------------- End of Extension type ----------------------
 /// Linear to sRGB (Encoding): OETF (Opto-Electronic Transfer Function (OETF)
-/// Apply gamma transfer function, i.e. convert from LinearRGB to non-linear
+/// Apply gamma transfer function, i.e. ops from LinearRGB to non-linear
 /// SRGB. The input value is assumed to a LinearRGB value in the
 /// range of 0 to 1.0, i.e. one that is often called 'normalized',
 /// as 'RGB Percent,' or 'LinearRGB.

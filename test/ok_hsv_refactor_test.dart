@@ -5,7 +5,7 @@ void main() {
   group('OkHsvColor Refactor Tests', () {
     test('adjustTransparency decreases alpha', () {
       const OkHsvColor color = OkHsvColor(0.0, 0.0, 0.0);
-      final OkHsvColor transparent = color.adjustTransparency(50);
+      final OkHsvColor transparent = color.increaseTransparency(Percent.v50);
 
       expect(transparent.alpha, closeTo(0.5, 0.01));
     });

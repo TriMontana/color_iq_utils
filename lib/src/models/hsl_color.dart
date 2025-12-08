@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'dart:math';
 
 import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:color_iq_utils/src/models/argb_color.dart';
 
 /// A color in the HSL (Hue, Saturation, Lightness) color space.
 ///
@@ -13,7 +14,7 @@ import 'package:color_iq_utils/color_iq_utils.dart';
 ///   100% is the full color. It is represented as a double from 0.0 to 1.0.
 /// - **Lightness**: The "brightness" of the color. 0% is black, 100% is white,
 ///   and 50% is the "normal" color. It is represented as a double from 0.0 to 1.0.
-class HslColor extends CommonIQ implements ColorSpacesIQ {
+class HSL extends CommonIQ implements ColorSpacesIQ {
   /// The hue value, ranging from 0.0 to 360.0.
   final double h;
 
@@ -23,35 +24,46 @@ class HslColor extends CommonIQ implements ColorSpacesIQ {
   /// The lightness value, ranging from 0.0 to 1.0.
   final double l;
 
+  /// The luminance of this color, LRV rating, 0.0 to 1.0
+  final Percent? lrv;
+
   /// Creates an HSL color and calculates the `hexId` automatically.
   ///
   /// This is a convenience constructor that calculates the integer hex value
   /// from the provided HSL and alpha values.
-  const HslColor(this.h, this.s, this.l,
+  const HSL(this.h, this.s, this.l,
       {final Percent alpha = Percent.max,
       final int? hexId,
-      final double? lrv,
+      this.lrv,
       final List<String>? names})
-      : super(hexId, alpha: alpha, names: names ?? kEmptyNames, lrv: lrv);
+      : super(hexId, alpha: alpha, names: names ?? kEmptyNames);
 
   @override
-  int get value => super.colorId ?? hexIdFromHSL(h, s, l, alpha: alpha);
+  int get value => super.colorId ?? HSL.hexIdFromHSL(h, s, l, alpha: alpha);
 
-  /// Creates an [HslColor] from an RGB [Color].
+  /// Creates an [HSL] from an RGB [Color].
   ///
   /// This constructor does not necessarily round-trip with [toColor] because
   /// of floating point imprecision.
-  factory HslColor.fromInt(final int color) {
-    final double red = color.r;
-    final double green = color.g;
-    final double blue = color.b;
+  factory HSL.fromInt(final int color) {
+    return HSL.fromRgbValues(
+        r: color.r, g: color.g, b: color.b, alpha: color.a2);
+  }
 
-    final double max = math.max(red, math.max(green, blue));
-    final double min = math.min(red, math.min(green, blue));
+  /// Creates an [HSL] from an RGB [Color].
+  ///
+  /// This constructor does not necessarily round-trip with [toColor] because
+  /// of floating point imprecision.
+  static HSL fromRgbValues(
+      {required final double r,
+      required final double g,
+      required final double b,
+      final Percent alpha = Percent.max}) {
+    final double max = math.max(r, math.max(g, b));
+    final double min = math.min(r, math.min(g, b));
     final double delta = max - min;
 
-    final Percent alpha = Percent(color.a);
-    final double hue = getHue(red, green, blue, max, delta);
+    final double hue = getHue(r, g, b, max, delta);
     final double lightness = (max + min) / 2.0;
     // Saturation can exceed 1.0 with rounding errors, so clamp it.
     final double saturation = min == max
@@ -61,7 +73,7 @@ class HslColor extends CommonIQ implements ColorSpacesIQ {
             min: 0.0,
             max: 1.0,
           );
-    return HslColor(hue, saturation, lightness, alpha: alpha);
+    return HSL(hue, saturation, lightness, alpha: alpha);
   }
 
   /// Creates a 32-bit ARGB hex value from HSL values.
@@ -97,7 +109,7 @@ class HslColor extends CommonIQ implements ColorSpacesIQ {
       b = x;
     }
 
-    return ColorIQ.fromARGB(
+    return ColorIQ.fromArgbInts(
       (alpha * 255).round(),
       ((r + m) * 255).round().clamp(0, 255),
       ((g + m) * 255).round().clamp(0, 255),
@@ -105,84 +117,88 @@ class HslColor extends CommonIQ implements ColorSpacesIQ {
     ).value;
   }
 
+  /// Converts ARGB to HSL.
+  static HSL fromARGB(final ARGBColor color) {
+    return HSL.fromRgbValues(
+        r: color.r, g: color.g, b: color.b, alpha: color.a);
+  }
+
+  static HSL fromColor(final ColorIQ color) {
+    final ARGBColor argb = color.argb;
+    return HSL.fromARGB(argb);
+  }
+
   @override
-  HslColor darken([final double amount = 20]) =>
+  HSL darken([final double amount = 20]) =>
       copyWith(saturation: max(0.0, l - amount / 100));
 
   @override
-  HslColor brighten([final double amount = 20]) {
-    return toColor().brighten(amount).toHsl();
-  }
+  HSL brighten([final double amount = 20]) =>
+      copyWith(lightness: Percent(min(1.0, l + amount / 100)));
 
   @override
-  HslColor saturate([final double amount = 25]) {
-    return copyWith(saturation: min(1.0, s + amount / 100));
-  }
+  HSL saturate([final double amount = 25]) =>
+      copyWith(saturation: min(1.0, s + amount / 100));
+
+  /// Increases the transparency of a color by moving the Alpha channel closer to 0.
+  /// Maximum Transparency (fully invisible) = Alpha 0x00 (0)
+  //
+  // Minimum Transparency (fully opaque) = Alpha 0xFF (255)
+  @override
+  HSL increaseTransparency([final Percent amount = Percent.v20]) =>
+      copyWith(alpha: a.decreaseBy(amount));
 
   @override
-  HslColor desaturate([final double amount = 25]) =>
+  HSL desaturate([final double amount = 25]) =>
       copyWith(saturation: max(0.0, s - amount / 100));
 
   @override
-  HslColor intensify([final double amount = 10]) {
-    return HslColor(h, min(1.0, s + amount / 100), l, alpha: alpha);
-  }
+  HSL intensify([final double amount = 10]) =>
+      copyWith(saturation: min(1.0, s + amount / 100));
 
   @override
-  HslColor deintensify([final double amount = 10]) =>
+  HSL deintensify([final double amount = 10]) =>
       copyWith(saturation: max(0.0, s - amount / 100));
 
   @override
-  HslColor accented([final double amount = 15]) => intensify(amount);
+  HSL accented([final double amount = 15]) => intensify(amount);
 
   @override
-  HslColor simulate(final ColorBlindnessType type) {
-    return toColor().simulate(type).toHsl();
+  HSL simulate(final ColorBlindnessType type) {
+    return toColor().simulate(type).hsl;
   }
 
-  HslColor get fippedHue => flipHue();
+  HSL get fippedHue => flipHue();
 
   /// Flip the hue by 180 degrees.
-  HslColor flipHue() => copyWith(hue: _wrapHue(h + 180));
+  HSL flipHue() => copyWith(hue: _wrapHue(h + 180));
 
-  HslColor get grayscale => copyWith(saturation: Percent.zero);
-
-  @override
-  HslColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
+  HSL get grayscale => copyWith(saturation: Percent.zero);
 
   @override
-  HslColor blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
+  HSL whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
-  HslColor lerp(final ColorSpacesIQ other, final double t) {
+  HSL blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
+
+  @override
+  HSL lerp(final ColorSpacesIQ other, final double t) {
     if (t == 0.0) return this;
-    final HslColor otherHsl =
-        other is HslColor ? other : other.toColor().toHsl();
-    if (t == 1.0) return otherHsl;
+    final HSL otherHsl = other is HSL ? other : other.toColor().hsl;
+    if (t == 1.0) {
+      return otherHsl;
+    }
 
-    return HslColor(
+    return HSL(
       lerpHue(h, otherHsl.h, t),
       lerpDouble(s, otherHsl.s, t),
       lerpDouble(l, otherHsl.l, t),
-      alpha: alpha.lerpTo(otherHsl.alpha, t),
     );
   }
 
   @override
-  HslColor lighten([final double amount = 20]) {
-    return HslColor(h, s, min(1.0, l + amount / 100), alpha: alpha);
-  }
-
-  @override
-  HslColor fromHct(final HctColor hct) => HslColor.fromInt(hct.toInt());
-
-  @override
-  HslColor adjustTransparency([final double amount = 20]) {
-    return toColor().adjustTransparency(amount).toHsl();
-  }
-
-  @override
-  double get transparency => toColor().transparency;
+  HSL lighten([final double amount = 20]) =>
+      copyWith(lightness: Percent(min(1.0, l + amount / 100)));
 
   @override
   ColorTemperature get temperature {
@@ -196,31 +212,32 @@ class HslColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  HslColor copyWith({
+  HSL copyWith({
     final double? hue,
     final double? saturation,
-    final double? lightness,
+    final Percent? lightness,
     final Percent? alpha,
+    final Percent? lrv,
   }) {
-    return HslColor(hue ?? h, saturation ?? s, lightness ?? l,
-        alpha: alpha ?? this.alpha);
+    return HSL(hue ?? h, saturation ?? s, lightness ?? l,
+        alpha: alpha ?? a, lrv: lrv);
   }
 
   @override
   List<ColorSpacesIQ> get monochromatic {
     // Native implementation for HSL
-    final List<HslColor> results = <HslColor>[];
+    final List<HSL> results = <HSL>[];
     for (int i = 0; i < 5; i++) {
       final double delta = (i - 2) * 0.1; // 10%
       final double newL = (l + delta).clamp(0.0, 1.0);
-      results.add(HslColor(h, s, newL, alpha: alpha));
+      results.add(copyWith(lightness: Percent(newL)));
     }
     return results;
   }
 
   @override
   List<ColorSpacesIQ> lighterPalette([final double? step]) {
-    final List<HslColor> results = <HslColor>[];
+    final List<HSL> results = <HSL>[];
     double delta;
     if (step != null) {
       delta = step / 100.0;
@@ -229,15 +246,15 @@ class HslColor extends CommonIQ implements ColorSpacesIQ {
     }
 
     for (int i = 1; i <= 5; i++) {
-      final double newL = (l + delta * i).clamp(0.0, 1.0);
-      results.add(HslColor(h, s, newL, alpha: alpha));
+      final Percent newL = Percent((l + delta * i).clamp(0.0, 1.0));
+      results.add(copyWith(lightness: newL));
     }
     return results;
   }
 
   @override
   List<ColorSpacesIQ> darkerPalette([final double? step]) {
-    final List<HslColor> results = <HslColor>[];
+    final List<HSL> results = <HSL>[];
     double delta;
     if (step != null) {
       delta = step / 100.0;
@@ -246,30 +263,24 @@ class HslColor extends CommonIQ implements ColorSpacesIQ {
     }
 
     for (int i = 1; i <= 5; i++) {
-      final double newL = (l - delta * i).clamp(0.0, 1.0);
-      results.add(HslColor(h, s, newL, alpha: alpha));
+      final Percent newL = Percent((l - delta * i).clamp(0.0, 1.0));
+      results.add(copyWith(lightness: newL));
     }
     return results;
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as ColorIQ).toHsl();
+  ColorSpacesIQ get random => (toColor().random as ColorIQ).hsl;
 
   @override
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
 
   @override
-  bool get isDark => brightness == Brightness.dark;
-
-  @override
-  bool get isLight => brightness == Brightness.light;
-
-  @override
-  HslColor blend(final ColorSpacesIQ other, [final double amount = 50]) {
-    final HslColor target = other is HslColor ? other : other.toHslColor();
+  HSL blend(final ColorSpacesIQ other, [final double amount = 50]) {
+    final HSL target = other is HSL ? other : other.toHslColor();
     final double t = (amount / 100).clamp(0.0, 1.0).toDouble();
 
-    return HslColor(
+    return HSL(
       lerpHueB(h, target.h, t),
       clamp01(lerpDoubleB(s, target.s, t)),
       clamp01(lerpDoubleB(l, target.l, t)),
@@ -278,81 +289,78 @@ class HslColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  HslColor opaquer([final double amount = 20]) {
+  HSL opaquer([final double amount = 20]) {
     final double factor = (amount / 100).clamp(0.0, 1.0).toDouble();
-    return HslColor(h, s, l,
+    return HSL(h, s, l,
         alpha: Percent(clamp01(alpha.value + (1 - alpha.value) * factor)));
   }
 
   @override
-  HslColor adjustHue([final double amount = 20]) =>
+  HSL adjustHue([final double amount = 20]) =>
       copyWith(hue: _wrapHue(h + amount));
 
   @override
-  HslColor get complementary => copyWith(hue: _wrapHue(h + 180.0));
+  HSL get complementary => copyWith(hue: _wrapHue(h + 180.0));
 
   @override
-  HslColor warmer([final double amount = 20]) =>
-      copyWith(hue: _wrapHue(h - amount));
+  HSL warmer([final double amount = 20]) => copyWith(hue: _wrapHue(h - amount));
 
   @override
-  HslColor cooler([final double amount = 20]) =>
-      copyWith(hue: _wrapHue(h + amount));
+  HSL cooler([final double amount = 20]) => copyWith(hue: _wrapHue(h + amount));
 
   @override
-  List<HslColor> generateBasicPalette() {
+  List<HSL> generateBasicPalette() {
     const List<double> saturationOffsets = <double>[-0.2, -0.1, 0.0, 0.1, 0.2];
     const List<double> lightnessOffsets = <double>[-0.2, -0.1, 0.0, 0.1, 0.2];
 
-    return List<HslColor>.generate(saturationOffsets.length, (final int index) {
-      return HslColor(
+    return List<HSL>.generate(saturationOffsets.length, (final int index) {
+      return HSL(
         h,
         clamp01(s + saturationOffsets[index]),
         clamp01(l + lightnessOffsets[index]),
-        alpha: alpha,
+        alpha: a,
       );
     });
   }
 
   @override
-  List<HslColor> tonesPalette() {
+  List<HSL> tonesPalette() {
     const List<double> toneOffsets = <double>[-0.3, -0.15, 0.0, 0.15, 0.3];
     return toneOffsets
         .map(
           (final double delta) =>
-              HslColor(h, s, (l + delta).clamp(0.0, 1.0), alpha: alpha),
+              copyWith(lightness: Percent((l + delta).clamp(0.0, 1.0))),
         )
         .toList();
   }
 
   @override
-  List<HslColor> analogous({final int count = 5, final double offset = 30}) {
+  List<HSL> analogous({final int count = 5, final double offset = 30}) {
     if (count <= 0) {
-      return <HslColor>[];
+      return <HSL>[];
     }
-    final List<HslColor> palette = <HslColor>[];
+    final List<HSL> palette = <HSL>[];
     final double pivot = (count - 1) / 2;
     for (int i = 0; i < count; i++) {
       final double delta = (i - pivot) * offset;
-      palette.add(HslColor(_wrapHue(h + delta), s, l, alpha: alpha));
+      palette.add(copyWith(hue: _wrapHue(h + delta)));
     }
     return palette;
   }
 
   @override
-  List<HslColor> square() => List<HslColor>.generate(
+  List<HSL> square() => List<HSL>.generate(
         4,
-        (final int index) =>
-            HslColor(_wrapHue(h + 90.0 * index), s, l, alpha: alpha),
+        (final int index) => copyWith(hue: _wrapHue(h + 90.0 * index)),
         growable: false,
       );
 
   @override
-  List<HslColor> tetrad({final double offset = 60}) => <HslColor>[
-        HslColor(h, s, l, alpha: alpha),
-        HslColor(_wrapHue(h + offset), s, l, alpha: alpha),
-        HslColor(_wrapHue(h + 180.0), s, l, alpha: alpha),
-        HslColor(_wrapHue(h + 180.0 + offset), s, l, alpha: alpha),
+  List<HSL> tetrad({final double offset = 60}) => <HSL>[
+        HSL(h, s, l, alpha: alpha),
+        copyWith(hue: _wrapHue(h + offset)),
+        copyWith(hue: _wrapHue(h + 180.0)),
+        HSL(_wrapHue(h + 180.0 + offset), s, l, alpha: alpha),
       ];
 
   double _wrapHue(final double hue) {
@@ -380,7 +388,7 @@ class HslColor extends CommonIQ implements ColorSpacesIQ {
       'hue': h,
       'saturation': s,
       'lightness': l,
-      'alpha': alpha,
+      'alpha': a,
     };
   }
 
@@ -388,10 +396,10 @@ class HslColor extends CommonIQ implements ColorSpacesIQ {
   String toString() => 'HslColor(h: ${h.toStrTrimZeros(3)}, '
       's: ${s.toStrTrimZeros(3)}, ' //
       'l: ${l.toStrTrimZeros(2)}, '
-      'alpha: ${alpha.toStrTrimZeros(2)})';
+      'a: ${a.toStrTrimZeros(2)})';
 
   @override
-  HslColor toHslColor() => this;
+  HSL toHslColor() => this;
 
   @override
   ColorSlice closestColorSlice() {
@@ -402,7 +410,7 @@ class HslColor extends CommonIQ implements ColorSpacesIQ {
     final double centerAngle = startAngle + 3.0;
 
     return ColorSlice(
-      color: HslColor(centerAngle, 1.0, 0.5),
+      color: HSL(centerAngle, 1.0, 0.5),
       startAngle: startAngle,
       endAngle: endAngle,
       name: names,
@@ -411,7 +419,7 @@ class HslColor extends CommonIQ implements ColorSpacesIQ {
 
   @override
   double get luminance {
-    final int argb = HslColor.hexIdFromHSL(h, s, l, alpha: alpha);
+    final int argb = HSL.hexIdFromHSL(h, s, l, alpha: alpha);
     final int r = (argb >> 16) & 0xFF;
     final int g = (argb >> 8) & 0xFF;
     final int b = argb & 0xFF;
@@ -421,7 +429,7 @@ class HslColor extends CommonIQ implements ColorSpacesIQ {
   @override
   double contrastWith(final ColorSpacesIQ other) {
     final double l1 = luminance;
-    final double l2 = other.toLRV;
+    final double l2 = other.luminance;
     final double lighter = max(l1, l2);
     final double darker = min(l1, l2);
     return (lighter + 0.05) / (darker + 0.05);

@@ -4,20 +4,20 @@ import 'package:test/test.dart';
 void main() {
   group('Saturate/Desaturate Tests', () {
     test('HslColor saturate/desaturate', () {
-      const HslColor hsl = HslColor(0, 0.5, 0.5);
-      final HslColor saturated = hsl.saturate(25);
+      const HSL hsl = HSL(0, 0.5, 0.5);
+      final HSL saturated = hsl.saturate(25);
       expect(saturated.s, closeTo(0.75, 0.01));
 
-      final HslColor desaturated = hsl.desaturate(25);
+      final HSL desaturated = hsl.desaturate(25);
       expect(desaturated.s, closeTo(0.25, 0.01));
     });
 
     test('HsvColor saturate/desaturate', () {
-      const HsvColor hsv = HsvColor(0, 0.5, Percent.mid);
-      final HsvColor saturated = hsv.saturate(25);
+      const HSV hsv = HSV(0, 0.5, Percent.mid);
+      final HSV saturated = hsv.saturate(25);
       expect(saturated.s, closeTo(0.75, 0.01));
 
-      final HsvColor desaturated = hsv.desaturate(25);
+      final HSV desaturated = hsv.desaturate(25);
       expect(desaturated.s, closeTo(0.25, 0.01));
     });
 
@@ -43,10 +43,10 @@ void main() {
 
     test('ColorIQ saturate/desaturate (via HSL)', () {
       // Red: HSL(0, 1.0, 0.5)
-      final ColorIQ red = ColorIQ.fromARGB(255, 255, 0, 0);
+      final ColorIQ red = ColorIQ.fromArgbInts(255, 255, 0, 0);
       final ColorIQ desaturated = red.desaturate(50);
       // HSL(0, 0.5, 0.5) -> RGB approx (191, 64, 64)
-      final HslColor hsl = desaturated.toHsl();
+      final HSL hsl = desaturated.hsl;
       expect(hsl.s, closeTo(0.5, 0.01));
     });
 
@@ -69,11 +69,11 @@ void main() {
     });
 
     test('Clamping', () {
-      const HslColor hsl = HslColor(0, 0.9, 0.5);
-      final HslColor saturated = hsl.saturate(25);
+      const HSL hsl = HSL(0, 0.9, 0.5);
+      final HSL saturated = hsl.saturate(25);
       expect(saturated.s, 1.0);
 
-      final HslColor desaturated = hsl.desaturate(100);
+      final HSL desaturated = hsl.desaturate(100);
       expect(desaturated.s, 0.0);
     });
   });

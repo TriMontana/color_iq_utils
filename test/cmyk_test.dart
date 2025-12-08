@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('CMYK Conversion Tests', () {
     test('Black conversion', () {
-      final ColorIQ color = ColorIQ.fromARGB(255, 0, 0, 0);
+      final ColorIQ color = ColorIQ.fromArgbInts(255, 0, 0, 0);
       final CmykColor cmyk = CmykColor.fromColorSpacesIQ(color);
       expect(cmyk.c, 0.0);
       expect(cmyk.m, 0.0);
@@ -18,7 +18,7 @@ void main() {
     });
 
     test('White conversion', () {
-      final ColorIQ color = ColorIQ.fromARGB(255, 255, 255, 255);
+      final ColorIQ color = ColorIQ.fromArgbInts(255, 255, 255, 255);
       final CmykColor cmyk = CmykColor.fromColorSpacesIQ(color);
       expect(cmyk.c, 0.0);
       expect(cmyk.m, 0.0);
@@ -32,7 +32,7 @@ void main() {
     });
 
     test('Red conversion', () {
-      final ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0);
+      final ColorIQ color = ColorIQ.fromArgbInts(255, 255, 0, 0);
       final CmykColor cmyk = CmykColor.fromColorSpacesIQ(color);
       expect(cmyk.c, 0.0);
       expect(cmyk.m, 1.0);
@@ -46,7 +46,7 @@ void main() {
     });
 
     test('Green conversion', () {
-      final ColorIQ color = ColorIQ.fromARGB(255, 0, 255, 0);
+      final ColorIQ color = ColorIQ.fromArgbInts(255, 0, 255, 0);
       final CmykColor cmyk = CmykColor.fromColorSpacesIQ(color);
       expect(cmyk.c, 1.0);
       expect(cmyk.m, 0.0);
@@ -60,7 +60,7 @@ void main() {
     });
 
     test('Blue conversion', () {
-      final ColorIQ color = ColorIQ.fromARGB(255, 0, 0, 255);
+      final ColorIQ color = ColorIQ.fromArgbInts(255, 0, 0, 255);
       final CmykColor cmyk = CmykColor.fromColorSpacesIQ(color);
       expect(cmyk.c, 1.0);
       expect(cmyk.m, 1.0);
@@ -75,7 +75,7 @@ void main() {
 
     test('Arbitrary color conversion', () {
       // Teal-ish color: R=0, G=128, B=128
-      final ColorIQ color = ColorIQ.fromARGB(255, 0, 128, 128);
+      final ColorIQ color = ColorIQ.fromArgbInts(255, 0, 128, 128);
       final CmykColor cmyk = CmykColor.fromColorSpacesIQ(color);
 
       // Expected: C=1.0, M=0.0, Y=0.0, K=0.5 (approx)

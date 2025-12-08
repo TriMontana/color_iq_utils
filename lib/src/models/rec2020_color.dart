@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:color_iq_utils/src/models/hct_color.dart';
 
 /// A color representation in the Rec. 2020 color space.
 ///
@@ -137,17 +136,6 @@ class Rec2020Color extends CommonIQ implements ColorSpacesIQ {
   Rec2020Color lighten([final double amount = 20]) {
     return toColor().lighten(amount).toRec2020();
   }
-
-  @override
-  Rec2020Color fromHct(final HctColor hct) => hct.toColor().toRec2020();
-
-  @override
-  Rec2020Color adjustTransparency([final double amount = 20]) {
-    return toColor().adjustTransparency(amount).toRec2020();
-  }
-
-  @override
-  double get transparency => toColor().transparency;
 
   double get opacity => 1.0 - transparency;
 

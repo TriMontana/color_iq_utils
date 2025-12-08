@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:color_iq_utils/src/models/hct_color.dart';
 
 /// A representation of a color in the Hunter Lab color space.
 ///
@@ -138,14 +137,6 @@ class HunterLabColor extends CommonIQ implements ColorSpacesIQ {
   @override
   HunterLabColor brighten([final double amount = 20]) {
     return HunterLabColor(l, max(100, aLab + amount), bLab);
-  }
-
-  @override
-  HunterLabColor fromHct(final HctColor hct) => hct.toColor().toHunterLab();
-
-  @override
-  HunterLabColor adjustTransparency([final double amount = 20]) {
-    return toColor().adjustTransparency(amount).toHunterLab();
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.

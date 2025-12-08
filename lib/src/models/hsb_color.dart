@@ -3,8 +3,6 @@ import 'dart:math';
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:color_iq_utils/src/models/hct_color.dart';
-import 'package:material_color_utilities/hct/cam16.dart';
 
 /// A representation of a color in the HSB (Hue, Saturation, Brightness) color space.
 ///
@@ -38,7 +36,7 @@ class HsbColor extends CommonIQ implements ColorSpacesIQ {
   @override
   int get value => super.colorId ?? HsbColor.hexIdFromHsb(h, s, brightnessHsb);
 
-// Note: THERE are two methods to convert HSB to ARGB
+// Note: THERE are two methods to ops HSB to ARGB
 // This function takes hue (0-360 degrees), saturation (0-1), and
 // brightness (0-1) as inputs and returns a 32-bit integer in ARGB format (with full opacity). If you're using this in a context
 // like Flutter, you can pass the result to Color(value) for rendering.
@@ -109,7 +107,7 @@ class HsbColor extends CommonIQ implements ColorSpacesIQ {
     return 0xFF000000 | (ir << 16) | (ig << 8) | ib;
   }
 
-  // // Note: THERE are two methods to convert HSB to ARGB
+  // // Note: THERE are two methods to ops HSB to ARGB
   /// Creates a 32-bit ARGB hex value from HSB components.
   ///
   /// `h` is hue (0-360), `s` is saturation (0-1), and `b` is brightness (0-1).
@@ -283,14 +281,6 @@ class HsbColor extends CommonIQ implements ColorSpacesIQ {
   @override
   HsbColor lighten([final double amount = 20]) =>
       HsbColor(h, s, Percent(min(1.0, brightnessHsb.val + amount / 100)));
-
-  @override
-  HsbColor adjustTransparency([final double amount = 20]) {
-    return toColor().adjustTransparency(amount).toHsb();
-  }
-
-  @override
-  double get transparency => toColor().transparency;
 
   @override
   ColorTemperature get temperature {
@@ -511,14 +501,6 @@ class HsbColor extends CommonIQ implements ColorSpacesIQ {
   String toString() =>
       'HsbColor(h: ${h.toStrTrimZeros(2)}, s: ${s.toStringAsFixed(2)}, ' //
       'b: ${b.toStringAsFixed(2)})';
-
-  @override
-  Cam16 toCam16() => Cam16.fromInt(value);
-
-  @override
-  HsbColor fromHct(final HctColor hct) {
-    return HsbColor.fromInt(hct.toInt());
-  }
 
   static HsbColor _fromRgb(final int r, final int g, final int b) {
     final double rd = r / 255.0;

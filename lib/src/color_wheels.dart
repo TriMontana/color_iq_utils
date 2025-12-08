@@ -1,10 +1,8 @@
-import 'package:color_iq_utils/src/color_interfaces.dart';
 import 'package:color_iq_utils/src/colors_lib.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/hsv_color.dart';
-import 'package:color_iq_utils/src/naming/names.dart';
 
 /// Represents a slice of a color wheel.
 class ColorSlice {
@@ -36,7 +34,7 @@ List<ColorSlice> generateHsvWheel({
 }) {
   return _generateWheel(
     (final double hue) =>
-        HsvColor(hue, Percent(saturation / 100), Percent(value / 100)),
+        HSV(hue, Percent(saturation / 100), Percent(value / 100)),
     saturation,
     value,
   );

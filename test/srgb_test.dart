@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('sRGB and Linear sRGB Tests', () {
     test('ColorIQ srgb getter', () {
-      final ColorIQ color = ColorIQ.fromARGB(255, 100, 150, 200);
+      final ColorIQ color = ColorIQ.fromArgbInts(255, 100, 150, 200);
       expect(color.argb255Ints, <int>[255, 100, 150, 200]);
 
       print('✓ ColorIQ srgb getter test completed');
@@ -12,7 +12,7 @@ void main() {
     });
 
     test('ColorIQ linearSrgb getter (Red)', () {
-      final ColorIQ red = ColorIQ.fromARGB(255, 255, 0, 0);
+      final ColorIQ red = ColorIQ.fromArgbInts(255, 255, 0, 0);
       expect(red.rgbaLinearized, <double>[1.0, 0.0, 0.0, 1.0]);
 
       print('✓ ColorIQ linearSrgb getter (Red) test completed');
@@ -20,7 +20,7 @@ void main() {
     });
 
     test('ColorIQ linearSrgb getter (Mid Gray)', () {
-      final ColorIQ gray = ColorIQ.fromARGB(255, 128, 128, 128);
+      final ColorIQ gray = ColorIQ.fromArgbInts(255, 128, 128, 128);
       // 128/255 = 0.50196
       // ((0.50196 + 0.055) / 1.055) ^ 2.4 = 0.21586
       final List<double> linear = gray.rgbaLinearized;
@@ -37,7 +37,7 @@ void main() {
     });
 
     test('ColorIQ linearSrgb getter (Dark Gray - Linear Segment)', () {
-      final ColorIQ dark = ColorIQ.fromARGB(255, 10, 10, 10);
+      final ColorIQ dark = ColorIQ.fromArgbInts(255, 10, 10, 10);
       // 10/255 = 0.039215
       // 0.039215 / 12.92 = 0.003035
       final List<double> linear = dark.rgbaLinearized;
@@ -53,7 +53,7 @@ void main() {
     });
 
     test('Other models delegation (HslColor)', () {
-      const HslColor hsl = HslColor(0, Percent.max, Percent.mid); // Red
+      const HSL hsl = HSL(0, Percent.max, Percent.mid); // Red
       expect(hsl.argb255Ints, <int>[255, 255, 0, 0]);
       expect(hsl.rgbaLinearized, <double>[1.0, 0.0, 0.0, 1.0]);
 

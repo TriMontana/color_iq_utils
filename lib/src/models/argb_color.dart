@@ -330,8 +330,8 @@ class ARGBColor {
       );
     }
     if (colorSpace != null && colorSpace != this.colorSpace) {
-      final _ColorTransform transform =
-          _getColorTransform(this.colorSpace, colorSpace);
+      final ColorTransform transform =
+          getColorTransform(this.colorSpace, colorSpace);
       return transform.transform(updatedComponents ?? this, colorSpace);
     }
     return updatedComponents ?? this;
@@ -491,33 +491,11 @@ class ARGBColor {
       'green: ${g.toStringAsFixed(4)}, blue: ${b.toStringAsFixed(4)}, colorSpace: $colorSpace)';
 }
 
-/// Linearly interpolate between two numbers, `a` and `b`, by an extrapolation
-/// factor `t`.
-///
-/// When `a` and `b` are equal or both NaN, `a` is returned.  Otherwise,
-/// `a`, `b`, and `t` are required to be finite or null, and the result of `a +
-/// (b - a) * t` is returned, where nulls are defaulted to 0.0.
-double? lerpDouble(num? a, num? b, final double t) {
-  if (a == b || (a?.isNaN ?? false) && (b?.isNaN ?? false)) {
-    return a?.toDouble();
-  }
-  a ??= 0.0;
-  b ??= 0.0;
-  assert(a.isFinite, 'Cannot interpolate between finite and non-finite values');
-  assert(b.isFinite, 'Cannot interpolate between finite and non-finite values');
-  assert(t.isFinite, 't must be finite when interpolating between values');
-  return a * (1.0 - t) + b * t;
-}
-
-// ARGBColor _scaleAlpha(final ARGBColor x, final double factor) {
-//   return x.withValues(alpha: clampDoubleDart(x.a * factor, 0, 1));
-// }
-
-abstract class _ColorTransform {
+abstract class ColorTransform {
   ARGBColor transform(final ARGBColor color, final ColorSpace resultColorSpace);
 }
 
-class _IdentityColorTransform implements _ColorTransform {
+class _IdentityColorTransform implements ColorTransform {
   const _IdentityColorTransform();
   @override
   ARGBColor transform(
@@ -525,9 +503,9 @@ class _IdentityColorTransform implements _ColorTransform {
       color;
 }
 
-class _ClampTransform implements _ColorTransform {
+class _ClampTransform implements ColorTransform {
   const _ClampTransform(this.child);
-  final _ColorTransform child;
+  final ColorTransform child;
   @override
   ARGBColor transform(
       final ARGBColor color, final ColorSpace resultColorSpace) {
@@ -541,7 +519,7 @@ class _ClampTransform implements _ColorTransform {
   }
 }
 
-class _MatrixColorTransform implements _ColorTransform {
+class _MatrixColorTransform implements ColorTransform {
   /// Row-major.
   const _MatrixColorTransform(this.values);
 
@@ -569,7 +547,7 @@ class _MatrixColorTransform implements _ColorTransform {
   }
 }
 
-_ColorTransform _getColorTransform(
+ColorTransform getColorTransform(
     final ColorSpace source, final ColorSpace destination) {
   // The transforms were calculated with the following octave script from known
   // conversions. These transforms have a white point that matches Apple's.
@@ -598,7 +576,7 @@ _ColorTransform _getColorTransform(
     -0.127099563510240, -0.068983484963878, 0.735426667591299,
     0.233655661600230,
   ]);
-  const _ColorTransform p3ToSrgb = _MatrixColorTransform(<double>[
+  const ColorTransform p3ToSrgb = _MatrixColorTransform(<double>[
     1.306671048092539, -0.298061942172353, 0.213228303487995,
     -0.213580156254466, //
     -0.117390025596251, 1.127722006101976, 0.109727644608938,
@@ -657,6 +635,6 @@ _ColorTransform _getColorTransform(
 // However, for converting color values ($0$ to $255$), this specific difference is **negligible** in practice.
 // The native `.round()` method is standard, slightly cleaner, and usually preferred in Dart for this task.
 //
-// Since both expressions correctly convert the four components ({a, red, green, blue}) from $0.0-1.0 to $0-255
+// Since both expressions correctly ops the four components ({a, red, green, blue}) from $0.0-1.0 to $0-255
 // and combine them using bitwise shifts (`<< 24`, `<< 16`, etc.), the resulting 32-bit `_colorId` will be the same in the
 // vast majority of cases.

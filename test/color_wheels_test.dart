@@ -6,10 +6,10 @@ void main() {
     test('generateHsvWheel returns 60 slices', () {
       final List<ColorSlice> wheel = generateHsvWheel();
       expect(wheel.length, 60);
-      expect(wheel.first.color, isA<HsvColor>());
+      expect(wheel.first.color, isA<HSV>());
       expect(wheel.first.name, equals('Red'));
       expect(wheel.last.name, equals('Ruby'));
-      
+
       // Check angles
       expect(wheel[0].startAngle, 0);
       expect(wheel[0].endAngle, 6);
@@ -23,7 +23,7 @@ void main() {
       expect(wheel.first.color, isA<HctColor>());
       // HCT Red is at ~27 degrees (Index 4). Index 0 is shifted to ~336 degrees (Raspberry).
       expect(wheel.first.name, equals('Raspberry'));
-      
+
       // Check angles
       expect(wheel[0].startAngle, 0);
       expect(wheel[0].endAngle, 6);
@@ -38,8 +38,9 @@ void main() {
     });
 
     test('Custom parameters work', () {
-      final List<ColorSlice> hsvWheel = generateHsvWheel(saturation: 50, value: 50);
-      final HsvColor firstHsv = hsvWheel.first.color as HsvColor;
+      final List<ColorSlice> hsvWheel =
+          generateHsvWheel(saturation: 50, value: 50);
+      final HSV firstHsv = hsvWheel.first.color as HSV;
       expect(firstHsv.s, closeTo(0.5, 0.01));
       expect(firstHsv.v, closeTo(0.5, 0.01));
 
@@ -54,7 +55,7 @@ void main() {
       expect(map.length, 60);
       expect(map.containsKey('Red'), isTrue);
       expect(map.containsKey('Scarlet'), isTrue);
-      expect(map['Red']!.color, isA<HsvColor>());
+      expect(map['Red']!.color, isA<HSV>());
     });
 
     test('getHctWheelMap returns map with correct keys', () {

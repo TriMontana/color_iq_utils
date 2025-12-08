@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:color_iq_utils/src/models/hct_color.dart';
 
 /// A representation of a color in the YUV color space.
 ///
@@ -16,7 +15,7 @@ import 'package:color_iq_utils/src/models/hct_color.dart';
 /// The Y component represents the luma, or brightness, and the U and V components
 /// are the chrominance (color) components.
 ///
-/// [YuvColor] provides methods to convert to and from other color spaces,
+/// [YuvColor] provides methods to ops to and from other color spaces,
 /// and to perform various color manipulations.
 class YuvColor extends CommonIQ implements ColorSpacesIQ {
   /// The luma component (brightness).
@@ -137,14 +136,6 @@ class YuvColor extends CommonIQ implements ColorSpacesIQ {
   @override
   YuvColor lighten([final double amount = 20]) {
     return YuvColor(min(1.0, y + amount / 100), u, v);
-  }
-
-  @override
-  YuvColor fromHct(final HctColor hct) => YuvColor.fromHexId(hct.toInt());
-
-  @override
-  YuvColor adjustTransparency([final double amount = 20]) {
-    return toColor().adjustTransparency(amount).toYuv();
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.

@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/maps/lrv_maps.dart';
-import 'package:color_iq_utils/src/models/cam16_color.dart';
+import 'package:color_iq_utils/src/maps/registry.dart';
 import 'package:color_iq_utils/src/models/cmyk_color.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
@@ -13,14 +13,16 @@ import 'package:color_iq_utils/src/models/ok_lab_color.dart';
 import 'package:color_iq_utils/src/models/ok_lch_color.dart';
 import 'package:color_iq_utils/src/models/xyz_color.dart';
 import 'package:color_iq_utils/src/utils/misc_utils.dart';
-import 'package:material_color_utilities/hct/cam16.dart' as mcu;
+import 'package:material_color_utilities/hct/cam16.dart';
 import 'package:material_color_utilities/hct/src/hct_solver.dart';
 
 /// A mixin that provides common color model conversion methods.
 mixin ColorModelsMixin {
   /// Returns the 32-bit integer ID (ARGB) of this color.
   int get value;
-  // int get alpha => value.alphaInt;
+
+  /// A hex string representation of the color, e.g., "#FF0000" for red.
+  String get hexStr => value.toHexStr;
   int get alphaInt => value.alphaInt;
   int get red => value.redInt;
   int get green => value.greenInt;
@@ -60,35 +62,36 @@ mixin ColorModelsMixin {
   /// See [kWhitePointD65] for the exact values.
   List<double> get whitePoint => kWhitePointD65;
 
+  /// The descriptive name of this color.
+  ///
   String get descriptiveName => ColorNamerSuperSimple.instance.name(toColor());
 
-  /// The relative luminance of this color.
-  ///
-  /// The value is in a range of `0.0` for darkest black to `1.0` for lightest
-  /// white. This is a linear value, not perceptual.
-  double get luminance => computeLuminance(r, g, b);
+  /// The relative luminance of this color, 0.0 to 1.0.
+  /// This is a linear value, not perceptual. This is typically cached
+  /// because it is expensive to compute.
+  double get luminance => computeLuminanceViaHexId(value);
 
-  Percent get toLRV => mapLRVs.getOrCreate(value);
+  /// Same as luminance, but stored in global cache.
+  Percent get toLrv => mapLRVs.getOrCreate(value);
 
-  Brightness get brightness => calculateBrightness(toLRV);
+  Brightness get brightness => calculateBrightness(toLrv);
 
   bool get isDark => brightness == Brightness.dark;
 
   bool get isLight => brightness == Brightness.light;
 
-  ColorIQ toColor() => (this is ColorIQ) ? (this as ColorIQ) : ColorIQ(value);
-
-  Cam16Color toCam16Color() =>
-      (this is Cam16Color) ? (this as Cam16Color) : Cam16Color.fromInt(value);
+  ColorIQ toColor() => (this is ColorIQ)
+      ? (this as ColorIQ)
+      : (colorRegistry[value] ?? ColorIQ(value));
 
   /// Converts this color the Cam16 instance from MaterialColorUtilities,
   /// used extensively for calculating distance
-  mcu.Cam16 toCam16() {
-    if (this is mcu.Cam16) {
-      return this as mcu.Cam16;
+  Cam16 toCam16() {
+    if (this is Cam16) {
+      return this as Cam16;
     }
     // Convert to Cam16 (MaterialColorUtilities)
-    return mcu.Cam16.fromInt(value);
+    return Cam16.fromInt(value);
   }
 
   HctColor toHctColor() =>
@@ -98,11 +101,9 @@ mixin ColorModelsMixin {
   ///
   /// The hue value is in the range of 0 to 360, and the saturation and
   // lightness values are in the range of 0 to 1.
-  HslColor toHslColor() =>
-      (this is HslColor) ? (this as HslColor) : HslColor.fromInt(value);
+  HSL toHslColor() => (this is HSL) ? (this as HSL) : HSL.fromInt(value);
 
-  HsvColor toHsvColor() =>
-      (this is HsvColor) ? this as HsvColor : HsvColor.fromInt(value);
+  HSV toHsvColor() => (this is HSV) ? this as HSV : HSV.fromInt(value);
 
   /// Converts this color to OkLab.
   OkLabColor toOkLab() =>
@@ -119,7 +120,7 @@ mixin ColorModelsMixin {
       (this is LuvColor) ? this as LuvColor : LuvColor.fromInt(value);
 
   ColorTemperature get temperature {
-    final HslColor hsl = toHslColor();
+    final HSL hsl = toHslColor();
     // Warm: 0-90 (Red-Yellow-Greenish) and 270-360 (Purple-Red)
     // Cool: 90-270 (Green-Cyan-Blue-Purple)
     if (hsl.h >= 90 && hsl.h < 270) {
@@ -150,6 +151,50 @@ mixin ColorModelsMixin {
 
   ColorSpacesIQ deintensify([final double amount = 10]) =>
       toHctColor().deintensify(amount);
+
+  /// Decreases the transparency of a color by moving the Alpha channel closer to 255 (opaque).
+  /// -- Maximum Transparency (fully invisible) = Alpha 0x00 (0)
+  /// -- Minimum Transparency (fully opaque) = Alpha 0xFF (255)
+  /// @param color The original Color.
+  /// @param factor The fraction of opacity to add (0.0 to 1.0).
+  ///               A factor of 0.5 means 50% of the remaining transparency will be filled.
+  /// @returns A new Color instance with decreased transparency.
+  ColorSpacesIQ decreaseTransparency([final Percent amount = Percent.v20]) {
+    final ColorIQ color = toColor();
+    if (amount.val == 0) {
+      return color;
+    }
+    final double currentOpacity = a.val;
+    final double transparencyGap = 1.0 - currentOpacity;
+
+    // 2. Calculate the amount of the gap to fill: transparencyGap * factor
+    // Example: If alpha is 0.5, gap is 0.5. If factor is 0.4, fill 0.5 * 0.4 = 0.2
+    // New alpha is currentOpacity + amountToFill = 0.5 + 0.2 = 0.7
+    final double amountToFill = transparencyGap * amount.val;
+    return color.withValues(aVal: Percent(currentOpacity + amountToFill));
+  }
+
+  /// Increases the transparency of a color by moving the Alpha channel closer to 0.
+  /// -- Maximum Transparency (fully invisible) = Alpha 0x00 (0)
+  /// -- Minimum Transparency (fully opaque) = Alpha 0xFF (255)
+  ///
+  /// @param color The original Color.
+  /// @param factor The fraction of transparency to add (0.0 to 1.0).
+  ///               A factor of 0.5 means 50% of the current opacity will be removed.
+  /// @returns A new Color instance with increased transparency.
+  ColorSpacesIQ increaseTransparency([final Percent amount = Percent.v20]) {
+    final ColorIQ color = toColor();
+    if (amount.val == 0) {
+      return color;
+    }
+
+    final double currentAlpha = a.val;
+    // 2. Calculate the new alpha: currentAlpha * (1.0 - factor)
+    // Example: If alpha is 0.8 and factor is 0.5, new alpha is 0.8 * 0.5 = 0.4
+    final Percent newAlphaDouble = Percent(currentAlpha * (1.0 - amount.value));
+
+    return color.withValues(aVal: newAlphaDouble);
+  }
 
   /// Returns the closest color slice from the HCT color wheel.
   ColorSlice closestColorSlice() {

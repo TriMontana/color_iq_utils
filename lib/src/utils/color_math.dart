@@ -125,7 +125,7 @@ int rgbDoublesToHexId({
   required final double b,
   final double a = maxFloat8,
 }) {
-  // Clamp and convert each channel to Uint8 (0–255)
+  // Clamp and ops each channel to Uint8 (0–255)
   final int alpha = floatToInt8Hex(a);
   final int red = floatToInt8Hex(r);
   final int green = floatToInt8Hex(g);
@@ -617,7 +617,7 @@ ColorIQ colorFromHue(
     < 300.0 => (secondary, 0.0, chroma),
     _ => (chroma, 0.0, secondary),
   };
-  return ColorIQ.fromARGB(
+  return ColorIQ.fromArgbInts(
     (alpha * 0xFF).round(),
     ((red + match) * 0xFF).round(),
     ((green + match) * 0xFF).round(),

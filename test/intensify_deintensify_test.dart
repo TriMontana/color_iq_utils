@@ -22,7 +22,7 @@ void main() {
     });
 
     test('ColorIQ intensify delegates to HctColor', () {
-      final ColorIQ color = ColorIQ.fromARGB(
+      final ColorIQ color = ColorIQ.fromArgbInts(
         255,
         100,
         150,
@@ -42,7 +42,7 @@ void main() {
     });
 
     test('ColorIQ deintensify delegates to HctColor', () {
-      final ColorIQ color = ColorIQ.fromARGB(255, 100, 150, 200);
+      final ColorIQ color = ColorIQ.fromArgbInts(255, 100, 150, 200);
       final ColorIQ deintensified = color.deintensify(20);
 
       final HctColor originalHct = color.toHctColor();
@@ -65,9 +65,9 @@ void main() {
     });
 
     test('HslColor intensify delegates correctly', () {
-      const HslColor hsl = HslColor(120, 0.5, 0.5);
-      final HslColor intensified = hsl.intensify(10);
-      expect(intensified, isA<HslColor>());
+      const HSL hsl = HSL(120, 0.5, 0.5);
+      final HSL intensified = hsl.intensify(10);
+      expect(intensified, isA<HSL>());
       // Saturation should likely increase
       expect((intensified).s, greaterThanOrEqualTo(hsl.s));
     });

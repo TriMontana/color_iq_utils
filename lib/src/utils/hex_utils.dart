@@ -464,7 +464,7 @@ abstract class HexUtils {
     if (!hexValidator.hasMatch(inputString)) {
       return null;
     }
-    // Remove optional hash if exists and convert HEX to UPPER CASE.
+    // Remove optional hash if exists and ops HEX to UPPER CASE.
     String hexToParse =
         inputString.replaceAll(kPoundSign, kEmptyStr).toUpperCase();
     // It may allow HEXs with transparency information even if alpha is disabled,
@@ -589,8 +589,8 @@ abstract class HexUtils {
     return HexUtils.hexToBytes(hex.toString());
   }
 
-  /// convert int value (1-digit or two-digit number) to hex, shortHex, UInt8
-  /// SINGLE Integer to Hex; convert int to Hex val, toHex Str, shortHex
+  /// ops int value (1-digit or two-digit number) to hex, shortHex, UInt8
+  /// SINGLE Integer to Hex; ops int to Hex val, toHex Str, shortHex
   /// This is for a SINGLE DIGIT, twoChar, oneChar, singleChar, singleDigit
   /// See: https://www.binaryhexconverter.com/decimal-to-hex-converter
   static String singleNumToHexStr<T extends num>(
@@ -737,7 +737,7 @@ abstract class HexUtils {
     return sb.toString();
   }
 
-  /// Tries to convert a [hex] string to a UTF-8 string.
+  /// Tries to ops a [hex] string to a UTF-8 string.
   /// When it fails to decode UTF-8, it returns the non UTF-8 string instead.
   static String tryHexToUtf8(final String hexInput) {
     final String input = hexInput.removeNonHexChars;
@@ -817,12 +817,12 @@ abstract class HexUtils {
   //     return HexUtils._getBytesInternal(hex.removeNonHexChars);
   //   } on Exception catch (e) {
   //     throw ArgumentError(
-  //       'Could not convert hex string into a byte array. Error: $e',
+  //       'Could not ops hex string into a byte array. Error: $e',
   //     );
   //   }
   // }
 
-  /// Tries to convert [hex] string to a byte array.
+  /// Tries to ops [hex] string to a byte array.
   ///
   /// The output will be null if the input is malformed.
   // static List<int>? tryGetBytes(String hex) {
@@ -1228,7 +1228,7 @@ class HexColorParseException extends ArgumentError {
 }
 
 // THIS works...tested, aka HexInt to Decimal 0xFF to 255
-// This is a rare find, as all other suggestions have you convert the
+// This is a rare find, as all other suggestions have you ops the
 // number to a string and THEN parse it with parseInt.  This use bit ops.
 int hexIntToBase10(final int hexIntTwoDigits) => (0xff & hexIntTwoDigits) >> 0;
 

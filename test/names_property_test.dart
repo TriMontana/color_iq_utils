@@ -6,7 +6,8 @@ void main() {
     const List<String> testNames = <String>['Alias1', 'Alias2'];
 
     test('ColorIQ stores names', () {
-      final ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0, names: testNames);
+      final ColorIQ color =
+          ColorIQ.fromArgbInts(255, 255, 0, 0, names: testNames);
       expect(color.names, equals(testNames));
       expect(ColorIQ(0xFFFF0000).names, isEmpty);
     });
@@ -18,15 +19,15 @@ void main() {
     });
 
     test('HslColor stores names', () {
-      const HslColor color = HslColor(0, 1.0, 0.5, names: testNames);
+      const HSL color = HSL(0, 1.0, 0.5, names: testNames);
       expect(color.names, equals(testNames));
-      expect(const HslColor(0, 1.0, 0.5).names, isEmpty);
+      expect(const HSL(0, 1.0, 0.5).names, isEmpty);
     });
 
     test('HsvColor stores names', () {
-      const HsvColor color = HsvColor(0, 1.0, Percent.max, names: testNames);
+      const HSV color = HSV(0, 1.0, Percent.max, names: testNames);
       expect(color.names, equals(testNames));
-      expect(const HsvColor(0, 1.0, Percent.max).names, isEmpty);
+      expect(const HSV(0, 1.0, Percent.max).names, isEmpty);
     });
 
     test('HsbColor stores names', () {
@@ -87,12 +88,6 @@ void main() {
       const OkHsvColor color = OkHsvColor(0, 1, 1, names: testNames);
       expect(color.names, equals(testNames));
       expect(const OkHsvColor(0, 1, 1).names, isEmpty);
-    });
-
-    test('Cam16Color stores names', () {
-      const Cam16Color color = Cam16Color(0, 0, 50, 0, 0, 0, names: testNames);
-      expect(color.names, equals(testNames));
-      expect(const Cam16Color(0, 0, 50, 0, 0, 0).names, isEmpty);
     });
 
     test('DisplayP3Color stores names', () {

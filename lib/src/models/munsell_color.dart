@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 
 /// Represents a color in the Munsell color system.
@@ -15,8 +14,8 @@ import 'package:material_color_utilities/hct/cam16.dart';
 ///
 /// Note: Conversion from Munsell to other color spaces like RGB is complex and
 /// often requires lookup tables. This implementation provides an approximation.
-/// Many methods convert the `MunsellColor` to a `ColorIQ` object first to perform
-/// the operation, and then convert it back. This might lead to precision loss
+/// Many methods ops the `MunsellColor` to a `ColorIQ` object first to perform
+/// the operation, and then ops it back. This might lead to precision loss
 /// due to the approximate nature of the Munsell to RGB conversion.
 class MunsellColor extends CommonIQ implements ColorSpacesIQ {
   /// The Munsell hue, represented as a string (e.g., "5R", "10GY").
@@ -70,7 +69,7 @@ class MunsellColor extends CommonIQ implements ColorSpacesIQ {
     // Or better, return a neutral gray based on Value.
     // Value 0-10 maps to L* 0-100 roughly.
     final int grayVal = (munsellValue * 25.5).round().clamp(0, 255);
-    return ColorIQ.fromARGB(255, grayVal, grayVal, grayVal);
+    return ColorIQ.fromArgbInts(255, grayVal, grayVal, grayVal);
   }
 
   @override
@@ -187,17 +186,6 @@ class MunsellColor extends CommonIQ implements ColorSpacesIQ {
       (munsellValue + (amount / 10)).clamp(0.0, 10.0),
       chroma,
     );
-  }
-
-  @override
-  MunsellColor fromHct(final HctColor hct) => hct.toColor().toMunsell();
-
-  @override
-  MunsellColor adjustTransparency([final double amount = 20]) {
-    // Munsell doesn't have alpha, so we ignore or return as is (conceptually)
-    // But interface requires returning same type.
-    // Since we don't store alpha, we can't really adjust it.
-    return this;
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.

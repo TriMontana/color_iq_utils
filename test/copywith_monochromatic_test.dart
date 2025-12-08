@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('CopyWith and Monochromatic Tests', () {
     test('ColorIQ copyWith', () {
-      final ColorIQ color = ColorIQ.fromARGB(255, 100, 150, 200);
+      final ColorIQ color = ColorIQ.fromArgbInts(255, 100, 150, 200);
       final ColorIQ copy = color.copyWith(red: 255, alpha: 128);
       expect(copy.red, 255);
       expect(copy.alphaInt, 128);
@@ -13,8 +13,8 @@ void main() {
     });
 
     test('HslColor copyWith', () {
-      const HslColor hsl = HslColor(180, 0.5, 0.5);
-      final HslColor copy = hsl.copyWith(hue: 90, lightness: 0.8);
+      const HSL hsl = HSL(180, 0.5, 0.5);
+      final HSL copy = hsl.copyWith(hue: 90, lightness: Percent.v80);
       expect(copy.h, 90);
       expect(copy.l, 0.8);
       expect(copy.s, 0.5); // Unchanged
@@ -29,7 +29,7 @@ void main() {
     });
 
     test('ColorIQ Monochromatic', () {
-      final ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0); // Red
+      final ColorIQ color = ColorIQ.fromArgbInts(255, 255, 0, 0); // Red
       final List<ColorSpacesIQ> palette = color.monochromatic;
       expect(palette.length, 5);
       expect(
@@ -38,9 +38,9 @@ void main() {
       ); // Middle color should be original (approximately)
 
       // Check that all colors have same hue (approximately)
-      final HslColor hsl = color.toHsl();
+      final HSL hsl = color.hsl;
       for (ColorSpacesIQ c in palette) {
-        final HslColor cHsl = (c as ColorIQ).toHsl();
+        final HSL cHsl = (c as ColorIQ).hsl;
         // Hue might wrap around or be slightly off due to clamping, but for Red (0) it should be close.
         // Actually, if we change lightness, hue stays same.
         // But if lightness goes to 0 or 1, hue is undefined/0.
@@ -55,12 +55,12 @@ void main() {
     });
 
     test('HslColor Monochromatic (Native)', () {
-      const HslColor hsl = HslColor(120, 1.0, 0.5); // Green
+      const HSL hsl = HSL(120, 1.0, 0.5); // Green
       final List<ColorSpacesIQ> palette = hsl.monochromatic;
       expect(palette.length, 5);
-      expect((palette[2] as HslColor).l, 0.5);
-      expect((palette[0] as HslColor).l, closeTo(0.3, 0.001)); // 0.5 - 0.2
-      expect((palette[4] as HslColor).l, closeTo(0.7, 0.001)); // 0.5 + 0.2
+      expect((palette[2] as HSL).l, 0.5);
+      expect((palette[0] as HSL).l, closeTo(0.3, 0.001)); // 0.5 - 0.2
+      expect((palette[4] as HSL).l, closeTo(0.7, 0.001)); // 0.5 + 0.2
     });
 
     test('CmykColor Monochromatic (Delegated)', () {

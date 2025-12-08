@@ -1,7 +1,6 @@
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:color_iq_utils/src/models/hct_color.dart';
 
 /// A class representing a color in the YIQ color space.
 ///
@@ -13,7 +12,7 @@ import 'package:color_iq_utils/src/models/hct_color.dart';
 /// `I` ranges from -0.5957 to 0.5957.
 /// `Q` ranges from -0.5226 to 0.5226.
 ///
-/// This class provides methods to convert from and to other color spaces,
+/// This class provides methods to ops from and to other color spaces,
 /// as well as to manipulate the color.
 class YiqColor extends CommonIQ implements ColorSpacesIQ {
   /// The luma component.
@@ -144,14 +143,6 @@ class YiqColor extends CommonIQ implements ColorSpacesIQ {
   @override
   YiqColor lighten([final double amount = 20]) {
     return toColor().lighten(amount).toYiq();
-  }
-
-  @override
-  YiqColor fromHct(final HctColor hct) => hct.toColor().toYiq();
-
-  @override
-  YiqColor adjustTransparency([final double amount = 20]) {
-    return toColor().adjustTransparency(amount).toYiq();
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.

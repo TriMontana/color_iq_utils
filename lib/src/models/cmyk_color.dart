@@ -16,7 +16,7 @@ import 'package:color_iq_utils/src/foundation_lib.dart';
 /// The values for C, M, Y, and K are represented as doubles ranging from 0.0 to 1.0,
 /// where 0.0 indicates no ink and 1.0 indicates full ink coverage.
 ///
-/// This class provides methods to convert CMYK colors to other color spaces (like RGB via `ColorIQ`),
+/// This class provides methods to ops CMYK colors to other color spaces (like RGB via `ColorIQ`),
 /// and to perform various color manipulations such as lightening, darkening, and generating palettes.
 /// It implements the `ColorSpacesIQ` interface, ensuring a consistent API for color operations
 /// across different color models in this library.
@@ -49,7 +49,7 @@ class CmykColor extends CommonIQ implements ColorSpacesIQ {
     final double r = 255 * (1 - c) * (1 - k);
     final double g = 255 * (1 - m) * (1 - k);
     final double b = 255 * (1 - y) * (1 - k);
-    return ColorIQ.fromARGB(
+    return ColorIQ.fromArgbInts(
       255,
       r.round().clamp(0, 255),
       g.round().clamp(0, 255),
@@ -184,7 +184,7 @@ class CmykColor extends CommonIQ implements ColorSpacesIQ {
 
   /// Generates a 32-bit hex value from CMYK components.
   ///
-  /// This is a stand-alone static utility function to convert CMYK values
+  /// This is a stand-alone static utility function to ops CMYK values
   /// directly to a 32-bit integer representation of the color, which is
   /// consistent with the `value` property of `Color` and `ColorIQ`.
   /// The alpha component is always set to 255 (fully opaque).
@@ -198,17 +198,6 @@ class CmykColor extends CommonIQ implements ColorSpacesIQ {
         (g.round().clamp(0, 255) << 8) |
         b.round().clamp(0, 255);
   }
-
-  @override
-  CmykColor fromHct(final HctColor hct) => CmykColor.fromColorSpacesIQ(hct);
-
-  @override
-  CmykColor adjustTransparency([final double amount = 20]) {
-    return CmykColor.fromColorSpacesIQ(toColor().adjustTransparency(amount));
-  }
-
-  @override
-  double get transparency => toColor().transparency;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   CmykColor copyWith({

@@ -28,28 +28,28 @@ void main() {
     });
 
     test('toJson and fromJson for HsvColor', () {
-      const HsvColor hsv = HsvColor(120, 0.5, Percent.v80);
+      const HSV hsv = HSV(120, 0.5, Percent.v80);
       final Map<String, dynamic> json = hsv.toJson();
       expect(json['type'], 'HsvColor');
       expect(json['hue'], 120);
       expect(json['saturation'], 0.5);
       expect(json['value'], 0.8);
 
-      final HsvColor fromJson = ColorIQ.fromJson(json) as HsvColor;
+      final HSV fromJson = ColorIQ.fromJson(json) as HSV;
       expect(fromJson.h, 120);
       expect(fromJson.s, 0.5);
       expect(fromJson.v, 0.8);
     });
 
     test('toJson and fromJson for HslColor', () {
-      const HslColor hsl = HslColor(240, 0.6, Percent.v40);
+      const HSL hsl = HSL(240, 0.6, Percent.v40);
       final Map<String, dynamic> json = hsl.toJson();
       expect(json['type'], 'HslColor');
       expect(json['hue'], 240);
       expect(json['saturation'], 0.6);
       expect(json['lightness'], 0.4);
 
-      final HslColor fromJson = ColorIQ.fromJson(json) as HslColor;
+      final HSL fromJson = ColorIQ.fromJson(json) as HSL;
       expect(fromJson.h, 240);
       expect(fromJson.s, 0.6);
       expect(fromJson.l, 0.4);

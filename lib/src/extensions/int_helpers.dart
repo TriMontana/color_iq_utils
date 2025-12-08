@@ -1,13 +1,7 @@
 import 'dart:math';
 
-import 'package:color_iq_utils/src/color_models_lib.dart';
-import 'package:color_iq_utils/src/color_wheels.dart';
-import 'package:color_iq_utils/src/colors/html.dart';
-import 'package:color_iq_utils/src/extensions/double_helpers.dart';
-import 'package:color_iq_utils/src/extensions/float_ext_type.dart';
-import 'package:color_iq_utils/src/foundation/constants.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
-import 'package:material_color_utilities/hct/cam16.dart' as mcucam16;
+import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:material_color_utilities/hct/cam16.dart';
 import 'package:material_color_utilities/hct/hct.dart' as mcuhct;
 
 /// Extension for integers
@@ -34,8 +28,8 @@ extension IntHelperIQ on int {
   }
 
   double distanceTo(final int other) {
-    final mcucam16.Cam16 cam1 = mcucam16.Cam16.fromInt(this);
-    final mcucam16.Cam16 cam2 = mcucam16.Cam16.fromInt(other);
+    final Cam16 cam1 = Cam16.fromInt(this);
+    final Cam16 cam2 = Cam16.fromInt(other);
     return cam1.distance(cam2);
   }
 
@@ -83,9 +77,8 @@ extension IntHelperIQ on int {
   Percent get toLRV => computeLuminanceViaLinearized(
       redLinearized, greenLinearized, blueLinearized);
 
-  Cam16Color get toCam16Color => Cam16Color.fromInt(this);
+  Cam16 get toCam16 => Cam16.fromInt(this);
   HctColor get toHctColor => HctColor.fromInt(this);
-  mcucam16.Cam16 get toCam16 => mcucam16.Cam16.fromInt(this);
   mcuhct.Hct get toHct => mcuhct.Hct.fromInt(this);
 
   int assertRange0to255([final String? message]) {
@@ -156,7 +149,7 @@ extension IntHelperIQ on int {
     return closestFamily!;
   }
 
-  /// Finds the closest [HTML] color to this color value.
+  /// Finds the closest [HtmlEN] color to this color value.
   ///
   /// Compares the color against all HTML colors using Euclidean distance
   /// in RGB color space.
@@ -166,15 +159,15 @@ extension IntHelperIQ on int {
   /// int myColor = 0xFFFF6B6B;
   /// HTML closest = myColor.closestHTMLColor(); // HTML.lightCoral
   /// ```
-  HTML closestHTMLColor() {
+  HtmlEN closestHTMLColor() {
     final int r = (this >> 16) & 0xFF;
     final int g = (this >> 8) & 0xFF;
     final int b = this & 0xFF;
 
-    HTML? closestColor;
+    HtmlEN? closestColor;
     double minDistance = double.infinity;
 
-    for (final HTML htmlColor in HTML.values) {
+    for (final HtmlEN htmlColor in HtmlEN.values) {
       final int hr = (htmlColor.value >> 16) & 0xFF;
       final int hg = (htmlColor.value >> 8) & 0xFF;
       final int hb = htmlColor.value & 0xFF;
@@ -210,8 +203,8 @@ extension IntHelperIQ on int {
     final Map<ColorFamilyHTML, HtmlColor> familyColors =
         <ColorFamilyHTML, HtmlColor>{
       ColorFamilyHTML.red: cRed,
-      ColorFamilyHTML.orange: ColorIQ(0xFFFFA500),
-      ColorFamilyHTML.yellow: ColorIQ(0xFFFFFF00),
+      ColorFamilyHTML.orange: cOrangeHtml,
+      ColorFamilyHTML.yellow: cYellow,
       ColorFamilyHTML.green: cGreenHtml,
       ColorFamilyHTML.cyan: cCyan,
       ColorFamilyHTML.blue: cBlue,
@@ -256,7 +249,7 @@ extension IntHelperIQ on int {
     return closestFamily!;
   }
 
-  /// Finds the closest [HTML] color to this color value using CAM16-based distance.
+  /// Finds the closest [HtmlEN] color to this color value using CAM16-based distance.
   ///
   /// Uses perceptually uniform CAM16/HCT color space for more accurate
   /// color matching based on human perception rather than simple RGB distance.
@@ -266,13 +259,13 @@ extension IntHelperIQ on int {
   /// int myColor = 0xFFFF6B6B;
   /// HTML closest = myColor.closestHTMLColorPerceptual(); // HTML.lightCoral
   /// ```
-  HTML closestHTMLColorPerceptual() {
+  HtmlEN closestHTMLColorPerceptual() {
     final ColorIQ thisColor = ColorIQ(this);
 
-    HTML? closestColor;
+    HtmlEN? closestColor;
     double minDistance = double.infinity;
 
-    for (final HTML htmlColor in HTML.values) {
+    for (final HtmlEN htmlColor in HtmlEN.values) {
       // Use the distanceTo method which uses CAM16/HCT
       final double distance = thisColor.distanceTo(ColorIQ(htmlColor.value));
 

@@ -9,9 +9,9 @@ void main() {
       expect(random, isA<ColorIQ>());
       expect(random.value, isNot(0xFF000000)); // Unlikely to be black again
 
-      const HslColor hsl = HslColor(0, 0, 0);
-      final HslColor randomHsl = hsl.random as HslColor;
-      expect(randomHsl, isA<HslColor>());
+      const HSL hsl = HSL(0, 0, 0);
+      final HSL randomHsl = hsl.random as HSL;
+      expect(randomHsl, isA<HSL>());
 
       print('✓ Random Color Generation test completed');
       print(
@@ -26,14 +26,14 @@ void main() {
     });
 
     test('isEqual', () {
-      final ColorIQ c1 = ColorIQ.fromARGB(255, 100, 100, 100);
-      final ColorIQ c2 = ColorIQ.fromARGB(255, 100, 100, 100);
-      final ColorIQ c3 = ColorIQ.fromARGB(255, 200, 200, 200);
+      final ColorIQ c1 = ColorIQ.fromArgbInts(255, 100, 100, 100);
+      final ColorIQ c2 = ColorIQ.fromArgbInts(255, 100, 100, 100);
+      final ColorIQ c3 = ColorIQ.fromArgbInts(255, 200, 200, 200);
 
       expect(c1.isEqual(c2), isTrue);
       expect(c1.isEqual(c3), isFalse);
 
-      final HslColor hsl1 = c1.toHsl();
+      final HSL hsl1 = c1.hsl;
       expect(c1.isEqual(hsl1), isTrue); // Should work across types
 
       print('✓ isEqual test completed');
@@ -48,7 +48,7 @@ void main() {
       // Red luminance: 0.2126
       expect(cRed.luminance, closeTo(0.2126, 0.01));
 
-      const HslColor hslWhite = HslColor(0, 0, 1.0);
+      const HSL hslWhite = HSL(0, 0, 1.0);
       expect(hslWhite.luminance, closeTo(1.0, 0.01));
 
       print('✓ Luminance test completed');
@@ -68,10 +68,11 @@ void main() {
       // lum + 0.05 > sqrt(0.15) ~ 0.387
       // lum > 0.337
 
-      final ColorIQ darkGrey = ColorIQ.fromARGB(255, 50, 50, 50); // Lum ~ 0.03
+      final ColorIQ darkGrey =
+          ColorIQ.fromArgbInts(255, 50, 50, 50); // Lum ~ 0.03
       expect(darkGrey.brightness, Brightness.dark);
 
-      final ColorIQ lightGrey = ColorIQ.fromARGB(
+      final ColorIQ lightGrey = ColorIQ.fromArgbInts(
         255,
         200,
         200,

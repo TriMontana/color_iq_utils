@@ -69,6 +69,11 @@ const List<String> kBabyBlueEyes = <String>[
   'Baby Blue',
   'Ojos azules bebe',
 ];
+const List<String> kBananaMania = <String>[
+  'Banana Mania',
+  'Manía de Banana',
+  'Manía del Plátano'
+];
 const List<String> kBarnRed = <String>[
   'Barn Red',
   'Vermelho-Barn',
@@ -118,11 +123,31 @@ const List<String> kBrass = <String>[
   'Latón',
   'Cobre',
 ];
+const List<String> kBrinkPink = <String>[
+  'Brink Pink',
+  'Borde rosa',
+];
+const List<String> kBronze = <String>[
+  'Bronze',
+  'Bronce',
+];
+const List<String> kBronzeMetallic = <String>[
+  'Bronze Metallic',
+  'Bronce Metálico',
+];
 const List<String> kBrown = <String>[
   'Brown',
   'Marrón',
   'Café',
   'Marron',
+];
+const List<String> kBrunswickGreen = <String>[
+  'Brunswick Green',
+  'Verde-Brunswick',
+];
+const List<String> kBulgarianRose = <String>[
+  'Bulgarian Rose',
+  'Rosa-Bulgária',
 ];
 const List<String> kBurgundy = <String>[
   'Burgundy',

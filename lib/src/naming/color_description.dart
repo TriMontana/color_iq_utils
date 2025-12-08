@@ -11,7 +11,7 @@ class ColorDescriptor {
   /// - "Deep Green"
   /// - "Dark Grayish Orange"
   static String describe(final ColorSpacesIQ color) {
-    final HslColor hsl = color.toColor().toHsl();
+    final HSL hsl = color.toColor().hsl;
     final double h = hsl.h;
     final double s = hsl.s;
     final double l = hsl.l;

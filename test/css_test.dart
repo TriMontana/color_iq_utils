@@ -23,7 +23,7 @@ void main() {
     });
 
     test('toCssString HSL', () {
-      const HslColor c = HslColor(0, 1.0, Percent.half); // Red
+      const HSL c = HSL(0, 1.0, Percent.half); // Red
       expect(
         c.toCssString(space: CssColorSpace.hsl),
         equals('hsl(0, 100%, 50%)'),

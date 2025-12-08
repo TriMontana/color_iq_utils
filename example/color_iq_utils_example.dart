@@ -3,7 +3,7 @@ import 'package:color_iq_utils/color_iq_utils.dart';
 void main() {
   // Create a ColorIQ object from RGB
   // const ColorIQ color = ColorIQ.fromARGB(255, 255, 0, 0); // Red
-  final ColorIQ color = ColorIQ(HTML.purple.value); // Red
+  final ColorIQ color = ColorIQ(HtmlEN.purple.value); // Red
   print('Original Color (RGB): $color');
 
   final HctColor hct = color.toHctColor();

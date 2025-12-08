@@ -7,7 +7,7 @@ void main() {
       final ColorIQ color = cRed; // Red
       final ColorIQ darkened = color.darken(20);
       // Red HSL: 0, 1.0, 0.5. Darkened: 0, 1.0, 0.3
-      final HslColor hsl = darkened.toHsl();
+      final HSL hsl = darkened.hsl;
       expect(hsl.l, closeTo(0.3, 0.01));
       print('ColorIQ darken: $darkened');
     });
@@ -22,15 +22,15 @@ void main() {
     });
 
     test('HslColor darken', () {
-      const HslColor hsl = HslColor(100, 0.5, 0.5);
-      final HslColor darkened = hsl.darken(20);
+      const HSL hsl = HSL(100, 0.5, 0.5);
+      final HSL darkened = hsl.darken(20);
       expect(darkened.l, closeTo(0.3, 0.01));
       print('HslColor darken: $darkened');
     });
 
     test('HsvColor darken', () {
-      const HsvColor hsv = HsvColor(100, 0.5, Percent.half);
-      final HsvColor darkened = hsv.darken(20);
+      const HSV hsv = HSV(100, 0.5, Percent.half);
+      final HSV darkened = hsv.darken(20);
       expect(darkened.v, closeTo(0.3, 0.01));
       print('HsvColor darken: $darkened');
     });
@@ -50,8 +50,8 @@ void main() {
     });
 
     test('Darken clamping', () {
-      const HslColor hsl = HslColor(0, 0, Percent.tenth);
-      final HslColor darkened = hsl.darken(20);
+      const HSL hsl = HSL(0, 0, Percent.tenth);
+      final HSL darkened = hsl.darken(20);
       expect(darkened.l, 0.0);
       print('Darken clamping: $darkened');
     });

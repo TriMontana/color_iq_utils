@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/hsv_color.dart';
 
 /// A representation of color in the HWB (Hue, Whiteness, Blackness) color model.
@@ -20,7 +19,7 @@ import 'package:color_iq_utils/src/models/hsv_color.dart';
 /// One constraint of the HWB model is that the sum of whiteness and blackness
 /// cannot exceed 1 (or 100%). If `w + b > 1`, the values are normalized.
 ///
-/// This class provides methods to convert HWB colors to other color spaces,
+/// This class provides methods to ops HWB colors to other color spaces,
 /// perform color manipulations (like darkening, saturating), and generate color palettes.
 class HwbColor extends CommonIQ implements ColorSpacesIQ {
   /// The hue component of the color, ranging from 0 to 360.
@@ -67,7 +66,7 @@ class HwbColor extends CommonIQ implements ColorSpacesIQ {
     final double v = 1 - bNorm;
     final double s = (v == 0) ? 0 : 1 - wNorm / v;
 
-    return HsvColor(h, s, Percent(v), alpha: alpha).value;
+    return HSV(h, s, Percent(v), alpha: alpha).value;
   }
 
 // /// Represents a color in the HWB color space.
@@ -160,7 +159,7 @@ class HwbColor extends CommonIQ implements ColorSpacesIQ {
     final double v = 1 - bNorm;
     final double s = (v == 0) ? 0 : 1 - wNorm / v;
 
-    return HsvColor(h, s, Percent(v), alpha: a).toColor();
+    return HSV(h, s, Percent(v), alpha: a).toColor();
   }
 
   @override
@@ -239,31 +238,6 @@ class HwbColor extends CommonIQ implements ColorSpacesIQ {
   @override
   HwbColor lighten([final double amount = 20]) {
     return toColor().lighten(amount).toHwb();
-  }
-
-  @override
-  HctColor toHctColor() => toColor().toHctColor();
-
-  @override
-  HwbColor fromHct(final HctColor hct) => HwbColor.fromInt(hct.toInt());
-
-  @override
-  HwbColor adjustTransparency([final double amount = 20]) {
-    return toColor().adjustTransparency(amount).toHwb();
-  }
-
-  @override
-  double get transparency => toColor().transparency;
-
-  @override
-  ColorTemperature get temperature {
-    // Warm: 0-90 (Red-Yellow-Greenish) and 270-360 (Purple-Red)
-    // Cool: 90-270 (Green-Cyan-Blue-Purple)
-    if (h >= 90 && h < 270) {
-      return ColorTemperature.cool;
-    } else {
-      return ColorTemperature.warm;
-    }
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.

@@ -18,7 +18,7 @@ void main() {
   stopwatch.reset();
   stopwatch.start();
   for (int i = 0; i < iterations; i++) {
-    color.toHsl();
+    color.hsl;
   }
   stopwatch.stop();
   print('HSL Conversion x $iterations: ${stopwatch.elapsedMilliseconds} ms');

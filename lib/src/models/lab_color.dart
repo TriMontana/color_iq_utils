@@ -3,9 +3,10 @@ import 'dart:math';
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/lch_color.dart';
 
+/// Cache for Lab colors, as they are computationally expensive
+/// to recalculate.
 Map<int, LabColor> mapLAB = <int, LabColor>{
   //
 };
@@ -162,17 +163,6 @@ class LabColor extends CommonIQ implements ColorSpacesIQ {
       lerpDouble(aLab, otherLab.aLab, t),
       lerpDouble(bLab, otherLab.bLab, t),
     );
-  }
-
-  @override
-  HctColor toHctColor() => toColor().toHctColor();
-
-  @override
-  LabColor fromHct(final HctColor hct) => LabColor.fromInt(hct.toInt());
-
-  @override
-  LabColor adjustTransparency([final double amount = 20]) {
-    return toColor().adjustTransparency(amount).lab;
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.

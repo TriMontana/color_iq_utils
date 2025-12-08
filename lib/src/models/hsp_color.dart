@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 
 /// A color model that represents color in terms of Hue, Saturation, and
@@ -293,17 +292,6 @@ class HspColor extends CommonIQ implements ColorSpacesIQ {
       lerpDouble(p, otherHsp.p, t),
     );
   }
-
-  @override
-  HspColor fromHct(final HctColor hct) => hct.toColor().toHsp();
-
-  @override
-  HspColor adjustTransparency([final double amount = 20]) {
-    return toColor().adjustTransparency(amount).toHsp();
-  }
-
-  @override
-  double get transparency => toColor().transparency;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   HspColor copyWith({

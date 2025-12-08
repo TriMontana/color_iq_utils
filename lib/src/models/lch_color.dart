@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/lab_color.dart';
 import 'package:color_iq_utils/src/models/xyz_color.dart';
 
@@ -18,7 +17,7 @@ import 'package:color_iq_utils/src/models/xyz_color.dart';
 ///   and higher values indicate a more vivid color.
 /// - **h (Hue):** Represents the hue angle, ranging from 0 to 360 degrees.
 ///
-/// This class provides methods to convert to and from other color spaces,
+/// This class provides methods to ops to and from other color spaces,
 /// perform color manipulations, and generate color palettes.
 class LchColor extends CommonIQ implements ColorSpacesIQ {
   /// The lightness component of the color (0-100).
@@ -177,14 +176,6 @@ class LchColor extends CommonIQ implements ColorSpacesIQ {
   @override
   LchColor brighten([final double amount = 20]) {
     return toColor().brighten(amount).toLch();
-  }
-
-  @override
-  LchColor fromHct(final HctColor hct) => hct.toColor().toLch();
-
-  @override
-  LchColor adjustTransparency([final double amount = 20]) {
-    return toColor().adjustTransparency(amount).toLch();
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
