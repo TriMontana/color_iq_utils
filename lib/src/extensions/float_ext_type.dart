@@ -657,7 +657,7 @@ extension type const LinRGB._(double _) implements Percent {
 
   // String get toShortHexStr => toUint8.toStringHexShort();
 
-  SRGB get gammaCorrect => oetf(_);
+  Percent get gammaCorrect => oetf(_);
 
   String to100PercentStr([final int decimals = 4]) =>
       (_ * 100).toStrTrimZeros(decimals) + kPercentSign;

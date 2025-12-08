@@ -286,7 +286,7 @@ const int hxAxolotl = 0xFF63775B;
 final ColorIQ cAxolotl = ColorIQ(hxAxolotl, names: const <String>['Axolotl']);
 
 const int hxAzure = 0xFF007FFF;
-final ColorIQ cAzure = ColorIQ(hxAzure, names: const <String>['Azure']);
+final ColorIQ cAzure = ColorIQ(hxAzure, names: kAzure);
 
 const int hxAzureishWhite = 0xFFDBE9F4;
 final ColorIQ cAzureishWhite =

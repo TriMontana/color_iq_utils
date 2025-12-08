@@ -9,8 +9,9 @@ abstract class CommonIQ with ColorModelsMixin {
   final int? colorId;
   final List<String> names;
   final Percent alpha;
+  final double? lrv;
   const CommonIQ(this.colorId,
-      {this.alpha = Percent.max, this.names = kEmptyNames});
+      {this.alpha = Percent.max, this.names = kEmptyNames, this.lrv});
 }
 
 /// A common parent class and interface for all color models.

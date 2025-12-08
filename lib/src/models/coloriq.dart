@@ -49,7 +49,6 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
   final int hexId;
   final HctColor? _hctColor;
   final ARGBColor? _argb;
-  final double? _lrv;
   final ColorSpace colorSpace;
 
   /// Constructor
@@ -61,12 +60,11 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
     final List<String> names = kEmptyNames,
     final double? lrv,
   })  : _hctColor = hctColor,
-        _lrv = lrv,
         _argb = argbColor,
-        super(hexId, names: names, alpha: hexId.a2);
+        super(hexId, names: names, alpha: hexId.a2, lrv: lrv);
 
   late final ARGBColor argb = _argb ?? ARGBColor(hexId);
-  late final double lrv = _lrv ?? computeLuminanceViaHexId(hexId);
+  late final double lrvVal = super.lrv ?? computeLuminanceViaHexId(hexId);
   @override
   int get value => hexId;
   @override

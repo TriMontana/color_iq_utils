@@ -134,7 +134,9 @@ final ColorIQ cGray = ColorIQ(hxGray, names: kGray);
 const int hxGrey = hxGray;
 final ColorIQ cGrey = cGray;
 const int hxGreenHtml = 0xFF008000;
-final ColorIQ cGreenHtml = ColorIQ(hxGreenHtml, names: kGreen);
+final HtmlColor cGreenHtml = HtmlColor(hxGreenHtml,
+    names: kGreen,
+    hctColor: const HctColor(142, 71, 46, argb: hxGreenHtml, names: kGreen));
 const HsvColor hsvGreen =
     HsvColor(120, Percent.max, Percent.max, hexId: hxGreenHtml, names: kGreen);
 const HslColor hslGreen =
@@ -256,7 +258,8 @@ final ColorIQ cOrangeHtml = ColorIQ(hxOrangeHtml, names: kOrange);
 const int hxOrangeRedHtml = 0xFFFF4500;
 final HtmlColor cOrangeRedHtml = HtmlColor(hxOrangeRedHtml,
     names: kOrangeRed,
-    hctColor: const HctColor(34, 95, 58, hxOrangeRedHtml, names: kOrangeRed));
+    hctColor:
+        const HctColor(34, 95, 58, argb: hxOrangeRedHtml, names: kOrangeRed));
 final HtmlColor cRedOrange = cOrangeRedHtml;
 const int hxOrchid = 0xFFDA70D6;
 final ColorIQ cOrchid = ColorIQ(hxOrchid, names: kOrchid);
@@ -281,7 +284,9 @@ final ColorIQ cPlumHtml = ColorIQ(hxPlumHtml, names: kPlum);
 const int hxPowderBlue = 0xFFB0E0E6;
 final ColorIQ cPowderBlue = ColorIQ(hxPowderBlue, names: kPowderBlue);
 const int hxPurpleHtml = 0xFF800080;
-final ColorIQ cPurpleHtml = ColorIQ(hxPurpleHtml, names: kPurple);
+final HtmlColor cPurpleHtml = HtmlColor(hxPurpleHtml,
+    names: kPurple,
+    hctColor: const HctColor(335, 70, 30, argb: hxPurpleHtml, names: kPurple));
 const int hxRebeccaPurple = 0xFF663399;
 final ColorIQ cRebeccaPurple = ColorIQ(hxRebeccaPurple, names: kRebeccaPurple);
 const int hxRed = 0xFFFF0000;

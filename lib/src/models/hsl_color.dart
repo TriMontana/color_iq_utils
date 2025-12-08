@@ -30,8 +30,9 @@ class HslColor extends CommonIQ implements ColorSpacesIQ {
   const HslColor(this.h, this.s, this.l,
       {final Percent alpha = Percent.max,
       final int? hexId,
+      final double? lrv,
       final List<String>? names})
-      : super(hexId, alpha: alpha, names: names ?? kEmptyNames);
+      : super(hexId, alpha: alpha, names: names ?? kEmptyNames, lrv: lrv);
 
   @override
   int get value => super.colorId ?? hexIdFromHSL(h, s, l, alpha: alpha);
