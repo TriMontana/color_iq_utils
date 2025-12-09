@@ -9,6 +9,7 @@ import 'package:material_color_utilities/utils/color_utils.dart';
 /// accurate color measurement system that can also accurately render what
 /// colors will appear as in different lighting environments.
 /// credit: Adapted from material_color_utilities
+@Deprecated('Use Hct Data')
 class HctColor extends CommonIQ implements ColorSpacesIQ {
   final double hue;
   final double chroma;
@@ -57,6 +58,8 @@ class HctColor extends CommonIQ implements ColorSpacesIQ {
     return HctColor(hue, chroma, tone, argb: argb, names: names ?? kEmptyNames);
   }
 
+  /// Secondary constructor.
+  /// credit: Adapted from material_color_utilities
   factory HctColor.alt(
     final double h,
     final double c,
@@ -382,5 +385,5 @@ class HctColor extends CommonIQ implements ColorSpacesIQ {
 
   @override
   String toString() => 'HctColor(hue: ${hue.toStrTrimZeros(3)}, ' //
-      'chroma: ${chroma.toStrTrimZeros(2)}, tone: ${tone.toStrTrimZeros(2)})';
+      'chroma: ${chroma.toStrTrimZeros(3)}, tone: ${tone.toStrTrimZeros(3)})';
 }

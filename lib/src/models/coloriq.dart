@@ -6,6 +6,7 @@ import 'package:color_iq_utils/src/models/argb_color.dart';
 import 'package:color_iq_utils/src/models/cmyk_color.dart';
 import 'package:color_iq_utils/src/models/display_p3_color.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:color_iq_utils/src/models/hct_data.dart';
 import 'package:color_iq_utils/src/models/hsb_color.dart';
 import 'package:color_iq_utils/src/models/hsl_color.dart';
 import 'package:color_iq_utils/src/models/hsluv_color.dart';
@@ -25,7 +26,6 @@ import 'package:color_iq_utils/src/models/yiq_color.dart';
 import 'package:color_iq_utils/src/models/yuv_color.dart';
 import 'package:color_iq_utils/src/utils_lib.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
-import 'package:material_color_utilities/hct/hct.dart';
 
 /// A versatile color representation class, `ColorIQ`, designed for advanced color
 /// manipulation and conversion.
@@ -50,9 +50,10 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
   /// This is the canonical value for the color instance.
   final int hexId;
 
-  /// An optional, pre-computed [HctColor] instance.
+  /// An optional, pre-computed [HctData] instance.
   /// Used for optimization to avoid re-calculating HCT values if they are already known.
-  final Hct? _hctColor;
+  /// Otherwise, this is lazily computed for performance reasons.
+  final HctData? _hct;
 
   /// An optional, pre-computed [ARGBColor] instance.
   /// Used for optimization to avoid re-parsing the `hexId` if components are known.
@@ -73,18 +74,18 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
   /// Creates a [ColorIQ] instance from a 32-bit integer [hexId].
   ///
   /// Optional parameters can be provided to pre-compute and cache values like
-  /// [hctColor], [argbColor], [lrv], and [brightness], which can improve
+  /// [hctData], [argbColor], [lrv], and [brightness], which can improve
   /// performance if these values are already available.
   ColorIQ(
     this.hexId, {
     this.colorSpace = ColorSpace.sRGB,
-    final Hct? hctColor,
+    final HctData? hctData,
     final ARGBColor? argbColor,
     final List<String> names = kEmptyNames,
     final Percent? lrv,
     final Brightness? brightness,
     final Percent? alpha,
-  })  : _hctColor = hctColor,
+  })  : _hct = hctData,
         _argb = argbColor,
         _lrv = lrv ?? argbColor?.lrv,
         _brightness = brightness ?? argbColor?.brightness,
@@ -102,7 +103,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
   /// This value is lazily computed and cached. It is a crucial component for
   /// determining color contrast and accessibility. The value ranges from 0.0
   /// (black) to 1.0 (white).
-  late final double lrv = _lrv ?? computeLuminanceViaHexId(hexId);
+  late final Percent lrv = _lrv ?? argb.lrv;
 
   /// The brightness of the color, determined as either [Brightness.light] or
   /// [Brightness.dark].
@@ -138,7 +139,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
     final ColorSpace colorSpace = ColorSpace.sRGB,
     final List<String>? names,
     final Percent? lrv,
-    final Hct? hctColor,
+    final HctData? hctColor,
   }) {
     final ARGBColor argbColor =
         ARGBColor.fromARGB(alpha, red, green, blue, a: a, r: r, g: g, b: b);
@@ -148,7 +149,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
       names: names ?? kEmptyNames,
       colorSpace: colorSpace,
       lrv: lrv,
-      hctColor: hctColor,
+      hctData: hctColor,
     );
   }
 
@@ -158,7 +159,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
     final ColorSpace colorSpace = ColorSpace.sRGB,
     final List<String>? names,
     final Percent? lrv,
-    final Hct? hctColor,
+    final HctData? hctColor,
   }) {
     return ColorIQ(
       argbColor.value,
@@ -166,7 +167,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
       names: names ?? kEmptyNames,
       colorSpace: colorSpace,
       lrv: lrv ?? argbColor.lrv,
-      hctColor: hctColor,
+      hctData: hctColor,
       brightness: argbColor.brightness,
     );
   }
@@ -180,7 +181,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
     Percent? luminance,
     final ColorSpace colorSpace = ColorSpace.sRGB,
     final List<String>? names,
-    final Hct? hctColor,
+    final HctData? hctColor,
     ARGBColor? argbColor,
   }) {
     argbColor ??= ARGBColor.from(a: a, r: r, g: g, b: b);
@@ -188,7 +189,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
     return ColorIQ(argbColor.value,
         colorSpace: colorSpace,
         lrv: luminance,
-        hctColor: hctColor,
+        hctData: hctColor,
         names: names ?? kEmptyNames);
   }
 
@@ -226,7 +227,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
   ColorIQ toColor() => this;
 
   late final LabColor lab = mapLAB.getOrCreate(value);
-  late final Hct hct = _hctColor ?? Hct.fromInt(value);
+  late final HctData hct = _hct ?? HctData.fromInt(value);
   late final Cam16 cam16 = Cam16.fromInt(value);
 
   late final XYZ xyz = XYZ.xyxFromRgb(red, green, blue);

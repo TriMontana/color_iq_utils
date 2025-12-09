@@ -1,10 +1,10 @@
 import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:material_color_utilities/hct/hct.dart';
+import 'package:color_iq_utils/src/models/hct_data.dart';
 
 class HtmlColor extends ColorIQ {
   HtmlColor(super.argb,
       {required super.names,
-      required Hct super.hctColor,
+      required HctData super.hctData,
       super.lrv,
       super.colorSpace});
 }

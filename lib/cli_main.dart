@@ -1,5 +1,5 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:material_color_utilities/hct/hct.dart';
+import 'package:color_iq_utils/src/models/hct_data.dart';
 
 void main() {
   final ColorIQ c = ColorIQ.fromHexStr('#BED3E5');
@@ -38,7 +38,7 @@ void main() {
   //   '${toPercentStr(cmyk.k, 4)}),',
   // );
   // print(hsl.createStr());
-  final Hct hct = c.hct;
+  final HctData hct = c.hct;
   // final Hct hct2 = Hct.fromInt(id);
   print('hct: $hct');
   // print('hct2: $hct2');

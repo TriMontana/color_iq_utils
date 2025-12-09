@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:color_iq_utils/src/models/hct_data.dart';
 import 'package:material_color_utilities/hct/hct.dart';
 
 void main() {
@@ -19,8 +20,10 @@ void main() {
   print(cmyk.toString());
   print(hsl.toString());
   final Hct hct = Hct.fromInt(color.value);
-
-  print('hct2: $hct');
+  final HctData hct2 = HctData.fromInt(color.value);
+  print('hct: $hct');
+  print('hct2: $hct2');
+  print('lrv: ${color.lrv.toStrTrimZeros(6)},');
   // print(hct.createStr());
   // final OkLCH okLCH = color.oklch; // mapOkLCH.getOrCreate(color.id);
   // print(okLCH.createStr(5));

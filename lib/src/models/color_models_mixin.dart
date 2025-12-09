@@ -215,12 +215,29 @@ mixin ColorModelsMixin {
   ///
   /// The [amount] must be between 0 and 100.
   /// Defaults to 25.
-
   ColorSpacesIQ desaturate([final double amount = 25]) {
     amount.assertRange0to100('desaturate');
     final HctColor hct = toHctColor();
     final double nuChroma = max(kMinChroma, hct.chroma - amount);
     final int hexID = HctSolver.solveToInt(hct.hue, nuChroma, hct.tone);
     return hct.copyWith(chroma: nuChroma, argb: hexID);
+  }
+
+  // Calculate
+  double calculateLrvAsPercent() {
+    // Decode RGB
+    final int r = (value >> 16) & 0xFF;
+    final int g = (value >> 8) & 0xFF;
+    final int b = value & 0xFF;
+
+    final double linR = r.linearizeUint8;
+    final double linG = g.linearizeUint8;
+    final double linB = b.linearizeUint8;
+
+    // Standard Luminance Formula
+    final double y = (0.2126 * linR) + (0.7152 * linG) + (0.0722 * linB);
+
+    // Scale to 0-100 range for standard LRV usage
+    return (y * 100.0);
   }
 }

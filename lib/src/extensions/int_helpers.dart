@@ -1,8 +1,9 @@
+import 'dart:math' as math;
 import 'dart:math';
 
 import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:color_iq_utils/src/models/hct_data.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
-import 'package:material_color_utilities/hct/hct.dart' as mcuhct;
 
 /// Extension for integers
 extension IntHelperIQ on int {
@@ -77,13 +78,21 @@ extension IntHelperIQ on int {
   Percent get toLRV => computeLuminanceViaLinearized(
       redLinearized, greenLinearized, blueLinearized);
 
+  // Helper for Linearization (The expensive part)
+  double get linearizeUint8 {
+    final double val = assertRange0to255() / 255.0;
+    // The expensive power function that prevents const
+    return (val <= 0.04045)
+        ? (val / 12.92)
+        : math.pow((val + 0.055) / 1.055, 2.4).toDouble();
+  }
+
   Cam16 get toCam16 => Cam16.fromInt(this);
-  HctColor get toHctColor => HctColor.fromInt(this);
-  mcuhct.Hct get toHct => mcuhct.Hct.fromInt(this);
+  HctData get toHctColor => HctData.fromInt(this);
 
   int assertRange0to255([final String? message]) {
     if (this < 0 || this > 255) {
-      throw ArgumentError(message ?? '$errorMsg0to255--$this');
+      throw ArgumentError('${message.orEmpty}--$errorMsg0to255--$this');
     }
     return this;
   }
