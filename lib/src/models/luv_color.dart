@@ -64,9 +64,9 @@ class LuvColor extends CommonIQ implements ColorSpacesIQ {
 
     const double refX = 95.047;
     const double refY = 100.0;
-    const double refZ = 108.883;
-    const double refU = (4 * refX) / (refX + (15 * refY) + (3 * refZ));
-    const double refV = (9 * refY) / (refX + (15 * refY) + (3 * refZ));
+    final double refZ = kWhitePointD65[2];
+    final double refU = (4 * refX) / (refX + (15 * refY) + (3 * refZ));
+    final double refV = (9 * refY) / (refX + (15 * refY) + (3 * refZ));
 
     final double uPrime = u / (13 * l) + refU;
     final double vPrime = v / (13 * l) + refV;

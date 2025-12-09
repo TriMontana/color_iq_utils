@@ -11,12 +11,14 @@ const double rgbMidPoint = (255 / 2);
 const double maxSRGBChroma = 134.0;
 const int kDefaultInt = uInt8bitInfinity; // maxInt32 = 0x7fffffff
 const double kDefaultDouble = double.maxFinite; // used for MAX distance
+// CIE LUV constants
 /// That constant `e = 216.0 / 24389.0` is the CIE L*a*b* epsilon threshold, usually called:
 /// "epsilon" (ε)**
 /// It is the breakpoint used in the CIE 1976 L*a*b* formulas to distinguish
 /// between the linear and cubic branches of the transfer function.
-const double kEpsilon = 216.0 / 24389.0;
-const double kKappa = 24389.0 / 27.0;
+const double kEpsilon = 0.0088564516; // 216.0 / 24389.0;
+const double kKappa = 903.2962962; // 24389.0 / 27.0;
+
 const double kDelta = 6.0 / 29.0;
 const double kMinTone = 0.0;
 const double kMaxTone = 100.0;

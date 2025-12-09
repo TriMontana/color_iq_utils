@@ -32,10 +32,6 @@ class Hsluv {
   static const double refU = 0.19783000664283;
   static const double refV = 0.46831999493879;
 
-  // CIE LUV constants
-  static const double kappa = 903.2962962;
-  static const double epsilon = 0.0088564516;
-
   /// For a given lightness, return a list of 6 lines in slope-intercept
   /// form that represent the bounds in CIELUV, stepping over which will
   /// push a value out of the RGB gamut
@@ -43,7 +39,7 @@ class Hsluv {
     final List<Line> result = <Line>[];
 
     final double sub1 = math.pow(L + 16, 3) / 1560896;
-    final double sub2 = sub1 > epsilon ? sub1 : L / kappa;
+    final double sub2 = sub1 > kEpsilon ? sub1 : L / kKappa;
 
     for (int c = 0; c < 3; c++) {
       final double m1 = m[c][0];
@@ -140,8 +136,8 @@ class Hsluv {
   /// illuminant D65, so Yn (see refY in Maxima file) equals 1. The formula is
   /// simplified accordingly.
   static double yToL(final double Y) {
-    if (Y <= epsilon) {
-      return (Y / refY) * kappa;
+    if (Y <= kEpsilon) {
+      return (Y / refY) * kKappa;
     } else {
       return 116 * math.pow(Y / refY, 1.0 / 3.0) - 16;
     }
@@ -149,7 +145,7 @@ class Hsluv {
 
   static double lToY(final double L) {
     if (L <= 8) {
-      return refY * L / kappa;
+      return refY * L / kKappa;
     } else {
       return refY * math.pow((L + 16) / 116, 3);
     }

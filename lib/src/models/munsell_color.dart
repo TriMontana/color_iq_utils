@@ -292,9 +292,6 @@ class MunsellColor extends CommonIQ implements ColorSpacesIQ {
       toColor().isWithinGamut(gamut);
 
   @override
-  List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
-
-  @override
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'type': 'MunsellColor',

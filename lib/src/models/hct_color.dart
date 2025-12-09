@@ -76,8 +76,8 @@ class HctColor extends CommonIQ implements ColorSpacesIQ {
   HctColor withChroma(final double nuChroma, {final List<String>? names}) =>
       HctColor(hue, nuChroma, tone, argb: value, names: names ?? kEmptyNames);
 
-  /// Converts this HCT color to a [CmykColor].
-  CmykColor toCMYK() => CmykColor.fromInt(value);
+  /// Converts this HCT color to a [CMYK].
+  CMYK toCMYK() => CMYK.fromInt(value);
 
   /// Returns the ARGB integer representation of this color.
   int toInt() => value;

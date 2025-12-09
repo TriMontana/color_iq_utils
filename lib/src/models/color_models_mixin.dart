@@ -111,8 +111,7 @@ mixin ColorModelsMixin {
 
   OkLCH toOkLch() => (this is OkLCH) ? (this as OkLCH) : OkLCH.fromInt(value);
 
-  CmykColor toCmyk() =>
-      (this is CmykColor) ? this as CmykColor : CmykColor.fromInt(value);
+  CMYK toCmyk() => (this is CMYK) ? this as CMYK : CMYK.fromInt(value);
 
   XYZ toXyyColor() => (this is XYZ) ? (this as XYZ) : XYZ.fromInt(value);
 

@@ -54,11 +54,12 @@ class HSL extends CommonIQ implements ColorSpacesIQ {
   ///
   /// This constructor does not necessarily round-trip with [toColor] because
   /// of floating point imprecision.
-  static HSL fromRgbValues(
-      {required final double r,
-      required final double g,
-      required final double b,
-      final Percent alpha = Percent.max}) {
+  static HSL fromRgbValues({
+    required final double r,
+    required final double g,
+    required final double b,
+    final Percent alpha = Percent.max,
+  }) {
     final double max = math.max(r, math.max(g, b));
     final double min = math.min(r, math.min(g, b));
     final double delta = max - min;
@@ -82,8 +83,12 @@ class HSL extends CommonIQ implements ColorSpacesIQ {
   /// [s] is in the range of 0.0-1.0.
   /// [l] is in the range of 0.0-1.0.
   /// [alpha] is in the range of 0.0-1.0.
-  static int hexIdFromHSL(final double h, final double s, final double l,
-      {final Percent alpha = Percent.max}) {
+  static int hexIdFromHSL(
+    final double h,
+    final double s,
+    final double l, {
+    final Percent alpha = Percent.max,
+  }) {
     final double c = (1 - (2 * l - 1).abs()) * s;
     final double x = c * (1 - ((h / 60) % 2 - 1).abs());
     final double m = l - c / 2;
@@ -142,8 +147,7 @@ class HSL extends CommonIQ implements ColorSpacesIQ {
 
   /// Increases the transparency of a color by moving the Alpha channel closer to 0.
   /// Maximum Transparency (fully invisible) = Alpha 0x00 (0)
-  //
-  // Minimum Transparency (fully opaque) = Alpha 0xFF (255)
+  /// Minimum Transparency (fully opaque) = Alpha 0xFF (255)
   @override
   HSL increaseTransparency([final Percent amount = Percent.v20]) =>
       copyWith(alpha: a.decreaseBy(amount));

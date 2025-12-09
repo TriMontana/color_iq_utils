@@ -7,7 +7,7 @@ void main() {
   group('Additional Color Conversion Tests', () {
     test('RGB to HSP conversion (Red)', () {
       final ColorIQ color = ColorIQ.fromArgbInts(255, 255, 0, 0);
-      final HspColor hsp = color.toHsp();
+      final HSP hsp = color.hsp;
 
       expect(hsp.h, closeTo(0, 0.1));
       expect(hsp.s, closeTo(1.0, 0.1));

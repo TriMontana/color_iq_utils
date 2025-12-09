@@ -59,14 +59,14 @@ void main() {
     });
 
     test('CmykColor Darker Palette (Delegated)', () {
-      const CmykColor cmyk = cmykWhite; // White
+      const CMYK cmyk = cmykWhite; // White
       final List<ColorSpacesIQ> palette = cmyk.darkerPalette();
       expect(palette.length, 5);
-      expect(palette.first, isA<CmykColor>());
+      expect(palette.first, isA<CMYK>());
 
       // Should get darker (K increases or CMY increases)
       // White in CMYK is 0,0,0,0. Darker means K goes up.
-      final CmykColor first = palette.first as CmykColor;
+      final CMYK first = palette.first as CMYK;
       // Converting to HSL logic: L goes down.
       // 0,0,0,0 -> L=1.0.
       // Step = 1.0/6 = 0.166.

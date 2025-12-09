@@ -134,6 +134,37 @@ int rgbDoublesToHexId({
   return rgbToHexID(red: red, green: green, blue: blue, alpha: alpha);
 }
 
+/// Converts RGB(A) double values (0.0–1.0) to a 32-bit ARGB hex integer.
+/// Alpha defaults to 1.0 (fully opaque).
+int percentsToHexId({
+  required final Percent r,
+  required final Percent g,
+  required final Percent b,
+  final Percent a = Percent.max,
+}) =>
+    ((a.value * 255).round() << 24 |
+        (r.value * 255).round() << 16 |
+        (g.value * 255).round() << 8 |
+        (b.value * 255).round());
+
+/// Converts RGB(A) double values (0.0–1.0) to a 32-bit ARGB hex integer.
+/// Alpha defaults to 1.0 (fully opaque).
+int doublesToHexId({
+  required final double r,
+  required final double g,
+  required final double b,
+  final double a = 1.0,
+}) {
+  r.assertRange0to1('doublesToHexId-r');
+  g.assertRange0to1('doublesToHexId-g');
+  b.assertRange0to1('doublesToHexId-b');
+  a.assertRange0to1('doublesToHexId-a');
+  return ((a * 255).round() << 24 |
+      (r * 255).round() << 16 |
+      (g * 255).round() << 8 |
+      (b * 255).round());
+}
+
 /// Returns the 8-bit hex number from a double value in the range
 /// of 0.0 to 1.0 symbol of a single r,g,b.  See warning in Dart library
 /// about lossy potentialities.

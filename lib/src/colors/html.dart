@@ -374,7 +374,7 @@ final HtmlColor cWhite =
     HtmlColor(hxWhite, names: kWhite, hctColor: Hct.from(209, 0, 100));
 const HSL kHslWhite =
     HSL(0, Percent.zero, Percent.max, hexId: hxWhite, lrv: Percent.max);
-const CmykColor cmykWhite = CmykColor(0, 0, 0, 0, value: hxWhite); // White
+const CMYK cmykWhite = CMYK(0, 0, 0, 0, value: hxWhite); // White
 
 const int hxWhiteSmoke = 0xFFF5F5F5;
 final ColorIQ cWhiteSmoke = ColorIQ(hxWhiteSmoke, names: kWhiteSmoke);

@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:material_color_utilities/hct/cam16.dart';
 
 /// A color model that represents color in terms of Hue, Saturation, and
 /// Perceived Brightness (HSP). HSP is designed to be more perceptually uniform
@@ -17,7 +16,7 @@ import 'package:material_color_utilities/hct/cam16.dart';
 ///
 /// This model is based on the HSP color model described by Darel Rex Finley.
 /// More details can be found at http://alienryderflex.com/hsp.html
-class HspColor extends CommonIQ implements ColorSpacesIQ {
+class HSP extends CommonIQ implements ColorSpacesIQ {
   /// The hue component of the color, ranging from 0.0 to 1.0.
   final double h;
 
@@ -28,14 +27,14 @@ class HspColor extends CommonIQ implements ColorSpacesIQ {
   final double p;
 
   /// Creates a new `HspColor`.
-  const HspColor(this.h, this.s, this.p,
+  const HSP(this.h, this.s, this.p,
       {final Percent alpha = Percent.max,
       final int? hexId,
       final List<String> names = kEmptyNames})
       : super(hexId, names: names, alpha: alpha);
 
   @override
-  int get value => super.colorId ?? HspColor.hexIdFromHSP(h, s, p);
+  int get value => super.colorId ?? HSP.hexIdFromHSP(h, s, p);
 
   // super.alt(hexId ?? HspColor.hexIdFromHSP(h, s, p, alpha),
   //     a: alpha,
@@ -194,10 +193,10 @@ class HspColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  ColorIQ toColor() => ColorIQ(HspColor.hexIdFromHSP(h, s, p));
+  ColorIQ toColor() => ColorIQ(HSP.hexIdFromHSP(h, s, p));
 
   /// Converts this color to HSP.
-  static HspColor fromInt(final int argb) {
+  static HSP fromInt(final int argb) {
     final double r = argb.r;
     final double g = argb.g;
     final double b = argb.b;
@@ -223,70 +222,69 @@ class HspColor extends CommonIQ implements ColorSpacesIQ {
 
     final double s = (maxVal == 0) ? 0 : delta / maxVal;
 
-    return HspColor(h, s, p);
+    return HSP(h, s, p);
   }
 
   @override
-  HspColor darken([final double amount = 20]) {
-    return HspColor(h, s, max(0.0, p - amount / 100), alpha: alpha);
+  HSP darken([final double amount = 20]) {
+    return HSP(h, s, max(0.0, p - amount / 100), alpha: alpha);
   }
 
   @override
-  HspColor brighten([final double amount = 20]) {
-    return HspColor(h, s, min(1.0, p + amount / 100), alpha: alpha);
+  HSP brighten([final double amount = 20]) {
+    return HSP(h, s, min(1.0, p + amount / 100), alpha: alpha);
   }
 
   @override
-  HspColor lighten([final double amount = 20]) {
-    return HspColor(h, s, min(1.0, p + amount / 100), alpha: alpha);
+  HSP lighten([final double amount = 20]) {
+    return HSP(h, s, min(1.0, p + amount / 100), alpha: alpha);
   }
 
   @override
-  HspColor saturate([final double amount = 25]) {
-    return HspColor(h, min(1.0, s + amount / 100), p, alpha: alpha);
+  HSP saturate([final double amount = 25]) {
+    return HSP(h, min(1.0, s + amount / 100), p, alpha: alpha);
   }
 
   @override
-  HspColor desaturate([final double amount = 25]) {
-    return HspColor(h, max(0.0, s - amount / 100), p, alpha: alpha);
+  HSP desaturate([final double amount = 25]) {
+    return HSP(h, max(0.0, s - amount / 100), p, alpha: alpha);
   }
 
   @override
-  HspColor intensify([final double amount = 10]) {
-    return HspColor(h, min(1.0, s + amount / 100), p, alpha: alpha);
+  HSP intensify([final double amount = 10]) {
+    return HSP(h, min(1.0, s + amount / 100), p, alpha: alpha);
   }
 
   @override
-  HspColor deintensify([final double amount = 10]) {
-    return HspColor(h, max(0.0, s - amount / 100), p, alpha: alpha);
+  HSP deintensify([final double amount = 10]) {
+    return HSP(h, max(0.0, s - amount / 100), p, alpha: alpha);
   }
 
   @override
-  HspColor accented([final double amount = 15]) {
+  HSP accented([final double amount = 15]) {
     return intensify(amount);
   }
 
   @override
-  HspColor simulate(final ColorBlindnessType type) {
-    return toColor().simulate(type).toHsp();
+  HSP simulate(final ColorBlindnessType type) {
+    return toColor().simulate(type).hsp;
   }
 
   @override
-  HspColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
+  HSP whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
-  HspColor blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
+  HSP blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
 
   @override
-  HspColor lerp(final ColorSpacesIQ other, final double t) {
+  HSP lerp(final ColorSpacesIQ other, final double t) {
     if (t == 0.0) return this;
-    final HspColor otherHsp =
-        other is HspColor ? other : other.toColor().toHsp();
+    final HSP otherHsp = other is HSP ? other : other.toColor().hsp;
     if (t == 1.0) {
       return otherHsp;
     }
 
-    return HspColor(
+    return HSP(
       lerpHue(h, otherHsp.h, t),
       lerpDouble(s, otherHsp.s, t),
       lerpDouble(p, otherHsp.p, t),
@@ -294,27 +292,26 @@ class HspColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  HspColor copyWith({
+  HSP copyWith({
     final double? h,
     final double? s,
     final double? p,
     final Percent? alpha,
   }) {
-    return HspColor(h ?? this.h, s ?? this.s, p ?? this.p,
-        alpha: alpha ?? super.a);
+    return HSP(h ?? this.h, s ?? this.s, p ?? this.p, alpha: alpha ?? super.a);
   }
 
   @override
   List<ColorSpacesIQ> get monochromatic => toColor()
       .monochromatic
-      .map((final ColorSpacesIQ c) => (c as ColorIQ).toHsp())
+      .map((final ColorSpacesIQ c) => (c as ColorIQ).hsp)
       .toList();
 
   @override
   List<ColorSpacesIQ> lighterPalette([final double? step]) {
     return toColor()
         .lighterPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toHsp())
+        .map((final ColorSpacesIQ c) => (c as ColorIQ).hsp)
         .toList();
   }
 
@@ -322,76 +319,57 @@ class HspColor extends CommonIQ implements ColorSpacesIQ {
   List<ColorSpacesIQ> darkerPalette([final double? step]) {
     return toColor()
         .darkerPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toHsp())
+        .map((final ColorSpacesIQ c) => (c as ColorIQ).hsp)
         .toList();
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as ColorIQ).toHsp();
+  ColorSpacesIQ get random => (toColor().random as ColorIQ).hsp;
 
   @override
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
 
   @override
-  double get luminance => toColor().luminance;
-  @override
-  Brightness get brightness => toColor().brightness;
+  HSP blend(final ColorSpacesIQ other, [final double amount = 50]) =>
+      toColor().blend(other, amount).hsp;
 
   @override
-  bool get isDark => brightness == Brightness.dark;
+  HSP opaquer([final double amount = 20]) => toColor().opaquer(amount).hsp;
 
   @override
-  bool get isLight => brightness == Brightness.light;
+  HSP adjustHue([final double amount = 20]) => toColor().adjustHue(amount).hsp;
 
   @override
-  HspColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
-      toColor().blend(other, amount).toHsp();
+  HSP get complementary => toColor().complementary.hsp;
 
   @override
-  HspColor opaquer([final double amount = 20]) =>
-      toColor().opaquer(amount).toHsp();
+  HSP warmer([final double amount = 20]) => toColor().warmer(amount).hsp;
 
   @override
-  HspColor adjustHue([final double amount = 20]) =>
-      toColor().adjustHue(amount).toHsp();
+  HSP cooler([final double amount = 20]) => toColor().cooler(amount).hsp;
 
   @override
-  HspColor get complementary => toColor().complementary.toHsp();
+  List<HSP> generateBasicPalette() =>
+      toColor().generateBasicPalette().map((final ColorIQ c) => c.hsp).toList();
 
   @override
-  HspColor warmer([final double amount = 20]) =>
-      toColor().warmer(amount).toHsp();
+  List<HSP> tonesPalette() =>
+      toColor().tonesPalette().map((final ColorIQ c) => c.hsp).toList();
 
   @override
-  HspColor cooler([final double amount = 20]) =>
-      toColor().cooler(amount).toHsp();
-
-  @override
-  List<HspColor> generateBasicPalette() => toColor()
-      .generateBasicPalette()
-      .map((final ColorIQ c) => c.toHsp())
-      .toList();
-
-  @override
-  List<HspColor> tonesPalette() =>
-      toColor().tonesPalette().map((final ColorIQ c) => c.toHsp()).toList();
-
-  @override
-  List<HspColor> analogous({final int count = 5, final double offset = 30}) =>
+  List<HSP> analogous({final int count = 5, final double offset = 30}) =>
       toColor()
           .analogous(count: count, offset: offset)
-          .map((final ColorIQ c) => c.toHsp())
+          .map((final ColorIQ c) => c.hsp)
           .toList();
 
   @override
-  List<HspColor> square() =>
-      toColor().square().map((final ColorIQ c) => c.toHsp()).toList();
+  List<HSP> square() =>
+      toColor().square().map((final ColorIQ c) => c.hsp).toList();
 
   @override
-  List<HspColor> tetrad({final double offset = 60}) => toColor()
-      .tetrad(offset: offset)
-      .map((final ColorIQ c) => c.toHsp())
-      .toList();
+  List<HSP> tetrad({final double offset = 60}) =>
+      toColor().tetrad(offset: offset).map((final ColorIQ c) => c.hsp).toList();
 
   @override
   double contrastWith(final ColorSpacesIQ other) =>
@@ -400,9 +378,6 @@ class HspColor extends CommonIQ implements ColorSpacesIQ {
   @override
   bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) =>
       toColor().isWithinGamut(gamut);
-
-  @override
-  List<double> get whitePoint => <double>[95.047, 100.0, 108.883];
 
   @override
   Map<String, dynamic> toJson() {
@@ -418,7 +393,4 @@ class HspColor extends CommonIQ implements ColorSpacesIQ {
   @override
   String toString() =>
       'HspColor(h: ${h.toStringAsFixed(2)}, s: ${s.toStringAsFixed(2)}, p: ${p.toStringAsFixed(2)}, alpha: ${alpha.toStringAsFixed(2)})';
-
-  @override
-  Cam16 toCam16() => Cam16.fromInt(value);
 }

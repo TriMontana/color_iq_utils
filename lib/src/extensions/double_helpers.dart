@@ -110,6 +110,8 @@ extension DoubleHelpersIQ on double {
 
   double get delinearize => gammaCorrect;
 
+  LinRGB get linearize => srgbToLinear(this);
+
   /// To String without training zeros.
   String toStrTrimZeros([
     final int decimals = 6,

@@ -21,7 +21,7 @@ import 'package:color_iq_utils/src/foundation_lib.dart';
 /// It implements the `ColorSpacesIQ` interface, ensuring a consistent API for color operations
 /// across different color models in this library.
 ///
-class CmykColor extends CommonIQ implements ColorSpacesIQ {
+class CMYK extends CommonIQ implements ColorSpacesIQ {
   final double c;
   final double m;
   final double y;
@@ -30,7 +30,7 @@ class CmykColor extends CommonIQ implements ColorSpacesIQ {
   /// Constructor for creating a CMYK color, optionally calculating the hex ID if not provided.
   ///
   /// [c], [m], [y], and [k] must be between 0.0 and 1.0.
-  const CmykColor(this.c, this.m, this.y, this.k,
+  const CMYK(this.c, this.m, this.y, this.k,
       {final int? value,
       final Percent alpha = Percent.max,
       final List<String>? names})
@@ -57,88 +57,88 @@ class CmykColor extends CommonIQ implements ColorSpacesIQ {
     );
   }
 
-  /// Creates a [CmykColor] instance from a 32-bit integer ARGB `hexID`.
+  /// Creates a [CMYK] instance from a 32-bit integer ARGB `hexID`.
   ///
   /// The `hexID` is a 32-bit integer in the format `0xAARRGGBB`.
   /// The alpha component is ignored in the CMYK conversion.
-  factory CmykColor.fromInt(final int hexID) {
+  factory CMYK.fromInt(final int hexID) {
     final double r = hexID.r;
     final double g = (hexID >> 8 & 0xFF) / 255.0;
     final double b = (hexID & 0xFF) / 255.0;
 
     final double k = 1.0 - max(r, max(g, b));
     if (k == 1.0) {
-      return CmykColor(0, 0, 0, 1, value: hexID);
+      return CMYK(0, 0, 0, 1, value: hexID);
     }
     final double c = (1.0 - r - k) / (1.0 - k);
     final double m = (1.0 - g - k) / (1.0 - k);
     final double y = (1.0 - b - k) / (1.0 - k);
 
-    return CmykColor(c, m, y, k, value: hexID);
+    return CMYK(c, m, y, k, value: hexID);
   }
 
   /// Converts this color to CMYK.
-  static CmykColor fromColorSpacesIQ(final CommonIQ clr) {
+  static CMYK fromColorSpacesIQ(final CommonIQ clr) {
     final double r = clr.r;
     final double g = clr.g;
     final double b = clr.b;
 
     final double k = 1.0 - max(r, max(g, b));
     if (k == 1.0) {
-      return const CmykColor(0, 0, 0, 1);
+      return const CMYK(0, 0, 0, 1);
     }
 
     final double c = (1.0 - r - k) / (1.0 - k);
     final double m = (1.0 - g - k) / (1.0 - k);
     final double y = (1.0 - b - k) / (1.0 - k);
 
-    return CmykColor(c, m, y, k);
+    return CMYK(c, m, y, k);
   }
 
   /// Converts this color to CMYK.
-  CmykColor fromColor() {
+  CMYK fromColor() {
     final double g = green / 255.0;
     final double b = blue / 255.0;
 
     final double k = 1.0 - max(r, max(g, b));
     if (k == 1.0) {
-      return const CmykColor(0, 0, 0, 1);
+      return const CMYK(0, 0, 0, 1);
     }
 
     final double c = (1.0 - r - k) / (1.0 - k);
     final double m = (1.0 - g - k) / (1.0 - k);
     final double y = (1.0 - b - k) / (1.0 - k);
 
-    return CmykColor(c, m, y, k);
+    return CMYK(c, m, y, k);
   }
 
   @override
   bool operator ==(final Object other) =>
-      other is CmykColor &&
+      other is CMYK &&
       other.c == c &&
       other.m == m &&
       other.y == y &&
       other.k == k;
 
   @override
-  CmykColor lighten([final double amount = 20]) {
+  CMYK lighten([final double amount = 20]) {
     return whiten(amount);
   }
 
   @override
-  CmykColor darken([final double amount = 20]) {
+  CMYK darken([final double amount = 20]) {
     return blacken(amount);
   }
 
   @override
-  CmykColor brighten([final double amount = 20]) {
+  CMYK brighten([final double amount = 20]) {
     // Brighten by reducing the black component
     final double newK = (k * (1 - amount / 100)).clamp(0.0, 1.0);
     return copyWith(k: newK);
   }
 
   @override
-  CmykColor saturate([final double amount = 25]) {
+  CMYK saturate([final double amount = 25]) {
     // Saturation in CMYK can be increased by increasing the dominant C, M, or Y.
     final double maxCmy = <double>[c, m, y].reduce(max);
     final double factor = 1 + amount / 100;
@@ -150,31 +150,30 @@ class CmykColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  CmykColor intensify([final double amount = 10]) => saturate(amount);
+  CMYK intensify([final double amount = 10]) => saturate(amount);
 
   @override
-  CmykColor accented([final double amount = 15]) {
+  CMYK accented([final double amount = 15]) {
     return saturate(amount);
   }
 
   @override
-  CmykColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
+  CMYK whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
-  CmykColor blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
+  CMYK blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
 
   @override
-  CmykColor lerp(final ColorSpacesIQ other, final double t) {
+  CMYK lerp(final ColorSpacesIQ other, final double t) {
     if (t == 0.0) {
       return this;
     }
-    final CmykColor otherCmyk =
-        other is CmykColor ? other : CmykColor.fromInt(other.value);
+    final CMYK otherCmyk = other is CMYK ? other : CMYK.fromInt(other.value);
     if (t == 1.0) {
       return otherCmyk;
     }
 
-    return CmykColor(
+    return CMYK(
       lerpDouble(c, otherCmyk.c, t),
       lerpDouble(m, otherCmyk.m, t),
       lerpDouble(y, otherCmyk.y, t),
@@ -200,17 +199,17 @@ class CmykColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  CmykColor copyWith({
+  CMYK copyWith({
     final double? c,
     final double? m,
     final double? y,
     final double? k,
   }) {
-    return CmykColor(c ?? this.c, m ?? this.m, y ?? this.y, k ?? this.k);
+    return CMYK(c ?? this.c, m ?? this.m, y ?? this.y, k ?? this.k);
   }
 
   @override
-  List<CmykColor> get monochromatic {
+  List<CMYK> get monochromatic {
     // Generate a simple monochromatic set by varying K while keeping C/M/Y fixed
     final List<double> kValues = <double>[
       k,
@@ -220,14 +219,12 @@ class CmykColor extends CommonIQ implements ColorSpacesIQ {
       0.0,
     ].map((final double v) => v.clamp(0.0, 1.0)).toList();
 
-    return kValues
-        .map((final double kVal) => CmykColor(c, m, y, kVal))
-        .toList();
+    return kValues.map((final double kVal) => CMYK(c, m, y, kVal)).toList();
   }
 
   @override
   List<ColorSpacesIQ> lighterPalette([final double? step]) {
-    final List<CmykColor> results = <CmykColor>[];
+    final List<CMYK> results = <CMYK>[];
     double delta;
     if (step != null) {
       delta = step;
@@ -243,7 +240,7 @@ class CmykColor extends CommonIQ implements ColorSpacesIQ {
 
   @override
   List<ColorSpacesIQ> darkerPalette([final double? step]) {
-    final List<CmykColor> results = <CmykColor>[];
+    final List<CMYK> results = <CMYK>[];
     double delta;
     if (step != null) {
       delta = step;
@@ -260,7 +257,7 @@ class CmykColor extends CommonIQ implements ColorSpacesIQ {
   @override
   ColorSpacesIQ get random {
     final Random random = Random();
-    return CmykColor(
+    return CMYK(
       random.nextDouble(),
       random.nextDouble(),
       random.nextDouble(),
@@ -270,7 +267,7 @@ class CmykColor extends CommonIQ implements ColorSpacesIQ {
 
   @override
   bool isEqual(final ColorSpacesIQ other) =>
-      other is CmykColor &&
+      other is CMYK &&
       other.c == c &&
       other.m == m &&
       other.y == y &&
@@ -284,30 +281,30 @@ class CmykColor extends CommonIQ implements ColorSpacesIQ {
   /// The `amount` parameter specifies the percentage of the `other` color to blend.
   /// It defaults to 50, which is an equal mix.
   @override
-  CmykColor blend(final ColorSpacesIQ other, [final double amount = 50]) {
+  CMYK blend(final ColorSpacesIQ other, [final double amount = 50]) {
     return lerp(other, amount / 100);
   }
 
   @override
-  CmykColor opaquer([final double amount = 20]) {
+  CMYK opaquer([final double amount = 20]) {
     // In CMYK, "opaquer" is not directly applicable as it's a subtractive model
     // for reflective surfaces, not a light-emitting one. This is a no-op.
     return this;
   }
 
   @override
-  CmykColor adjustHue([final double amount = 20]) {
+  CMYK adjustHue([final double amount = 20]) {
     final HctColor hct = toHctColor();
     return hct.copyWith(hue: (hct.hue + amount) % 360).toCMYK();
   }
 
   @override
-  CmykColor get complementary {
-    return CmykColor.fromColorSpacesIQ(toHctColor().flipHue());
+  CMYK get complementary {
+    return CMYK.fromColorSpacesIQ(toHctColor().flipHue());
   }
 
   @override
-  CmykColor warmer([final double amount = 20]) {
+  CMYK warmer([final double amount = 20]) {
     // Increase yellow and magenta, decrease cyan
     final double change = amount / 100.0;
     return copyWith(
@@ -318,7 +315,7 @@ class CmykColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  CmykColor cooler([final double amount = 20]) {
+  CMYK cooler([final double amount = 20]) {
     // Increase cyan, decrease yellow and magenta
     final double change = amount / 100.0;
     return copyWith(
@@ -329,8 +326,8 @@ class CmykColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  List<CmykColor> generateBasicPalette() {
-    return <CmykColor>[
+  List<CMYK> generateBasicPalette() {
+    return <CMYK>[
       lighten(40),
       lighten(20),
       this,
@@ -340,21 +337,21 @@ class CmykColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  List<CmykColor> tonesPalette() {
-    return List<CmykColor>.generate(9, (final int i) => blacken(10.0 * i));
+  List<CMYK> tonesPalette() {
+    return List<CMYK>.generate(9, (final int i) => blacken(10.0 * i));
   }
 
   @override
-  List<CmykColor> analogous({final int count = 5, final double offset = 30}) {
+  List<CMYK> analogous({final int count = 5, final double offset = 30}) {
     final HctColor hct = toHctColor();
-    return List<CmykColor>.generate(count, (final int i) {
+    return List<CMYK>.generate(count, (final int i) {
       final double hueShift = (i - (count ~/ 2)) * offset;
       return hct.copyWith(hue: (hct.hue + hueShift) % 360).toCMYK();
     });
   }
 
   @override
-  List<CmykColor> square() {
+  List<CMYK> square() {
     final HctColor hct = toHctColor();
     return <double>[0, 90, 180, 270]
         .map(
@@ -365,7 +362,7 @@ class CmykColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  List<CmykColor> tetrad({final double offset = 60}) {
+  List<CMYK> tetrad({final double offset = 60}) {
     final HctColor hct = toHctColor();
     const double second = 180;
     return <double>[0, offset, second, (second + offset) % 360]
@@ -376,16 +373,16 @@ class CmykColor extends CommonIQ implements ColorSpacesIQ {
         .toList();
   }
 
-  CmykColor get grayscale {
+  CMYK get grayscale {
     // Using a weighted average of C, M, Y to determine the gray value for K
     final double gray = c * 0.3 + m * 0.59 + y * 0.11;
-    return CmykColor(0, 0, 0, (gray + k).clamp(0.0, 1.0));
+    return CMYK(0, 0, 0, (gray + k).clamp(0.0, 1.0));
   }
 
   @override
-  CmykColor simulate(final ColorBlindnessType type) {
+  CMYK simulate(final ColorBlindnessType type) {
     final ColorIQ simulatedColor = toColor().simulate(type);
-    return CmykColor.fromColorSpacesIQ(simulatedColor);
+    return CMYK.fromColorSpacesIQ(simulatedColor);
   }
 
   @override

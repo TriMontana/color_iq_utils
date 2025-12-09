@@ -232,13 +232,13 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
   late final XYZ xyz = XYZ.xyxFromRgb(red, green, blue);
   late final HSV hsv = HSV.fromARGB(argb);
   late final HSL hsl = HSL.fromARGB(argb);
-  late final CmykColor cmyk = CmykColor.fromInt(value);
+  late final CMYK cmyk = CMYK.fromInt(value);
 
   /// Converts this color to CIELCH.
   LchColor toLch() => lab.toLch();
 
   /// Converts this color to HSP.
-  HspColor toHsp() => HspColor.fromInt(value);
+  late final HSP hsp = HSP.fromInt(value);
 
   /// Returns a new color with the provided components updated.
   ///
@@ -454,7 +454,9 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
 
   @override
   bool operator ==(final Object other) {
-    if (identical(this, other)) return true;
+    if (identical(this, other)) {
+      return true;
+    }
     return other is ColorIQ && other.value == value;
   }
 
@@ -822,7 +824,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
           alpha: json['alpha'] ?? 1.0,
         );
       case 'CmykColor':
-        return CmykColor(json['c'], json['m'], json['y'], json['k']);
+        return CMYK(json['c'], json['m'], json['y'], json['k']);
       case 'LabColor':
         return LabColor(json['l'], json['a'], json['b']);
       case 'XyzColor':

@@ -13,9 +13,9 @@ void main() {
     });
 
     test('CmykColor stores names', () {
-      const CmykColor color = CmykColor(0, 1, 1, 0, names: testNames);
+      const CMYK color = CMYK(0, 1, 1, 0, names: testNames);
       expect(color.names, equals(testNames));
-      expect(const CmykColor(0, 1, 1, 0).names, isEmpty);
+      expect(const CMYK(0, 1, 1, 0).names, isEmpty);
     });
 
     test('HslColor stores names', () {
@@ -107,9 +107,9 @@ void main() {
     });
 
     test('HspColor stores names', () {
-      const HspColor color = HspColor(0, 1, 1, names: testNames);
+      const HSP color = HSP(0, 1, 1, names: testNames);
       expect(color.names, equals(testNames));
-      expect(const HspColor(0, 1, 1).names, isEmpty);
+      expect(const HSP(0, 1, 1).names, isEmpty);
     });
 
     test('HunterLabColor stores names', () {

@@ -13,9 +13,9 @@ void main() {
   // print('brightness: ${ThemeData.estimateBrightnessForColor(color)},');
   // print('brightness2: ${mapBrightness.getOrCreate(color.id).name},');
   print(hsv.toString());
-  final HSV hsv2 = color.hsv; // mapHSV.getOrCreate(color.id);
-  print(hsv2.toString());
-  final CmykColor cmyk = color.cmyk; // mapCMYK.getOrCreate(color.id);
+  final HSP hsp = color.hsp; //
+  print(hsp.toString());
+  final CMYK cmyk = color.cmyk; // mapCMYK.getOrCreate(color.id);
   print(cmyk.toString());
   print(hsl.toString());
   final Hct hct = Hct.fromInt(color.value);

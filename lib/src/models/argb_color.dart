@@ -85,7 +85,14 @@ class ARGBColor {
   ///
   const ARGBColor(final int value,
       {final ColorSpace colorSpace = ColorSpace.sRGB, final double? lrv})
-      : this._fromARGBC(value >> 24, value >> 16, value >> 8, value, colorSpace,
+      : this._fromARGBC((value >> 24) & 0xFF, (value >> 16) & 0xFF,
+            (value >> 8) & 0xFF, (value) & 0xFF, colorSpace,
+            colorId: value, lrv: lrv);
+
+  const ARGBColor.iq(final int value,
+      {final ColorSpace colorSpace = ColorSpace.sRGB, final double? lrv})
+      : this._fromARGBC((value >> 24) & 0xFF, (value >> 16) & 0xFF,
+            (value >> 8) & 0xFF, (value) & 0xFF, colorSpace,
             colorId: value, lrv: lrv);
 
   /// Construct a color with floating-point color components.
@@ -185,12 +192,12 @@ class ARGBColor {
   ///   transparent and 1.0 being fully opaque.
   ///
   /// Out of range values are brought into range using modulo 255.
-  const ARGBColor.fromRGBO(
-      final int r, final int greenInt, final int blueInt, final int opacity,
+  const ARGBColor.fromRGBO(final int redInt, final int greenInt,
+      final int blueInt, final int opacity,
       {final int? colorId,
       final ColorSpace colorSpace = ColorSpace.sRGB,
       final double? lrv})
-      : this._fromRGBOC(r, greenInt, blueInt, colorSpace,
+      : this._fromRGBOC(redInt, greenInt, blueInt, colorSpace,
             opacity: opacity, colorId: colorId, lrv: lrv);
 
   const ARGBColor._fromRGBOC(
@@ -208,7 +215,7 @@ class ARGBColor {
   })  : assert(opacity >= 0.0 && opacity <= 255,
             'invalid Opacity $opacity-$errorMsg0to255'),
         assert(redInt >= 0 && redInt <= 255,
-            'invalid Red $redInt-$errorMsg0to255'),
+            'invalid Red "$redInt"-$errorMsg0to255'),
         assert(greenInt >= 0 && greenInt <= 255,
             'invalid Green $greenInt-$errorMsg0to255'),
         assert(blueInt >= 0 && blueInt <= 255,

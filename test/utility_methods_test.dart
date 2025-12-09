@@ -57,9 +57,9 @@ void main() {
     });
 
     test('Other models delegation (CmykColor)', () {
-      const CmykColor cmyk = CmykColor(0, 0, 0, 1); // Black
-      final CmykColor inverted =
-          cmyk.inverted as CmykColor; // Should be White (0, 0, 0, 0)
+      const CMYK cmyk = CMYK(0, 0, 0, 1); // Black
+      final CMYK inverted =
+          cmyk.inverted as CMYK; // Should be White (0, 0, 0, 0)
       expect(inverted.k, 0.0);
     });
   });

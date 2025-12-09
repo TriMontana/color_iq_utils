@@ -10,7 +10,7 @@ void main() {
   print('HCT: $hct');
 
   // Convert to various color spaces
-  final HspColor hsp = color.toHsp();
+  final HSP hsp = color.hsp;
   print('HSP: $hsp');
 
   final YiqColor yiq = color.toYiq();

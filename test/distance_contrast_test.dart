@@ -26,7 +26,7 @@ void main() {
     });
 
     test('contrastWith delegates correctly', () {
-      const CmykColor cmyk = CmykColor(0, 0, 0, 0); // White
+      const CMYK cmyk = CMYK(0, 0, 0, 0); // White
       const HSL hsl = kHslBlack; // Black
       expect(cmyk.contrastWith(hsl), closeTo(21.0, 0.1));
     });

@@ -48,8 +48,8 @@ void main() {
     });
 
     test('CmykColor.brighten delegates correctly', () {
-      const CmykColor cmyk = CmykColor(0, 1, 1, 0.5); // Dark Red
-      final CmykColor brightened = cmyk.brighten(20);
+      const CMYK cmyk = CMYK(0, 1, 1, 0.5); // Dark Red
+      final CMYK brightened = cmyk.brighten(20);
       expect(
         brightened.toColor().hsv.v,
         greaterThan(cmyk.toColor().hsv.v),
