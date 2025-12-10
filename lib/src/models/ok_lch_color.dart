@@ -179,32 +179,62 @@ class OkLCH extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor()
-      .monochromatic
-      .map((final ColorSpacesIQ c) => (c as ColorIQ).toOkLch())
-      .toList();
-
-  @override
-  List<ColorSpacesIQ> lighterPalette([final double? step]) {
-    return toColor()
-        .lighterPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toOkLch())
-        .toList();
+  List<OkLCH> get monochromatic {
+    final List<OkLCH> results = <OkLCH>[];
+    for (int i = 0; i < 5; i++) {
+      final double delta = (i - 2) * 0.1;
+      final double newL = (l.val + delta).clamp(0.0, 1.0);
+      results.add(OkLCH(Percent(newL), c, h, alpha: alpha));
+    }
+    return results;
   }
 
   @override
-  List<ColorSpacesIQ> darkerPalette([final double? step]) {
-    return toColor()
-        .darkerPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toOkLch())
-        .toList();
+  List<OkLCH> lighterPalette([final double? step]) {
+    final double s = step ?? 10.0;
+    return <OkLCH>[
+      lighten(s),
+      lighten(s * 2),
+      lighten(s * 3),
+      lighten(s * 4),
+      lighten(s * 5),
+    ];
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as ColorIQ).toOkLch();
+  List<OkLCH> darkerPalette([final double? step]) {
+    final double s = step ?? 10.0;
+    return <OkLCH>[
+      darken(s),
+      darken(s * 2),
+      darken(s * 3),
+      darken(s * 4),
+      darken(s * 5),
+    ];
+  }
 
   @override
-  bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
+  OkLCH get random {
+    final Random rng = Random();
+    return OkLCH(
+      Percent(rng.nextDouble()),
+      rng.nextDouble() * 0.5,
+      rng.nextDouble() * 360.0,
+      alpha: alpha,
+    );
+  }
+
+  @override
+  bool isEqual(final ColorSpacesIQ other) {
+    if (other is OkLCH) {
+      const double epsilon = 0.001;
+      return (l.val - other.l.val).abs() < epsilon &&
+          (c - other.c).abs() < epsilon &&
+          (h - other.h).abs() < epsilon &&
+          (alpha.val - other.alpha.val).abs() < epsilon;
+    }
+    return false;
+  }
 
   @override
   bool get isDark => brightness == Brightness.dark;
@@ -213,12 +243,14 @@ class OkLCH extends CommonIQ implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  OkLCH blend(final ColorSpacesIQ other, [final double amount = 50]) =>
-      toColor().blend(other, amount).toOkLch();
+  OkLCH blend(final ColorSpacesIQ other, [final double amount = 50]) {
+    return lerp(other, amount / 100);
+  }
 
   @override
-  OkLCH opaquer([final double amount = 20]) =>
-      toColor().opaquer(amount).toOkLch();
+  OkLCH opaquer([final double amount = 20]) {
+    return copyWith(alpha: Percent((alpha.val + amount / 100).clamp(0.0, 1.0)));
+  }
 
   @override
   OkLCH adjustHue([final double amount = 20]) {

@@ -261,76 +261,61 @@ class OkHsvColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  ColorSpacesIQ get random {
+  OkHsvColor get random {
     final Random rng = Random();
     return OkHsvColor(
       rng.nextDouble() * 360.0,
       rng.nextDouble(),
       rng.nextDouble(),
+      alpha: alpha,
     );
   }
 
   @override
-  bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
-
-  double _lerpHue(final double start, final double end, final double t) {
-    final double delta = ((end - start + 540) % 360) - 180;
-    return wrapHue(start + delta * _clamp01(t));
-  }
-
-  double _clamp01(final double value) => value.clamp(0.0, 1.0);
-
-  OkHsvColor _withHueShift(final double delta) =>
-      copyWith(hue: wrapHue(hue + delta));
-
-  OkHsvColor _asOkHsv(final ColorSpacesIQ color) {
-    if (color is OkHsvColor) {
-      return color;
+  bool isEqual(final ColorSpacesIQ other) {
+    if (other is OkHsvColor) {
+      const double epsilon = 0.001;
+      return (hue - other.hue).abs() < epsilon &&
+          (saturation - other.saturation).abs() < epsilon &&
+          (val - other.val).abs() < epsilon &&
+          (alpha.val - other.alpha.val).abs() < epsilon;
     }
-    if (color is OkLabColor) {
-      return color.toOkHsv();
-    }
-    if (color is ColorIQ) {
-      return color.toOkHsv();
-    }
-    return color.toOkLab().toOkHsv();
+    return false;
   }
 
   @override
   OkHsvColor blend(final ColorSpacesIQ other, [final double amount = 50]) {
-    final OkHsvColor target = _asOkHsv(other);
-    final double t = _clamp01(amount / 100);
-    final double blendedHue = _lerpHue(hue, target.hue, t);
-    final double blendedSaturation = _clamp01(
-      saturation + (target.saturation - saturation) * t,
-    );
-    final double blendedValue = _clamp01(val + (target.val - val) * t);
-    final double blendedAlpha =
-        _clamp01(alpha.val + (target.alpha.val - alpha.val) * t);
-    return OkHsvColor(
-      blendedHue,
-      blendedSaturation,
-      blendedValue,
-      alpha: Percent(blendedAlpha),
-    );
+    return lerp(other, amount / 100);
   }
 
   @override
   OkHsvColor opaquer([final double amount = 20]) {
-    return copyWith(alpha: Percent(_clamp01(alpha.val + amount / 100)));
+    return copyWith(alpha: Percent((alpha.val + amount / 100).clamp(0.0, 1.0)));
   }
 
   @override
-  OkHsvColor adjustHue([final double amount = 20]) => _withHueShift(amount);
+  OkHsvColor adjustHue([final double amount = 20]) {
+    return copyWith(hue: wrapHue(hue + amount));
+  }
 
   @override
-  OkHsvColor get complementary => _withHueShift(180);
+  OkHsvColor get complementary => adjustHue(180);
 
   @override
-  OkHsvColor warmer([final double amount = 20]) => _withHueShift(-amount);
+  OkHsvColor warmer([final double amount = 20]) {
+    const double targetHue = 30.0;
+    final double delta = ((targetHue - hue + 540) % 360) - 180;
+    final double shift = delta * (amount / 100).clamp(0.0, 1.0);
+    return copyWith(hue: wrapHue(hue + shift));
+  }
 
   @override
-  OkHsvColor cooler([final double amount = 20]) => _withHueShift(amount);
+  OkHsvColor cooler([final double amount = 20]) {
+    const double targetHue = 210.0;
+    final double delta = ((targetHue - hue + 540) % 360) - 180;
+    final double shift = delta * (amount / 100).clamp(0.0, 1.0);
+    return copyWith(hue: wrapHue(hue + shift));
+  }
 
   @override
   List<OkHsvColor> generateBasicPalette() => <OkHsvColor>[
@@ -344,7 +329,7 @@ class OkHsvColor extends CommonIQ implements ColorSpacesIQ {
   @override
   List<OkHsvColor> tonesPalette() => List<OkHsvColor>.generate(
         6,
-        (final int index) => copyWith(v: Percent(_clamp01(index / 5))),
+        (final int index) => copyWith(v: Percent((index / 5).clamp(0.0, 1.0))),
       );
 
   @override
@@ -355,22 +340,23 @@ class OkHsvColor extends CommonIQ implements ColorSpacesIQ {
     final double center = (count - 1) / 2;
     return List<OkHsvColor>.generate(
       count,
-      (final int index) => _withHueShift((index - center) * offset),
+      (final int index) =>
+          copyWith(hue: wrapHue(hue + (index - center) * offset)),
     );
   }
 
   @override
   List<OkHsvColor> square() => List<OkHsvColor>.generate(
         4,
-        (final int index) => _withHueShift(index * 90),
+        (final int index) => copyWith(hue: wrapHue(hue + index * 90)),
       );
 
   @override
   List<OkHsvColor> tetrad({final double offset = 60}) => <OkHsvColor>[
         this,
-        _withHueShift(offset),
-        _withHueShift(180),
-        _withHueShift(180 + offset),
+        copyWith(hue: wrapHue(hue + offset)),
+        copyWith(hue: wrapHue(hue + 180)),
+        copyWith(hue: wrapHue(hue + 180 + offset)),
       ];
   double distanceTo(final ColorSpacesIQ other) =>
       toCam16().distance(other.toCam16());

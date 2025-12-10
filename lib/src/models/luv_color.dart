@@ -161,12 +161,14 @@ class CIELuv extends CommonIQ implements ColorSpacesIQ {
 
   @override
   CIELuv saturate([final double amount = 25]) {
-    return toColor().saturate(amount).toLuv();
+    final double factor = 1.0 + (amount / 100);
+    return CIELuv(l, u * factor, v * factor, alpha: alpha);
   }
 
   @override
   CIELuv desaturate([final double amount = 25]) {
-    return toColor().desaturate(amount).toLuv();
+    final double factor = max(0.0, 1.0 - (amount / 100));
+    return CIELuv(l, u * factor, v * factor, alpha: alpha);
   }
 
   @override
@@ -185,85 +187,159 @@ class CIELuv extends CommonIQ implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  CIELuv copyWith({final double? l, final double? u, final double? v}) {
-    return CIELuv(l ?? this.l, u ?? this.u, v ?? this.v);
+  CIELuv copyWith({
+    final double? l,
+    final double? u,
+    final double? v,
+    final Percent? alpha,
+  }) {
+    return CIELuv(
+      l ?? this.l,
+      u ?? this.u,
+      v ?? this.v,
+      alpha: alpha ?? super.a,
+    );
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor()
-      .monochromatic
-      .map((final ColorSpacesIQ c) => (c as ColorIQ).toLuv())
-      .toList();
-
-  @override
-  List<ColorSpacesIQ> lighterPalette([final double? step]) {
-    return toColor()
-        .lighterPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toLuv())
-        .toList();
+  List<CIELuv> get monochromatic {
+    final List<CIELuv> results = <CIELuv>[];
+    for (int i = 0; i < 5; i++) {
+      final double delta = (i - 2) * 10.0;
+      final double newL = (l + delta).clamp(0.0, 100.0);
+      results.add(CIELuv(newL, u, v, alpha: alpha));
+    }
+    return results;
   }
 
   @override
-  List<ColorSpacesIQ> darkerPalette([final double? step]) {
-    return toColor()
-        .darkerPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toLuv())
-        .toList();
+  List<CIELuv> lighterPalette([final double? step]) {
+    final double s = step ?? 10.0;
+    return <CIELuv>[
+      lighten(s),
+      lighten(s * 2),
+      lighten(s * 3),
+      lighten(s * 4),
+      lighten(s * 5),
+    ];
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as ColorIQ).toLuv();
+  List<CIELuv> darkerPalette([final double? step]) {
+    final double s = step ?? 10.0;
+    return <CIELuv>[
+      darken(s),
+      darken(s * 2),
+      darken(s * 3),
+      darken(s * 4),
+      darken(s * 5),
+    ];
+  }
 
   @override
-  bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
+  CIELuv get random {
+    final Random rng = Random();
+    return CIELuv(
+      rng.nextDouble() * 100.0,
+      rng.nextDouble() * 200.0 - 100.0,
+      rng.nextDouble() * 200.0 - 100.0,
+      alpha: alpha,
+    );
+  }
 
   @override
-  CIELuv blend(final ColorSpacesIQ other, [final double amount = 50]) =>
-      toColor().blend(other, amount).toLuv();
+  bool isEqual(final ColorSpacesIQ other) {
+    if (other is CIELuv) {
+      const double epsilon = 0.001;
+      return (l - other.l).abs() < epsilon &&
+          (u - other.u).abs() < epsilon &&
+          (v - other.v).abs() < epsilon &&
+          (alpha.val - other.alpha.val).abs() < epsilon;
+    }
+    return false;
+  }
 
   @override
-  CIELuv opaquer([final double amount = 20]) =>
-      toColor().opaquer(amount).toLuv();
+  CIELuv blend(final ColorSpacesIQ other, [final double amount = 50]) {
+    return lerp(other, amount / 100);
+  }
 
   @override
-  CIELuv adjustHue([final double amount = 20]) =>
-      toColor().adjustHue(amount).toLuv();
+  CIELuv opaquer([final double amount = 20]) {
+    return copyWith(alpha: Percent((alpha.val + amount / 100).clamp(0.0, 1.0)));
+  }
 
   @override
-  CIELuv get complementary => toColor().complementary.toLuv();
+  CIELuv adjustHue([final double amount = 20]) {
+    final double angleRad = amount * pi / 180.0;
+    final double cosA = cos(angleRad);
+    final double sinA = sin(angleRad);
+    final double newU = u * cosA - v * sinA;
+    final double newV = u * sinA + v * cosA;
+    return CIELuv(l, newU, newV, alpha: alpha);
+  }
 
   @override
-  CIELuv warmer([final double amount = 20]) => toColor().warmer(amount).toLuv();
+  CIELuv get complementary => adjustHue(180);
 
   @override
-  CIELuv cooler([final double amount = 20]) => toColor().cooler(amount).toLuv();
+  CIELuv warmer([final double amount = 20]) {
+    final double currentHue = atan2(v, u) * 180.0 / pi;
+    const double targetHue = 30.0;
+    final double delta = ((targetHue - currentHue + 540) % 360) - 180;
+    final double shift = delta * (amount / 100).clamp(0.0, 1.0);
+    return adjustHue(shift);
+  }
 
   @override
-  List<CIELuv> generateBasicPalette() => toColor()
-      .generateBasicPalette()
-      .map((final ColorIQ c) => c.toLuv())
-      .toList();
+  CIELuv cooler([final double amount = 20]) {
+    final double currentHue = atan2(v, u) * 180.0 / pi;
+    const double targetHue = 210.0;
+    final double delta = ((targetHue - currentHue + 540) % 360) - 180;
+    final double shift = delta * (amount / 100).clamp(0.0, 1.0);
+    return adjustHue(shift);
+  }
 
   @override
-  List<CIELuv> tonesPalette() =>
-      toColor().tonesPalette().map((final ColorIQ c) => c.toLuv()).toList();
+  List<CIELuv> generateBasicPalette() => <CIELuv>[
+        darken(40),
+        darken(20),
+        this,
+        lighten(20),
+        lighten(40),
+      ];
 
   @override
-  List<CIELuv> analogous({final int count = 5, final double offset = 30}) =>
-      toColor()
-          .analogous(count: count, offset: offset)
-          .map((final ColorIQ c) => c.toLuv())
-          .toList();
+  List<CIELuv> tonesPalette() => List<CIELuv>.generate(
+        6,
+        (final int index) => copyWith(l: (index / 5 * 100).clamp(0.0, 100.0)),
+      );
 
   @override
-  List<CIELuv> square() =>
-      toColor().square().map((final ColorIQ c) => c.toLuv()).toList();
+  List<CIELuv> analogous({final int count = 5, final double offset = 30}) {
+    if (count <= 1) {
+      return <CIELuv>[this];
+    }
+    final double center = (count - 1) / 2;
+    return List<CIELuv>.generate(
+      count,
+      (final int index) => adjustHue((index - center) * offset),
+    );
+  }
 
   @override
-  List<CIELuv> tetrad({final double offset = 60}) => toColor()
-      .tetrad(offset: offset)
-      .map((final ColorIQ c) => c.toLuv())
-      .toList();
+  List<CIELuv> square() => List<CIELuv>.generate(
+        4,
+        (final int index) => adjustHue(index * 90.0),
+      );
+
+  @override
+  List<CIELuv> tetrad({final double offset = 60}) => <CIELuv>[
+        this,
+        adjustHue(offset),
+        adjustHue(180),
+        adjustHue(180 + offset),
+      ];
 
   double distanceTo(final ColorSpacesIQ other) =>
       toCam16().distance(other.toCam16());

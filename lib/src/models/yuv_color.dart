@@ -137,37 +137,77 @@ class YuvColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  YuvColor copyWith({final double? y, final double? u, final double? v}) {
-    return YuvColor(y ?? this.y, u ?? this.u, v ?? this.v);
+  YuvColor copyWith({
+    final double? y,
+    final double? u,
+    final double? v,
+    final Percent? alpha,
+  }) {
+    return YuvColor(
+      y ?? this.y,
+      u ?? this.u,
+      v ?? this.v,
+      alpha: alpha ?? super.a,
+    );
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor()
-      .monochromatic
-      .map((final ColorSpacesIQ c) => (c as ColorIQ).toYuv())
-      .toList();
-
-  @override
-  List<ColorSpacesIQ> lighterPalette([final double? step]) {
-    return toColor()
-        .lighterPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toYuv())
-        .toList();
+  List<YuvColor> get monochromatic {
+    final List<YuvColor> results = <YuvColor>[];
+    for (int i = 0; i < 5; i++) {
+      final double delta = (i - 2) * 0.1;
+      final double newY = (y + delta).clamp(0.0, 1.0);
+      results.add(YuvColor(newY, u, v, alpha: alpha));
+    }
+    return results;
   }
 
   @override
-  List<ColorSpacesIQ> darkerPalette([final double? step]) {
-    return toColor()
-        .darkerPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toYuv())
-        .toList();
+  List<YuvColor> lighterPalette([final double? step]) {
+    final double s = step ?? 10.0;
+    return <YuvColor>[
+      lighten(s),
+      lighten(s * 2),
+      lighten(s * 3),
+      lighten(s * 4),
+      lighten(s * 5),
+    ];
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as ColorIQ).toYuv();
+  List<YuvColor> darkerPalette([final double? step]) {
+    final double s = step ?? 10.0;
+    return <YuvColor>[
+      darken(s),
+      darken(s * 2),
+      darken(s * 3),
+      darken(s * 4),
+      darken(s * 5),
+    ];
+  }
 
   @override
-  bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
+  YuvColor get random {
+    final Random rng = Random();
+    return YuvColor(
+      rng.nextDouble(),
+      rng.nextDouble() * 0.872 - 0.436,
+      rng.nextDouble() * 1.230 - 0.615,
+      alpha: alpha,
+    );
+  }
+
+  @override
+  bool isEqual(final ColorSpacesIQ other) {
+    if (other is YuvColor) {
+      const double epsilon = 0.001;
+      return (y - other.y).abs() < epsilon &&
+          (u - other.u).abs() < epsilon &&
+          (v - other.v).abs() < epsilon &&
+          (alpha.val - other.alpha.val).abs() < epsilon;
+    }
+    return false;
+  }
 
   @override
   Brightness get brightness => toColor().brightness;
@@ -179,54 +219,86 @@ class YuvColor extends CommonIQ implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  YuvColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
-      toColor().blend(other, amount).toYuv();
+  YuvColor blend(final ColorSpacesIQ other, [final double amount = 50]) {
+    return lerp(other, amount / 100);
+  }
 
   @override
-  YuvColor opaquer([final double amount = 20]) =>
-      toColor().opaquer(amount).toYuv();
+  YuvColor opaquer([final double amount = 20]) {
+    return this;
+  }
 
   @override
-  YuvColor adjustHue([final double amount = 20]) =>
-      toColor().adjustHue(amount).toYuv();
+  YuvColor adjustHue([final double amount = 20]) {
+    final double angleRad = amount * pi / 180.0;
+    final double cosA = cos(angleRad);
+    final double sinA = sin(angleRad);
+    final double newU = u * cosA - v * sinA;
+    final double newV = u * sinA + v * cosA;
+    return YuvColor(y, newU, newV, alpha: alpha);
+  }
 
   @override
-  YuvColor get complementary => toColor().complementary.toYuv();
+  YuvColor get complementary => adjustHue(180);
 
   @override
-  YuvColor warmer([final double amount = 20]) =>
-      toColor().warmer(amount).toYuv();
+  YuvColor warmer([final double amount = 20]) {
+    final double currentHue = atan2(v, u) * 180.0 / pi;
+    const double targetHue = 30.0;
+    final double delta = ((targetHue - currentHue + 540) % 360) - 180;
+    final double shift = delta * (amount / 100).clamp(0.0, 1.0);
+    return adjustHue(shift);
+  }
 
   @override
-  YuvColor cooler([final double amount = 20]) =>
-      toColor().cooler(amount).toYuv();
+  YuvColor cooler([final double amount = 20]) {
+    final double currentHue = atan2(v, u) * 180.0 / pi;
+    const double targetHue = 210.0;
+    final double delta = ((targetHue - currentHue + 540) % 360) - 180;
+    final double shift = delta * (amount / 100).clamp(0.0, 1.0);
+    return adjustHue(shift);
+  }
 
   @override
-  List<YuvColor> generateBasicPalette() => toColor()
-      .generateBasicPalette()
-      .map((final ColorIQ c) => c.toYuv())
-      .toList();
+  List<YuvColor> generateBasicPalette() => <YuvColor>[
+        darken(40),
+        darken(20),
+        this,
+        lighten(20),
+        lighten(40),
+      ];
 
   @override
-  List<YuvColor> tonesPalette() =>
-      toColor().tonesPalette().map((final ColorIQ c) => c.toYuv()).toList();
+  List<YuvColor> tonesPalette() => List<YuvColor>.generate(
+        6,
+        (final int index) => copyWith(y: (index / 5).clamp(0.0, 1.0)),
+      );
 
   @override
-  List<YuvColor> analogous({final int count = 5, final double offset = 30}) =>
-      toColor()
-          .analogous(count: count, offset: offset)
-          .map((final ColorIQ c) => c.toYuv())
-          .toList();
+  List<YuvColor> analogous({final int count = 5, final double offset = 30}) {
+    if (count <= 1) {
+      return <YuvColor>[this];
+    }
+    final double center = (count - 1) / 2;
+    return List<YuvColor>.generate(
+      count,
+      (final int index) => adjustHue((index - center) * offset),
+    );
+  }
 
   @override
-  List<YuvColor> square() =>
-      toColor().square().map((final ColorIQ c) => c.toYuv()).toList();
+  List<YuvColor> square() => List<YuvColor>.generate(
+        4,
+        (final int index) => adjustHue(index * 90.0),
+      );
 
   @override
-  List<YuvColor> tetrad({final double offset = 60}) => toColor()
-      .tetrad(offset: offset)
-      .map((final ColorIQ c) => c.toYuv())
-      .toList();
+  List<YuvColor> tetrad({final double offset = 60}) => <YuvColor>[
+        this,
+        adjustHue(offset),
+        adjustHue(180),
+        adjustHue(180 + offset),
+      ];
 
   @override
   double contrastWith(final ColorSpacesIQ other) =>

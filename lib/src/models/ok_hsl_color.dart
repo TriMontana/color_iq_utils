@@ -205,40 +205,71 @@ class OkHslColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor()
-      .monochromatic
-      .map((final ColorSpacesIQ c) => (c as ColorIQ).toOkHsl())
-      .toList();
-
-  @override
-  List<ColorSpacesIQ> lighterPalette([final double? step]) {
-    return toColor()
-        .lighterPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toOkHsl())
-        .toList();
+  List<OkHslColor> get monochromatic {
+    return <OkHslColor>[
+      darken(20),
+      darken(10),
+      this,
+      lighten(10),
+      lighten(20),
+    ];
   }
 
   @override
-  List<ColorSpacesIQ> darkerPalette([final double? step]) {
-    return toColor()
-        .darkerPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toOkHsl())
-        .toList();
+  List<OkHslColor> lighterPalette([final double? step]) {
+    final double s = step ?? 10.0;
+    return <OkHslColor>[
+      lighten(s),
+      lighten(s * 2),
+      lighten(s * 3),
+      lighten(s * 4),
+      lighten(s * 5),
+    ];
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as ColorIQ).toOkHsl();
+  List<OkHslColor> darkerPalette([final double? step]) {
+    final double s = step ?? 10.0;
+    return <OkHslColor>[
+      darken(s),
+      darken(s * 2),
+      darken(s * 3),
+      darken(s * 4),
+      darken(s * 5),
+    ];
+  }
 
   @override
-  bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
+  ColorSpacesIQ get random {
+    final Random rng = Random();
+    return OkHslColor(
+      rng.nextDouble() * 360,
+      rng.nextDouble(),
+      rng.nextDouble(),
+    );
+  }
 
   @override
-  OkHslColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
-      toColor().blend(other, amount).toOkHsl();
+  bool isEqual(final ColorSpacesIQ other) {
+    if (other is! OkHslColor) {
+      return value == other.value;
+    }
+    const double epsilon = 0.001;
+    return (h - other.h).abs() < epsilon &&
+        (s - other.s).abs() < epsilon &&
+        (l - other.l).abs() < epsilon;
+  }
 
   @override
-  OkHslColor opaquer([final double amount = 20]) =>
-      toColor().opaquer(amount).toOkHsl();
+  OkHslColor blend(final ColorSpacesIQ other, [final double amount = 50]) {
+    return lerp(other, amount / 100);
+  }
+
+  @override
+  OkHslColor opaquer([final double amount = 20]) {
+    // OkHSL doesn't store alpha in this implementation
+    return this;
+  }
 
   @override
   OkHslColor adjustHue([final double amount = 20]) {
@@ -251,39 +282,93 @@ class OkHslColor extends CommonIQ implements ColorSpacesIQ {
   OkHslColor get complementary => adjustHue(180);
 
   @override
-  OkHslColor warmer([final double amount = 20]) =>
-      toColor().warmer(amount).toOkHsl();
+  OkHslColor warmer([final double amount = 20]) {
+    const double targetHue = 30.0;
+    final double currentHue = h;
+
+    // Calculate shortest path difference
+    double diff = targetHue - currentHue;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+
+    double newHue = currentHue + (diff * amount / 100);
+    if (newHue < 0) newHue += 360;
+    if (newHue >= 360) newHue -= 360;
+
+    return copyWith(hue: newHue);
+  }
 
   @override
-  OkHslColor cooler([final double amount = 20]) =>
-      toColor().cooler(amount).toOkHsl();
+  OkHslColor cooler([final double amount = 20]) {
+    const double targetHue = 210.0;
+    final double currentHue = h;
+
+    // Calculate shortest path difference
+    double diff = targetHue - currentHue;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+
+    double newHue = currentHue + (diff * amount / 100);
+    if (newHue < 0) newHue += 360;
+    if (newHue >= 360) newHue -= 360;
+
+    return copyWith(hue: newHue);
+  }
 
   @override
-  List<OkHslColor> generateBasicPalette() => toColor()
-      .generateBasicPalette()
-      .map((final ColorIQ c) => c.toOkHsl())
-      .toList();
+  List<OkHslColor> generateBasicPalette() {
+    return <OkHslColor>[
+      lighten(40),
+      lighten(20),
+      this,
+      darken(20),
+      darken(40),
+    ];
+  }
 
   @override
-  List<OkHslColor> tonesPalette() =>
-      toColor().tonesPalette().map((final ColorIQ c) => c.toOkHsl()).toList();
+  List<OkHslColor> tonesPalette() {
+    // Create tones by reducing saturation (moving towards gray)
+    return <OkHslColor>[
+      this,
+      copyWith(s: s * 0.85),
+      copyWith(s: s * 0.70),
+      copyWith(s: s * 0.55),
+      copyWith(s: s * 0.40),
+    ];
+  }
 
   @override
-  List<OkHslColor> analogous({final int count = 5, final double offset = 30}) =>
-      toColor()
-          .analogous(count: count, offset: offset)
-          .map((final ColorIQ c) => c.toOkHsl())
-          .toList();
+  List<OkHslColor> analogous({final int count = 5, final double offset = 30}) {
+    final List<OkHslColor> palette = <OkHslColor>[];
+    final double startHue = h - ((count - 1) / 2) * offset;
+    for (int i = 0; i < count; i++) {
+      double newHue = (startHue + i * offset) % 360;
+      if (newHue < 0) newHue += 360;
+      palette.add(copyWith(hue: newHue));
+    }
+    return palette;
+  }
 
   @override
-  List<OkHslColor> square() =>
-      toColor().square().map((final ColorIQ c) => c.toOkHsl()).toList();
+  List<OkHslColor> square() {
+    return <OkHslColor>[
+      this,
+      adjustHue(90),
+      adjustHue(180),
+      adjustHue(270),
+    ];
+  }
 
   @override
-  List<OkHslColor> tetrad({final double offset = 60}) => toColor()
-      .tetrad(offset: offset)
-      .map((final ColorIQ c) => c.toOkHsl())
-      .toList();
+  List<OkHslColor> tetrad({final double offset = 60}) {
+    return <OkHslColor>[
+      this,
+      adjustHue(offset),
+      adjustHue(180),
+      adjustHue(180 + offset),
+    ];
+  }
 
   @override
   double contrastWith(final ColorSpacesIQ other) =>

@@ -103,45 +103,87 @@ class HsluvColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  HsluvColor copyWith({final double? h, final double? s, final double? l}) {
-    return HsluvColor(h ?? this.h, s ?? this.s, l ?? this.l);
+  HsluvColor copyWith({
+    final double? h,
+    final double? s,
+    final double? l,
+    final Percent? alpha,
+  }) {
+    return HsluvColor(
+      h ?? this.h,
+      s ?? this.s,
+      l ?? this.l,
+      alpha: alpha ?? super.a,
+    );
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor()
-      .monochromatic
-      .map((final ColorSpacesIQ c) => (c as ColorIQ).toHsluv())
-      .toList();
-
-  @override
-  List<ColorSpacesIQ> lighterPalette([final double? step]) {
-    return toColor()
-        .lighterPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toHsluv())
-        .toList();
+  List<HsluvColor> get monochromatic {
+    final List<HsluvColor> results = <HsluvColor>[];
+    for (int i = 0; i < 5; i++) {
+      final double delta = (i - 2) * 10.0;
+      final double newL = (l + delta).clamp(0.0, 100.0);
+      results.add(HsluvColor(h, s, newL, alpha: alpha));
+    }
+    return results;
   }
 
   @override
-  List<ColorSpacesIQ> darkerPalette([final double? step]) {
-    return toColor()
-        .darkerPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toHsluv())
-        .toList();
+  List<HsluvColor> lighterPalette([final double? step]) {
+    final double s = step ?? 10.0;
+    return <HsluvColor>[
+      lighten(s),
+      lighten(s * 2),
+      lighten(s * 3),
+      lighten(s * 4),
+      lighten(s * 5),
+    ];
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as ColorIQ).toHsluv();
+  List<HsluvColor> darkerPalette([final double? step]) {
+    final double s = step ?? 10.0;
+    return <HsluvColor>[
+      darken(s),
+      darken(s * 2),
+      darken(s * 3),
+      darken(s * 4),
+      darken(s * 5),
+    ];
+  }
 
   @override
-  bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
+  HsluvColor get random {
+    final Random rng = Random();
+    return HsluvColor(
+      rng.nextDouble() * 360.0,
+      rng.nextDouble() * 100.0,
+      rng.nextDouble() * 100.0,
+      alpha: alpha,
+    );
+  }
 
   @override
-  HsluvColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
-      toColor().blend(other, amount).toHsluv();
+  bool isEqual(final ColorSpacesIQ other) {
+    if (other is HsluvColor) {
+      const double epsilon = 0.001;
+      return (h - other.h).abs() < epsilon &&
+          (s - other.s).abs() < epsilon &&
+          (l - other.l).abs() < epsilon &&
+          (alpha.val - other.alpha.val).abs() < epsilon;
+    }
+    return false;
+  }
 
   @override
-  HsluvColor opaquer([final double amount = 20]) =>
-      toColor().opaquer(amount).toHsluv();
+  HsluvColor blend(final ColorSpacesIQ other, [final double amount = 50]) {
+    return lerp(other, amount / 100);
+  }
+
+  @override
+  HsluvColor opaquer([final double amount = 20]) {
+    return copyWith(alpha: Percent((alpha.val + amount / 100).clamp(0.0, 1.0)));
+  }
 
   @override
   HsluvColor adjustHue([final double amount = 20]) {
@@ -154,39 +196,61 @@ class HsluvColor extends CommonIQ implements ColorSpacesIQ {
   HsluvColor get complementary => adjustHue(180);
 
   @override
-  HsluvColor warmer([final double amount = 20]) =>
-      toColor().warmer(amount).toHsluv();
+  HsluvColor warmer([final double amount = 20]) {
+    const double targetHue = 30.0;
+    final double delta = ((targetHue - h + 540) % 360) - 180;
+    final double shift = delta * (amount / 100).clamp(0.0, 1.0);
+    return adjustHue(shift);
+  }
 
   @override
-  HsluvColor cooler([final double amount = 20]) =>
-      toColor().cooler(amount).toHsluv();
+  HsluvColor cooler([final double amount = 20]) {
+    const double targetHue = 210.0;
+    final double delta = ((targetHue - h + 540) % 360) - 180;
+    final double shift = delta * (amount / 100).clamp(0.0, 1.0);
+    return adjustHue(shift);
+  }
 
   @override
-  List<HsluvColor> generateBasicPalette() => toColor()
-      .generateBasicPalette()
-      .map((final ColorIQ c) => c.toHsluv())
-      .toList();
+  List<HsluvColor> generateBasicPalette() => <HsluvColor>[
+        darken(40),
+        darken(20),
+        this,
+        lighten(20),
+        lighten(40),
+      ];
 
   @override
-  List<HsluvColor> tonesPalette() =>
-      toColor().tonesPalette().map((final ColorIQ c) => c.toHsluv()).toList();
+  List<HsluvColor> tonesPalette() => List<HsluvColor>.generate(
+        6,
+        (final int index) => copyWith(l: (index / 5 * 100).clamp(0.0, 100.0)),
+      );
 
   @override
-  List<HsluvColor> analogous({final int count = 5, final double offset = 30}) =>
-      toColor()
-          .analogous(count: count, offset: offset)
-          .map((final ColorIQ c) => c.toHsluv())
-          .toList();
+  List<HsluvColor> analogous({final int count = 5, final double offset = 30}) {
+    if (count <= 1) {
+      return <HsluvColor>[this];
+    }
+    final double center = (count - 1) / 2;
+    return List<HsluvColor>.generate(
+      count,
+      (final int index) => adjustHue((index - center) * offset),
+    );
+  }
 
   @override
-  List<HsluvColor> square() =>
-      toColor().square().map((final ColorIQ c) => c.toHsluv()).toList();
+  List<HsluvColor> square() => List<HsluvColor>.generate(
+        4,
+        (final int index) => adjustHue(index * 90.0),
+      );
 
   @override
-  List<HsluvColor> tetrad({final double offset = 60}) => toColor()
-      .tetrad(offset: offset)
-      .map((final ColorIQ c) => c.toHsluv())
-      .toList();
+  List<HsluvColor> tetrad({final double offset = 60}) => <HsluvColor>[
+        this,
+        adjustHue(offset),
+        adjustHue(180),
+        adjustHue(180 + offset),
+      ];
 
   @override
   double contrastWith(final ColorSpacesIQ other) =>

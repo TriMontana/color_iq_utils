@@ -220,32 +220,62 @@ class OkLabColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor()
-      .monochromatic
-      .map((final ColorSpacesIQ c) => (c as ColorIQ).toOkLab())
-      .toList();
-
-  @override
-  List<ColorSpacesIQ> lighterPalette([final double? step]) {
-    return toColor()
-        .lighterPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toOkLab())
-        .toList();
+  List<OkLabColor> get monochromatic {
+    final List<OkLabColor> results = <OkLabColor>[];
+    for (int i = 0; i < 5; i++) {
+      final double delta = (i - 2) * 0.1;
+      final double newL = (l + delta).clamp(0.0, 1.0);
+      results.add(OkLabColor(newL, aLab, bLab, alpha: alpha));
+    }
+    return results;
   }
 
   @override
-  List<ColorSpacesIQ> darkerPalette([final double? step]) {
-    return toColor()
-        .darkerPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toOkLab())
-        .toList();
+  List<OkLabColor> lighterPalette([final double? step]) {
+    final double s = step ?? 10.0;
+    return <OkLabColor>[
+      lighten(s),
+      lighten(s * 2),
+      lighten(s * 3),
+      lighten(s * 4),
+      lighten(s * 5),
+    ];
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as ColorIQ).toOkLab();
+  List<OkLabColor> darkerPalette([final double? step]) {
+    final double s = step ?? 10.0;
+    return <OkLabColor>[
+      darken(s),
+      darken(s * 2),
+      darken(s * 3),
+      darken(s * 4),
+      darken(s * 5),
+    ];
+  }
 
   @override
-  bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
+  OkLabColor get random {
+    final Random rng = Random();
+    return OkLabColor(
+      rng.nextDouble(),
+      rng.nextDouble() * 2 - 1,
+      rng.nextDouble() * 2 - 1,
+      alpha: alpha,
+    );
+  }
+
+  @override
+  bool isEqual(final ColorSpacesIQ other) {
+    if (other is OkLabColor) {
+      const double epsilon = 0.001;
+      return (l - other.l).abs() < epsilon &&
+          (aLab - other.aLab).abs() < epsilon &&
+          (bLab - other.bLab).abs() < epsilon &&
+          (alpha.val - other.alpha.val).abs() < epsilon;
+    }
+    return false;
+  }
 
   @override
   bool get isDark => brightness == Brightness.dark;
@@ -254,53 +284,66 @@ class OkLabColor extends CommonIQ implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  OkLabColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
-      toColor().blend(other, amount).toOkLab();
+  OkLabColor blend(final ColorSpacesIQ other, [final double amount = 50]) {
+    return lerp(other, amount / 100);
+  }
 
   @override
-  OkLabColor opaquer([final double amount = 20]) =>
-      toColor().opaquer(amount).toOkLab();
+  OkLabColor opaquer([final double amount = 20]) {
+    return copyWith(alpha: Percent((alpha.val + amount / 100).clamp(0.0, 1.0)));
+  }
 
   @override
-  OkLabColor adjustHue([final double amount = 20]) =>
-      toColor().adjustHue(amount).toOkLab();
+  OkLabColor adjustHue([final double amount = 20]) {
+    return toOkLch().adjustHue(amount).toOkLab();
+  }
 
   @override
-  OkLabColor get complementary => toColor().complementary.toOkLab();
+  OkLabColor get complementary => adjustHue(180);
 
   @override
-  OkLabColor warmer([final double amount = 20]) =>
-      toColor().warmer(amount).toOkLab();
+  OkLabColor warmer([final double amount = 20]) {
+    return toOkLch().warmer(amount).toOkLab();
+  }
 
   @override
-  OkLabColor cooler([final double amount = 20]) =>
-      toColor().cooler(amount).toOkLab();
+  OkLabColor cooler([final double amount = 20]) {
+    return toOkLch().cooler(amount).toOkLab();
+  }
 
   @override
-  List<OkLabColor> generateBasicPalette() => toColor()
-      .generateBasicPalette()
-      .map((final ColorIQ c) => c.toOkLab())
+  List<OkLabColor> generateBasicPalette() => <OkLabColor>[
+        darken(40),
+        darken(20),
+        this,
+        lighten(20),
+        lighten(40),
+      ];
+
+  @override
+  List<OkLabColor> tonesPalette() => List<OkLabColor>.generate(
+        6,
+        (final int index) => copyWith(l: (index / 5).clamp(0.0, 1.0)),
+      );
+
+  @override
+  List<OkLabColor> analogous({final int count = 5, final double offset = 30}) {
+    return toOkLch()
+        .analogous(count: count, offset: offset)
+        .map((final ColorSpacesIQ c) => (c as OkLCH).toOkLab())
+        .toList();
+  }
+
+  @override
+  List<OkLabColor> square() => toOkLch()
+      .square()
+      .map((final ColorSpacesIQ c) => (c as OkLCH).toOkLab())
       .toList();
 
   @override
-  List<OkLabColor> tonesPalette() =>
-      toColor().tonesPalette().map((final ColorIQ c) => c.toOkLab()).toList();
-
-  @override
-  List<OkLabColor> analogous({final int count = 5, final double offset = 30}) =>
-      toColor()
-          .analogous(count: count, offset: offset)
-          .map((final ColorIQ c) => c.toOkLab())
-          .toList();
-
-  @override
-  List<OkLabColor> square() =>
-      toColor().square().map((final ColorIQ c) => c.toOkLab()).toList();
-
-  @override
-  List<OkLabColor> tetrad({final double offset = 60}) => toColor()
+  List<OkLabColor> tetrad({final double offset = 60}) => toOkLch()
       .tetrad(offset: offset)
-      .map((final ColorIQ c) => c.toOkLab())
+      .map((final ColorSpacesIQ c) => (c as OkLCH).toOkLab())
       .toList();
 
   @override

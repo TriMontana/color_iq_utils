@@ -160,78 +160,128 @@ class LabColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor()
-      .monochromatic
-      .map((final ColorSpacesIQ c) => (c as ColorIQ).lab)
-      .toList();
-
-  @override
-  List<ColorSpacesIQ> lighterPalette([final double? step]) {
-    return toColor()
-        .lighterPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).lab)
-        .toList();
+  List<LabColor> get monochromatic {
+    final List<LabColor> results = <LabColor>[];
+    for (int i = 0; i < 5; i++) {
+      final double delta = (i - 2) * 10.0;
+      final double newL = (l + delta).clamp(0.0, 100.0);
+      results.add(LabColor(newL, aLab, bLab, alpha: alpha));
+    }
+    return results;
   }
 
   @override
-  List<ColorSpacesIQ> darkerPalette([final double? step]) {
-    return toColor()
-        .darkerPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).lab)
-        .toList();
+  List<LabColor> lighterPalette([final double? step]) {
+    final double s = step ?? 10.0;
+    return <LabColor>[
+      lighten(s),
+      lighten(s * 2),
+      lighten(s * 3),
+      lighten(s * 4),
+      lighten(s * 5),
+    ];
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as ColorIQ).lab;
+  List<LabColor> darkerPalette([final double? step]) {
+    final double s = step ?? 10.0;
+    return <LabColor>[
+      darken(s),
+      darken(s * 2),
+      darken(s * 3),
+      darken(s * 4),
+      darken(s * 5),
+    ];
+  }
 
   @override
-  bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
+  LabColor get random {
+    final Random rng = Random();
+    return LabColor(
+      rng.nextDouble() * 100.0,
+      rng.nextDouble() * 256.0 - 128.0,
+      rng.nextDouble() * 256.0 - 128.0,
+      alpha: alpha,
+    );
+  }
+
+  @override
+  bool isEqual(final ColorSpacesIQ other) {
+    if (other is LabColor) {
+      const double epsilon = 0.001;
+      return (l - other.l).abs() < epsilon &&
+          (aLab - other.aLab).abs() < epsilon &&
+          (bLab - other.bLab).abs() < epsilon &&
+          (alpha.val - other.alpha.val).abs() < epsilon;
+    }
+    return false;
+  }
 
   @override
   bool get isLight => brightness == Brightness.light;
 
   @override
-  LabColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
-      toColor().blend(other, amount).lab;
+  LabColor blend(final ColorSpacesIQ other, [final double amount = 50]) {
+    return lerp(other, amount / 100);
+  }
 
   @override
-  LabColor opaquer([final double amount = 20]) => toColor().opaquer(amount).lab;
+  LabColor opaquer([final double amount = 20]) {
+    return copyWith(alpha: Percent((alpha.val + amount / 100).clamp(0.0, 1.0)));
+  }
 
   @override
-  LabColor adjustHue([final double amount = 20]) =>
-      toColor().adjustHue(amount).lab;
+  LabColor adjustHue([final double amount = 20]) {
+    return toLch().adjustHue(amount).toLab();
+  }
 
   @override
-  LabColor get complementary => toColor().complementary.lab;
+  LabColor get complementary => adjustHue(180);
 
   @override
-  LabColor warmer([final double amount = 20]) => toColor().warmer(amount).lab;
+  LabColor warmer([final double amount = 20]) {
+    return toLch().warmer(amount).toLab();
+  }
 
   @override
-  LabColor cooler([final double amount = 20]) => toColor().cooler(amount).lab;
+  LabColor cooler([final double amount = 20]) {
+    return toLch().cooler(amount).toLab();
+  }
 
   @override
-  List<LabColor> generateBasicPalette() =>
-      toColor().generateBasicPalette().map((final ColorIQ c) => c.lab).toList();
+  List<LabColor> generateBasicPalette() => <LabColor>[
+        darken(40),
+        darken(20),
+        this,
+        lighten(20),
+        lighten(40),
+      ];
 
   @override
-  List<LabColor> tonesPalette() =>
-      toColor().tonesPalette().map((final ColorIQ c) => c.lab).toList();
+  List<LabColor> tonesPalette() => List<LabColor>.generate(
+        6,
+        (final int index) => copyWith(l: (index / 5 * 100).clamp(0.0, 100.0)),
+      );
 
   @override
-  List<LabColor> analogous({final int count = 5, final double offset = 30}) =>
-      toColor()
-          .analogous(count: count, offset: offset)
-          .map((final ColorIQ c) => c.lab)
-          .toList();
+  List<LabColor> analogous({final int count = 5, final double offset = 30}) {
+    return toLch()
+        .analogous(count: count, offset: offset)
+        .map((final ColorSpacesIQ c) => (c as LchColor).toLab())
+        .toList();
+  }
 
   @override
-  List<LabColor> square() =>
-      toColor().square().map((final ColorIQ c) => c.lab).toList();
+  List<LabColor> square() => toLch()
+      .square()
+      .map((final ColorSpacesIQ c) => (c as LchColor).toLab())
+      .toList();
 
   @override
-  List<LabColor> tetrad({final double offset = 60}) =>
-      toColor().tetrad(offset: offset).map((final ColorIQ c) => c.lab).toList();
+  List<LabColor> tetrad({final double offset = 60}) => toLch()
+      .tetrad(offset: offset)
+      .map((final ColorSpacesIQ c) => (c as LchColor).toLab())
+      .toList();
 
   // @override
   // double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);

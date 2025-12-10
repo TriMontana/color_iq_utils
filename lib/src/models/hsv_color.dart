@@ -327,18 +327,39 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> analogous({
+  List<HSV> analogous({
     final int count = 5,
     final double offset = 30,
-  }) =>
-      toColor().analogous(count: count, offset: offset);
+  }) {
+    final List<HSV> palette = <HSV>[];
+    final double startHue = h - ((count - 1) / 2) * offset;
+    for (int i = 0; i < count; i++) {
+      double newHue = (startHue + i * offset) % 360;
+      if (newHue < 0) newHue += 360;
+      palette.add(copyWith(hue: newHue));
+    }
+    return palette;
+  }
 
   @override
-  List<ColorSpacesIQ> square() => toColor().square();
+  List<HSV> square() {
+    return <HSV>[
+      this,
+      adjustHue(90),
+      adjustHue(180),
+      adjustHue(270),
+    ];
+  }
 
   @override
-  List<ColorSpacesIQ> tetrad({final double offset = 60}) =>
-      toColor().tetrad(offset: offset);
+  List<HSV> tetrad({final double offset = 60}) {
+    return <HSV>[
+      this,
+      adjustHue(offset),
+      adjustHue(180),
+      adjustHue(180 + offset),
+    ];
+  }
 
   @override
   double contrastWith(final ColorSpacesIQ other) =>
@@ -346,19 +367,48 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
 
   @override
   HSV warmer([final double amount = 20]) {
-    double newHue = (h - amount) % 360.0;
-    if (newHue < 0) {
-      newHue += 360.0;
-    }
+    const double targetHue = 30.0;
+    final double currentHue = h;
+
+    // Calculate shortest path difference
+    double diff = targetHue - currentHue;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+
+    double newHue = currentHue + (diff * amount / 100);
+    if (newHue < 0) newHue += 360;
+    if (newHue >= 360) newHue -= 360;
+
     return copyWith(hue: newHue);
   }
 
   @override
-  HSV cooler([final double amount = 20]) => toColor().cooler(amount).hsv;
+  HSV cooler([final double amount = 20]) {
+    const double targetHue = 210.0;
+    final double currentHue = h;
+
+    // Calculate shortest path difference
+    double diff = targetHue - currentHue;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+
+    double newHue = currentHue + (diff * amount / 100);
+    if (newHue < 0) newHue += 360;
+    if (newHue >= 360) newHue -= 360;
+
+    return copyWith(hue: newHue);
+  }
 
   @override
-  List<HSV> generateBasicPalette() =>
-      toColor().generateBasicPalette().map((final ColorIQ c) => c.hsv).toList();
+  List<HSV> generateBasicPalette() {
+    return <HSV>[
+      lighten(40),
+      lighten(20),
+      this,
+      darken(20),
+      darken(40),
+    ];
+  }
 
   @override
   Map<String, dynamic> toJson() {

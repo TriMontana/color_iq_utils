@@ -296,7 +296,16 @@ class HwbColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
+  bool isEqual(final ColorSpacesIQ other) {
+    if (other is! HwbColor) {
+      return value == other.value;
+    }
+    const double epsilon = 0.001;
+    return (h - other.h).abs() < epsilon &&
+        (w - other.w).abs() < epsilon &&
+        (blackness - other.blackness).abs() < epsilon &&
+        (alpha.val - other.alpha.val).abs() < epsilon;
+  }
 
   @override
   bool get isDark => brightness == Brightness.dark;
@@ -305,54 +314,115 @@ class HwbColor extends CommonIQ implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  HwbColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
-      toColor().blend(other, amount).toHwb();
+  HwbColor blend(final ColorSpacesIQ other, [final double amount = 50]) {
+    return lerp(other, amount / 100);
+  }
 
   @override
-  HwbColor opaquer([final double amount = 20]) =>
-      toColor().opaquer(amount).toHwb();
+  HwbColor opaquer([final double amount = 20]) {
+    final double newAlpha = min(1.0, alpha.val + amount / 100);
+    return copyWith(alpha: Percent(newAlpha));
+  }
 
   @override
-  HwbColor adjustHue([final double amount = 20]) =>
-      toColor().adjustHue(amount).toHwb();
+  HwbColor adjustHue([final double amount = 20]) {
+    double newHue = (h + amount) % 360;
+    if (newHue < 0) newHue += 360;
+    return copyWith(h: newHue);
+  }
 
   @override
-  HwbColor get complementary => toColor().complementary.toHwb();
+  HwbColor get complementary => adjustHue(180);
 
   @override
-  HwbColor warmer([final double amount = 20]) =>
-      toColor().warmer(amount).toHwb();
+  HwbColor warmer([final double amount = 20]) {
+    const double targetHue = 30.0;
+    final double currentHue = h;
+
+    // Calculate shortest path difference
+    double diff = targetHue - currentHue;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+
+    double newHue = currentHue + (diff * amount / 100);
+    if (newHue < 0) newHue += 360;
+    if (newHue >= 360) newHue -= 360;
+
+    return copyWith(h: newHue);
+  }
 
   @override
-  HwbColor cooler([final double amount = 20]) =>
-      toColor().cooler(amount).toHwb();
+  HwbColor cooler([final double amount = 20]) {
+    const double targetHue = 210.0;
+    final double currentHue = h;
+
+    // Calculate shortest path difference
+    double diff = targetHue - currentHue;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+
+    double newHue = currentHue + (diff * amount / 100);
+    if (newHue < 0) newHue += 360;
+    if (newHue >= 360) newHue -= 360;
+
+    return copyWith(h: newHue);
+  }
 
   @override
-  List<HwbColor> generateBasicPalette() => toColor()
-      .generateBasicPalette()
-      .map((final ColorIQ c) => c.toHwb())
-      .toList();
+  List<HwbColor> generateBasicPalette() {
+    return <HwbColor>[
+      whiten(40),
+      whiten(20),
+      this,
+      blacken(20),
+      blacken(40),
+    ];
+  }
 
   @override
-  List<HwbColor> tonesPalette() =>
-      toColor().tonesPalette().map((final ColorIQ c) => c.toHwb()).toList();
+  List<HwbColor> tonesPalette() {
+    // Mix with gray (h, 0.5, 0.5)
+    final HwbColor gray = HwbColor(h, 0.5, 0.5);
+    return <HwbColor>[
+      this,
+      lerp(gray, 0.15),
+      lerp(gray, 0.30),
+      lerp(gray, 0.45),
+      lerp(gray, 0.60),
+    ];
+  }
 
   @override
-  List<HwbColor> analogous({final int count = 5, final double offset = 30}) =>
-      toColor()
-          .analogous(count: count, offset: offset)
-          .map((final ColorIQ c) => c.toHwb())
-          .toList();
+  List<HwbColor> analogous({final int count = 5, final double offset = 30}) {
+    final List<HwbColor> palette = <HwbColor>[];
+    final double startHue = h - ((count - 1) / 2) * offset;
+    for (int i = 0; i < count; i++) {
+      double newHue = (startHue + i * offset) % 360;
+      if (newHue < 0) newHue += 360;
+      palette.add(copyWith(h: newHue));
+    }
+    return palette;
+  }
 
   @override
-  List<HwbColor> square() =>
-      toColor().square().map((final ColorIQ c) => c.toHwb()).toList();
+  List<HwbColor> square() {
+    return <HwbColor>[
+      this,
+      adjustHue(90),
+      adjustHue(180),
+      adjustHue(270),
+    ];
+  }
 
   @override
-  List<HwbColor> tetrad({final double offset = 60}) => toColor()
-      .tetrad(offset: offset)
-      .map((final ColorIQ c) => c.toHwb())
-      .toList();
+  List<HwbColor> tetrad({final double offset = 60}) {
+    return <HwbColor>[
+      this,
+      adjustHue(offset),
+      adjustHue(180),
+      adjustHue(180 + offset),
+    ];
+  }
 
   @override
   double contrastWith(final ColorSpacesIQ other) =>

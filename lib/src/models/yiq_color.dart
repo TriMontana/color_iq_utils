@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
@@ -85,7 +87,7 @@ class YiqColor extends CommonIQ implements ColorSpacesIQ {
 
   @override
   YiqColor darken([final double amount = 20]) {
-    return toColor().darken(amount).toYiq();
+    return copyWith(y: (y - amount / 100).clamp(0.0, 1.0));
   }
 
   @override
@@ -136,41 +138,81 @@ class YiqColor extends CommonIQ implements ColorSpacesIQ {
 
   @override
   YiqColor lighten([final double amount = 20]) {
-    return toColor().lighten(amount).toYiq();
+    return copyWith(y: (y + amount / 100).clamp(0.0, 1.0));
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  YiqColor copyWith({final double? y, final double? i, final double? q}) {
-    return YiqColor(y ?? this.y, i ?? this.i, q ?? this.q);
+  YiqColor copyWith({
+    final double? y,
+    final double? i,
+    final double? q,
+    final Percent? alpha,
+  }) {
+    return YiqColor(
+      y ?? this.y,
+      i ?? this.i,
+      q ?? this.q,
+      alpha: alpha ?? super.a,
+    );
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor()
-      .monochromatic
-      .map((final ColorSpacesIQ c) => (c as ColorIQ).toYiq())
-      .toList();
-
-  @override
-  List<ColorSpacesIQ> lighterPalette([final double? step]) {
-    return toColor()
-        .lighterPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toYiq())
-        .toList();
+  List<YiqColor> get monochromatic {
+    final List<YiqColor> results = <YiqColor>[];
+    for (int index = 0; index < 5; index++) {
+      final double delta = (index - 2) * 0.1;
+      final double newY = (y + delta).clamp(0.0, 1.0);
+      results.add(YiqColor(newY, i, q, alpha: alpha));
+    }
+    return results;
   }
 
   @override
-  List<ColorSpacesIQ> darkerPalette([final double? step]) {
-    return toColor()
-        .darkerPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toYiq())
-        .toList();
+  List<YiqColor> lighterPalette([final double? step]) {
+    final double s = (step ?? 10.0) / 100.0;
+    return <YiqColor>[
+      copyWith(y: (y + s).clamp(0.0, 1.0)),
+      copyWith(y: (y + s * 2).clamp(0.0, 1.0)),
+      copyWith(y: (y + s * 3).clamp(0.0, 1.0)),
+      copyWith(y: (y + s * 4).clamp(0.0, 1.0)),
+      copyWith(y: (y + s * 5).clamp(0.0, 1.0)),
+    ];
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as ColorIQ).toYiq();
+  List<YiqColor> darkerPalette([final double? step]) {
+    final double s = (step ?? 10.0) / 100.0;
+    return <YiqColor>[
+      copyWith(y: (y - s).clamp(0.0, 1.0)),
+      copyWith(y: (y - s * 2).clamp(0.0, 1.0)),
+      copyWith(y: (y - s * 3).clamp(0.0, 1.0)),
+      copyWith(y: (y - s * 4).clamp(0.0, 1.0)),
+      copyWith(y: (y - s * 5).clamp(0.0, 1.0)),
+    ];
+  }
 
   @override
-  bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
+  YiqColor get random {
+    final Random rng = Random();
+    return YiqColor(
+      rng.nextDouble(),
+      rng.nextDouble() * 1.1914 - 0.5957,
+      rng.nextDouble() * 1.0452 - 0.5226,
+      alpha: alpha,
+    );
+  }
+
+  @override
+  bool isEqual(final ColorSpacesIQ other) {
+    if (other is YiqColor) {
+      const double epsilon = 0.001;
+      return (y - other.y).abs() < epsilon &&
+          (i - other.i).abs() < epsilon &&
+          (q - other.q).abs() < epsilon &&
+          (alpha.val - other.alpha.val).abs() < epsilon;
+    }
+    return false;
+  }
 
   @override
   bool get isDark => brightness == Brightness.dark;
@@ -179,54 +221,86 @@ class YiqColor extends CommonIQ implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  YiqColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
-      toColor().blend(other, amount).toYiq();
+  YiqColor blend(final ColorSpacesIQ other, [final double amount = 50]) {
+    return lerp(other, amount / 100);
+  }
 
   @override
-  YiqColor opaquer([final double amount = 20]) =>
-      toColor().opaquer(amount).toYiq();
+  YiqColor opaquer([final double amount = 20]) {
+    return copyWith(alpha: Percent((alpha.val + amount / 100).clamp(0.0, 1.0)));
+  }
 
   @override
-  YiqColor adjustHue([final double amount = 20]) =>
-      toColor().adjustHue(amount).toYiq();
+  YiqColor adjustHue([final double amount = 20]) {
+    final double angleRad = amount * pi / 180.0;
+    final double cosA = cos(angleRad);
+    final double sinA = sin(angleRad);
+    final double newI = i * cosA - q * sinA;
+    final double newQ = i * sinA + q * cosA;
+    return YiqColor(y, newI, newQ, alpha: alpha);
+  }
 
   @override
-  YiqColor get complementary => toColor().complementary.toYiq();
+  YiqColor get complementary => adjustHue(180);
 
   @override
-  YiqColor warmer([final double amount = 20]) =>
-      toColor().warmer(amount).toYiq();
+  YiqColor warmer([final double amount = 20]) {
+    final double currentHue = atan2(q, i) * 180.0 / pi;
+    const double targetHue = 30.0;
+    final double delta = ((targetHue - currentHue + 540) % 360) - 180;
+    final double shift = delta * (amount / 100).clamp(0.0, 1.0);
+    return adjustHue(shift);
+  }
 
   @override
-  YiqColor cooler([final double amount = 20]) =>
-      toColor().cooler(amount).toYiq();
+  YiqColor cooler([final double amount = 20]) {
+    final double currentHue = atan2(q, i) * 180.0 / pi;
+    const double targetHue = 210.0;
+    final double delta = ((targetHue - currentHue + 540) % 360) - 180;
+    final double shift = delta * (amount / 100).clamp(0.0, 1.0);
+    return adjustHue(shift);
+  }
 
   @override
-  List<YiqColor> generateBasicPalette() => toColor()
-      .generateBasicPalette()
-      .map((final ColorIQ c) => c.toYiq())
-      .toList();
+  List<YiqColor> generateBasicPalette() => <YiqColor>[
+        copyWith(y: (y - 0.4).clamp(0.0, 1.0)),
+        copyWith(y: (y - 0.2).clamp(0.0, 1.0)),
+        this,
+        copyWith(y: (y + 0.2).clamp(0.0, 1.0)),
+        copyWith(y: (y + 0.4).clamp(0.0, 1.0)),
+      ];
 
   @override
-  List<YiqColor> tonesPalette() =>
-      toColor().tonesPalette().map((final ColorIQ c) => c.toYiq()).toList();
+  List<YiqColor> tonesPalette() => List<YiqColor>.generate(
+        6,
+        (final int index) => copyWith(y: (index / 5).clamp(0.0, 1.0)),
+      );
 
   @override
-  List<YiqColor> analogous({final int count = 5, final double offset = 30}) =>
-      toColor()
-          .analogous(count: count, offset: offset)
-          .map((final ColorIQ c) => c.toYiq())
-          .toList();
+  List<YiqColor> analogous({final int count = 5, final double offset = 30}) {
+    if (count <= 1) {
+      return <YiqColor>[this];
+    }
+    final double center = (count - 1) / 2;
+    return List<YiqColor>.generate(
+      count,
+      (final int index) => adjustHue((index - center) * offset),
+    );
+  }
 
   @override
-  List<YiqColor> square() =>
-      toColor().square().map((final ColorIQ c) => c.toYiq()).toList();
+  List<YiqColor> square() => List<YiqColor>.generate(
+        4,
+        (final int index) => adjustHue(index * 90.0),
+      );
 
   @override
-  List<YiqColor> tetrad({final double offset = 60}) => toColor()
-      .tetrad(offset: offset)
-      .map((final ColorIQ c) => c.toYiq())
-      .toList();
+  List<YiqColor> tetrad({final double offset = 60}) => <YiqColor>[
+        this,
+        adjustHue(offset),
+        adjustHue(180),
+        adjustHue(180 + offset),
+      ];
 
   @override
   double contrastWith(final ColorSpacesIQ other) =>

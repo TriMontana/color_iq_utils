@@ -322,52 +322,148 @@ class HSP extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as ColorIQ).hsp;
+  ColorSpacesIQ get random {
+    final Random rng = Random();
+    return HSP(
+      rng.nextDouble(),
+      rng.nextDouble(),
+      rng.nextDouble(),
+    );
+  }
 
   @override
-  bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
+  bool isEqual(final ColorSpacesIQ other) {
+    if (other is! HSP) {
+      return value == other.value;
+    }
+    const double epsilon = 0.001;
+    return (h - other.h).abs() < epsilon &&
+        (s - other.s).abs() < epsilon &&
+        (p - other.p).abs() < epsilon &&
+        (alpha.val - other.alpha.val).abs() < epsilon;
+  }
 
   @override
-  HSP blend(final ColorSpacesIQ other, [final double amount = 50]) =>
-      toColor().blend(other, amount).hsp;
+  HSP blend(final ColorSpacesIQ other, [final double amount = 50]) {
+    return lerp(other, amount / 100);
+  }
 
   @override
-  HSP opaquer([final double amount = 20]) => toColor().opaquer(amount).hsp;
+  HSP opaquer([final double amount = 20]) {
+    final double newAlpha = min(1.0, alpha.val + amount / 100);
+    return copyWith(alpha: Percent(newAlpha));
+  }
 
   @override
-  HSP adjustHue([final double amount = 20]) => toColor().adjustHue(amount).hsp;
+  HSP adjustHue([final double amount = 20]) {
+    // HSP uses hue in 0.0-1.0 range, amount is in degrees
+    // Convert amount from degrees to 0.0-1.0 range
+    final double hueShift = (amount % 360) / 360;
+    double newHue = h + hueShift;
+    // Wrap to 0.0-1.0 range
+    newHue = newHue % 1.0;
+    if (newHue < 0) newHue += 1.0;
+    return copyWith(h: newHue);
+  }
 
   @override
-  HSP get complementary => toColor().complementary.hsp;
+  HSP get complementary => adjustHue(180);
 
   @override
-  HSP warmer([final double amount = 20]) => toColor().warmer(amount).hsp;
+  HSP warmer([final double amount = 20]) {
+    // Target warm hue is 30 degrees = 30/360 = 0.0833 in 0-1 range
+    const double targetHue = 30.0 / 360.0;
+    final double currentHue = h;
+
+    // Calculate shortest path difference
+    double diff = targetHue - currentHue;
+    if (diff > 0.5) diff -= 1.0;
+    if (diff < -0.5) diff += 1.0;
+
+    double newHue = currentHue + (diff * amount / 100);
+    // Wrap to 0.0-1.0 range
+    newHue = newHue % 1.0;
+    if (newHue < 0) newHue += 1.0;
+
+    return copyWith(h: newHue);
+  }
 
   @override
-  HSP cooler([final double amount = 20]) => toColor().cooler(amount).hsp;
+  HSP cooler([final double amount = 20]) {
+    // Target cool hue is 210 degrees = 210/360 = 0.5833 in 0-1 range
+    const double targetHue = 210.0 / 360.0;
+    final double currentHue = h;
+
+    // Calculate shortest path difference
+    double diff = targetHue - currentHue;
+    if (diff > 0.5) diff -= 1.0;
+    if (diff < -0.5) diff += 1.0;
+
+    double newHue = currentHue + (diff * amount / 100);
+    // Wrap to 0.0-1.0 range
+    newHue = newHue % 1.0;
+    if (newHue < 0) newHue += 1.0;
+
+    return copyWith(h: newHue);
+  }
 
   @override
-  List<HSP> generateBasicPalette() =>
-      toColor().generateBasicPalette().map((final ColorIQ c) => c.hsp).toList();
+  List<HSP> generateBasicPalette() {
+    return <HSP>[
+      lighten(40),
+      lighten(20),
+      this,
+      darken(20),
+      darken(40),
+    ];
+  }
 
   @override
-  List<HSP> tonesPalette() =>
-      toColor().tonesPalette().map((final ColorIQ c) => c.hsp).toList();
+  List<HSP> tonesPalette() {
+    // Mix with gray (h, 0, 0.5)
+    final HSP gray = HSP(h, 0, 0.5);
+    return <HSP>[
+      this,
+      lerp(gray, 0.15),
+      lerp(gray, 0.30),
+      lerp(gray, 0.45),
+      lerp(gray, 0.60),
+    ];
+  }
 
   @override
-  List<HSP> analogous({final int count = 5, final double offset = 30}) =>
-      toColor()
-          .analogous(count: count, offset: offset)
-          .map((final ColorIQ c) => c.hsp)
-          .toList();
+  List<HSP> analogous({final int count = 5, final double offset = 30}) {
+    final List<HSP> palette = <HSP>[];
+    final double startHue = h - ((count - 1) / 2) * (offset / 360);
+    for (int i = 0; i < count; i++) {
+      double newHue = startHue + i * (offset / 360);
+      // Wrap to 0.0-1.0 range
+      newHue = newHue % 1.0;
+      if (newHue < 0) newHue += 1.0;
+      palette.add(copyWith(h: newHue));
+    }
+    return palette;
+  }
 
   @override
-  List<HSP> square() =>
-      toColor().square().map((final ColorIQ c) => c.hsp).toList();
+  List<HSP> square() {
+    return <HSP>[
+      this,
+      adjustHue(90),
+      adjustHue(180),
+      adjustHue(270),
+    ];
+  }
 
   @override
-  List<HSP> tetrad({final double offset = 60}) =>
-      toColor().tetrad(offset: offset).map((final ColorIQ c) => c.hsp).toList();
+  List<HSP> tetrad({final double offset = 60}) {
+    return <HSP>[
+      this,
+      adjustHue(offset),
+      adjustHue(180),
+      adjustHue(180 + offset),
+    ];
+  }
 
   @override
   double contrastWith(final ColorSpacesIQ other) =>

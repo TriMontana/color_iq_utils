@@ -169,82 +169,170 @@ class LchColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor()
-      .monochromatic
-      .map((final ColorSpacesIQ c) => (c as ColorIQ).toLch())
-      .toList();
-
-  @override
-  List<ColorSpacesIQ> lighterPalette([final double? step]) {
-    return toColor()
-        .lighterPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toLch())
-        .toList();
+  List<LchColor> get monochromatic {
+    return <LchColor>[
+      darken(20),
+      darken(10),
+      this,
+      lighten(10),
+      lighten(20),
+    ];
   }
 
   @override
-  List<ColorSpacesIQ> darkerPalette([final double? step]) {
-    return toColor()
-        .darkerPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toLch())
-        .toList();
+  List<LchColor> lighterPalette([final double? step]) {
+    final double s = step ?? 10.0;
+    return <LchColor>[
+      lighten(s),
+      lighten(s * 2),
+      lighten(s * 3),
+      lighten(s * 4),
+      lighten(s * 5),
+    ];
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as ColorIQ).toLch();
+  List<LchColor> darkerPalette([final double? step]) {
+    final double s = step ?? 10.0;
+    return <LchColor>[
+      darken(s),
+      darken(s * 2),
+      darken(s * 3),
+      darken(s * 4),
+      darken(s * 5),
+    ];
+  }
 
   @override
-  bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
+  ColorSpacesIQ get random {
+    final Random rng = Random();
+    return LchColor(
+      rng.nextDouble() * 100,
+      rng.nextDouble() * 134,
+      rng.nextDouble() * 360,
+    );
+  }
 
   @override
-  LchColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
-      toColor().blend(other, amount).toLch();
+  bool isEqual(final ColorSpacesIQ other) {
+    if (other is! LchColor) {
+      return value == other.value;
+    }
+    const double epsilon = 0.001;
+    return (l - other.l).abs() < epsilon &&
+        (c - other.c).abs() < epsilon &&
+        (h - other.h).abs() < epsilon;
+  }
 
   @override
-  LchColor opaquer([final double amount = 20]) =>
-      toColor().opaquer(amount).toLch();
+  LchColor blend(final ColorSpacesIQ other, [final double amount = 50]) {
+    return lerp(other, amount / 100);
+  }
 
   @override
-  LchColor adjustHue([final double amount = 20]) =>
-      toColor().adjustHue(amount).toLch();
+  LchColor opaquer([final double amount = 20]) {
+    // LCH doesn't store alpha in this implementation
+    return this;
+  }
 
   @override
-  LchColor get complementary => toColor().complementary.toLch();
+  LchColor adjustHue([final double amount = 20]) {
+    double newHue = (h + amount) % 360;
+    if (newHue < 0) newHue += 360;
+    return copyWith(h: newHue);
+  }
 
   @override
-  LchColor warmer([final double amount = 20]) =>
-      toColor().warmer(amount).toLch();
+  LchColor get complementary => adjustHue(180);
 
   @override
-  LchColor cooler([final double amount = 20]) =>
-      toColor().cooler(amount).toLch();
+  LchColor warmer([final double amount = 20]) {
+    const double targetHue = 30.0;
+    final double currentHue = h;
+
+    // Calculate shortest path difference
+    double diff = targetHue - currentHue;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+
+    double newHue = currentHue + (diff * amount / 100);
+    if (newHue < 0) newHue += 360;
+    if (newHue >= 360) newHue -= 360;
+
+    return copyWith(h: newHue);
+  }
 
   @override
-  List<LchColor> generateBasicPalette() => toColor()
-      .generateBasicPalette()
-      .map((final ColorIQ c) => c.toLch())
-      .toList();
+  LchColor cooler([final double amount = 20]) {
+    const double targetHue = 210.0;
+    final double currentHue = h;
+
+    // Calculate shortest path difference
+    double diff = targetHue - currentHue;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+
+    double newHue = currentHue + (diff * amount / 100);
+    if (newHue < 0) newHue += 360;
+    if (newHue >= 360) newHue -= 360;
+
+    return copyWith(h: newHue);
+  }
 
   @override
-  List<LchColor> tonesPalette() =>
-      toColor().tonesPalette().map((final ColorIQ c) => c.toLch()).toList();
+  List<LchColor> generateBasicPalette() {
+    return <LchColor>[
+      lighten(40),
+      lighten(20),
+      this,
+      darken(20),
+      darken(40),
+    ];
+  }
 
   @override
-  List<LchColor> analogous({final int count = 5, final double offset = 30}) =>
-      toColor()
-          .analogous(count: count, offset: offset)
-          .map((final ColorIQ c) => c.toLch())
-          .toList();
+  List<LchColor> tonesPalette() {
+    // Create tones by reducing chroma (moving towards gray)
+    return <LchColor>[
+      this,
+      LchColor(l, c * 0.85, h),
+      LchColor(l, c * 0.70, h),
+      LchColor(l, c * 0.55, h),
+      LchColor(l, c * 0.40, h),
+    ];
+  }
 
   @override
-  List<LchColor> square() =>
-      toColor().square().map((final ColorIQ c) => c.toLch()).toList();
+  List<LchColor> analogous({final int count = 5, final double offset = 30}) {
+    final List<LchColor> palette = <LchColor>[];
+    final double startHue = h - ((count - 1) / 2) * offset;
+    for (int i = 0; i < count; i++) {
+      double newHue = (startHue + i * offset) % 360;
+      if (newHue < 0) newHue += 360;
+      palette.add(copyWith(h: newHue));
+    }
+    return palette;
+  }
 
   @override
-  List<LchColor> tetrad({final double offset = 60}) => toColor()
-      .tetrad(offset: offset)
-      .map((final ColorIQ c) => c.toLch())
-      .toList();
+  List<LchColor> square() {
+    return <LchColor>[
+      this,
+      adjustHue(90),
+      adjustHue(180),
+      adjustHue(270),
+    ];
+  }
+
+  @override
+  List<LchColor> tetrad({final double offset = 60}) {
+    return <LchColor>[
+      this,
+      adjustHue(offset),
+      adjustHue(180),
+      adjustHue(180 + offset),
+    ];
+  }
 
   @override
   double contrastWith(final ColorSpacesIQ other) =>

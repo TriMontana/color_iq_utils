@@ -250,26 +250,50 @@ class HctColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> lighterPalette([final double? step]) {
-    return toColor()
-        .lighterPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toHctColor())
-        .toList();
+  List<HctColor> lighterPalette([final double? step]) {
+    final double s = step ?? 10.0;
+    return <HctColor>[
+      lighten(s),
+      lighten(s * 2),
+      lighten(s * 3),
+      lighten(s * 4),
+      lighten(s * 5),
+    ];
   }
 
   @override
-  List<ColorSpacesIQ> darkerPalette([final double? step]) {
-    return toColor()
-        .darkerPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toHctColor())
-        .toList();
+  List<HctColor> darkerPalette([final double? step]) {
+    final double s = step ?? 10.0;
+    return <HctColor>[
+      darken(s),
+      darken(s * 2),
+      darken(s * 3),
+      darken(s * 4),
+      darken(s * 5),
+    ];
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as ColorIQ).toHctColor();
+  HctColor get random {
+    final Random rng = Random();
+    return HctColor.alt(
+      rng.nextDouble() * 360.0,
+      rng.nextDouble() * 150.0,
+      rng.nextDouble() * 100.0,
+    );
+  }
 
   @override
-  bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
+  bool isEqual(final ColorSpacesIQ other) {
+    if (other is HctColor) {
+      const double epsilon = 0.001;
+      return (hue - other.hue).abs() < epsilon &&
+          (chroma - other.chroma).abs() < epsilon &&
+          (tone - other.tone).abs() < epsilon &&
+          (alpha.val - other.alpha.val).abs() < epsilon;
+    }
+    return false;
+  }
 
   @override
   double get luminance => toColor().luminance;
@@ -284,16 +308,19 @@ class HctColor extends CommonIQ implements ColorSpacesIQ {
   bool get isLight => brightness == Brightness.light;
 
   @override
-  HctColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
-      toColor().blend(other, amount).toHctColor();
+  HctColor blend(final ColorSpacesIQ other, [final double amount = 50]) {
+    return lerp(other, amount / 100);
+  }
 
   @override
-  HctColor opaquer([final double amount = 20]) =>
-      toColor().opaquer(amount).toHctColor();
+  HctColor opaquer([final double amount = 20]) {
+    return this;
+  }
 
   @override
-  HctColor adjustHue([final double amount = 20]) =>
-      toColor().adjustHue(amount).toHctColor();
+  HctColor adjustHue([final double amount = 20]) {
+    return copyWith(hue: (hue + amount) % 360);
+  }
 
   @override
   HctColor get complementary => flipHue();
@@ -305,24 +332,36 @@ class HctColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  HctColor warmer([final double amount = 20]) =>
-      toColor().warmer(amount).toHctColor();
+  HctColor warmer([final double amount = 20]) {
+    const double targetHue = 30.0;
+    final double delta = ((targetHue - hue + 540) % 360) - 180;
+    final double shift = delta * (amount / 100).clamp(0.0, 1.0);
+    return copyWith(hue: (hue + shift) % 360);
+  }
 
   @override
-  HctColor cooler([final double amount = 20]) =>
-      toColor().cooler(amount).toHctColor();
+  HctColor cooler([final double amount = 20]) {
+    const double targetHue = 210.0;
+    final double delta = ((targetHue - hue + 540) % 360) - 180;
+    final double shift = delta * (amount / 100).clamp(0.0, 1.0);
+    return copyWith(hue: (hue + shift) % 360);
+  }
 
   @override
-  List<HctColor> generateBasicPalette() => toColor()
-      .generateBasicPalette()
-      .map((final ColorIQ c) => c.toHctColor())
-      .toList();
+  List<HctColor> generateBasicPalette() => <HctColor>[
+        darken(40),
+        darken(20),
+        this,
+        lighten(20),
+        lighten(40),
+      ];
 
   @override
-  List<HctColor> tonesPalette() => toColor()
-      .tonesPalette()
-      .map((final ColorIQ c) => c.toHctColor())
-      .toList();
+  List<HctColor> tonesPalette() => List<HctColor>.generate(
+        6,
+        (final int index) =>
+            copyWith(tone: (index / 5 * 100).clamp(0.0, 100.0)),
+      );
 
   @override
   List<HctColor> analogous({final int count = 5, final double offset = 30}) {

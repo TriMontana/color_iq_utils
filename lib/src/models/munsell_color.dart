@@ -127,22 +127,59 @@ class MunsellColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  MunsellColor adjustHue([final double amount = 20]) =>
-      toColor().adjustHue(amount).toMunsell();
+  MunsellColor adjustHue([final double amount = 20]) {
+    // Munsell hue circle: R, YR, Y, GY, G, BG, B, PB, P, RP (10 hues)
+    // Each hue has 10 steps (e.g., 1R to 10R)
+    final List<String> hueLetters = <String>[
+      'R',
+      'YR',
+      'Y',
+      'GY',
+      'G',
+      'BG',
+      'B',
+      'PB',
+      'P',
+      'RP'
+    ];
+
+    // Parse current hue
+    final RegExp huePattern = RegExp(r'(\d+(?:\.\d+)?)([A-Z]+)');
+    final Match? match = huePattern.firstMatch(hue);
+    if (match == null) return this;
+
+    final double hueNum = double.parse(match.group(1)!);
+    final String hueLetter = match.group(2)!;
+    final int hueIndex = hueLetters.indexOf(hueLetter);
+    if (hueIndex == -1) return this;
+
+    // Convert to continuous hue value (0-100)
+    final double continuousHue = hueIndex * 10 + hueNum;
+
+    // Adjust by amount (treating amount as degrees, scale to 0-100 range)
+    final double adjustedHue = (continuousHue + (amount * 100 / 360)) % 100;
+
+    // Convert back to Munsell notation
+    final int newHueIndex = (adjustedHue / 10).floor() % 10;
+    final double newHueNum = (adjustedHue % 10).clamp(0.1, 10.0);
+    final String newHue =
+        '${newHueNum.toStringAsFixed(1)}${hueLetters[newHueIndex]}';
+
+    return MunsellColor(newHue, munsellValue, chroma);
+  }
 
   @override
   MunsellColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
-      toColor().blend(other, amount).toMunsell();
+      lerp(other, amount / 100);
 
   @override
-  MunsellColor get complementary => toColor().complementary.toMunsell();
+  MunsellColor get complementary => adjustHue(180);
 
   @override
   bool get isLight => brightness == Brightness.light;
 
   @override
-  MunsellColor opaquer([final double amount = 20]) =>
-      toColor().opaquer(amount).toMunsell();
+  MunsellColor opaquer([final double amount = 20]) => this;
 
   @override
   MunsellColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
@@ -200,32 +237,72 @@ class MunsellColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor()
-      .monochromatic
-      .map((final ColorSpacesIQ c) => (c as ColorIQ).toMunsell())
-      .toList();
+  List<ColorSpacesIQ> get monochromatic {
+    final List<MunsellColor> results = <MunsellColor>[];
+    // Create variations by changing value while keeping hue and chroma constant
+    for (int i = 1; i <= 9; i++) {
+      final double newValue = (i * 1.0).clamp(0.0, 10.0);
+      results.add(MunsellColor(hue, newValue, chroma));
+    }
+    return results;
+  }
 
   @override
   List<ColorSpacesIQ> lighterPalette([final double? step]) {
-    return toColor()
-        .lighterPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toMunsell())
-        .toList();
+    final List<MunsellColor> results = <MunsellColor>[];
+    final double delta = step ?? 1.0; // Default step in Munsell value units
+
+    for (int i = 1; i <= 5; i++) {
+      final double newValue = (munsellValue + delta * i).clamp(0.0, 10.0);
+      results.add(MunsellColor(hue, newValue, chroma));
+    }
+    return results;
   }
 
   @override
   List<ColorSpacesIQ> darkerPalette([final double? step]) {
-    return toColor()
-        .darkerPalette(step)
-        .map((final ColorSpacesIQ c) => (c as ColorIQ).toMunsell())
-        .toList();
+    final List<MunsellColor> results = <MunsellColor>[];
+    final double delta = step ?? 1.0; // Default step in Munsell value units
+
+    for (int i = 1; i <= 5; i++) {
+      final double newValue = (munsellValue - delta * i).clamp(0.0, 10.0);
+      results.add(MunsellColor(hue, newValue, chroma));
+    }
+    return results;
   }
 
   @override
-  ColorSpacesIQ get random => (toColor().random as ColorIQ).toMunsell();
+  ColorSpacesIQ get random {
+    final Random rnd = Random();
+    // Generate random Munsell hue string
+    final List<String> hueLetters = <String>[
+      'R',
+      'YR',
+      'Y',
+      'GY',
+      'G',
+      'BG',
+      'B',
+      'PB',
+      'P',
+      'RP'
+    ];
+    final int hueNum = rnd.nextInt(10) + 1; // 1-10
+    final String randomHue =
+        '$hueNum${hueLetters[rnd.nextInt(hueLetters.length)]}';
+    final double randomValue = rnd.nextDouble() * 10.0; // 0-10
+    final double randomChroma = rnd.nextDouble() * 20.0; // 0-20 typical range
+    return MunsellColor(randomHue, randomValue, randomChroma);
+  }
 
   @override
-  bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
+  bool isEqual(final ColorSpacesIQ other) {
+    if (other is! MunsellColor) return false;
+    const double epsilon = 0.001;
+    return hue == other.hue &&
+        (munsellValue - other.munsellValue).abs() < epsilon &&
+        (chroma - other.chroma).abs() < epsilon;
+  }
 
   @override
   double get luminance => toColor().luminance;
@@ -237,43 +314,77 @@ class MunsellColor extends CommonIQ implements ColorSpacesIQ {
   bool get isDark => brightness == Brightness.dark;
 
   @override
-  @override
-  MunsellColor warmer([final double amount = 20]) =>
-      toColor().warmer(amount).toMunsell();
+  MunsellColor warmer([final double amount = 20]) {
+    // In Munsell, warmer hues are around YR (Yellow-Red)
+    // Adjust hue toward YR (roughly 30 degrees or index 1)
+    return adjustHue(amount);
+  }
 
   @override
-  MunsellColor cooler([final double amount = 20]) =>
-      toColor().cooler(amount).toMunsell();
+  MunsellColor cooler([final double amount = 20]) {
+    // In Munsell, cooler hues are around B (Blue)
+    // Adjust hue in opposite direction
+    return adjustHue(-amount);
+  }
 
   @override
-  List<MunsellColor> generateBasicPalette() => toColor()
-      .generateBasicPalette()
-      .map((final ColorIQ c) => c.toMunsell())
-      .toList();
+  List<MunsellColor> generateBasicPalette() {
+    final List<MunsellColor> results = <MunsellColor>[];
+    // Generate palette with variations in value (lightness)
+    for (int i = 0; i < 9; i++) {
+      final double newValue = (i * 1.25).clamp(0.0, 10.0);
+      results.add(MunsellColor(hue, newValue, chroma));
+    }
+    return results;
+  }
 
   @override
-  List<MunsellColor> tonesPalette() =>
-      toColor().tonesPalette().map((final ColorIQ c) => c.toMunsell()).toList();
+  List<MunsellColor> tonesPalette() {
+    final List<MunsellColor> results = <MunsellColor>[];
+    // Create tones by varying value around the current value
+    final List<double> valueOffsets = <double>[-4, -3, -2, -1, 0, 1, 2, 3, 4];
+    for (final double offset in valueOffsets) {
+      final double newValue = (munsellValue + offset).clamp(0.0, 10.0);
+      results.add(MunsellColor(hue, newValue, chroma));
+    }
+    return results;
+  }
 
   @override
   List<MunsellColor> analogous({
     final int count = 5,
     final double offset = 30,
-  }) =>
-      toColor()
-          .analogous(count: count, offset: offset)
-          .map((final ColorIQ c) => c.toMunsell())
-          .toList();
+  }) {
+    final List<MunsellColor> results = <MunsellColor>[this];
+    final int side = count ~/ 2;
+
+    for (int i = 1; i <= side; i++) {
+      results.add(adjustHue(offset * i));
+      results.insert(0, adjustHue(-offset * i));
+    }
+
+    return results.take(count).toList();
+  }
 
   @override
-  List<MunsellColor> square() =>
-      toColor().square().map((final ColorIQ c) => c.toMunsell()).toList();
+  List<MunsellColor> square() {
+    return <MunsellColor>[
+      this,
+      adjustHue(90),
+      adjustHue(180),
+      adjustHue(270),
+    ];
+  }
 
   @override
-  List<MunsellColor> tetrad({final double offset = 60}) => toColor()
-      .tetrad(offset: offset)
-      .map((final ColorIQ c) => c.toMunsell())
-      .toList();
+  List<MunsellColor> tetrad({final double offset = 60}) {
+    return <MunsellColor>[
+      this,
+      adjustHue(offset),
+      adjustHue(180),
+      adjustHue(180 + offset),
+    ];
+  }
 
   @override
   double contrastWith(final ColorSpacesIQ other) =>
