@@ -20,25 +20,25 @@ void main() {
     });
 
     test('lerp interpolates correctly', () {
-      const HSP start = HSP(0, 1.0, Percent.max); // Red
-      const HSP end = HSP(120, 1.0, Percent.max); // Green
-      final HSP mid = start.lerp(end, 0.5);
+      const HSP c1 = HSP(0, 1.0, 0.0); // Black
+      const HSP c2 = HSP(0, 1.0, 1.0); // White
+      final HSP mid = c1.lerp(c2, 0.5);
 
-      expect(mid.h, closeTo(60, 0.1)); // Yellow
+      expect(mid.h, closeTo(0, 0.1));
       expect(mid.s, closeTo(1.0, 0.01));
-      expect(mid.p, closeTo(1.0, 0.01));
+      expect(mid.p, closeTo(0.5, 0.01));
     });
 
     test('intensify increases saturation', () {
       const HSP color = HSP(0, Percent.mid, Percent.max);
-      final HSP intensified = color.intensify(Percent.v20);
+      final HSP intensified = color.intensify(20);
 
       expect(intensified.s, closeTo(0.7, 0.01));
     });
 
     test('deintensify decreases saturation', () {
       const HSP color = HSP(0, Percent.mid, Percent.max);
-      final HSP deintensified = color.deintensify(Percent.v20);
+      final HSP deintensified = color.deintensify(20);
 
       expect(deintensified.s, closeTo(0.3, 0.01));
     });

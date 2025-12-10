@@ -7,7 +7,7 @@ void main() {
       const HsbColor color = HsbColor(0, 1.0, Percent.mid); // Dark Red
       final HsbColor whitened = color.whiten(Percent.mid);
 
-      expect(whitened.b, greaterThan(color.b));
+      expect(whitened.brightnessHsb.val, greaterThan(color.brightnessHsb.val));
       expect(whitened.s, lessThan(color.s));
     });
 
@@ -15,7 +15,7 @@ void main() {
       const HsbColor color = HsbColor(0, 1.0, Percent.mid); // Red
       final HsbColor blackened = color.blacken(Percent.mid);
 
-      expect(blackened.b, lessThan(color.b));
+      expect(blackened.brightnessHsb.val, lessThan(color.brightnessHsb.val));
       expect(blackened.s, lessThan(color.s));
     });
 
@@ -26,19 +26,19 @@ void main() {
 
       expect(mid.h, closeTo(60, 0.1)); // Yellow
       expect(mid.s, closeTo(1.0, 0.01));
-      expect(mid.b, closeTo(0.5, 0.01));
+      expect(mid.brightnessHsb.val, closeTo(0.5, 0.01));
     });
 
     test('intensify increases saturation', () {
       const HsbColor color = HsbColor(0, 0.5, Percent.mid);
-      final HsbColor intensified = color.intensify(Percent.v20);
+      final HsbColor intensified = color.intensify(20);
 
       expect(intensified.s, closeTo(0.7, 0.01));
     });
 
     test('deintensify decreases saturation', () {
       const HsbColor color = HsbColor(0, 0.5, Percent.mid);
-      final HsbColor deintensified = color.deintensify(Percent.v20);
+      final HsbColor deintensified = color.deintensify(20);
 
       expect(deintensified.s, closeTo(0.3, 0.01));
     });

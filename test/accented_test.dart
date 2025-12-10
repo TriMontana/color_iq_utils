@@ -36,12 +36,12 @@ void main() {
       final ColorIQ rgb = ColorIQ.fromArgbInts(255, 100, 150, 200);
       final XYZ xyz = rgb.xyz;
       final LabColor lab = rgb.lab;
-      final LuvColor luv = LuvColor.fromInt(rgb.value);
+      final CIELuv luv = CIELuv.fromInt(rgb.value);
 
       final ColorIQ accentedRgb = rgb.accented();
       final XYZ accentedXyz = xyz.accented();
       final LabColor accentedLab = lab.accented();
-      final LuvColor accentedLuv = luv.accented();
+      final CIELuv accentedLuv = luv.accented();
 
       // Since they all delegate to ColorIQ -> Hct -> accented -> ColorIQ -> Model
       // They should represent approximately the same color (allowing for conversion errors)

@@ -219,7 +219,7 @@ class HsbColor extends CommonIQ implements ColorSpacesIQ {
       HsbColor(h, min(1.0, s + amount / 100), b);
 
   HsbColor deintensify([final double amount = 10]) =>
-      HsbColor(h, max(0.0, s - amount / 100), b);
+      HsbColor(h, max(0.0, s - amount / 100), brightnessHsb);
 
   @override
   HsbColor accented([final double amount = 15]) => intensify(amount);
@@ -227,7 +227,7 @@ class HsbColor extends CommonIQ implements ColorSpacesIQ {
   @override
   HsbColor simulate(final ColorBlindnessType type) {
     // Convert to RGB
-    final int argb = HsbColor.hexIdFromHsb(h, s, b);
+    final int argb = HsbColor.hexIdFromHsb(h, s, brightnessHsb.val);
     final int r = (argb >> 16) & 0xFF;
     final int g = (argb >> 8) & 0xFF;
     final int bVal = argb & 0xFF;
@@ -303,7 +303,7 @@ class HsbColor extends CommonIQ implements ColorSpacesIQ {
     for (int i = 0; i < 5; i++) {
       // -2, -1, 0, 1, 2
       final double delta = (i - 2) * 10.0;
-      final double newB = (b * 100 + delta).clamp(0.0, 100.0);
+      final double newB = (brightnessHsb.val * 100 + delta).clamp(0.0, 100.0);
       results.add(HsbColor(h, s, Percent(newB / 100)));
     }
     return results;
@@ -498,7 +498,7 @@ class HsbColor extends CommonIQ implements ColorSpacesIQ {
   @override
   String toString() =>
       'HsbColor(h: ${h.toStrTrimZeros(2)}, s: ${s.toStringAsFixed(2)}, ' //
-      'b: ${b.toStringAsFixed(2)})';
+      'b: ${brightnessHsb.val.toStringAsFixed(2)})';
 
   static HsbColor _fromRgb(final int r, final int g, final int b) {
     final double rd = r / 255.0;

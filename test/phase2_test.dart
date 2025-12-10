@@ -25,8 +25,8 @@ void main() {
       final HSV hsv = color.hsv;
       expect(hsv.h, closeTo(120, 0.1));
       expect(hsv.saturation, closeTo(1.0, 0.1));
-      expect(hsv.value, closeTo(1.0, 0.1));
-      expect(hsv.value, 0xFF00FF00);
+      expect(hsv.val.val, closeTo(1.0, 0.1));
+      expect(hsv.hexId, 0xFF00FF00);
     });
 
     test('RGB to HSB conversion (Blue)', () {

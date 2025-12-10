@@ -31,14 +31,14 @@ void main() {
 
     test('intensify increases saturation', () {
       const HSL color = HSL(0, Percent.mid, Percent.mid);
-      final HSL intensified = color.intensify(Percent.v20);
+      final HSL intensified = color.intensify(20);
 
       expect(intensified.s, closeTo(0.7, 0.01));
     });
 
     test('deintensify decreases saturation', () {
       const HSL color = HSL(0, Percent.mid, Percent.mid);
-      final HSL deintensified = color.deintensify(Percent.v20);
+      final HSL deintensified = color.deintensify(20);
 
       expect(deintensified.s, closeTo(0.3, 0.01));
     });

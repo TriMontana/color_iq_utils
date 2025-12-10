@@ -230,6 +230,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   ColorIQ toColor() => this;
 
   late final LabColor lab = mapLAB.getOrCreate(value);
+  @override
   late final HctData hct = _hct ?? HctData.fromInt(value);
   @override
   late final Cam16 cam16 = Cam16.fromInt(value);
@@ -363,7 +364,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
 
   /// Converts this color to HSLuv.
   HsluvColor toHsluv() {
-    final LuvColor luv = toLuv();
+    final CIELuv luv = toLuv();
     final double c = sqrt(luv.u * luv.u + luv.v * luv.v);
     double h = atan2(luv.v, luv.u) * 180 / pi;
     if (h < 0) h += 360;
@@ -377,7 +378,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
 
   /// Converts this color to HSB (Alias for HSV).
   HsbColor toHsb() {
-    return HsbColor(hsv.h, hsv.saturation, hsv.value);
+    return HsbColor(hsv.h, hsv.saturation, hsv.val);
   }
 
   /// Converts this color to HWB.
@@ -439,7 +440,10 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     bP3 =
         (bP3 > 0.0031308) ? (1.055 * pow(bP3, 1 / 2.4) - 0.055) : (12.92 * bP3);
 
-    return DisplayP3Color(rP3.gammaCorrect, gP3.gammaCorrect, Percent(bP3));
+    return DisplayP3Color(
+        Percent(rP3.clamp(0.0, 1.0).gammaCorrect),
+        Percent(gP3.clamp(0.0, 1.0).gammaCorrect),
+        Percent(bP3.clamp(0.0, 1.0)));
   }
 
   /// Converts this color to Rec. 2020.
@@ -473,9 +477,9 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
 
     Percent transfer(final double v) {
       if (v < 0.018) {
-        return Percent(4.5 * v);
+        return Percent((4.5 * v).clamp(0.0, 1.0));
       }
-      return Percent(1.099 * pow(v, 0.45) - 0.099);
+      return Percent((1.099 * pow(v, 0.45) - 0.099).clamp(0.0, 1.0));
     }
 
     return Rec2020Color(transfer(r2020), transfer(g2020), transfer(b2020));
@@ -574,7 +578,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
 
   ColorIQ adjustTransparency([final double amount = 20]) {
     return ColorIQ.fromArgbInts(
-      (alpha * (1 - amount / 100)).round().clamp(0, 255),
+      (alphaInt * (1 - amount / 100)).round().clamp(0, 255),
       red,
       green,
       blue,
@@ -832,6 +836,8 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
           json['lightness'],
           alpha: json['alpha'] ?? 1.0,
         );
+      case 'HsvColor':
+        return HSV.fromJson(json);
       case 'CmykColor':
         return CMYK(json['c'], json['m'], json['y'], json['k']);
       case 'LabColor':
@@ -852,4 +858,9 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   @override
   String toString() =>
       'ColorIQ(0x${value.toRadixString(16).toUpperCase().padLeft(8, '0')})';
+
+  @override
+  double toneDifference(final ColorWheelInf other) {
+    return hct.toneDifference(other);
+  }
 }

@@ -12,7 +12,7 @@ void main() {
     });
 
     test('blacken decreases J', () {
-      final Cam16 color = Cam16.fromJch(0.0, 0.0, 50.0); // Gray
+      final Cam16 color = Cam16.fromJch(50.0, 0.0, 0.0); // Gray
       final Cam16 blackened = color.blacken(50);
 
       expect(blackened.j, lessThan(color.j));
@@ -20,15 +20,15 @@ void main() {
 
     test('lerp interpolates correctly', () {
       final Cam16 start = Cam16.fromJch(0.0, 0.0, 0.0); // Black
-      final Cam16 end = Cam16.fromJch(0.0, 0.0, 100.0); // White
+      final Cam16 end = Cam16.fromJch(100.0, 0.0, 0.0); // White
       final Cam16 mid = start.lerp(end, 0.5);
 
       expect(mid.j, closeTo(50.0, 0.01));
     });
 
     test('lerp handles hue wrapping', () {
-      final Cam16 start = Cam16.fromJch(10.0, 50.0, 50.0);
-      final Cam16 end = Cam16.fromJch(350.0, 50.0, 50.0);
+      final Cam16 start = Cam16.fromJch(50.0, 50.0, 10.0);
+      final Cam16 end = Cam16.fromJch(50.0, 50.0, 350.0);
       final Cam16 mid = start.lerp(end, 0.5);
 
       // Shortest path is through 0/360, so average is 0 or 360
@@ -36,28 +36,28 @@ void main() {
     });
 
     test('saturate increases chroma', () {
-      final Cam16 color = Cam16.fromJch(0.0, 50.0, 50.0);
+      final Cam16 color = Cam16.fromJch(50.0, 50.0, 0.0);
       final Cam16 saturated = color.saturate(10);
 
       expect(saturated.chroma, greaterThan(color.chroma));
     });
 
     test('desaturate decreases chroma', () {
-      final Cam16 color = Cam16.fromJch(0.0, 50.0, 50.0);
+      final Cam16 color = Cam16.fromJch(50.0, 50.0, 0.0);
       final Cam16 desaturated = color.desaturate(10);
 
       expect(desaturated.chroma, lessThan(color.chroma));
     });
 
     test('intensify increases s', () {
-      final Cam16 color = Cam16.fromJch(0.0, 50.0, 50.0);
+      final Cam16 color = Cam16.fromJch(50.0, 50.0, 0.0);
       final Cam16 intensified = color.intensify(10);
 
       expect(intensified.s, greaterThan(color.s));
     });
 
     test('deintensify decreases s', () {
-      final Cam16 color = Cam16.fromJch(0.0, 50.0, 50.0);
+      final Cam16 color = Cam16.fromJch(50.0, 50.0, 0.0);
       final Cam16 deintensified = color.deintensify(10);
 
       expect(deintensified.s, lessThan(color.s));

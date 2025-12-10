@@ -36,7 +36,7 @@ void main() {
 
     test('RGB to Luv conversion (Green)', () {
       final ColorIQ color = ColorIQ.fromArgbInts(255, 0, 255, 0);
-      final LuvColor luv = color.toLuv();
+      final CIELuv luv = color.toLuv();
 
       // Approximate values for pure green in sRGB -> Luv (D65)
       // L=87.73, u=-83.07, v=107.39
@@ -82,7 +82,7 @@ void main() {
       expect(lab.aLab, 0);
       expect(lab.bLab, 0);
 
-      final LuvColor luv = color.toLuv();
+      final CIELuv luv = color.toLuv();
       expect(luv.l, 0);
       expect(luv.u, 0);
       expect(luv.v, 0);

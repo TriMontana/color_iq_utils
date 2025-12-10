@@ -137,8 +137,7 @@ mixin ColorModelsMixin {
 
   XYZ toXyyColor() => (this is XYZ) ? (this as XYZ) : XYZ.fromInt(value);
 
-  LuvColor toLuv() =>
-      (this is LuvColor) ? this as LuvColor : LuvColor.fromInt(value);
+  CIELuv toLuv() => (this is CIELuv) ? this as CIELuv : CIELuv.fromInt(value);
 
   ColorTemperature get temperature {
     final HSL hsl = toHslColor();

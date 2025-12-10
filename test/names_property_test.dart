@@ -113,9 +113,9 @@ void main() {
     });
 
     test('LuvColor stores names', () {
-      const LuvColor color = LuvColor(50, 0, 0, names: testNames);
+      const CIELuv color = CIELuv(50, 0, 0, names: testNames);
       expect(color.names, equals(testNames));
-      expect(const LuvColor(50, 0, 0).names, isEmpty);
+      expect(const CIELuv(50, 0, 0).names, isEmpty);
     });
 
     test('MunsellColor stores names', () {

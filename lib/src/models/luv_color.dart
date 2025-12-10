@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
@@ -17,7 +18,7 @@ import 'package:color_iq_utils/src/models/xyz_color.dart';
 ///   positive values are reddish.
 /// - `v`: Position on the blue-yellow axis. Negative values are bluish,
 ///   positive values are yellowish.
-class LuvColor extends CommonIQ implements ColorSpacesIQ {
+class CIELuv extends CommonIQ implements ColorSpacesIQ {
   /// The lightness component of the color.
   ///
   /// Ranges from 0 (black) to 100 (white).
@@ -29,22 +30,66 @@ class LuvColor extends CommonIQ implements ColorSpacesIQ {
   /// The blue-yellow component of the color.
   final double v;
 
-  const LuvColor(this.l, this.u, this.v,
+  const CIELuv(this.l, this.u, this.v,
       {final int? hexId,
       final Percent alpha = Percent.max,
       final List<String> names = kEmptyNames})
       : super(hexId, alpha: alpha, names: names);
 
   @override
-  int get value => super.colorId ?? LuvColor.toHexId(l, u, v);
+  int get value => super.colorId ?? CIELuv.toHexId(l, u, v);
 
   //
   // super.alt(hexId ?? LuvColor.toHexId(l, u, v),
   //     a: alpha, names: names ?? const <String>[]);
 
-  /// Creates a [LuvColor] from a 32-bit integer ARGB value.
-  factory LuvColor.fromInt(final int argb) {
-    return ColorIQ(argb).toLuv();
+  /// Creates a [CIELuv] from a 32-bit integer ARGB value.
+  factory CIELuv.fromInt(final int argb) {
+    // Normalize to [0,1]
+    final LinRGB rn = argb.redLinearized;
+    final LinRGB gn = argb.greenLinearized;
+    final LinRGB bn = argb.blueLinearized;
+
+    final XYZ xyz = XYZ.xyzFromRgbLinearized(rn, gn, bn);
+    return _xyzToLuv(xyz.x, xyz.y, xyz.z);
+  }
+
+  static CIELuv _xyzToLuv(final double X, final double Y, final double Z) {
+    // D65 reference white
+    // ignore: constant_identifier_names
+    const double Xn = 95.047;
+    // ignore: constant_identifier_names
+    const double Yn = 100.000;
+    // ignore: constant_identifier_names
+    const double Zn = 108.883;
+
+    // Compute u', v' for the sample
+    final double denom = X + 15 * Y + 3 * Z;
+    final double uPrime = denom == 0 ? 0 : (4 * X) / denom;
+    final double vPrime = denom == 0 ? 0 : (9 * Y) / denom;
+
+    // Compute u'n, v'n for the reference white
+    const double denomN = Xn + 15 * Yn + 3 * Zn;
+    const double uPrimeN = (4 * Xn) / denomN;
+    const double vPrimeN = (9 * Yn) / denomN;
+
+    // Compute L*
+    final double yr = Y / Yn;
+    double L;
+    if (yr <= (6 / 29) * (6 / 29) * (6 / 29)) {
+      L = (29 * 29 * 29 / 3) * yr;
+    } else {
+      L = 116 * math.pow(yr, 1 / 3).toDouble() - 16;
+    }
+
+    // Avoid NaN if L=0
+    if (L == 0) return const CIELuv(0, 0, 0);
+
+    // Compute u* and v*
+    final double uStar = 13 * L * (uPrime - uPrimeN);
+    final double vStar = 13 * L * (vPrime - vPrimeN);
+
+    return CIELuv(L, uStar, vStar);
   }
 
   /// Creates a 32-bit hex ARGB value from L, u, v components.
@@ -89,21 +134,20 @@ class LuvColor extends CommonIQ implements ColorSpacesIQ {
   ColorIQ toColor() => ColorIQ(value);
 
   @override
-  LuvColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
+  CIELuv whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
   @override
-  LuvColor blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
+  CIELuv blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
 
   @override
-  LuvColor lerp(final ColorSpacesIQ other, final double t) {
+  CIELuv lerp(final ColorSpacesIQ other, final double t) {
     if (t == 0.0) {
       return this;
     }
-    final LuvColor otherLuv =
-        (other is LuvColor) ? other : other.toColor().toLuv();
+    final CIELuv otherLuv = (other is CIELuv) ? other : other.toColor().toLuv();
     if (t == 1.0) return otherLuv;
 
-    return LuvColor(
+    return CIELuv(
       l + (otherLuv.l - l) * t,
       u + (otherLuv.u - u) * t,
       v + (otherLuv.v - v) * t,
@@ -111,38 +155,38 @@ class LuvColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  LuvColor darken([final double amount = 20]) {
-    return LuvColor(max(0, l - amount), u, v);
+  CIELuv darken([final double amount = 20]) {
+    return CIELuv(max(0, l - amount), u, v);
   }
 
   @override
-  LuvColor saturate([final double amount = 25]) {
+  CIELuv saturate([final double amount = 25]) {
     return toColor().saturate(amount).toLuv();
   }
 
   @override
-  LuvColor desaturate([final double amount = 25]) {
+  CIELuv desaturate([final double amount = 25]) {
     return toColor().desaturate(amount).toLuv();
   }
 
   @override
-  LuvColor accented([final double amount = 15]) {
+  CIELuv accented([final double amount = 15]) {
     return toColor().accented(amount).toLuv();
   }
 
   @override
-  LuvColor simulate(final ColorBlindnessType type) {
+  CIELuv simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toLuv();
   }
 
   @override
-  LuvColor lighten([final double amount = 20]) {
-    return LuvColor(min(100, l + amount), u, v);
+  CIELuv lighten([final double amount = 20]) {
+    return CIELuv(min(100, l + amount), u, v);
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
-  LuvColor copyWith({final double? l, final double? u, final double? v}) {
-    return LuvColor(l ?? this.l, u ?? this.u, v ?? this.v);
+  CIELuv copyWith({final double? l, final double? u, final double? v}) {
+    return CIELuv(l ?? this.l, u ?? this.u, v ?? this.v);
   }
 
   @override
@@ -174,51 +218,49 @@ class LuvColor extends CommonIQ implements ColorSpacesIQ {
   bool isEqual(final ColorSpacesIQ other) => toColor().isEqual(other);
 
   @override
-  LuvColor blend(final ColorSpacesIQ other, [final double amount = 50]) =>
+  CIELuv blend(final ColorSpacesIQ other, [final double amount = 50]) =>
       toColor().blend(other, amount).toLuv();
 
   @override
-  LuvColor opaquer([final double amount = 20]) =>
+  CIELuv opaquer([final double amount = 20]) =>
       toColor().opaquer(amount).toLuv();
 
   @override
-  LuvColor adjustHue([final double amount = 20]) =>
+  CIELuv adjustHue([final double amount = 20]) =>
       toColor().adjustHue(amount).toLuv();
 
   @override
-  LuvColor get complementary => toColor().complementary.toLuv();
+  CIELuv get complementary => toColor().complementary.toLuv();
 
   @override
-  LuvColor warmer([final double amount = 20]) =>
-      toColor().warmer(amount).toLuv();
+  CIELuv warmer([final double amount = 20]) => toColor().warmer(amount).toLuv();
 
   @override
-  LuvColor cooler([final double amount = 20]) =>
-      toColor().cooler(amount).toLuv();
+  CIELuv cooler([final double amount = 20]) => toColor().cooler(amount).toLuv();
 
   @override
-  List<LuvColor> generateBasicPalette() => toColor()
+  List<CIELuv> generateBasicPalette() => toColor()
       .generateBasicPalette()
       .map((final ColorIQ c) => c.toLuv())
       .toList();
 
   @override
-  List<LuvColor> tonesPalette() =>
+  List<CIELuv> tonesPalette() =>
       toColor().tonesPalette().map((final ColorIQ c) => c.toLuv()).toList();
 
   @override
-  List<LuvColor> analogous({final int count = 5, final double offset = 30}) =>
+  List<CIELuv> analogous({final int count = 5, final double offset = 30}) =>
       toColor()
           .analogous(count: count, offset: offset)
           .map((final ColorIQ c) => c.toLuv())
           .toList();
 
   @override
-  List<LuvColor> square() =>
+  List<CIELuv> square() =>
       toColor().square().map((final ColorIQ c) => c.toLuv()).toList();
 
   @override
-  List<LuvColor> tetrad({final double offset = 60}) => toColor()
+  List<CIELuv> tetrad({final double offset = 60}) => toColor()
       .tetrad(offset: offset)
       .map((final ColorIQ c) => c.toLuv())
       .toList();

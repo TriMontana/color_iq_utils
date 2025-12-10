@@ -7,7 +7,7 @@ void main() {
       const HSV color = HSV(0, Percent.max, Percent.mid); // Dark Red
       final HSV whitened = color.whiten(Percent.mid);
 
-      expect(whitened.value, greaterThan(color.value));
+      expect(whitened.val, greaterThan(color.val));
       expect(whitened.saturation, lessThan(color.saturation));
     });
 
@@ -15,7 +15,7 @@ void main() {
       const HSV color = HSV(0, Percent.max, Percent.max); // Red
       final HSV blackened = color.blacken(Percent.mid);
 
-      expect(blackened.value, lessThan(color.value));
+      expect(blackened.val, lessThan(color.val));
       // lerp(cBlack, 0.5) -> cBlack is (0, 0, 0).
       // Red is (0, 1, 1).
       // Mid is (0, 0.5, 0.5).
@@ -30,38 +30,41 @@ void main() {
 
       expect(mid.h, closeTo(60, 0.1)); // Yellow
       expect(mid.saturation, closeTo(1.0, 0.01));
-      expect(mid.value, closeTo(1.0, 0.01));
+      expect(mid.val, closeTo(1.0, 0.01));
     });
 
     test('intensify increases saturation', () {
       const HSV color = HSV(0, Percent.mid, Percent.max);
-      final HSV intensified = color.intensify(Percent.v20);
+      final HSV intensified = color.intensify(20);
 
       expect(intensified.saturation, closeTo(0.7, 0.01));
+      print('intensified: ${intensified.toStringIQ()}');
     });
 
     test('deintensify decreases saturation', () {
       const HSV color = HSV(0, Percent.mid, Percent.max);
-      final HSV deintensified = color.deintensify(Percent.v20);
+      final HSV deintensified = color.deintensify(20);
 
       expect(deintensified.saturation, closeTo(0.3, 0.01));
+      print('deintensified: $deintensified');
     });
 
     test('blend interpolates correctly', () {
       const HSV start = HSV(0, Percent.max, Percent.max); // Red (0, 1, 1)
       const HSV end = HSV(120, Percent.max, Percent.max); // Green (120, 1, 1)
-      final HSV blended = start.blend(end, Percent.mid);
+      final HSV blended = start.blend(end, 50);
 
       expect(blended.h, closeTo(60, 0.1)); // Yellow
       expect(blended.saturation, closeTo(1.0, 0.01));
-      expect(blended.value, closeTo(1.0, 0.01));
+      expect(blended.val, closeTo(1.0, 0.01));
     });
 
     test('opaquer increases alpha', () {
       const HSV color = HSV(0, Percent.max, Percent.max, a: Percent.mid);
-      final HSV opaque = color.opaquer(Percent.mid);
+      final HSV opaque = color.opaquer(20);
 
       expect(opaque.a, closeTo(0.7, 0.01));
+      print('opaque: $opaque');
     });
 
     test('adjustHue rotates hue', () {

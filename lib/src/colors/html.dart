@@ -46,7 +46,7 @@ const int hxBlack = 0xFF000000;
 const HctData hxBlackData = HctData(0, 0, 0);
 final HTML cBlack = HTML(hxBlack, names: kBlack, hct: hxBlackData);
 const HSL kHslBlack = HSL(0, 0, 0, hexId: hxBlack, names: kBlack);
-const LuvColor luvBlack = LuvColor(0, 0, 0, hexId: hxBlack, names: kBlack);
+const CIELuv luvBlack = CIELuv(0, 0, 0, hexId: hxBlack, names: kBlack);
 const int hxBlanchedAlmond = 0xFFFFEBCD;
 final ColorIQ cBlanchedAlmond =
     ColorIQ(hxBlanchedAlmond, names: kBlanchedAlmond);

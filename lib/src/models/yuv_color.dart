@@ -97,7 +97,6 @@ class YuvColor extends CommonIQ implements ColorSpacesIQ {
     return saturate(amount);
   }
 
-  @override
   YuvColor deintensify([final double amount = 10]) {
     return desaturate(amount);
   }

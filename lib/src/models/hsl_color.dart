@@ -142,7 +142,7 @@ class HSL extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
 
   @override
   HSL darken([final double amount = 20]) =>
-      copyWith(saturation: max(0.0, l - amount / 100));
+      copyWith(lightness: Percent(max(0.0, l - amount / 100)));
 
   @override
   HSL brighten([final double amount = 20]) =>
@@ -446,4 +446,12 @@ class HSL extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
 
   @override
   Cam16 get cam16 => Cam16.fromInt(value);
+
+  @override
+  HctData get hct => HctData.fromInt(value);
+
+  @override
+  double toneDifference(final ColorWheelInf other) {
+    return hct.toneDifference(other);
+  }
 }

@@ -78,12 +78,12 @@ extension IntHelperIQ on int {
       redLinearized, greenLinearized, blueLinearized);
 
   // Helper for Linearization (The expensive part)
-  double get linearizeUint8 {
-    final double val = assertRange0to255() / 255.0;
+  LinRGB get linearizeUint8 {
+    final double val = assertRange0to255('linearizeUint8') / 255.0;
     // The expensive power function that prevents const
     return (val <= 0.04045)
-        ? (val / 12.92)
-        : math.pow((val + 0.055) / 1.055, 2.4).toDouble();
+        ? LinRGB(val / 12.92)
+        : LinRGB(math.pow((val + 0.055) / 1.055, 2.4).toDouble().clamp0to1);
   }
 
   Cam16 get toCam16 => Cam16.fromInt(this);

@@ -33,7 +33,7 @@ void main() {
         80,
       ); // Reduce by 80% -> 20% opacity
       expect(moreTransparent.transparency, closeTo(0.2, 0.01));
-      expect(moreTransparent.alpha, closeTo(51, 2));
+      expect(moreTransparent.alphaInt, closeTo(51, 2));
     });
 
     test('Transparency on other models (lossy)', () {
@@ -44,7 +44,8 @@ void main() {
       // adjustTransparency returns the same model, so alpha is lost (reset to 1.0)
       final HSL adjusted = hsl.increaseTransparency(Percent.v50);
       expect(adjusted, isA<HSL>());
-      expect(adjusted.transparency, 1.0);
+      expect(adjusted.transparency, closeTo(0.5, 0.01));
+      print('✓ Transparency Adjustment');
     });
 
     test('Color Temperature', () {

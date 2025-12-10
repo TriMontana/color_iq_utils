@@ -12,7 +12,7 @@ void main() {
 
     test('transparency returns alpha', () {
       const OkHsvColor color = OkHsvColor(0.0, 0.0, 0.0, alpha: Percent(0.5));
-      expect(color.transparency, 0.5);
+      expect(color.transparency, closeTo(0.5, 0.01));
     });
 
     test('temperature returns correct value', () {

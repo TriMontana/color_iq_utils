@@ -9,7 +9,8 @@ void main() {
 
       expect(palette.length, 5);
       expect(palette[2], color);
-      expect((palette[0] as HwbColor).b, greaterThan(color.b)); // Blackened
+      expect((palette[0] as HwbColor).blackness,
+          greaterThan(color.blackness)); // Blackened
       expect((palette[4] as HwbColor).w, greaterThan(color.w)); // Whitened
     });
 
@@ -26,7 +27,7 @@ void main() {
       final List<ColorSpacesIQ> palette = color.darkerPalette();
 
       expect(palette.length, 5);
-      expect((palette[0] as HwbColor).b, greaterThan(color.b));
+      expect((palette[0] as HwbColor).blackness, greaterThan(color.blackness));
     });
 
     test('random returns valid HwbColor', () {
@@ -35,7 +36,8 @@ void main() {
 
       expect(randomColor, isA<HwbColor>());
       final HwbColor hwb = randomColor as HwbColor;
-      expect(hwb.w + hwb.b, lessThanOrEqualTo(1.0001)); // Allow float precision
+      expect(hwb.w + hwb.blackness,
+          lessThanOrEqualTo(1.0001)); // Allow float precision
     });
   });
 }

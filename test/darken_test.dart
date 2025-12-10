@@ -31,7 +31,7 @@ void main() {
     test('HsvColor darken', () {
       const HSV hsv = HSV(100, Percent.v50, Percent.v50);
       final HSV darkened = hsv.darken(20);
-      expect(darkened.value, closeTo(0.3, 0.01));
+      expect(darkened.val, closeTo(0.3, 0.01));
       print('HsvColor darken: $darkened');
     });
 

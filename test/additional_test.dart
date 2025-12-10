@@ -12,6 +12,7 @@ void main() {
       expect(hsp.h, closeTo(0, 0.1));
       expect(hsp.s, closeTo(1.0, 0.1));
       expect(hsp.p, closeTo(sqrt(0.299), 0.01));
+      print('✓ RGB to HSP conversion (Red)');
     });
 
     test('RGB to YIQ conversion (White)', () {
@@ -21,6 +22,7 @@ void main() {
       expect(yiq.y, closeTo(1.0, 0.01));
       expect(yiq.i, closeTo(0.0, 0.01));
       expect(yiq.q, closeTo(0.0, 0.01));
+      print('✓ RGB to YIQ conversion (White)');
     });
 
     test('RGB to YUV conversion (White)', () {
@@ -30,6 +32,7 @@ void main() {
       expect(yuv.y, closeTo(1.0, 0.01));
       expect(yuv.u, closeTo(0.0, 0.01));
       expect(yuv.v, closeTo(0.0, 0.01));
+      print('✓ RGB to YUV conversion (White)');
     });
 
     test('RGB to OkLab conversion (White)', () {
@@ -39,6 +42,7 @@ void main() {
       expect(oklab.l, closeTo(1.0, 0.01));
       expect(oklab.aLab, closeTo(0.0, 0.01));
       expect(oklab.bLab, closeTo(0.0, 0.01));
+      print('✓ RGB to OkLab conversion (White)');
     });
 
     test('RGB to OkLch conversion (Red)', () {
@@ -49,6 +53,7 @@ void main() {
       expect(oklch.l, closeTo(0.627, 0.05));
       expect(oklch.c, closeTo(0.257, 0.05));
       expect(oklch.h, closeTo(29.2, 1.0));
+      print('✓ RGB to OkLch conversion (Red)');
     });
 
     test('RGB to Hunter Lab conversion (White)', () {
@@ -58,6 +63,7 @@ void main() {
       expect(hunter.l, closeTo(100.0, 0.1));
       expect(hunter.aLab, closeTo(0.0, 0.1));
       expect(hunter.bLab, closeTo(0.0, 0.1));
+      print('✓ RGB to Hunter Lab conversion (White)');
     });
   });
 }

@@ -13,11 +13,11 @@ void main() {
     });
 
     test('HsvColor saturate/desaturate', () {
-      const HSV hsv = HSV(0, Percent.max, Percent.mid);
-      final HSV saturated = hsv.saturate(Percent.v25);
+      const HSV hsv = HSV(0, Percent.v50, Percent.mid);
+      final HSV saturated = hsv.saturate(25);
       expect(saturated.saturation, closeTo(0.75, 0.01));
 
-      final HSV desaturated = hsv.desaturate(Percent.v25);
+      final HSV desaturated = hsv.desaturate(25);
       expect(desaturated.saturation, closeTo(0.25, 0.01));
     });
 

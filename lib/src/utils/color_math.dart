@@ -35,10 +35,10 @@ abstract class ColorMathIQ {
   /// would divide 180 by 57.2958 to get 3.1416 radians.
   /// return degrees / 360 * 2 * pi;
   /// 2 * pi(rad) = 360(deg)
-//
-// pi(rad) = 360(deg) / 2
-//
-// pi(rad) = 180(deg)
+  ///
+  /// pi(rad) = 360(deg) / 2
+  ///
+  /// pi(rad) = 180(deg)
   static Radians degreesToRadians(final double degrees) {
     double rads = degrees * degreesInRadian;
     if (rads < 0) {
@@ -56,6 +56,36 @@ abstract class ColorMathIQ {
       degrees += 360.0;
     }
     return Degrees(degrees);
+  }
+
+  /// Converts linear RGB to XYZ
+  ///
+  /// r, g, b must be linear (not gamma-encoded)
+  ///
+  /// x = r * 0.4124564 + g * 0.3575761 + b * 0.1804375;
+  /// y = r * 0.2126729 + g * 0.7151522 + b * 0.0721750;
+  /// z = r * 0.0193339 + g * 0.1191920 + b * 0.9503041;
+  ///
+  /// Returns a list of [x, y, z]
+  List<double> linearRgbToXyz(final double r, final double g, final double b) {
+    // r, g, b must be linear (not gamma-encoded)
+    final double x = r * 0.4124564 + g * 0.3575761 + b * 0.1804375;
+    final double y = r * 0.2126729 + g * 0.7151522 + b * 0.0721750;
+    final double z = r * 0.0193339 + g * 0.1191920 + b * 0.9503041;
+    return <double>[x, y, z];
+  }
+
+  /// Converts sRGB to linear RGB
+  ///
+  /// c is in [0,1]
+  ///
+  /// if (c <= 0.04045) return c / 12.92;
+  /// return math.pow((c + 0.055) / 1.055, 2.4).toDouble();
+  LinRGB srgbToLinear(final Percent c) {
+    // c is in [0,1]
+    if (c <= 0.04045) return LinRGB(c.val / 12.92);
+    return LinRGB(
+        math.pow((c.val + 0.055) / 1.055, 2.4).toDouble().clampToPercent);
   }
 }
 

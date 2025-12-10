@@ -8,7 +8,10 @@ import 'package:material_color_utilities/hct/cam16.dart';
 abstract interface class ColorWheelInf {
   int get hexId; // aka ColorID
   Cam16 get cam16;
+  HctData get hct;
   ColorSlice closestColorSlice();
+  double toneDifference(final ColorWheelInf other);
+  String get hexStr;
 }
 
 /// Represents a slice of a color wheel.

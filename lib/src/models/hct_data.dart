@@ -1,6 +1,7 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 import 'package:material_color_utilities/hct/hct.dart';
+import 'package:material_color_utilities/hct/src/hct_solver.dart';
 
 // 1. A pure data class (Const capable!)
 // Create a custom class that holds the HCT values as simple
@@ -8,23 +9,47 @@ import 'package:material_color_utilities/hct/hct.dart';
 // and allows for a more efficient pre-computation strategy.
 // This class is "dumb." It doesn't know how to calculate HCT;
 // it just holds the result of a calculation. This allows it to be const.
+/// A pure data class that holds HCT (Hue, Chroma, Tone) values as simple double primitives.
+///
+/// This class is immutable and capable of being `const`, allowing for efficient
+/// storage and pre-computation strategies. It acts as a lightweight wrapper
+/// around HCT values, decoupling data storage from the heavy calculations
+/// performed by the underlying library.
 class HctData implements ColorWheelInf {
+  /// The hue component of the color, in degrees (0.0 - 360.0).
   final double hue;
+
+  /// The chroma component of the color, representing colorfulness.
+  ///
+  /// While technically unbounded, values > 200 are usually outside the visible gamut.
   final double chroma;
+
+  /// The tone component of the color, representing lightness (0.0 - 100.0).
   final double tone;
+
+  /// The optional integer representation of the color (e.g., typically 0xAABBGGRR).
+  ///
+  /// If provided, this avoids recalculating the integer value from HCT components.
   final int? colorId;
 
+  /// Creates a CONST constant [HctData] instance.
+  ///
+  /// [hue] must be between 0.0 and 360.0.
+  /// [chroma] must be non-negative and typically below [kMaxChroma].
+  /// [tone] must be between 0.0 and 100.0.
   const HctData(this.hue, this.chroma, this.tone, {this.colorId})
       : assert(hue >= 0.0 && hue <= 360.0,
             'Hue must be between 0 and 360, was $hue'),
         assert(chroma >= 0.0 && chroma <= kMaxChroma,
             'Chroma must be positive and below $kMaxChroma, was $chroma'),
-        // Note: Chroma technically has no hard cap, but >200 is usually outside visible gamut.
-        // We leave it uncapped or capped high (e.g. 200) to allow for theoretical intermediate values.
-
         assert(tone >= 0.0 && tone <= 100.0,
             'Tone must be between 0 and 100, was $tone');
 
+  /// Creates an [HctData] instance from an integer color value [colorId].
+  ///
+  /// This method uses the underlying HCT library to perform the expensive
+  /// conversion from integer to HCT components once, then stores the result
+  /// in a lightweight [HctData] object.
   static HctData fromInt(final int colorId) {
     // Use the heavy library ONCE to do the math
     final Hct heavyObject = Hct.fromInt(colorId);
@@ -34,6 +59,10 @@ class HctData implements ColorWheelInf {
         colorId: colorId);
   }
 
+  /// Returns the integer representation of this color.
+  ///
+  /// If [colorId] is stored, it is returned directly. Otherwise, the value
+  /// is calculated from [hue], [chroma], and [tone] using the underlying HCT library.
   @override
   int get hexId {
     if (colorId != null) {
@@ -45,6 +74,7 @@ class HctData implements ColorWheelInf {
     return heavyObject.toInt();
   }
 
+  /// Converts this [HctData] to its integer representation.
   int toInt() => hexId;
 
   @override
@@ -52,7 +82,10 @@ class HctData implements ColorWheelInf {
       'c: ${chroma.toStrTrimZeros(2)}, ' //
       't: ${tone.toStrTrimZeros(2)})';
 
-  /// calculate the colorID
+  /// Calculates the integer color ID from [hue], [chroma], and [tone].
+  ///
+  /// This is a static helper that performs the conversion without creating
+  /// an [HctData] instance.
   static int calculateColorID(
       final double hue, final double chroma, final double tone) {
     // Use the heavy library ONCE to do the math
@@ -61,7 +94,10 @@ class HctData implements ColorWheelInf {
     return heavyObject.toInt();
   }
 
-  // Equality operator is vital if you plan to compare colors logically
+  /// Checks for equality with another object.
+  ///
+  /// Two [HctData] objects are considered equal if they have the same runtime type
+  /// and identical [hue], [chroma], and [tone] values.
   @override
   bool operator ==(final Object other) =>
       identical(this, other) ||
@@ -79,6 +115,17 @@ class HctData implements ColorWheelInf {
 
   @override
   ColorSlice closestColorSlice() => hexId.closestColorSlice();
+
+  @override
+  String get hexStr => hexId.toHexStr;
+
+  @override
+  HctData get hct => this;
+
+  @override
+  double toneDifference(final ColorWheelInf other) {
+    return tone - other.hct.tone;
+  }
 }
 
 // This extension operates on your immutable HctData wrapper.
@@ -117,6 +164,19 @@ extension HctManipulation on HctData {
   HctData withHue(final double newHue) {
     wrapHue(newHue);
     return HctData(wrapHue(newHue), chroma, tone);
+  }
+
+  HctData whiten([final double amount = 20]) => lerp(cWhite.hct, amount / 100);
+
+  HctData blacken([final double amount = 20]) => lerp(cBlack.hct, amount / 100);
+
+  HctData lerp(final HctData other, final double t) {
+    final double newHue = lerpHue(hue, other.hue, t);
+    final double newChroma =
+        (chroma + (other.chroma - chroma) * t).clampChromaHct;
+    final double newTone = (tone + (other.tone - tone) * t).clampToneHct;
+    final int hexID = HctSolver.solveToInt(newHue, newChroma, newTone);
+    return HctData(newHue, newChroma, newTone, colorId: hexID);
   }
 
   String createStr([final int precision = 5]) =>

@@ -11,13 +11,13 @@ class ColorNames {
     final ColorSlice slice = color.closestColorSlice();
     final String hex =
         color.value.toRadixString(16).toUpperCase().padLeft(8, '0');
-    return '${slice.name}$hex';
+    return '${slice.name.first}$hex';
   }
 
   static String generateDefaultNameFromInt(final int argb) {
     final ColorSlice slice = argb.closestColorSlice();
     final String hex = argb.toRadixString(16).toUpperCase().padLeft(8, '0');
-    return '${slice.name}$hex';
+    return '${slice.name.first}$hex';
   }
 
   /// Groups a list of colors by their names.

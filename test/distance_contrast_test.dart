@@ -12,7 +12,7 @@ void main() {
       final double dist = cWhite.distanceTo(cBlack);
       expect(dist, greaterThan(0));
       // HCT Tone difference is 100. Distance should be at least 100.
-      expect(dist, greaterThanOrEqualTo(100));
+      expect(cWhite.toneDifference(cBlack), greaterThanOrEqualTo(100));
     });
 
     test('contrastWith self is 1.0', () {

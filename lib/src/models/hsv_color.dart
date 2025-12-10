@@ -6,6 +6,7 @@ import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/argb_color.dart';
 import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
+import 'package:color_iq_utils/src/models/hct_data.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 
 /// A representation of a color in the HSV (Hue, Saturation, Value) color space.
@@ -20,18 +21,18 @@ import 'package:material_color_utilities/hct/cam16.dart';
 /// and to perform various color manipulations like adjusting brightness,
 /// saturation, and finding harmonies.
 /// See also [ColorIQ]
-class HSV implements ColorWheelInf {
+class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
   final double h;
   final Percent saturation;
-  final Percent value;
-  final Percent a;
-  final int? colorId;
+  final Percent val;
 
-  const HSV(this.h, this.saturation, this.value,
-      {this.a = Percent.max, this.colorId});
+  const HSV(this.h, this.saturation, this.val,
+      {final Percent a = Percent.max, final int? colorId})
+      : super(colorId, alpha: a);
 
-  const HSV.fromAHSV(this.a, this.h, this.saturation, this.value,
-      {this.colorId});
+  const HSV.fromAHSV(final Percent a, this.h, this.saturation, this.val,
+      {final int? colorId})
+      : super(colorId, alpha: a);
 
   /// This constructor does not necessarily round-trip with [toColor] because
   /// of floating point imprecision.
@@ -55,8 +56,6 @@ class HSV implements ColorWheelInf {
       saturation,
       value,
       a: alpha,
-      colorId:
-          hexId ?? HSV.hexIdFromHSV(hue, saturation.val, value.val, alpha.val),
     );
   }
 
@@ -75,10 +74,17 @@ class HSV implements ColorWheelInf {
       HSV.fromRgbValues(r: argb.r, g: argb.g, b: argb.b, alpha: argb.a);
 
   @override
-  int get hexId => colorId ?? HSV.hexIdFromHSV(h, saturation, value, a.val);
+  int get value => hexId;
+
+  @override
+  int get hexId =>
+      super.colorId ?? HSV.hexIdFromHSV(h, saturation, val, alpha.val);
 
   @override
   Cam16 get cam16 => Cam16.fromInt(hexId);
+
+  @override
+  String get hexStr => hexId.toHexStr;
 
   /// Creates a 32-bit integer ARGB value from HSV components.
   ///
@@ -86,22 +92,22 @@ class HSV implements ColorWheelInf {
   /// [s] is the saturation, specified as a value between 0.0 and 1.0.
   /// [v] is the value, specified as a value between 0.0 and 1.0.
   /// [alpha] is the alpha channel, specified as a value between 0.0 and 1.0.
-  static int hexIdFromHSV(final double h, final double s, final double v,
+  static int hexIdFromHSV(final double h, final double s, final Percent v,
       [final double alpha = 1.0]) {
-    final double chroma = s * v;
+    final double chroma = s * v.val;
     final double secondary = chroma * (1.0 - (((h / 60.0) % 2.0) - 1.0).abs());
-    final double match = v - chroma;
+    final double match = v.val - chroma;
 
     return colorFromHue(alpha, h, chroma, secondary, match).value;
   }
 
   /// Returns this color in RGB.
   ColorIQ toColor() {
-    final double chroma = saturation * value.val;
+    final double chroma = saturation * val.val;
     final double secondary = chroma * (1.0 - (((h / 60.0) % 2.0) - 1.0).abs());
-    final double match = value.val - chroma;
+    final double match = val.val - chroma;
 
-    return colorFromHue(a.val, h, chroma, secondary, match);
+    return colorFromHue(alpha.val, h, chroma, secondary, match);
   }
 
   static HSV fromJson(final Map<String, dynamic> json) {
@@ -109,37 +115,53 @@ class HSV implements ColorWheelInf {
       json['hue'],
       json['saturation'],
       Percent(json['value']),
-      a: json['alpha'] ?? 1.0,
+      a: Percent(json['alpha'] ?? 1.0),
     );
   }
 
   @override
   String toString() => 'HsvColor(h: ${h.toStrTrimZeros(3)}, ' //
-      's: ${saturation.toStrTrimZeros(3)}, v: ${value.toStringAsFixed(2)}, '
-      'a: ${a.toStringAsFixed(2)})';
+      's: ${saturation.toStrTrimZeros(3)}, v: ${val.toStrTrimZeros(2)}, '
+      'a: ${alpha.toStrTrimZeros(3)})';
+
+  String toStringIQ() => 'HsvColor(h: ${h.toStrTrimZeros(3)}, ' //
+      's: ${saturation.toStrTrimZeros(3)}, v: ${val.toStrTrimZeros(2)}, '
+      'a: ${alpha.toStrTrimZeros(3)}) - $hexStr';
 
   @override
   ColorSlice closestColorSlice() => hexId.closestColorSlice();
-}
 
-/// Extension methods for HSV
-extension HSVColorHelper on HSV {
+  @override
+  HctData get hct => HctData.fromInt(hexId);
+
+  @override
+  double toneDifference(final ColorWheelInf other) {
+    return hct.toneDifference(other);
+  }
+
+  @override
   HSV darken([final double amount = 20]) =>
-      copyWith(value: Percent(max(0.0, value.val - amount / 100)));
+      copyWith(val: Percent(max(0.0, val.val - amount / 100)));
 
+  @override
   HSV whiten([final double amount = 20]) => lerp(cWhite.hsv, amount / 100);
 
+  @override
   HSV blacken([final double amount = 20]) => lerp(cBlack.hsv, amount / 100);
 
-  HSV withValue(final Percent nuValue) => copyWith(value: nuValue);
+  HSV withValue(final Percent nuValue) => copyWith(val: nuValue);
 
   /// Returns a copy of this color with the [saturation] parameter replaced with
   /// the given value.
   HSV withSaturation(final Percent saturation) =>
       copyWith(saturation: saturation);
 
-  HSV lerp(final HSV otherHsv, final double t) {
-    if (t == 0.0) return this;
+  @override
+  HSV lerp(final ColorSpacesIQ other, final double t) {
+    if (t == 0.0) {
+      return this;
+    }
+    final HSV otherHsv = other is HSV ? other : other.toColor().hsv;
 
     if (t == 1.0) {
       return otherHsv;
@@ -148,92 +170,163 @@ extension HSVColorHelper on HSV {
     return HSV(
       lerpHue(h, otherHsv.h, t),
       saturation.lerpTo(otherHsv.saturation, t),
-      value.lerpTo(otherHsv.value, t),
+      val.lerpTo(otherHsv.val, t),
     );
   }
 
+  @override
   HSV lighten([final double amount = 20]) =>
-      copyWith(value: Percent(min(1.0, value.val + amount / 100)));
+      copyWith(val: Percent(min(1.0, val.val + amount / 100)));
 
+  @override
   HSV brighten([final Percent amount = Percent.v20]) =>
-      copyWith(value: Percent(min(1.0, value.val + amount.val)));
+      copyWith(val: Percent(min(1.0, val.val + amount.val)));
 
-  HSV intensify([final Percent factor = Percent.v20]) {
+  HSV intensify([final double amount = 20]) {
+    final Percent factor = Percent(amount / 100);
     final Percent newSat = (saturation + factor).clampToPercent;
-    final Percent newVal = (value + factor).clampToPercent;
-    return copyWith(saturation: newSat, value: newVal);
+    final Percent newVal = (val + factor).clampToPercent;
+    return copyWith(saturation: newSat, val: newVal);
   }
 
-  HSV deintensify([final Percent factor = Percent.v20]) {
+  HSV deintensify([final double amount = 20]) {
+    final Percent factor = Percent(amount / 100);
     final Percent newSat = (saturation - factor).clampToPercent;
-    final Percent newVal = (value - factor).clampToPercent;
-    return copyWith(saturation: newSat, value: newVal);
+    final Percent newVal = (val - factor).clampToPercent;
+    return copyWith(saturation: newSat, val: newVal);
   }
 
-  HSV saturate([final Percent amount = Percent.v25]) =>
-      copyWith(saturation: min(1.0, saturation + amount).clampToPercent);
+  @override
+  HSV saturate([final double amount = 25]) {
+    final Percent pAmount = Percent(amount / 100);
+    return copyWith(saturation: min(1.0, saturation + pAmount).clampToPercent);
+  }
 
-  HSV desaturate([final Percent amount = Percent.v25]) =>
-      copyWith(saturation: Percent(max(0.0, saturation - amount)));
+  @override
+  HSV desaturate([final double amount = 25]) {
+    final Percent pAmount = Percent(amount / 100);
+    return copyWith(saturation: Percent(max(0.0, saturation - pAmount)));
+  }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   HSV copyWith({
     final double? hue,
     final Percent? saturation,
-    final Percent? value,
+    final Percent? val,
     final Percent? alpha,
   }) {
-    return HSV(hue ?? h, saturation ?? this.saturation, value ?? this.value,
-        a: alpha ?? a);
+    return HSV(hue ?? h, saturation ?? this.saturation, val ?? this.val,
+        a: alpha ?? this.alpha);
   }
 
-  HSV blend(final HSV other, [final double amount = 50]) {
+  @override
+  HSV blend(final ColorSpacesIQ other, [final double amount = 50]) {
     return lerp(other, amount / 100);
   }
 
+  @override
   HSV opaquer([final double amount = 20]) {
-    final double x = min(1.0, a.val + amount / 100);
-    return HSV(h, saturation, value, a: Percent(x));
+    final Percent x = min(1.0, alpha.val + amount / 100).clampToPercent;
+    return HSV(h, saturation, val, a: x);
   }
 
+  @override
   HSV adjustHue([final double amount = 20]) =>
       copyWith(hue: wrapHue(h + amount));
 
+  @override
   HSV get complementary => adjustHue(180);
 
-  /// amount = stepDegrees
+  @override
+  ColorSpacesIQ accented([final double amount = 15]) =>
+      toColor().accented(amount);
+
+  @override
+  ColorSpacesIQ decreaseTransparency([final Percent amount = Percent.v20]) =>
+      toColor().decreaseTransparency(amount);
+
+  @override
+  ColorSpacesIQ increaseTransparency([final Percent amount = Percent.v20]) =>
+      toColor().increaseTransparency(amount);
+
+  @override
+  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic;
+
+  @override
+  List<ColorSpacesIQ> lighterPalette([final double? step]) =>
+      toColor().lighterPalette(step);
+
+  @override
+  List<ColorSpacesIQ> darkerPalette([final double? step]) =>
+      toColor().darkerPalette(step);
+
+  @override
+  ColorSpacesIQ get random => toColor().random;
+
+  @override
+  bool isEqual(final ColorSpacesIQ other) => hexId == other.value;
+
+  @override
+  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) =>
+      toColor().isWithinGamut(gamut);
+
+  @override
+  ColorSpacesIQ simulate(final ColorBlindnessType type) =>
+      toColor().simulate(type);
+
+  @override
+  List<ColorSpacesIQ> tonesPalette() => toColor().tonesPalette();
+
+  @override
+  List<ColorSpacesIQ> analogous({
+    final int count = 5,
+    final double offset = 30,
+  }) =>
+      toColor().analogous(count: count, offset: offset);
+
+  @override
+  List<ColorSpacesIQ> square() => toColor().square();
+
+  @override
+  List<ColorSpacesIQ> tetrad({final double offset = 60}) =>
+      toColor().tetrad(offset: offset);
+
+  @override
+  double contrastWith(final ColorSpacesIQ other) =>
+      toColor().contrastWith(other);
+
+  @override
   HSV warmer([final double amount = 20]) {
-    // 2. Define the new Hue, shifting counter-clockwise (reducing the angle).
-    // The Hue is wrapped using the modulo operator to stay within [0, 360).
-    // Adjust the hue to make it warmer (shift towards red)
-    // Shift hue toward warmer side (lower hue values are red/yellow).
     double newHue = (h - amount) % 360.0;
-    // Ensure the result is positive
     if (newHue < 0) {
       newHue += 360.0;
     }
     return copyWith(hue: newHue);
   }
 
+  @override
   HSV cooler([final double amount = 20]) => toColor().cooler(amount).hsv;
 
+  @override
   List<HSV> generateBasicPalette() =>
       toColor().generateBasicPalette().map((final ColorIQ c) => c.hsv).toList();
 
+  @override
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'type': 'HsvColor',
       'hue': h,
       'saturation': saturation,
-      'value': value,
-      'alpha': a,
+      'value': val.val,
+      'alpha': alpha,
     };
   }
 
+  @override
   String createStr([final int precision = 4]) =>
       'HsvColor(h: ${h.toStrTrimZeros(precision)}, ' //
-      's: ${saturation.toStringAsFixed(precision)}, v: ${value.toStringAsFixed(precision)}, '
-      'a: ${a.toStringAsFixed(precision)})';
+      's: ${saturation.toStringAsFixed(precision)}, v: ${val.toStringAsFixed(precision)}, '
+      'a: ${alpha.toStringAsFixed(precision)})';
 }
 
 // --- HSV Strategy ---
@@ -247,7 +340,7 @@ class HsvStrategy extends ManipulationStrategy {
     // Let's assume increasing Value here:
     hsv ??= HSV.fromInt(argb);
     final HSV modified =
-        hsv.withValue((hsv.value.val + (amount / 100)).clampToPercent);
+        hsv.withValue((hsv.val.val + (amount / 100)).clampToPercent);
     return modified.toColor().value;
   }
 
@@ -270,7 +363,7 @@ class HsvStrategy extends ManipulationStrategy {
 
     // Increase Saturation and Value
     final Percent newSat = (hsv.saturation + amount).clampToPercent;
-    final Percent newVal = (hsv.value.val - amount.half).clampToPercent;
+    final Percent newVal = (hsv.val.val - amount.half).clampToPercent;
 
     return hsv.withSaturation(newSat).withValue(newVal).toColor().value;
   }
@@ -284,7 +377,7 @@ class HsvStrategy extends ManipulationStrategy {
 
     // Decrease Saturation and Value
     final Percent newSat = (hsv.saturation - amount);
-    final Percent newVal = hsv.value - amount.half;
+    final Percent newVal = hsv.val - amount.half;
 
     return hsv.withSaturation(newSat).withValue(newVal).toColor().value;
   }

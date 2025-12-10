@@ -8,7 +8,7 @@ void main() {
       final HsbColor gray = color.grayscale;
 
       expect(gray.s, equals(0.0));
-      expect(gray.b, closeTo(0.5, 0.01));
+      expect(gray.brightnessHsb.val, closeTo(0.5, 0.01));
       expect(gray.h, equals(0.0));
     });
 
@@ -18,7 +18,7 @@ void main() {
 
       expect(inverted.h, closeTo(180, 0.1));
       expect(inverted.s, closeTo(1.0, 0.01));
-      expect(inverted.b, closeTo(1.0, 0.01));
+      expect(inverted.brightnessHsb.val, closeTo(1.0, 0.01));
     });
 
     test('simulate returns same color for none', () {
@@ -27,7 +27,8 @@ void main() {
 
       expect(simulated.h, closeTo(color.h, 0.1));
       expect(simulated.s, closeTo(color.s, 0.01));
-      expect(simulated.b, closeTo(color.b, 0.01));
+      expect(
+          simulated.brightnessHsb.val, closeTo(color.brightnessHsb.val, 0.01));
     });
 
     test('simulate achromatopsia results in grayscale', () {
@@ -36,7 +37,7 @@ void main() {
           color.simulate(ColorBlindnessType.achromatopsia);
 
       expect(simulated.s, closeTo(0.0, 0.01));
-      expect(simulated.b, closeTo(0.46, 0.1));
+      expect(simulated.brightnessHsb.val, closeTo(0.46, 0.1));
     });
 
     test('monochromatic generates 5 colors', () {
@@ -45,7 +46,7 @@ void main() {
       expect(palette.length, 5);
       expect(palette[2], isA<HsbColor>());
       final HsbColor center = palette[2] as HsbColor;
-      expect(center.b, closeTo(color.b, 0.01));
+      expect(center.brightnessHsb.val, closeTo(color.brightnessHsb.val, 0.01));
       expect(center.h, closeTo(color.h, 0.1));
       expect(center.s, closeTo(color.s, 0.01));
     });
@@ -55,7 +56,8 @@ void main() {
       final List<ColorSpacesIQ> palette = color.lighterPalette(10);
       expect(palette.length, 3);
       for (ColorSpacesIQ c in palette) {
-        expect((c as HsbColor).b, greaterThan(color.b));
+        expect((c as HsbColor).brightnessHsb.val,
+            greaterThan(color.brightnessHsb.val));
       }
     });
 
@@ -64,7 +66,8 @@ void main() {
       final List<ColorSpacesIQ> palette = color.darkerPalette(10);
       expect(palette.length, 3);
       for (ColorSpacesIQ c in palette) {
-        expect((c as HsbColor).b, lessThan(color.b));
+        expect((c as HsbColor).brightnessHsb.val,
+            lessThan(color.brightnessHsb.val));
       }
     });
 
@@ -75,7 +78,7 @@ void main() {
       final HsbColor hsb = randomColor as HsbColor;
       expect(hsb.h, inInclusiveRange(0, 360));
       expect(hsb.s, inInclusiveRange(0, 1));
-      expect(hsb.b, inInclusiveRange(0, 1));
+      expect(hsb.brightnessHsb.val, inInclusiveRange(0, 1));
     });
 
     test('isEqual compares correctly', () {

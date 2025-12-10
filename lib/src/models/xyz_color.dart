@@ -41,7 +41,7 @@ class XYZ extends CommonIQ {
   /// Converts this color to XYZ.
   static XYZ xyxFromRgb(final int red, final int green, final int blue) =>
       XYZ.xyzFromRgbLinearized(
-          linearized(red), linearized(green), linearized(blue));
+          red.linearizeUint8, green.linearizeUint8, blue.linearizeUint8);
 
   /// Converts this color to XYZ.  Values are expected to be in the range of 0.0 to 1.0
   /// and are expected to be in the sRGB color space, not linearized.
@@ -49,13 +49,15 @@ class XYZ extends CommonIQ {
       .xyzFromRgbLinearized(srgbToLinear(r), srgbToLinear(g), srgbToLinear(b));
 
   /// Converts this color to XYZ.
-  static XYZ xyzFromRgbLinearized(final double redLinearized,
-      final double greenLinearized, final double blueLinearized) {
+  static XYZ xyzFromRgbLinearized(final LinRGB redLinearized,
+      final LinRGB greenLinearized, final LinRGB blueLinearized) {
     final List<double> xyzList = matrixMultiply(
-        <double>[redLinearized, greenLinearized, blueLinearized],
+        <double>[redLinearized.val, greenLinearized.val, blueLinearized.val],
         srgbToXyzMatrix);
-    return XYZ(xyzList[0], xyzList[1], xyzList[2],
-        hexId: argbFromXyz(xyzList[0], xyzList[1], xyzList[2]));
+    // Convert 0-1 range to 0-100 range
+    return XYZ(xyzList[0] * 100, xyzList[1] * 100, xyzList[2] * 100,
+        hexId:
+            argbFromXyz(xyzList[0] * 100, xyzList[1] * 100, xyzList[2] * 100));
   }
 
   static ColorIQ xyzToColor(final double x, final double y, final double z) =>
@@ -76,7 +78,7 @@ class XYZ extends CommonIQ {
   }
 
   @override
-  LuvColor toLuv() {
+  CIELuv toLuv() {
     const double refX = 95.047;
     const double refY = 100.000;
     const double refZ = 108.883;
@@ -101,7 +103,7 @@ class XYZ extends CommonIQ {
       vOut = 0;
     }
 
-    return LuvColor(l, uOut, vOut);
+    return CIELuv(l, uOut, vOut);
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.

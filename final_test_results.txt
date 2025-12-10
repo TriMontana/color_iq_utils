@@ -1,0 +1,472 @@
+﻿00:00 +0: loading test\accented_test.dart
+00:00 +0: test\accented_test.dart: Accented Method Tests HctColor accented increases chroma and tone
+00:00 +0: test\additional_test.dart: Additional Color Conversion Tests RGB to HSP conversion (Red)
+Γ£ô RGB to HSP conversion (Red)
+00:00 +1: test\accented_test.dart: Accented Method Tests HctColor accented increases chroma and tone
+00:00 +2: test\advanced_test.dart: Advanced Color Conversion Tests RGB to XYZ conversion (White)
+00:00 +2: test\additional_test.dart: Additional Color Conversion Tests RGB to YIQ conversion (White)
+Γ£ô RGB to YIQ conversion (White)
+00:00 +3: test\advanced_test.dart: Advanced Color Conversion Tests RGB to XYZ conversion (White)
+00:00 +3: test\additional_test.dart: Additional Color Conversion Tests RGB to YUV conversion (White)
+Γ£ô RGB to YUV conversion (White)
+00:00 +4: test\advanced_test.dart: Advanced Color Conversion Tests RGB to XYZ conversion (White)
+00:00 +4: test\additional_test.dart: Additional Color Conversion Tests RGB to OkLab conversion (White)
+Γ£ô RGB to OkLab conversion (White)
+00:00 +5: test\advanced_test.dart: Advanced Color Conversion Tests RGB to XYZ conversion (White)
+00:00 +5: test\additional_test.dart: Additional Color Conversion Tests RGB to OkLch conversion (Red)
+Γ£ô RGB to OkLch conversion (Red)
+00:00 +6: test\advanced_test.dart: Advanced Color Conversion Tests RGB to XYZ conversion (White)
+00:00 +6: test\additional_test.dart: Additional Color Conversion Tests RGB to Hunter Lab conversion (White)
+Γ£ô RGB to Hunter Lab conversion (White)
+00:00 +7: test\advanced_test.dart: Advanced Color Conversion Tests RGB to XYZ conversion (White)
+00:00 +7: test\brighten_test.dart: Brighten ColorIQ.brighten increases HSV Value
+Γ£ô ColorIQ.brighten increases HSV Value
+00:00 +8: test\advanced_test.dart: Advanced Color Conversion Tests RGB to XYZ conversion (White)
+00:00 +8: test\brighten_test.dart: Brighten HsvColor.brighten increases Value
+Γ£ô HsvColor.brighten increases Value
+00:00 +9: test\advanced_test.dart: Advanced Color Conversion Tests RGB to XYZ conversion (White)
+00:00 +10: test\advanced_test.dart: Advanced Color Conversion Tests RGB to XYZ conversion (White)
+00:00 +11: test\advanced_test.dart: Advanced Color Conversion Tests RGB to XYZ conversion (White)
+00:00 +12: test\advanced_test.dart: Advanced Color Conversion Tests RGB to XYZ conversion (White)
+00:00 +13: test\advanced_test.dart: Advanced Color Conversion Tests RGB to XYZ conversion (White)
+00:00 +14: test\advanced_test.dart: Advanced Color Conversion Tests RGB to XYZ conversion (White)
+00:00 +15: test\advanced_test.dart: Advanced Color Conversion Tests RGB to XYZ conversion (White)
+00:00 +16: test\advanced_test.dart: Advanced Color Conversion Tests RGB to XYZ conversion (White)
+00:00 +17: test\advanced_test.dart: Advanced Color Conversion Tests RGB to XYZ conversion (White)
+00:00 +18: test\advanced_test.dart: Advanced Color Conversion Tests RGB to XYZ conversion (White)
+00:00 +19: test\advanced_test.dart: Advanced Color Conversion Tests RGB to XYZ conversion (White)
+00:00 +20: test\advanced_test.dart: Advanced Color Conversion Tests RGB to XYZ conversion (White)
+00:00 +21: test\advanced_test.dart: Advanced Color Conversion Tests RGB to XYZ conversion (White)
+00:00 +22: test\advanced_test.dart: Advanced Color Conversion Tests RGB to XYZ conversion (White)
+00:00 +23: test\advanced_test.dart: Advanced Color Conversion Tests RGB to XYZ conversion (White)
+00:00 +24: test\advanced_test.dart: Advanced Color Conversion Tests RGB to XYZ conversion (White)
+00:00 +25: test\brighten_test.dart: Brighten Brighten vs Lighten
+00:00 +25: test\accented_test.dart: Accented Method Tests Accented works across different color models
+Γ£ô Accented color model test completed
+  Original RGB: 4284782280
+  Accented RGB: 4283673849
+  Accented XYZ: 4283673849
+  Accented LAB: 4283673849
+  Accented LUV: 4283673849
+00:00 +26: test\brighten_test.dart: Brighten Brighten vs Lighten
+00:00 +27: test\brighten_test.dart: Brighten Brighten vs Lighten
+00:00 +28: test\brighten_test.dart: Brighten Brighten vs Lighten
+00:00 +28: test\advanced_test.dart: Advanced Color Conversion Tests RGB to LCH conversion (Blue)
+Tested RGB to LCH conversion and back successfully.
+00:00 +29: test\brighten_test.dart: Brighten Brighten vs Lighten
+00:00 +30: test\brighten_test.dart: Brighten Brighten vs Lighten
+00:00 +31: test\brighten_test.dart: Brighten Brighten vs Lighten
+00:00 +32: test\brighten_test.dart: Brighten Brighten vs Lighten
+00:00 +33: test\brighten_test.dart: Brighten Brighten vs Lighten
+00:00 +34: test\brighten_test.dart: Brighten Brighten vs Lighten
+00:00 +35: test\brighten_test.dart: Brighten Brighten vs Lighten
+00:00 +35: test\cmyk_test.dart: CMYK Conversion Tests Arbitrary color conversion
+Γ£ô Arbitrary color conversion test completed
+  Original RGB: (0, 128, 128)
+  CMYK: C=1.00, M=0.00, Y=0.00, K=0.50
+  Back to RGB: (0, 128, 128)
+00:00 +36: test\brighten_test.dart: Brighten Brighten vs Lighten
+Γ£ô Brighten vs Lighten
+00:00 +37: test\color_blindness_test.dart: Color Blindness Tests Simulate Protanopia
+00:00 +37: test\brighten_test.dart: Brighten CmykColor.brighten delegates correctly
+Γ£ô CMYK.brighten delegates correctly
+00:00 +38: test\color_blindness_test.dart: Color Blindness Tests Simulate Protanopia
+00:00 +39: test\color_blindness_test.dart: Color Blindness Tests Simulate Deuteranopia
+00:00 +40: test\color_blindness_test.dart: Color Blindness Tests Simulate Tritanopia
+00:00 +41: test\color_blindness_test.dart: Color Blindness Tests Simulate Achromatopsia
+00:00 +42: test\color_blindness_test.dart: Color Blindness Tests Delegation works for other models
+00:00 +43: test\color_blindness_test.dart: Color Blindness Tests Delegation works for other models
+00:00 +44: test\color_blindness_test.dart: Color Blindness Tests Delegation works for other models
+00:00 +45: test\color_description_test.dart: ColorDescriptor Chromatic colors
+00:00 +46: test\color_description_test.dart: ColorDescriptor Chromatic colors
+00:00 +46: test\color_wheels_test.dart: Color Wheels Tests generateHsvWheel returns 60 slices
+Γ£ô generateHsvWheel returns 60 slices
+00:00 +47: test\color_wheels_test.dart: Color Wheels Tests generateHsvWheel returns 60 slices
+00:00 +48: test\color_names_test.dart: ColorNames Utility indexByNames handles multiple names
+00:00 +49: test\color_names_test.dart: ColorNames Utility indexByNames handles multiple names
+00:00 +49: test\color_wheels_test.dart: Color Wheels Tests generateHctWheel returns 60 slices
+Γ£ô generateHctWheel returns 60 slices
+00:00 +50: test\color_names_test.dart: ColorNames Utility indexByNames handles multiple names
+00:00 +51: test\color_wheels_test.dart: Color Wheels Tests Color names are populated
+Γ£ô Color names are populated
+00:00 +52: test\color_wheels_test.dart: Color Wheels Tests Custom parameters work
+Γ£ô Custom parameters work
+00:00 +53: test\color_wheels_test.dart: Color Wheels Tests getHsvWheelMap returns map with correct keys
+Γ£ô getHsvWheelMap returns map with correct keys
+00:00 +54: test\copywith_monochromatic_test.dart: CopyWith and Monochromatic Tests ColorIQ copyWith
+00:00 +55: test\copywith_monochromatic_test.dart: CopyWith and Monochromatic Tests ColorIQ copyWith
+00:00 +56: test\css_test.dart: CSS String Tests toCssString Hex
+00:00 +57: test\css_test.dart: CSS String Tests toCssString Hex
+00:00 +58: test\css_test.dart: CSS String Tests toCssString Hex
+00:00 +59: test\copywith_monochromatic_test.dart: CopyWith and Monochromatic Tests ColorIQ Monochromatic
+00:00 +60: test\copywith_monochromatic_test.dart: CopyWith and Monochromatic Tests ColorIQ Monochromatic
+00:00 +61: test\copywith_monochromatic_test.dart: CopyWith and Monochromatic Tests ColorIQ Monochromatic
+00:00 +62: test\copywith_monochromatic_test.dart: CopyWith and Monochromatic Tests ColorIQ Monochromatic
+00:00 +63: test\copywith_monochromatic_test.dart: CopyWith and Monochromatic Tests ColorIQ Monochromatic
+00:00 +64: test\copywith_monochromatic_test.dart: CopyWith and Monochromatic Tests ColorIQ Monochromatic
+00:00 +65: test\copywith_monochromatic_test.dart: CopyWith and Monochromatic Tests ColorIQ Monochromatic
+00:00 +66: test\copywith_monochromatic_test.dart: CopyWith and Monochromatic Tests ColorIQ Monochromatic
+00:00 +67: test\copywith_monochromatic_test.dart: CopyWith and Monochromatic Tests ColorIQ Monochromatic
+00:00 +68: test\copywith_monochromatic_test.dart: CopyWith and Monochromatic Tests ColorIQ Monochromatic
+00:00 +69: test\copywith_monochromatic_test.dart: CopyWith and Monochromatic Tests ColorIQ Monochromatic
+00:00 +70: test\copywith_monochromatic_test.dart: CopyWith and Monochromatic Tests ColorIQ Monochromatic
+00:00 +71: test\copywith_monochromatic_test.dart: CopyWith and Monochromatic Tests ColorIQ Monochromatic
+00:00 +72: test\copywith_monochromatic_test.dart: CopyWith and Monochromatic Tests ColorIQ Monochromatic
+00:00 +73: test\copywith_monochromatic_test.dart: CopyWith and Monochromatic Tests ColorIQ Monochromatic
+00:00 +74: test\copywith_monochromatic_test.dart: CopyWith and Monochromatic Tests ColorIQ Monochromatic
+00:00 +75: test\copywith_monochromatic_test.dart: CopyWith and Monochromatic Tests ColorIQ Monochromatic
+00:00 +76: test\darken_test.dart: Darken Tests ColorIQ darken
+00:00 +77: test\darken_test.dart: Darken Tests ColorIQ darken
+00:00 +78: test\darken_test.dart: Darken Tests ColorIQ darken
+00:00 +79: test\darken_test.dart: Darken Tests ColorIQ darken
+00:00 +80: test\darken_test.dart: Darken Tests ColorIQ darken
+00:00 +81: test\darken_test.dart: Darken Tests ColorIQ darken
+00:00 +82: test\darken_test.dart: Darken Tests ColorIQ darken
+00:00 +83: test\darken_test.dart: Darken Tests ColorIQ darken
+00:00 +84: test\darken_test.dart: Darken Tests ColorIQ darken
+00:00 +85: test\darken_test.dart: Darken Tests ColorIQ darken
+00:00 +86: test\darken_test.dart: Darken Tests ColorIQ darken
+ColorIQ darken: ColorIQ(0xFF990000)
+00:00 +87: test\darken_test.dart: Darken Tests ColorIQ darken
+00:00 +88: test\gamut_whitepoint_json_test.dart: Gamut, WhitePoint, and JSON isWithinGamut returns true for sRGB colors
+00:00 +88: test\darken_test.dart: Darken Tests LabColor darken
+LabColor darken: LabColor(l: 30.0, a: 20.0, b: 30.0)
+00:00 +89: test\gamut_whitepoint_json_test.dart: Gamut, WhitePoint, and JSON isWithinGamut returns true for sRGB colors
+00:00 +90: test\gamut_whitepoint_json_test.dart: Gamut, WhitePoint, and JSON isWithinGamut returns true for sRGB colors
+00:00 +90: test\darken_test.dart: Darken Tests HslColor darken
+HslColor darken: HslColor(h: 100.0, s: 0.5, l: 0.3, a: 1.0)
+00:00 +91: test\gamut_whitepoint_json_test.dart: Gamut, WhitePoint, and JSON isWithinGamut returns true for sRGB colors
+00:00 +92: test\darken_test.dart: Darken Tests HsvColor darken
+HsvColor darken: HsvColor(h: 100.0, s: 0.5, v: 0.3, a: 1.0)
+00:00 +93: test\gamut_whitepoint_json_test.dart: Gamut, WhitePoint, and JSON whitePoint returns D65 default
+00:00 +93: test\darken_test.dart: Darken Tests OkLabColor darken
+OkLabColor darken: OkLabColor(l: 0.30, a: 0.10, b: 0.10, alpha: 1.00)
+00:00 +94: test\darken_test.dart: Darken Tests OkLabColor darken
+00:00 +95: test\hct_refactor_test.dart: HctColor Refactor Tests whiten increases tone
+00:00 +96: test\hct_refactor_test.dart: HctColor Refactor Tests whiten increases tone
+00:00 +97: test\hct_refactor_test.dart: HctColor Refactor Tests whiten increases tone
+00:00 +97: test\darken_test.dart: Darken Tests HctColor darken
+HctColor darken: HctColor(hue: 100.0, chroma: 50.0, tone: 30.0)
+00:00 +98: test\hct_refactor_test.dart: HctColor Refactor Tests whiten increases tone
+00:00 +99: test\hct_refactor_test.dart: HctColor Refactor Tests whiten increases tone
+00:00 +99: test\darken_test.dart: Darken Tests Darken clamping
+Darken clamping: HslColor(h: 0.0, s: 0.0, l: 0.0, a: 1.0)
+00:00 +100: test\hct_refactor_test.dart: HctColor Refactor Tests whiten increases tone
+00:00 +101: test\hct_refactor_test.dart: HctColor Refactor Tests whiten increases tone
+00:00 +102: test\hct_refactor_test.dart: HctColor Refactor Tests whiten increases tone
+00:00 +103: test\hct_refactor_test.dart: HctColor Refactor Tests whiten increases tone
+00:00 +104: test\hct_refactor_test.dart: HctColor Refactor Tests whiten increases tone
+00:00 +105: test\hct_refactor_test.dart: HctColor Refactor Tests whiten increases tone
+00:00 +106: test\hct_refactor_test.dart: HctColor Refactor Tests whiten increases tone
+00:00 +107: test\hct_refactor_test.dart: HctColor Refactor Tests blacken decreases tone
+25.0
+00:00 +108: test\hct_refactor_test.dart: HctColor Refactor Tests lerp interpolates correctly
+interpolated tone: 50.0
+00:00 +109: test\hct_temperature_test.dart: HCT and Temperature Tests Color to HCT and back
+00:00 +110: test\hsb_methods_test.dart: HsbColor Methods Tests grayscale converts to grayscale correctly
+00:00 +111: test\hsb_methods_test.dart: HsbColor Methods Tests grayscale converts to grayscale correctly
+00:00 +111: test\hct_temperature_test.dart: HCT and Temperature Tests Transparency on other models (lossy)
+Γ£ô Transparency Adjustment
+00:00 +112: test\hsb_methods_test.dart: HsbColor Methods Tests grayscale converts to grayscale correctly
+00:00 +113: test\hsb_methods_test.dart: HsbColor Methods Tests grayscale converts to grayscale correctly
+00:00 +114: test\hsb_refactor_test.dart: HsbColor Refactor Tests whiten increases brightness and desaturates
+00:00 +115: test\hsb_refactor_test.dart: HsbColor Refactor Tests whiten increases brightness and desaturates
+00:00 +116: test\hsb_refactor_test.dart: HsbColor Refactor Tests whiten increases brightness and desaturates
+00:00 +117: test\hsb_refactor_test.dart: HsbColor Refactor Tests whiten increases brightness and desaturates
+00:00 +118: test\hsb_refactor_test.dart: HsbColor Refactor Tests whiten increases brightness and desaturates
+00:00 +119: test\hsb_refactor_test.dart: HsbColor Refactor Tests whiten increases brightness and desaturates
+00:00 +120: test\hsb_refactor_test.dart: HsbColor Refactor Tests whiten increases brightness and desaturates
+00:00 +121: test\hsb_refactor_test.dart: HsbColor Refactor Tests whiten increases brightness and desaturates
+00:00 +122: test\hsb_refactor_test.dart: HsbColor Refactor Tests whiten increases brightness and desaturates
+00:00 +123: test\hsb_refactor_test.dart: HsbColor Refactor Tests whiten increases brightness and desaturates
+00:00 +124: test\hsb_refactor_test.dart: HsbColor Refactor Tests blacken decreases brightness and desaturates
+00:00 +125: test\hsb_warmer_cooler_test.dart: HsbColor Warmer/Cooler Tests warmer shifts hue towards 30 degrees
+00:00 +126: test\hsb_warmer_cooler_test.dart: HsbColor Warmer/Cooler Tests warmer shifts hue towards 30 degrees
+00:00 +127: test\hsb_warmer_cooler_test.dart: HsbColor Warmer/Cooler Tests warmer shifts hue towards 30 degrees
+00:00 +128: test\hsb_warmer_cooler_test.dart: HsbColor Warmer/Cooler Tests warmer shifts hue towards 30 degrees
+00:00 +129: test\hsb_warmer_cooler_test.dart: HsbColor Warmer/Cooler Tests cooler shifts hue towards 210 degrees
+00:00 +130: test\hsluv_refactor_test.dart: HsluvColor Refactor Tests whiten increases lightness and desaturates
+00:01 +131: test\hsluv_refactor_test.dart: HsluvColor Refactor Tests blacken decreases lightness and desaturates
+00:01 +132: test\hsluv_refactor_test.dart: HsluvColor Refactor Tests lerp interpolates correctly
+00:01 +133: test\hsl_color_test.dart: HslColor closestColorSlice returns correct slice
+00:01 +134: test\hsl_color_test.dart: HslColor closestColorSlice returns correct slice
+00:01 +135: test\hsl_color_test.dart: HslColor contrastWith calculates contrast ratio
+00:01 +136: test\hsl_refactor_test.dart: HslColor Refactor Tests whiten increases lightness and desaturates
+00:01 +137: test\hsp_refactor_test.dart: HspColor Refactor Tests whiten increases brightness and desaturates
+00:01 +138: test\hsp_refactor_test.dart: HspColor Refactor Tests whiten increases brightness and desaturates
+00:01 +139: test\hsp_refactor_test.dart: HspColor Refactor Tests whiten increases brightness and desaturates
+00:01 +140: test\hsp_refactor_test.dart: HspColor Refactor Tests whiten increases brightness and desaturates
+00:01 +141: test\hsp_refactor_test.dart: HspColor Refactor Tests whiten increases brightness and desaturates
+00:01 +142: test\hsp_refactor_test.dart: HspColor Refactor Tests blacken decreases brightness and desaturates
+00:01 +143: test\hsp_refactor_test.dart: HspColor Refactor Tests lerp interpolates correctly
+00:01 +144: test\hsp_refactor_test.dart: HspColor Refactor Tests intensify increases saturation
+00:01 +145: test\hsp_refactor_test.dart: HspColor Refactor Tests deintensify decreases saturation
+00:01 +146: test\hsv_refactor_test.dart: HsvColor Refactor Tests whiten increases value and desaturates
+00:01 +147: test\hunter_lab_refactor_test.dart: HunterLabColor Refactor Tests whiten increases lightness
+00:01 +148: test\hunter_lab_refactor_test.dart: HunterLabColor Refactor Tests whiten increases lightness
+00:01 +149: test\hunter_lab_refactor_test.dart: HunterLabColor Refactor Tests whiten increases lightness
+00:01 +149 -1: test\hunter_lab_refactor_test.dart: HunterLabColor Refactor Tests whiten increases lightness
+00:01 +150 -1: test\hwb_darken_brighten_test.dart: HwbColor Darken/Brighten darken increases blackness
+00:01 +151 -1: test\hwb_darken_brighten_test.dart: HwbColor Darken/Brighten darken increases blackness
+00:01 +152 -1: test\hwb_darken_brighten_test.dart: HwbColor Darken/Brighten darken increases blackness
+00:01 +153 -1: test\hwb_darken_brighten_test.dart: HwbColor Darken/Brighten darken increases blackness
+00:01 +154 -1: test\hwb_darken_brighten_test.dart: HwbColor Darken/Brighten darken increases blackness
+00:01 +154 -1: test\hsv_refactor_test.dart: HsvColor Refactor Tests intensify increases saturation [E]
+  Expected: a numeric value within <0.01> of <0.7>
+    Actual: <0.502>
+     Which:  differs by <0.19799999999999995>
+  
+  package:matcher                   expect
+  test\hsv_refactor_test.dart 40:7  main.<fn>.<fn>
+  
+00:01 +155 -1: test\hwb_refactor_test.dart: HwbColor Refactor Tests whiten increases whiteness
+00:01 +155 -2: test\hwb_refactor_test.dart: HwbColor Refactor Tests whiten increases whiteness
+00:01 +156 -2: test\hwb_refactor_test.dart: HwbColor Refactor Tests whiten increases whiteness
+00:01 +156 -2: test\hsv_refactor_test.dart: HsvColor Refactor Tests deintensify decreases saturation [E]
+  Expected: a numeric value within <0.01> of <0.3>
+    Actual: <0.498>
+     Which:  differs by <0.198>
+  
+  package:matcher                   expect
+  test\hsv_refactor_test.dart 48:7  main.<fn>.<fn>
+  
+00:01 +157 -2: test\hwb_refactor_test.dart: HwbColor Refactor Tests whiten increases whiteness
+00:01 +157 -3: test\hwb_refactor_test.dart: HwbColor Refactor Tests whiten increases whiteness
+00:01 +158 -3: test\hwb_refactor_test.dart: HwbColor Refactor Tests whiten increases whiteness
+00:01 +158 -3: test\hsv_refactor_test.dart: HsvColor Refactor Tests blend interpolates correctly [E]
+  Expected: a numeric value within <0.1> of <60>
+    Actual: <0.6>
+     Which:  differs by <59.4>
+  
+  package:matcher                   expect
+  test\hsv_refactor_test.dart 57:7  main.<fn>.<fn>
+  
+00:01 +158 -4: test\hwb_refactor_test.dart: HwbColor Refactor Tests whiten increases whiteness
+00:01 +158 -4: test\hsv_refactor_test.dart: HsvColor Refactor Tests opaquer increases alpha [E]
+  Expected: a numeric value within <0.01> of <0.7>
+    Actual: <0.5019607843137255>
+     Which:  differs by <0.19803921568627447>
+  
+  package:matcher                   expect
+  test\hsv_refactor_test.dart 66:7  main.<fn>.<fn>
+  
+00:01 +159 -4: test\hwb_refactor_test.dart: HwbColor Refactor Tests whiten increases whiteness
+00:01 +160 -4: test\hwb_refactor_test.dart: HwbColor Refactor Tests whiten increases whiteness
+00:01 +161 -4: test\hwb_refactor_v2_test.dart: HwbColor Refactor V2 Tests intensify decreases whiteness and blackness
+00:01 +162 -4: test\hwb_refactor_v2_test.dart: HwbColor Refactor V2 Tests intensify decreases whiteness and blackness
+00:01 +163 -4: test\hwb_refactor_test.dart: HwbColor Refactor Tests lerp interpolates correctly
+00:01 +164 -4: test\hwb_refactor_v2_test.dart: HwbColor Refactor V2 Tests deintensify increases whiteness and blackness
+00:01 +165 -4: test\hwb_refactor_test.dart: HwbColor Refactor Tests saturate decreases w and b
+00:01 +166 -4: test\hwb_refactor_v2_test.dart: HwbColor Refactor V2 Tests accented delegates to intensify
+00:01 +167 -4: test\hwb_refactor_test.dart: HwbColor Refactor Tests desaturate increases w and b
+00:01 +168 -4: test\hwb_refactor_v3_test.dart: HwbColor Refactor V3 Tests monochromatic returns correct list
+00:01 +169 -4: test\intensify_deintensify_test.dart: Intensify and Deintensify Tests HctColor intensify increases chroma and decreases tone
+00:01 +170 -4: test\intensify_deintensify_test.dart: Intensify and Deintensify Tests HctColor intensify increases chroma and decreases tone
+00:01 +171 -4: test\intensify_deintensify_test.dart: Intensify and Deintensify Tests HctColor intensify increases chroma and decreases tone
+00:01 +172 -4: test\intensify_deintensify_test.dart: Intensify and Deintensify Tests HctColor intensify increases chroma and decreases tone
+00:01 +173 -4: test\intensify_deintensify_test.dart: Intensify and Deintensify Tests HctColor deintensify decreases chroma and increases tone
+00:01 +174 -4: test\lab_refactor_test.dart: LabColor Refactor Tests whiten increases lightness
+00:01 +175 -4: test\lab_refactor_test.dart: LabColor Refactor Tests whiten increases lightness
+00:01 +176 -4: test\lab_refactor_test.dart: LabColor Refactor Tests whiten increases lightness
+00:01 +177 -4: test\lab_refactor_test.dart: LabColor Refactor Tests whiten increases lightness
+00:01 +178 -4: test\lab_refactor_test.dart: LabColor Refactor Tests whiten increases lightness
+00:01 +179 -4: test\lab_refactor_test.dart: LabColor Refactor Tests whiten increases lightness
+00:01 +180 -4: test\lab_refactor_test.dart: LabColor Refactor Tests whiten increases lightness
+00:01 +181 -4: test\lab_refactor_test.dart: LabColor Refactor Tests blacken decreases lightness
+00:01 +182 -4: test\lab_refactor_test.dart: LabColor Refactor Tests lerp interpolates correctly
+00:01 +183 -4: test\lch_refactor_test.dart: LchColor Refactor Tests whiten increases lightness and desaturates
+00:01 +184 -4: test\lch_refactor_test.dart: LchColor Refactor Tests blacken decreases lightness and desaturates
+00:01 +185 -4: test\lch_refactor_test.dart: LchColor Refactor Tests lerp interpolates correctly
+00:01 +186 -4: test\lch_refactor_test.dart: LchColor Refactor Tests lerp handles hue wrapping
+00:01 +187 -4: test\lighten_test.dart: Lighten Tests HslColor lighten increases lightness
+00:01 +188 -4: test\lighten_test.dart: Lighten Tests HslColor lighten increases lightness
+00:01 +189 -4: test\lighten_test.dart: Lighten Tests HslColor lighten clamps to 1.0
+00:01 +190 -4: test\lighten_test.dart: Lighten Tests ColorIQ lighten works via HSL conversion
+00:01 +191 -4: test\lighten_test.dart: Lighten Tests ColorIQ lighten works via HSL conversion
+00:01 +192 -4: test\lighten_test.dart: Lighten Tests ColorIQ lighten works via HSL conversion
+00:01 +193 -4: test\lighten_test.dart: Lighten Tests ColorIQ lighten works via HSL conversion
+00:01 +194 -4: test\lighten_test.dart: Lighten Tests ColorIQ lighten works via HSL conversion
+00:01 +195 -4: test\lighten_test.dart: Lighten Tests ColorIQ lighten works via HSL conversion
+00:01 +196 -4: test\lighten_test.dart: Lighten Tests ColorIQ lighten works via HSL conversion
+00:01 +197 -4: test\lighten_test.dart: Lighten Tests ColorIQ lighten works via HSL conversion
+00:01 +198 -4: test\lighten_test.dart: Lighten Tests ColorIQ lighten works via HSL conversion
+00:01 +199 -4: test\lighten_test.dart: Lighten Tests ColorIQ lighten works via HSL conversion
+00:01 +200 -4: test\lighten_test.dart: Lighten Tests ColorIQ lighten works via HSL conversion
+00:01 +201 -4: test\lighten_test.dart: Lighten Tests ColorIQ lighten works via HSL conversion
+00:01 +202 -4: test\lighten_test.dart: Lighten Tests ColorIQ lighten works via HSL conversion
+00:01 +203 -4: test\lighten_test.dart: Lighten Tests ColorIQ lighten works via HSL conversion
+00:01 +204 -4: test\lighten_test.dart: Lighten Tests ColorIQ lighten works via HSL conversion
+00:01 +205 -4: test\lighten_test.dart: Lighten Tests ColorIQ lighten works via HSL conversion
+00:01 +206 -4: test\lighten_test.dart: Lighten Tests ColorIQ lighten works via HSL conversion
+00:01 +207 -4: test\lighten_test.dart: Lighten Tests ColorIQ lighten works via HSL conversion
+00:01 +208 -4: test\lighten_test.dart: Lighten Tests ColorIQ lighten works via HSL conversion
+00:01 +209 -4: test\lighten_test.dart: Lighten Tests ColorIQ lighten works via HSL conversion
+00:01 +210 -4: test\lighter_darker_palette_test.dart: Lighter and Darker Palette Tests ColorIQ Lighter Palette (Custom Step)
+00:01 +211 -4: test\lighter_darker_palette_test.dart: Lighter and Darker Palette Tests ColorIQ Lighter Palette (Custom Step)
+00:01 +212 -4: test\lighter_darker_palette_test.dart: Lighter and Darker Palette Tests ColorIQ Lighter Palette (Custom Step)
+00:01 +213 -4: test\lighter_darker_palette_test.dart: Lighter and Darker Palette Tests ColorIQ Lighter Palette (Custom Step)
+00:01 +214 -4: test\lighter_darker_palette_test.dart: Lighter and Darker Palette Tests ColorIQ Lighter Palette (Custom Step)
+00:01 +215 -4: test\lighter_darker_palette_test.dart: Lighter and Darker Palette Tests ColorIQ Lighter Palette (Custom Step)
+00:01 +216 -4: test\lighter_darker_palette_test.dart: Lighter and Darker Palette Tests ColorIQ Lighter Palette (Custom Step)
+00:01 +217 -4: test\lighter_darker_palette_test.dart: Lighter and Darker Palette Tests ColorIQ Lighter Palette (Custom Step)
+00:01 +218 -4: test\lighter_darker_palette_test.dart: Lighter and Darker Palette Tests ColorIQ Lighter Palette (Custom Step)
+00:01 +219 -4: test\lighter_darker_palette_test.dart: Lighter and Darker Palette Tests ColorIQ Lighter Palette (Custom Step)
+00:01 +220 -4: test\lighter_darker_palette_test.dart: Lighter and Darker Palette Tests ColorIQ Lighter Palette (Custom Step)
+00:01 +221 -4: test\lighter_darker_palette_test.dart: Lighter and Darker Palette Tests ColorIQ Lighter Palette (Custom Step)
+00:01 +222 -4: test\lighter_darker_palette_test.dart: Lighter and Darker Palette Tests ColorIQ Lighter Palette (Custom Step)
+00:01 +223 -4: test\lighter_darker_palette_test.dart: Lighter and Darker Palette Tests ColorIQ Lighter Palette (Custom Step)
+00:01 +224 -4: test\lighter_darker_palette_test.dart: Lighter and Darker Palette Tests ColorIQ Lighter Palette (Custom Step)
+00:01 +225 -4: test\lighter_darker_palette_test.dart: Lighter and Darker Palette Tests ColorIQ Lighter Palette (Custom Step)
+00:01 +226 -4: test\new_mandatory_methods_test.dart: New Mandatory Methods Tests Random Color Generation
+00:01 +227 -4: test\new_mandatory_methods_test.dart: New Mandatory Methods Tests Random Color Generation
+00:01 +228 -4: test\new_mandatory_methods_test.dart: New Mandatory Methods Tests Random Color Generation
+00:01 +229 -4: test\new_mandatory_methods_test.dart: New Mandatory Methods Tests Random Color Generation
+00:01 +230 -4: test\new_mandatory_methods_test.dart: New Mandatory Methods Tests Random Color Generation
+00:01 +231 -4: test\new_mandatory_methods_test.dart: New Mandatory Methods Tests Random Color Generation
+00:01 +232 -4: test\new_mandatory_methods_test.dart: New Mandatory Methods Tests Random Color Generation
+00:01 +233 -4: test\new_mandatory_methods_test.dart: New Mandatory Methods Tests Random Color Generation
+00:01 +234 -4: test\new_mandatory_methods_test.dart: New Mandatory Methods Tests Random Color Generation
+00:01 +235 -4: test\new_mandatory_methods_test.dart: New Mandatory Methods Tests Random Color Generation
+00:01 +236 -4: test\new_mandatory_methods_test.dart: New Mandatory Methods Tests Random Color Generation
+00:01 +237 -4: test\new_mandatory_methods_test.dart: New Mandatory Methods Tests Random Color Generation
+Γ£ô Random Color Generation test completed
+  Original ColorIQ: 0xFF000000
+  Random ColorIQ: 0xFF651CC0
+  Random HslColor: H=189.5, S=0.56, L=0.15
+00:01 +238 -4: test\ok_hsv_refactor_test.dart: OkHsvColor Refactor Tests temperature returns correct value
+00:01 +239 -4: test\new_mandatory_methods_test.dart: New Mandatory Methods Tests isEqual
+Γ£ô isEqual test completed
+  c1 == c2: true
+  c1 == c3: false
+  c1 == hsl1 (cross-type): true
+00:01 +240 -4: test\ok_hsv_refactor_test.dart: OkHsvColor Refactor Tests whiten increases value
+00:01 +240 -4: test\new_mandatory_methods_test.dart: New Mandatory Methods Tests Luminance
+Γ£ô Luminance test completed
+  White luminance: 1.0000
+  Black luminance: 0.0000
+  Red luminance: 0.2126
+  HSL White luminance: 1.0
+00:01 +241 -4: test\ok_hsv_refactor_test.dart: OkHsvColor Refactor Tests whiten increases value
+00:01 +241 -4: test\new_mandatory_methods_test.dart: New Mandatory Methods Tests Brightness
+Γ£ô Brightness test completed
+  White brightness: Brightness.light (lum: 1.0000)
+  Black brightness: Brightness.dark (lum: 0.0000)
+  Dark grey brightness: Brightness.dark (lum: 0.0319)
+  Light grey brightness: Brightness.light (lum: 0.5776)
+00:01 +242 -4: test\ok_hsv_refactor_test.dart: OkHsvColor Refactor Tests whiten increases value
+00:01 +243 -4: test\ok_hsv_refactor_test.dart: OkHsvColor Refactor Tests blacken decreases value
+00:01 +244 -4: test\ok_hsv_refactor_test.dart: OkHsvColor Refactor Tests lerp interpolates correctly
+00:01 +245 -4: test\ok_hsv_refactor_test.dart: OkHsvColor Refactor Tests intensify increases saturation
+00:01 +246 -4: test\ok_hsv_refactor_test.dart: OkHsvColor Refactor Tests deintensify decreases saturation
+00:01 +247 -4: test\ok_hsv_test.dart: OkHsvColor Tests intensify increases saturation and decreases value
+00:01 +248 -4: test\ok_hsv_test.dart: OkHsvColor Tests deintensify decreases saturation and increases value
+00:01 +249 -4: test\ok_lab_refactor_test.dart: OkLabColor Refactor Tests whiten increases lightness
+00:01 +250 -4: test\ok_lab_refactor_test.dart: OkLabColor Refactor Tests whiten increases lightness
+00:01 +251 -4: test\ok_lab_refactor_test.dart: OkLabColor Refactor Tests whiten increases lightness
+00:01 +252 -4: test\ok_lab_refactor_test.dart: OkLabColor Refactor Tests whiten increases lightness
+00:01 +253 -4: test\ok_lab_refactor_test.dart: OkLabColor Refactor Tests whiten increases lightness
+00:01 +254 -4: test\ok_lab_refactor_test.dart: OkLabColor Refactor Tests whiten increases lightness
+00:01 +255 -4: test\ok_lab_refactor_test.dart: OkLabColor Refactor Tests whiten increases lightness
+00:01 +256 -4: test\ok_lab_refactor_test.dart: OkLabColor Refactor Tests whiten increases lightness
+00:01 +257 -4: test\ok_hsv_test.dart: OkHsvColor Tests random generates valid color
+00:01 +258 -4: test\ok_hsv_test.dart: OkHsvColor Tests random generates valid color
+00:01 +259 -4: test\ok_hsv_test.dart: OkHsvColor Tests random generates valid color
+00:01 +260 -4: test\ok_lch_refactor_test.dart: OkLchColor Refactor Tests whiten increases lightness
+00:01 +261 -4: test\ok_lch_refactor_test.dart: OkLchColor Refactor Tests blacken decreases lightness
+00:01 +262 -4: test\ok_lch_refactor_test.dart: OkLchColor Refactor Tests lerp interpolates correctly
+00:01 +263 -4: test\ok_lch_refactor_test.dart: OkLchColor Refactor Tests lerp handles hue wrapping
+00:01 +264 -4: test\ok_lch_test.dart: OkLchColor Tests grayscale sets chroma to 0
+00:01 +265 -4: test\ok_lch_test.dart: OkLchColor Tests grayscale sets chroma to 0
+00:01 +266 -4: test\ok_lch_test.dart: OkLchColor Tests grayscale sets chroma to 0
+00:01 +267 -4: test\ok_lch_test.dart: OkLchColor Tests grayscale sets chroma to 0
+00:01 +268 -4: test\ok_lch_test.dart: OkLchColor Tests grayscale sets chroma to 0
+00:01 +269 -4: test\ok_lch_test.dart: OkLchColor Tests whiten moves towards white
+00:02 +270 -4: test\palettes_test.dart: Palette Methods Tests generateBasicPalette returns 7 colors
+00:02 +271 -4: test\palettes_test.dart: Palette Methods Tests generateBasicPalette returns 7 colors
+00:02 +272 -4: test\palettes_test.dart: Palette Methods Tests generateBasicPalette returns 7 colors
+00:02 +273 -4: test\palettes_test.dart: Palette Methods Tests generateBasicPalette returns 7 colors
+00:02 +274 -4: test\palettes_test.dart: Palette Methods Tests generateBasicPalette returns 7 colors
+00:02 +275 -4: test\palettes_test.dart: Palette Methods Tests generateBasicPalette returns 7 colors
+00:02 +276 -4: test\palettes_test.dart: Palette Methods Tests generateBasicPalette returns 7 colors
+00:02 +277 -4: test\palettes_test.dart: Palette Methods Tests generateBasicPalette returns 7 colors
+00:02 +278 -4: test\palettes_test.dart: Palette Methods Tests generateBasicPalette returns 7 colors
+00:02 +279 -4: test\palettes_test.dart: Palette Methods Tests generateBasicPalette returns 7 colors
+00:02 +280 -4: test\palettes_test.dart: Palette Methods Tests generateBasicPalette returns 7 colors
+00:02 +281 -4: test\palettes_test.dart: Palette Methods Tests generateBasicPalette returns 7 colors
+00:02 +282 -4: test\palettes_test.dart: Palette Methods Tests generateBasicPalette returns 7 colors
+00:02 +283 -4: test\palettes_test.dart: Palette Methods Tests generateBasicPalette returns 7 colors
+00:02 +284 -4: test\palettes_test.dart: Palette Methods Tests generateBasicPalette returns 7 colors
+00:02 +285 -4: test\palettes_test.dart: Palette Methods Tests generateBasicPalette returns 7 colors
+00:02 +286 -4: test\palettes_test.dart: Palette Methods Tests generateBasicPalette returns 7 colors
+00:02 +287 -4: test\palettes_test.dart: Palette Methods Tests generateBasicPalette returns 7 colors
+00:02 +288 -4: test\palettes_test.dart: Palette Methods Tests generateBasicPalette returns 7 colors
+00:02 +289 -4: test\palettes_test.dart: Palette Methods Tests generateBasicPalette returns 7 colors
+00:02 +290 -4: test\palettes_test.dart: Palette Methods Tests generateBasicPalette returns 7 colors
+00:02 +291 -4: test\srgb_test.dart: sRGB and Linear sRGB Tests ColorIQ srgb getter
+Γ£ô ColorIQ srgb getter test completed
+00:02 +292 -4: test\srgb_test.dart: sRGB and Linear sRGB Tests ColorIQ srgb getter
+  sRGB values: [255, 100, 150, 200]
+00:02 +293 -4: test\srgb_test.dart: sRGB and Linear sRGB Tests ColorIQ srgb getter
+00:02 +294 -4: test\saturate_desaturate_test.dart: Saturate/Desaturate Tests ColorIQ saturate/desaturate (via HSL)
+00:02 +294 -4: test\srgb_test.dart: sRGB and Linear sRGB Tests ColorIQ linearSrgb getter (Red)
+Γ£ô ColorIQ linearSrgb getter (Red) test completed
+  Linear sRGB values: 1.0
+00:02 +295 -4: test\saturate_desaturate_test.dart: Saturate/Desaturate Tests ColorIQ saturate/desaturate (via HSL)
+00:02 +295 -4: test\srgb_test.dart: sRGB and Linear sRGB Tests ColorIQ linearSrgb getter (Mid Gray)
+Γ£ô ColorIQ linearSrgb getter (Mid Gray) test completed
+  Linear sRGB values: [0.21586, 0.21586, 0.21586, 1.0]
+00:02 +296 -4: test\saturate_desaturate_test.dart: Saturate/Desaturate Tests ColorIQ saturate/desaturate (via HSL)
+00:02 +296 -4: test\srgb_test.dart: sRGB and Linear sRGB Tests ColorIQ linearSrgb getter (Dark Gray - Linear Segment)
+Γ£ô ColorIQ linearSrgb getter (Dark Gray - Linear Segment) test completed
+  Linear sRGB values: [0.003035, 0.003035, 0.003035, 1.0]
+00:02 +297 -4: test\saturate_desaturate_test.dart: Saturate/Desaturate Tests ColorIQ saturate/desaturate (via HSL)
+00:02 +298 -4: test\saturate_desaturate_test.dart: Saturate/Desaturate Tests ColorIQ saturate/desaturate (via HSL)
+00:02 +298 -4: test\srgb_test.dart: sRGB and Linear sRGB Tests Other models delegation (HslColor)
+Γ£ô Other models delegation (HslColor) test completed
+  HslColor(0.0, 1.0, 0.5)
+  sRGB: [255, 255, 0, 0]
+  Linear sRGB: [1.0, 0.0, 0.0, 1.0]
+00:02 +299 -4: test\saturate_desaturate_test.dart: Saturate/Desaturate Tests ColorIQ saturate/desaturate (via HSL)
+00:02 +300 -4: test\saturate_desaturate_test.dart: Saturate/Desaturate Tests ColorIQ saturate/desaturate (via HSL)
+00:02 +300 -4: test\srgb_test.dart: sRGB and Linear sRGB Tests Other models delegation (LabColor)
+Γ£ô Other models delegation (LabColor) test completed
+  LabColor(53.24, 80.09, 67.2)
+00:02 +301 -4: test\saturate_desaturate_test.dart: Saturate/Desaturate Tests ColorIQ saturate/desaturate (via HSL)
+00:02 +301 -4: test\srgb_test.dart: sRGB and Linear sRGB Tests Other models delegation (LabColor)
+  sRGB: [255, 255, 0, 0]
+00:02 +302 -4: test\saturate_desaturate_test.dart: Saturate/Desaturate Tests ColorIQ saturate/desaturate (via HSL)
+00:02 +303 -4: test\saturate_desaturate_test.dart: Saturate/Desaturate Tests ColorIQ saturate/desaturate (via HSL)
+00:02 +304 -4: test\saturate_desaturate_test.dart: Saturate/Desaturate Tests ColorIQ saturate/desaturate (via HSL)
+00:02 +305 -4: test\saturate_desaturate_test.dart: Saturate/Desaturate Tests ColorIQ saturate/desaturate (via HSL)
+00:02 +306 -4: test\saturate_desaturate_test.dart: Saturate/Desaturate Tests ColorIQ saturate/desaturate (via HSL)
+00:02 +307 -4: test\saturate_desaturate_test.dart: Saturate/Desaturate Tests ColorIQ saturate/desaturate (via HSL)
+00:02 +308 -4: test\saturate_desaturate_test.dart: Saturate/Desaturate Tests ColorIQ saturate/desaturate (via HSL)
+00:02 +309 -4: test\saturate_desaturate_test.dart: Saturate/Desaturate Tests ColorIQ saturate/desaturate (via HSL)
+00:02 +310 -4: test\saturate_desaturate_test.dart: Saturate/Desaturate Tests ColorIQ saturate/desaturate (via HSL)
+00:02 +311 -4: test\saturate_desaturate_test.dart: Saturate/Desaturate Tests ColorIQ saturate/desaturate (via HSL)
+00:02 +312 -4: test\utility_methods_test.dart: Utility Methods Tests ColorIQ grayscale
+00:02 +313 -4: test\utility_methods_test.dart: Utility Methods Tests ColorIQ grayscale
+00:02 +314 -4: test\utility_methods_test.dart: Utility Methods Tests ColorIQ grayscale
+00:02 +315 -4: test\utility_methods_test.dart: Utility Methods Tests ColorIQ grayscale
+00:02 +316 -4: test\utility_methods_test.dart: Utility Methods Tests ColorIQ grayscale
+00:02 +317 -4: test\utility_methods_test.dart: Utility Methods Tests ColorIQ grayscale
+00:02 +318 -4: test\utility_methods_test.dart: Utility Methods Tests ColorIQ grayscale
+00:02 +319 -4: test\utility_methods_test.dart: Utility Methods Tests ColorIQ grayscale
+00:02 +320 -4: test\utility_methods_test.dart: Utility Methods Tests ColorIQ grayscale
+00:02 +321 -4: test\yuv_test.dart: YuvColor Tests darken decreases Y
+00:02 +322 -4: test\yuv_test.dart: YuvColor Tests darken decreases Y
+00:02 +323 -4: test\yuv_test.dart: YuvColor Tests darken decreases Y
+00:02 +324 -4: test\yuv_test.dart: YuvColor Tests darken decreases Y
+00:02 +325 -4: test\yuv_test.dart: YuvColor Tests darken decreases Y
+00:02 +326 -4: test\yuv_test.dart: YuvColor Tests darken decreases Y
+00:02 +327 -4: test\yuv_test.dart: YuvColor Tests brighten increases Y
+00:02 +328 -4: test\yuv_test.dart: YuvColor Tests lighten increases Y
+00:02 +329 -4: test\yuv_test.dart: YuvColor Tests saturate increases U and V magnitude
+00:02 +330 -4: test\yuv_test.dart: YuvColor Tests desaturate decreases U and V magnitude
+00:02 +331 -4: test\yuv_test.dart: YuvColor Tests whiten moves towards white
+00:02 +332 -4: test\yuv_test.dart: YuvColor Tests blacken moves towards black
+00:02 +333 -4: test\yuv_test.dart: YuvColor Tests lerp interpolates correctly
+00:02 +334 -4: Some tests failed.
+
+Consider enabling the flag chain-stack-traces to receive more detailed exceptions.
+For example, 'dart test --chain-stack-traces'.

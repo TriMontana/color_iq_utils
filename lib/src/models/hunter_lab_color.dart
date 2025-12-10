@@ -93,7 +93,6 @@ class HunterLabColor extends CommonIQ implements ColorSpacesIQ {
     return saturate(amount);
   }
 
-  @override
   HunterLabColor deintensify([final double amount = 10]) => desaturate(amount);
 
   @override

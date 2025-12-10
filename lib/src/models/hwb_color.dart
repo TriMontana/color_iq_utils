@@ -169,7 +169,7 @@ class HwbColor extends CommonIQ implements ColorSpacesIQ {
 
   @override
   HwbColor brighten([final Percent amount = Percent.v20]) =>
-      copyWith(b: blackness - amount);
+      copyWith(b: max(0.0, blackness - amount));
 
   @override
   HwbColor saturate([final double amount = 25]) {
@@ -368,12 +368,12 @@ class HwbColor extends CommonIQ implements ColorSpacesIQ {
       'type': 'HwbColor',
       'hue': h,
       'whiteness': w,
-      'blackness': b,
+      'blackness': blackness,
       'alpha': alpha,
     };
   }
 
   @override
   String toString() =>
-      'HwbColor(h: ${h.toStrTrimZeros(3)}, w: ${w.toStringAsFixed(2)}, b: ${b.toStringAsFixed(2)}, alpha: ${alpha.toStringAsFixed(2)})';
+      'HwbColor(h: ${h.toStrTrimZeros(3)}, w: ${w.toStringAsFixed(2)}, b: ${blackness.toStringAsFixed(2)}, alpha: ${alpha.toStringAsFixed(2)})';
 }

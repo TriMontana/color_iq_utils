@@ -6,7 +6,7 @@ void main() {
     test('darken increases blackness', () {
       const HwbColor color = HwbColor(0.0, 0.0, 0.2); // B = 0.2
       final HwbColor darkened = color.darken(20);
-      expect(darkened.b, closeTo(0.4, 0.001));
+      expect(darkened.blackness, closeTo(0.4, 0.001));
       expect(darkened.w, color.w);
       expect(darkened.h, color.h);
     });
@@ -14,7 +14,7 @@ void main() {
     test('brighten decreases blackness', () {
       const HwbColor color = HwbColor(0.0, 0.0, 0.5); // B = 0.5
       final HwbColor brightened = color.brighten(Percent.v20);
-      expect(brightened.b, closeTo(0.3, 0.001));
+      expect(brightened.blackness, closeTo(0.3, 0.001));
       expect(brightened.w, color.w);
       expect(brightened.h, color.h);
     });
@@ -22,13 +22,13 @@ void main() {
     test('darken clamps to 1.0', () {
       const HwbColor color = HwbColor(0.0, 0.0, 0.9);
       final HwbColor darkened = color.darken(20);
-      expect(darkened.b, 1.0);
+      expect(darkened.blackness, 1.0);
     });
 
     test('brighten clamps to 0.0', () {
       const HwbColor color = HwbColor(0.0, 0.0, 0.1);
       final HwbColor brightened = color.brighten(Percent.v20);
-      expect(brightened.b, 0.0);
+      expect(brightened.blackness, 0.0);
     });
   });
 }

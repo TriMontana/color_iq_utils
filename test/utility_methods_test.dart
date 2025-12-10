@@ -59,7 +59,7 @@ void main() {
     test('Other models delegation (CmykColor)', () {
       const CMYK cmyk = CMYK(0, 0, 0, 1); // Black
       final CMYK inverted =
-          cmyk.inverted as CMYK; // Should be White (0, 0, 0, 0)
+          CMYK.fromInt(cmyk.inverted); // Should be White (0, 0, 0, 0)
       expect(inverted.k, 0.0);
     });
   });
