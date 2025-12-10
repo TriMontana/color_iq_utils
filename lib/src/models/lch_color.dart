@@ -164,6 +164,7 @@ class LchColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
+  @override
   LchColor copyWith({final double? l, final double? c, final double? h}) {
     return LchColor(l ?? this.l, c ?? this.c, h ?? this.h);
   }

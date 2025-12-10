@@ -8,6 +8,7 @@ void main() {
       final CMYK whitened = color.whiten(50);
 
       expect(whitened.k, lessThan(color.k));
+      print('✓ CMYK.whiten decreases K');
     });
 
     test('blacken increases K', () {
@@ -15,6 +16,7 @@ void main() {
       final CMYK blackened = color.blacken(50);
 
       expect(blackened.k, greaterThan(color.k));
+      print('✓ CMYK.blacken increases K');
     });
 
     test('lerp interpolates correctly', () {

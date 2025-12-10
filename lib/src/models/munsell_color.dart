@@ -224,6 +224,7 @@ class MunsellColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
+  @override
   MunsellColor copyWith({
     final String? hue,
     final double? munsellValue,

@@ -12,6 +12,7 @@ void main() {
       expect(palette[0].brightness, equals(Brightness.dark)); // Darkest
       // Note: Lightness check depends on implementation, but index 0 should be darker than index 6
       expect(palette[0].hsl.l, lessThan(palette[6].hsl.l));
+
     });
 
     test('tonesPalette returns 5 colors', () {
@@ -22,6 +23,7 @@ void main() {
       // Check that subsequent colors are more gray (less saturated)
       expect(palette[1].hsl.s, lessThan(palette[0].hsl.s));
       expect(palette[4].hsl.s, lessThan(palette[1].hsl.s));
+      //
     });
 
     test('analogous returns correct count and offset', () {
@@ -63,6 +65,7 @@ void main() {
       final List<HctColor> tetrad = hct.tetrad();
       expect(tetrad.length, 4);
       expect(tetrad.first, isA<HctColor>());
+      print('✓ Palette Methods Tests');
     });
 
     test('square returns 4 colors with 90 degree spacing', () {
@@ -91,6 +94,7 @@ void main() {
       expect(palette30.length, 4);
       expect(palette30[1].h, closeTo(30, 1.0));
       expect(palette30[3].h, closeTo(210, 1.0)); // 180 + 30
+      print('✓ Palette Methods Tests');
     });
   });
 }

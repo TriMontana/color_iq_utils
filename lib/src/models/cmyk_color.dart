@@ -196,6 +196,7 @@ class CMYK extends CommonIQ implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
+  @override
   CMYK copyWith({
     final double? c,
     final double? m,

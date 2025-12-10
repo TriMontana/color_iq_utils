@@ -17,6 +17,7 @@ void main() {
 
       expect(blackened.brightnessHsb.val, lessThan(color.brightnessHsb.val));
       expect(blackened.s, lessThan(color.s));
+      print('✓ HsbColor Refactor Tests');
     });
 
     test('lerp interpolates correctly', () {
@@ -27,6 +28,7 @@ void main() {
       expect(mid.h, closeTo(60, 0.1)); // Yellow
       expect(mid.s, closeTo(1.0, 0.01));
       expect(mid.brightnessHsb.val, closeTo(0.5, 0.01));
+      print('✓ HsbColor Refactor Tests');
     });
 
     test('intensify increases saturation', () {

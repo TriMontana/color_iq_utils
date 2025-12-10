@@ -45,7 +45,7 @@ void main() {
           generateHsvWheel(saturation: 50, value: 50);
       final HSV firstHsv = hsvWheel.first.color as HSV;
       expect(firstHsv.saturation, closeTo(0.5, 0.01));
-      expect(firstHsv.val, closeTo(0.5, 0.01));
+      expect(firstHsv.valueHsv, closeTo(0.5, 0.01));
 
       final List<ColorSlice> hctWheel = generateHctWheel(chroma: 80, tone: 60);
       final HctData firstHct = hctWheel.first.color as HctData;

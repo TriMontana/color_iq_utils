@@ -8,6 +8,7 @@ void main() {
       final HctData whitened = color.whiten(50);
 
       expect(whitened.tone, greaterThan(color.tone));
+      print(whitened.tone);
     });
 
     test('blacken decreases tone', () {
@@ -16,6 +17,7 @@ void main() {
 
       expect(blackened.tone, lessThan(color.tone));
       print(blackened.tone);
+      //
     });
 
     test('lerp interpolates correctly', () {

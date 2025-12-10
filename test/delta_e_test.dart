@@ -8,6 +8,7 @@ void main() {
       expect(c1.deltaE(c1, algorithm: DeltaEAlgorithm.cie76), equals(0.0));
       expect(c1.deltaE(c1, algorithm: DeltaEAlgorithm.cie94), equals(0.0));
       expect(c1.deltaE(c1, algorithm: DeltaEAlgorithm.ciede2000), equals(0.0));
+      //
     });
 
     test('CIE76 Calculation', () {

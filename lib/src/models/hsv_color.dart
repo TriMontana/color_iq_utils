@@ -24,13 +24,13 @@ import 'package:material_color_utilities/hct/cam16.dart';
 class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
   final double h;
   final Percent saturation;
-  final Percent val;
+  final Percent valueHsv;
 
-  const HSV(this.h, this.saturation, this.val,
+  const HSV(this.h, this.saturation, this.valueHsv,
       {final Percent a = Percent.max, final int? colorId})
       : super(colorId, alpha: a);
 
-  const HSV.fromAHSV(final Percent a, this.h, this.saturation, this.val,
+  const HSV.fromAHSV(final Percent a, this.h, this.saturation, this.valueHsv,
       {final int? colorId})
       : super(colorId, alpha: a);
 
@@ -78,7 +78,7 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
 
   @override
   int get hexId =>
-      super.colorId ?? HSV.hexIdFromHSV(h, saturation, val, alpha.val);
+      super.colorId ?? HSV.hexIdFromHSV(h, saturation, valueHsv, alpha.val);
 
   @override
   Cam16 get cam16 => Cam16.fromInt(hexId);
@@ -104,9 +104,9 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
   /// Returns this color in RGB.
   @override
   ColorIQ toColor() {
-    final double chroma = saturation * val.val;
+    final double chroma = saturation * valueHsv.val;
     final double secondary = chroma * (1.0 - (((h / 60.0) % 2.0) - 1.0).abs());
-    final double match = val.val - chroma;
+    final double match = valueHsv.val - chroma;
 
     return colorFromHue(alpha.val, h, chroma, secondary, match);
   }
@@ -122,11 +122,11 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
 
   @override
   String toString() => 'HsvColor(h: ${h.toStrTrimZeros(3)}, ' //
-      's: ${saturation.toStrTrimZeros(3)}, v: ${val.toStrTrimZeros(2)}, '
+      's: ${saturation.toStrTrimZeros(3)}, v: ${valueHsv.toStrTrimZeros(2)}, '
       'a: ${alpha.toStrTrimZeros(3)})';
 
   String toStringIQ() => 'HsvColor(h: ${h.toStrTrimZeros(3)}, ' //
-      's: ${saturation.toStrTrimZeros(3)}, v: ${val.toStrTrimZeros(2)}, '
+      's: ${saturation.toStrTrimZeros(3)}, v: ${valueHsv.toStrTrimZeros(2)}, '
       'a: ${alpha.toStrTrimZeros(3)}) - $hexStr';
 
   @override
@@ -142,7 +142,7 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
 
   @override
   HSV darken([final double amount = 20]) =>
-      copyWith(val: Percent(max(0.0, val.val - amount / 100)));
+      copyWith(val: Percent(max(0.0, valueHsv.val - amount / 100)));
 
   @override
   HSV whiten([final double amount = 20]) => lerp(cWhite.hsv, amount / 100);
@@ -171,29 +171,29 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
     return HSV(
       lerpHue(h, otherHsv.h, t),
       saturation.lerpTo(otherHsv.saturation, t),
-      val.lerpTo(otherHsv.val, t),
+      valueHsv.lerpTo(otherHsv.valueHsv, t),
     );
   }
 
   @override
   HSV lighten([final double amount = 20]) =>
-      copyWith(val: Percent(min(1.0, val.val + amount / 100)));
+      copyWith(val: Percent(min(1.0, valueHsv.val + amount / 100)));
 
   @override
   HSV brighten([final Percent amount = Percent.v20]) =>
-      copyWith(val: Percent(min(1.0, val.val + amount.val)));
+      copyWith(val: Percent(min(1.0, valueHsv.val + amount.val)));
 
   HSV intensify([final double amount = 20]) {
     final Percent factor = Percent(amount / 100);
     final Percent newSat = (saturation + factor).clampToPercent;
-    final Percent newVal = (val + factor).clampToPercent;
+    final Percent newVal = (valueHsv + factor).clampToPercent;
     return copyWith(saturation: newSat, val: newVal);
   }
 
   HSV deintensify([final double amount = 20]) {
     final Percent factor = Percent(amount / 100);
     final Percent newSat = (saturation - factor).clampToPercent;
-    final Percent newVal = (val - factor).clampToPercent;
+    final Percent newVal = (valueHsv - factor).clampToPercent;
     return copyWith(saturation: newSat, val: newVal);
   }
 
@@ -210,13 +210,14 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
+  @override
   HSV copyWith({
     final double? hue,
     final Percent? saturation,
     final Percent? val,
     final Percent? alpha,
   }) {
-    return HSV(hue ?? h, saturation ?? this.saturation, val ?? this.val,
+    return HSV(hue ?? h, saturation ?? this.saturation, val ?? valueHsv,
         a: alpha ?? this.alpha);
   }
 
@@ -228,7 +229,7 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
   @override
   HSV opaquer([final double amount = 20]) {
     final Percent x = min(1.0, alpha.val + amount / 100).clampToPercent;
-    return HSV(h, saturation, val, a: x);
+    return HSV(h, saturation, valueHsv, a: x);
   }
 
   @override
@@ -249,12 +250,13 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
   HSV increaseTransparency([final Percent amount = Percent.v20]) =>
       copyWith(alpha: max(0.0, alpha - amount).clampToPercent);
 
+
   @override
   List<HSV> get monochromatic {
     final List<HSV> results = <HSV>[];
     for (int i = 0; i < 5; i++) {
       final double delta = (i - 2) * 10;
-      results.add(withValue((val + Percent(delta / 100)).clampToPercent));
+      results.add(withValue((valueHsv + Percent(delta / 100)).clampToPercent));
     }
     return results;
   }
@@ -298,8 +300,8 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
     if (gamut == Gamut.sRGB) {
       return saturation.val >= 0 &&
           saturation.val <= 1 &&
-          val.val >= 0 &&
-          val.val <= 1;
+          valueHsv.val >= 0 &&
+          valueHsv.val <= 1;
     }
     return toColor().isWithinGamut(gamut);
   }
@@ -316,7 +318,7 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
   List<HSV> tonesPalette() {
     // Gray in HSV is (0, 0, 0.5) roughly, or just desaturated.
     // ColorIQ uses 0xFF808080 which is HSV(0, 0, 0.502).
-    final HSV gray = HSV(0.0, Percent.zero, Percent(0.50196));
+    const HSV gray = HSV(0.0, Percent.zero, Percent(0.50196));
     return <HSV>[
       this,
       lerp(gray, 0.15),
@@ -416,14 +418,14 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
       'type': 'HsvColor',
       'hue': h,
       'saturation': saturation,
-      'value': val.val,
+      'value': valueHsv.val,
       'alpha': alpha,
     };
   }
 
   String createStr([final int precision = 4]) =>
       'HsvColor(h: ${h.toStrTrimZeros(precision)}, ' //
-      's: ${saturation.toStringAsFixed(precision)}, v: ${val.toStringAsFixed(precision)}, '
+      's: ${saturation.toStringAsFixed(precision)}, v: ${valueHsv.toStringAsFixed(precision)}, '
       'a: ${alpha.toStringAsFixed(precision)})';
 }
 
@@ -438,7 +440,7 @@ class HsvStrategy extends ManipulationStrategy {
     // Let's assume increasing Value here:
     hsv ??= HSV.fromInt(argb);
     final HSV modified =
-        hsv.withValue((hsv.val.val + (amount / 100)).clampToPercent);
+        hsv.withValue((hsv.valueHsv.val + (amount / 100)).clampToPercent);
     return modified.toColor().value;
   }
 
@@ -461,7 +463,7 @@ class HsvStrategy extends ManipulationStrategy {
 
     // Increase Saturation and Value
     final Percent newSat = (hsv.saturation + amount).clampToPercent;
-    final Percent newVal = (hsv.val.val - amount.half).clampToPercent;
+    final Percent newVal = (hsv.valueHsv.val - amount.half).clampToPercent;
 
     return hsv.withSaturation(newSat).withValue(newVal).toColor().value;
   }
@@ -475,7 +477,7 @@ class HsvStrategy extends ManipulationStrategy {
 
     // Decrease Saturation and Value
     final Percent newSat = (hsv.saturation - amount);
-    final Percent newVal = hsv.val - amount.half;
+    final Percent newVal = hsv.valueHsv - amount.half;
 
     return hsv.withSaturation(newSat).withValue(newVal).toColor().value;
   }

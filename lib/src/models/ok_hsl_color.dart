@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
-import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/ok_lch_color.dart';
 
 /// A color model that represents colors using Hue, Saturation, and Lightness
@@ -195,6 +194,7 @@ class OkHslColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
+  @override
   OkHslColor copyWith(
       {final double? hue,
       final double? s,

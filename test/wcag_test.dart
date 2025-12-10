@@ -10,6 +10,7 @@ void main() {
 
       // Self contrast
       expect(cBlack.contrastWith(cBlack), equals(1.0));
+      //
     });
 
     test('Meets WCAG Levels', () {

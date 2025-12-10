@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
-import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/ok_lab_color.dart';
 
 /// A color model that represents color in the Okhsv color space.
@@ -211,6 +210,7 @@ class OkHsvColor extends CommonIQ implements ColorSpacesIQ {
       copyWith(v: Percent(min(1.0, val + amount / 100)));
 
   /// Creates a copy of this color with the given fields replaced with the new values.
+  @override
   OkHsvColor copyWith({
     final double? hue,
     final double? saturation,

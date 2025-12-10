@@ -14,6 +14,7 @@ void main() {
               color.blackness)); // Blackness shouldn't change for pure whiten?
       // Actually whiten(50) lerps to white (0, 1, 0).
       // So w goes 0 -> 0.5. b goes 0 -> 0.
+      //
     });
 
     test('blacken increases blackness', () {

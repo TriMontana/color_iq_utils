@@ -235,6 +235,7 @@ class HwbColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
+  @override
   HwbColor copyWith({
     final double? h,
     final double? whiteness,

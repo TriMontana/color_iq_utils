@@ -10,6 +10,7 @@ void main() {
       expect(whitened.l, greaterThan(color.l));
       expect(whitened.u, closeTo(0, 0.1));
       expect(whitened.v, closeTo(0, 0.1));
+      // print('✓ LuvColor Refactor Tests');
     });
 
     test('blacken decreases lightness', () {

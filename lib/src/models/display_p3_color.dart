@@ -182,6 +182,7 @@ class DisplayP3Color extends CommonIQ implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
+  @override
   DisplayP3Color copyWith(
       {final Percent? r, final Percent? g, final Percent? b}) {
     return DisplayP3Color(r ?? this.r, g ?? this.g, b ?? this.b);

@@ -10,7 +10,7 @@ void main() {
       final HSV hsvOriginal = color.hsv;
       final HSV hsvBrightened = brightened.hsv;
 
-      expect(hsvBrightened.val, greaterThan(hsvOriginal.val));
+      expect(hsvBrightened.valueHsv, greaterThan(hsvOriginal.valueHsv));
       expect(hsvBrightened.h, closeTo(hsvOriginal.h, 1.0));
       expect(hsvBrightened.saturation, closeTo(hsvOriginal.saturation, 0.01));
       print('✓ ColorIQ.brighten increases HSV Value');
@@ -20,7 +20,7 @@ void main() {
       const HSV color = HSV(0, Percent.max, Percent.v50); // Dark Red
       final HSV brightened = color.brighten(Percent.v20);
 
-      expect(brightened.val, closeTo(0.7, 0.01));
+      expect(brightened.valueHsv, closeTo(0.7, 0.01));
       expect(brightened.h, equals(0));
       expect(brightened.saturation, equals(1.0));
       print('✓ HsvColor.brighten increases Value');
@@ -53,8 +53,8 @@ void main() {
       const CMYK cmyk = CMYK(0, 1, 1, 0.5); // Dark Red
       final CMYK brightened = cmyk.brighten(20);
       expect(
-        brightened.toColor().hsv.val,
-        greaterThan(cmyk.toColor().hsv.val),
+        brightened.toColor().hsv.valueHsv,
+        greaterThan(cmyk.toColor().hsv.valueHsv),
       );
       print('✓ CMYK.brighten delegates correctly');
     });

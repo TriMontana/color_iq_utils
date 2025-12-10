@@ -378,7 +378,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
 
   /// Converts this color to HSB (Alias for HSV).
   HsbColor toHsb() {
-    return HsbColor(hsv.h, hsv.saturation, hsv.val);
+    return HsbColor(hsv.h, hsv.saturation, hsv.valueHsv);
   }
 
   /// Converts this color to HWB.
@@ -593,6 +593,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
           alphaInt, red ?? this.red, green ?? this.green, blue ?? this.blue);
 
   /// Creates a copy of this color with the given fields replaced with the new values.
+  @override
   ColorIQ copyWith(
       {final int? alpha, final int? red, final int? green, final int? blue}) {
     return ColorIQ.fromArgbInts(alpha ?? alphaInt, red ?? this.red,

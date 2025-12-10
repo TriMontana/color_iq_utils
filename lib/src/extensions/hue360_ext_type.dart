@@ -13,8 +13,8 @@ import 'package:color_iq_utils/src/utils/error_handling.dart';
 /// -- and compile-time phasing by use of 'const' (constants)
 ///    and provision of numerous ready-made const values (to reduce code
 ///    and number of objects in memory).
-///    See also  [LinRGB], [Flt0toInf], [XYZ], [Uint8IQ],
-extension type const Hue._(double _) implements FloatIQ {
+///    See also  [LinRGB], [XYZ], [Uint8IQ],
+extension type const Hue._(double _) implements double {
   // const Degrees360(double val) : this._(val);
   const Hue(final double vl)
       : _ = vl,

@@ -18,6 +18,7 @@ void main() {
       // But cWhite (0xFFFFFFFF) -> Lch might have non-zero chroma due to gamut mapping or conversion noise?
       // Actually cWhite is L=100, C=0.
       expect(whitened.h, closeTo(color.h, 1.0));
+      print('✓ LchColor Refactor Tests');
     });
 
     test('blacken decreases lightness and desaturates', () {
@@ -27,6 +28,7 @@ void main() {
       expect(blackened.l, lessThan(color.l));
       expect(blackened.c, lessThan(color.c));
       expect(blackened.h, closeTo(color.h, 0.1));
+      print('✓ LchColor Refactor Tests');
     });
 
     test('lerp interpolates correctly', () {

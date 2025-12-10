@@ -221,6 +221,7 @@ class HSL extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
+  @override
   HSL copyWith({
     final double? hue,
     final double? saturation,

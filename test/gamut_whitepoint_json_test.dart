@@ -38,7 +38,7 @@ void main() {
       final HSV fromJson = ColorIQ.fromJson(json) as HSV;
       expect(fromJson.h, 120);
       expect(fromJson.saturation, 0.5);
-      expect(fromJson.val.val, 0.8);
+      expect(fromJson.valueHsv.val, 0.8);
     });
 
     test('toJson and fromJson for HslColor', () {

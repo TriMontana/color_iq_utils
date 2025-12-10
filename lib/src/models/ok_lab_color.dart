@@ -205,6 +205,7 @@ class OkLabColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
+  @override
   OkLabColor copyWith({
     final double? l,
     final double? a,

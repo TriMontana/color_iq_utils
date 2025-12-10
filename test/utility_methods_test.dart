@@ -10,6 +10,7 @@ void main() {
       expect(inverted.green, 155);
       expect(inverted.blue, 55);
       expect(inverted.alphaInt, 255);
+      print('✓ ColorIQ inverted');
     });
 
     test('ColorIQ grayscale', () {
@@ -21,6 +22,7 @@ void main() {
       expect(grayscale.red, closeTo(128, 1));
       expect(grayscale.green, closeTo(128, 1));
       expect(grayscale.blue, closeTo(128, 1));
+      expect(grayscale.alphaInt, 255);
     });
 
     test('ColorIQ whiten', () {
@@ -29,6 +31,7 @@ void main() {
       expect(whitened.red, closeTo(128, 1));
       expect(whitened.green, closeTo(128, 1));
       expect(whitened.blue, closeTo(128, 1));
+      print('✓ ColorIQ whiten');
     });
 
     test('ColorIQ blacken', () {
@@ -46,6 +49,7 @@ void main() {
       expect(mid.red, 50);
       expect(mid.green, 100);
       expect(mid.blue, 128); // 127.5 rounds to 128
+      print('✓ ColorIQ lerp');
     });
 
     test('HslColor grayscale optimization', () {

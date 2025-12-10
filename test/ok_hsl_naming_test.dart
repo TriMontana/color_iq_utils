@@ -15,6 +15,7 @@ void main() {
       const OkHslColor color =
           OkHslColor(0, 0, 0, names: <String>['Custom Name']);
       expect(color.names, equals(<String>['Custom Name']));
+      print('✓ OkHslColor.alt accepts explicit names');
     });
   });
 }

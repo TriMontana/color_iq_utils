@@ -10,6 +10,7 @@ void main() {
       expect(gray.s, equals(0.0));
       expect(gray.brightnessHsb.val, closeTo(0.5, 0.01));
       expect(gray.h, equals(0.0));
+      //
     });
 
     test('inverted inverts color correctly', () {

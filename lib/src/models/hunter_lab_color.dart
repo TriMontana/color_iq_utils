@@ -138,6 +138,7 @@ class HunterLabColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
+  @override
   HunterLabColor copyWith(
       {final double? lStar, final double? aStar, final double? bStar}) {
     return HunterLabColor(lStar ?? l, aStar ?? aLab, bStar ?? bLab);

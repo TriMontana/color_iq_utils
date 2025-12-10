@@ -137,6 +137,7 @@ class YuvColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
+  @override
   YuvColor copyWith({
     final double? y,
     final double? u,

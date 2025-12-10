@@ -12,6 +12,7 @@ void main() {
       expect((palette[0] as HwbColor).blackness,
           greaterThan(color.blackness)); // Blackened
       expect((palette[4] as HwbColor).w, greaterThan(color.w)); // Whitened
+      //
     });
 
     test('lighterPalette returns whiter colors', () {

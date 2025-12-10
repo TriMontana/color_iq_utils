@@ -10,6 +10,7 @@ void main() {
       expect(simulated.red, lessThan(150));
       expect(simulated.green, lessThan(150));
       expect(simulated.blue, lessThan(50));
+      print('✓ Simulate Protanopia');
     });
 
     test('Simulate Deuteranopia', () {
@@ -18,6 +19,8 @@ void main() {
       // Green looks yellowish/brownish
       expect(simulated.red, greaterThan(150));
       expect(simulated.green, greaterThan(150));
+      expect(simulated.blue, lessThan(50));
+      print('✓ Simulate Deuteranopia');
     });
 
     test('Simulate Tritanopia', () {
@@ -47,6 +50,7 @@ void main() {
       expect(simulated.h, closeTo(expected.h, 1.0));
       expect(simulated.s, closeTo(expected.s, 1.0));
       expect(simulated.l, closeTo(expected.l, 1.0));
+      print('✓ Delegation works for other models');
     });
   });
 }

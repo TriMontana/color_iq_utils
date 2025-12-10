@@ -9,6 +9,7 @@ void main() {
       final Cam16 whitened = color.whiten(50);
 
       expect(whitened.j, greaterThan(color.j));
+      //
     });
 
     test('blacken decreases J', () {

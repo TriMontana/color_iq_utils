@@ -142,6 +142,7 @@ class YiqColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
+  @override
   YiqColor copyWith({
     final double? y,
     final double? i,

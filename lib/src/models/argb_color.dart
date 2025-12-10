@@ -202,6 +202,7 @@ class AppColor {
       : this._fromRGBOC(redInt, greenInt, blueInt, colorSpace,
             opacity: opacity, colorId: colorId, lrv: lrv);
 
+  ///
   const AppColor._fromRGBOC(
     final int redInt,
     final int greenInt,
@@ -284,7 +285,6 @@ class AppColor {
   /// based on technique: (*.a * 255.0).round().clamp(0, 255)')
   /// A value of 0 means this color is fully transparent. A value of 255 means
   /// this color is fully opaque.
-
   int get alphaInt => (0xff000000 & value) >> 24;
   int get alpha => _a.toInt0to255;
 

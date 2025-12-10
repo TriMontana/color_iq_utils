@@ -9,6 +9,7 @@ void main() {
       expect(color.c, 50);
       expect(color.l, 50);
       expect(color.alpha.val, 1.0);
+      print('✓ HclUv Constructor assignment');
     });
 
     test('Round trip conversion (Red)', () {

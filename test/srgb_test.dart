@@ -9,6 +9,7 @@ void main() {
 
       print('✓ ColorIQ srgb getter test completed');
       print('  sRGB values: ${color.argb255Ints}');
+      print('  Linear sRGB values: ${color.rgbaLinearized}');
     });
 
     test('ColorIQ linearSrgb getter (Red)', () {

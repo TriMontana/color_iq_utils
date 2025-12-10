@@ -25,7 +25,7 @@ void main() {
       final HSV hsv = color.hsv;
       expect(hsv.h, closeTo(120, 0.1));
       expect(hsv.saturation, closeTo(1.0, 0.1));
-      expect(hsv.val.val, closeTo(1.0, 0.1));
+      expect(hsv.valueHsv.val, closeTo(1.0, 0.1));
       expect(hsv.hexId, 0xFF00FF00);
     });
 

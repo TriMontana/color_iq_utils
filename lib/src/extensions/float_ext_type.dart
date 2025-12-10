@@ -9,148 +9,7 @@ import 'package:color_iq_utils/src/foundation/range.dart';
 import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/utils/error_handling.dart';
 
-/// A base extension type for floating-point values used throughout the library.
-///
-/// `FltType` wraps a [double] and serves as the foundation for more specific
-/// float-based extension types like [Percent], [SRGB], and [LinRGB].
-/// It uses Dart's extension type feature to provide compile-time type safety
-/// and specific functionality without the runtime overhead of a traditional
-/// wrapper class.
-///
-/// As an `implements double`, it can be used wherever a `double` is expected,
-/// but it also defines a set of constructors and operators that are often
-/// overridden by its more specialized subtypes to enforce specific constraints
-/// (e.g., clamping values to a 0.0-1.0 range).
-///
-/// This type is not typically instantiated directly by consumers. Instead, one
-/// of its subtypes should be used.
-extension type const FloatIQ._(double _) implements double {
-  /// Constant constructor
-  const FloatIQ(final double val) : this._(val);
 
-  const factory FloatIQ.percent(final double value) = Percent;
-
-  const factory FloatIQ.zeroTo1(final double value) = Percent;
-
-  const factory FloatIQ.factored(final double value) = Percent;
-
-  const factory FloatIQ.srgb(final double value) = Percent;
-
-  const factory FloatIQ.fractionalized(final double value) = Percent;
-
-  const factory FloatIQ.linearized(final double value) = LinRGB;
-  const factory FloatIQ.linearize(final double value) = LinRGB;
-
-  const factory FloatIQ.lightnessHsl(final double value) = Percent;
-
-  const factory FloatIQ.saturation(final double value) = Percent;
-
-  const factory FloatIQ.valueHsv(final double value) = Percent;
-
-  const factory FloatIQ.lrv(final double value) = Percent;
-
-  const factory FloatIQ.xyzX(final double value) = Xxyz;
-
-  const factory FloatIQ.xyzY(final double value) = Yxyz;
-
-  const factory FloatIQ.xyzZ(final double value) = Zxyz;
-
-  /// Takes a max val and assumes 0 for minimum
-  const FloatIQ.fromUnchecked(
-    final double vl,
-    final double maxVal, {
-    final String? msg,
-  })  : _ = vl,
-        assert(
-          vl >= minFloat8 && vl <= maxVal,
-          'FxFloat.fromUnchecked: ${msg ?? ''}-"$vl"',
-        );
-
-  factory FloatIQ.clampBetween(
-    final double val,
-    final double minVal,
-    final double maxVal,
-  ) =>
-      FloatIQ(clampDouble(val, min: minVal, max: maxVal));
-
-  factory FloatIQ.clampInRange(final double val, final RangeIQ<double> range) =>
-      FloatIQ(
-        clampDouble(
-          val,
-          min: range.lowerLimit,
-          max: range.upperLimit ?? range.getMiddlePoint(),
-        ),
-      );
-
-  factory FloatIQ.assertBetween(
-    final double val,
-    final double minVal,
-    final double maxVal, {
-    final String? msg,
-    final Object? source,
-  }) {
-    final double valNum = assertInRange<double>(
-      val,
-      lowest: minVal,
-      highest: maxVal,
-      msg: msg,
-      source: source,
-    );
-    return FloatIQ(valNum);
-  }
-
-  /// The value for this double
-  double get val => _;
-
-  static const double minValFxFloat = 0.0;
-  static const FloatIQ zero = FloatIQ(0.0);
-  static const FloatIQ minInstance = FloatIQ.zero;
-
-  double get toMinVal => FloatIQ.minInstance._;
-
-  FloatIQ operator +(final FloatIQ otherVal) => FloatIQ(_ + otherVal._);
-
-  /// "Minus" operator. Results are returned in type of [FloatIQ].
-  /// These operators are typically overridden by the more-specific subtypes.
-  /// This will NOT clamp the value so it best handled by the API client.
-  FloatIQ operator -(final FloatIQ otherVal) => FloatIQ(_ - otherVal._);
-
-  /// A general "Multiply" operator. Results are returned in type of [FloatIQ].
-  /// These operators are typically overridden by the more-specific subtypes.
-  FloatIQ operator *(final FloatIQ otherVal) =>
-      FloatIQ((_ * otherVal._).clamp(0.0, fxFloat8bitInfinity));
-
-  /// A general "Division" operator. Results are returned in type of [FloatIQ].
-  /// These operators are typically overridden by the more-specific subtypes.
-  FloatIQ operator /(final FloatIQ otherVal) =>
-      FloatIQ((_ / otherVal._).clamp(0.0, fxFloat8bitInfinity));
-
-  /// A general "Modulus" operator. Results are returned in type of [FloatIQ].
-  /// Returns the remainder in [FloatIQ] format when a number is divided
-  /// by another number.  (It's essentially the "leftover" after dividing).
-  FloatIQ operator %(final FloatIQ otherVal) =>
-      FloatIQ((_ % otherVal._).clamp(0.0, 1.0));
-
-  String toStringAsFixed([final int decimals = 5]) =>
-      _.toStringAsFixed(decimals);
-
-  static const String name = "FltType";
-}
-
-extension MapStringToFloatHelper on Map<String, FloatIQ> {
-  String get asStr4Printing {
-    return toStrings.join(kSemiColonNL);
-  }
-
-  List<String> get toStrings {
-    final List<String> strs = List<String>.empty(growable: true);
-    final Iterable<MapEntry<String, FloatIQ>> ents = entries;
-    for (final MapEntry<String, FloatIQ> e in ents) {
-      strs.add('${e.key}: ${e.value.toString()}');
-    }
-    return strs;
-  }
-}
 
 /// An extension type representing a percentage value in the range of 0.0 to 1.0.
 ///
@@ -173,7 +32,7 @@ extension MapStringToFloatHelper on Map<String, FloatIQ> {
 /// It serves as the supertype for more specific fractional types for gamma correction
 /// (non-linear, gamma-corrected RGB) and [LinRGB] (linear RGB), inheriting
 /// its constraints and base functionality.
-extension type const Percent._(double _) implements FloatIQ {
+extension type const Percent._(double _) implements double {
   /// Constant constructor.
   const Percent(final double val, {final String? msg})
       : assert(
@@ -972,14 +831,7 @@ sealed class PropertyLegend<T extends num> {
   }
 }
 
-// -------------------------- Subclass Definitions --------------------
-final class FloatLegend extends PropertyLegend<FloatIQ> {
-  const FloatLegend({
-    required final String name,
-    required super.range,
-    required final TdCheckCastFN<FloatIQ> checkAndCast,
-  }) : super(label: name, checkAndCastFN: checkAndCast);
-}
+
 
 /// Function pointers to RgbLinear legend
 final class PercentsLegend extends PropertyLegend<Percent> {
@@ -1045,7 +897,7 @@ const PercentsLegend legendPercent = PercentsLegend(
 /// green wavelengths.
 /// Ranges from `0` to `95.05` in the normal sRGB spectrum, but colors
 /// outside of the sRGB spectrum are upwardly unbounded.
-extension type const Xxyz._(double _) implements FloatIQ {
+extension type const Xxyz._(double _) implements double {
   const Xxyz(final double vl)
       : assert(
           vl >= Xxyz.minXyzX && vl <= Xxyz.maxXyzX,
@@ -1064,15 +916,7 @@ extension type const Xxyz._(double _) implements FloatIQ {
 
   static String get name => capitalLetterX;
 
-  static const FloatLegend xLegend = FloatLegend(
-    name: capitalLetterX,
-    range: RangeIQ<FloatIQ>(
-      Xxyz.minInst as FloatIQ,
-      Xxyz.maxInst as FloatIQ,
-      rangeType: RangeType.standard,
-    ),
-    checkAndCast: Xxyz.fromUnchecked as TdCheckCastFN<FloatIQ>,
-  );
+
 
   // https://www.sttmedia.com/colormodel-xyz/colormodels
   static const double minXyzX = 0.0;
@@ -1089,7 +933,7 @@ extension type const Xxyz._(double _) implements FloatIQ {
 /// color, and is often considered the most important parameter.
 /// Ranges from `0` to `108.883` in the normal sRGB spectrum, but colors
 /// outside of the sRGB spectrum are upwardly unbounded.
-extension type const Yxyz._(double _) implements FloatIQ {
+extension type const Yxyz._(double _) implements double {
   const Yxyz(final double vl)
       : assert(
           vl >= Yxyz.minXyzY && vl <= Yxyz.maxXyzY,
@@ -1135,7 +979,7 @@ extension type const Yxyz._(double _) implements FloatIQ {
 /// The Z value in [XYZ].  Z: Primarily represents the human eye's response to
 /// blue wavelengths. Ranges from `0` to `108.883` in the normal sRGB spectrum,
 /// but colors outside of the sRGB spectrum are upwardly unbounded.
-extension type const Zxyz._(double _) implements FloatIQ {
+extension type const Zxyz._(double _) implements double {
   const Zxyz(final double vl)
       : assert(
           vl >= Zxyz.minZval && vl <= Zxyz.maxZval,
@@ -1155,35 +999,16 @@ extension type const Zxyz._(double _) implements FloatIQ {
   factory Zxyz.clamped(final double vl, {final String? msg}) =>
       Zxyz.fromUnchecked(vl.clamp(Zxyz.minZval, Zxyz.maxZval), msg: msg);
 
-  /// Allows to bound upper limit. Colors outside of the sRGB spectrum
-  /// are upwardly unbounded.
-  factory Zxyz.checkOrThrow(
-    final double vl, {
-    final String? msg,
-    final double tolerance = 0.1,
-  }) {
-    if (vl > Zxyz.maxZval && vl <= (Zxyz.maxZval + tolerance)) {
-      return Zxyz.fromUnchecked(vl.clamp(Zxyz.minZval, Zxyz.maxZval), msg: msg);
-    }
-    return Zxyz(zLegend.checkOrThrow(vl.toDouble(), msg: msg).val);
-  }
 
-  bool isValid(final num val) => zLegend.isValid(val);
+
+
 
   static const double minZval = 0.0;
   static const double maxZval = 108.883; // but some go beyond this
   static const Zxyz minInst = Zxyz(minZval);
   static const Zxyz maxInst = Zxyz(maxZval);
 
-  static const FloatLegend zLegend = FloatLegend(
-    name: capitalLetterZ,
-    range: RangeIQ<FloatIQ>(
-      Zxyz.minInst as FloatIQ,
-      Zxyz.maxInst as FloatIQ,
-      rangeType: RangeType.standard,
-    ),
-    checkAndCast: Zxyz.fromUnchecked as TdCheckCastFN<FloatIQ>,
-  );
+
 
   /// Division operator
   Zxyz operator /(final Zxyz otherVal) => Zxyz.clamped(_ / otherVal._);

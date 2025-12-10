@@ -88,16 +88,31 @@ abstract interface class ColorSpacesIQ {
 
   // ======= Methods To Implement =========  //
 
+  /// Returns a copy of this color instance with optional overrides.
+  ///
+  /// Implementations should return a new instance of the concrete color type,
+  /// applying any provided modifications (for example, a new ARGB value,
+  /// adjusted `alpha`, or updated `names`). This is commonly used for
+  /// immutable color objects to produce modified copies without mutating
+  /// the original instance.
+  ColorSpacesIQ copyWith();
+
+  /// Finds the closest matching `ColorSlice` for this color.
+  ///
+  /// A `ColorSlice` represents a segment or bucket of colors (for example,
+  /// a palette entry or perceptual bin). Implementations should determine
+  /// and return the best matching slice based on perceptual distance,
+  /// chroma/hue proximity, or other domain-specific heuristics.
   ColorSlice closestColorSlice();
 
-  /// Lightens the color by the given [amount] (0-100).
-  ColorSpacesIQ lighten([final double amount = 20]);
+
+  ColorSpacesIQ lighten([final Percent amount = Percent.v20]);
 
   /// Darkens the color by the given [amount] (0-100).
-  ColorSpacesIQ darken([final double amount = 20]);
+  ColorSpacesIQ darken([final Percent amount = Percent.v20]);
 
-  /// Brightens the color by the given [amount] (0-100).
-  /// Increases the brightness/value (HSV Value).
+  /// Brightens the color by the given [amount] (0-100%).
+  /// Increases the brightness/value
   ColorSpacesIQ brighten([final Percent amount = Percent.v20]);
 
   /// Saturates the color by the given [amount] (0-100).

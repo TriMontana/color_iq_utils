@@ -219,6 +219,7 @@ class HctColor extends CommonIQ implements ColorSpacesIQ {
   HctColor toHctColor() => this;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
+  @override
   HctColor copyWith({
     final double? hue,
     final double? chroma,

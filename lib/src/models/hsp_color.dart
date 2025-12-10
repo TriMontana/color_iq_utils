@@ -290,6 +290,7 @@ class HSP extends CommonIQ implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
+  @override
   HSP copyWith({
     final double? h,
     final double? s,

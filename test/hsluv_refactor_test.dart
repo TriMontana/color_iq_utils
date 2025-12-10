@@ -9,6 +9,7 @@ void main() {
 
       expect(whitened.l, greaterThan(color.l));
       expect(whitened.s, lessThan(color.s));
+      //
     });
 
     test('blacken decreases lightness and desaturates', () {
@@ -17,6 +18,8 @@ void main() {
 
       expect(blackened.l, lessThan(color.l));
       expect(blackened.s, lessThan(color.s));
+
+      //
     });
 
     test('lerp interpolates correctly', () {

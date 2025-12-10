@@ -188,7 +188,7 @@ class HclUv extends CommonIQ implements ColorSpacesIQ {
   @override
   int get value => hexId;
 
-  @override
+
   int get hexId => super.colorId ?? HclUv.hclUvToColor(h, c, l).value;
 
   @override
@@ -273,7 +273,7 @@ class HclUv extends CommonIQ implements ColorSpacesIQ {
     return copyWith(c: math.max(0.0, c - amount));
   }
 
-  @override
+
   HclUv intensify([final double amount = 10]) {
     // Increase chroma, decrease lightness slightly?
     // Or just delegation to saturate?
@@ -282,7 +282,7 @@ class HclUv extends CommonIQ implements ColorSpacesIQ {
     return saturate(amount);
   }
 
-  @override
+
   HclUv deintensify([final double amount = 10]) {
     return desaturate(amount);
   }

@@ -13,6 +13,7 @@ void main() {
       const HSL cyan = HSL(180, 1.0, Percent.mid, hexId: hxCyan);
       // expect(cyan.closestColorSlice().name, equals('Cyan'));
       expect(cyan.closestColorSlice().name.first, equals('Cyan'));
+      //
     });
 
     test('contrastWith calculates contrast ratio', () {

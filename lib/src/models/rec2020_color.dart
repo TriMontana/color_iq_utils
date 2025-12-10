@@ -126,6 +126,7 @@ class Rec2020Color extends CommonIQ implements ColorSpacesIQ {
   double get opacity => 1.0 - transparency;
 
   /// Creates a copy of this color with the given fields replaced with the new values.
+  @override
   Rec2020Color copyWith(
       {final Percent? r, final Percent? g, final Percent? b}) {
     return Rec2020Color(r ?? this.r, g ?? this.g, b ?? this.b);

@@ -17,6 +17,7 @@ void main() {
       expect(back.red, closeTo(255, 2));
       expect(back.green, closeTo(0, 2));
       expect(back.blue, closeTo(0, 2));
+      print('✓ Color to HCT and back');
     });
 
     test('Transparency Adjustment', () {
@@ -106,6 +107,7 @@ void main() {
 
       final HctColor blueHct = HctColor.alt(260, 100, 50);
       expect(blueHct.temperature, ColorTemperature.cool);
+      //
     });
   });
 }

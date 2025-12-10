@@ -15,6 +15,7 @@ void main() {
       // Wait, 150 is closer to 30 than 180? Yes.
 
       expect(warmed.h, closeTo(150, 0.1));
+      print('✓ HsbColor Warmer/Cooler Tests');
     });
 
     test('cooler shifts hue towards 210 degrees', () {

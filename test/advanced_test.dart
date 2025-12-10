@@ -16,6 +16,7 @@ void main() {
       expect(backToColor.red, 255);
       expect(backToColor.green, 255);
       expect(backToColor.blue, 255);
+      print('Tested RGB to XYZ conversion and back successfully.');
     });
 
     test('RGB to Lab conversion (Red)', () {
@@ -32,6 +33,7 @@ void main() {
       expect(backToColor.red, 255);
       expect(backToColor.green, 0);
       expect(backToColor.blue, 0);
+      print('Tested RGB to Lab conversion and back successfully.');
     });
 
     test('RGB to Luv conversion (Green)', () {

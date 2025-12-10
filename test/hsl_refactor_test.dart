@@ -9,6 +9,7 @@ void main() {
 
       expect(whitened.l, greaterThan(color.l));
       expect(whitened.s, lessThan(color.s));
+      //
     });
 
     test('blacken decreases lightness and desaturates', () {

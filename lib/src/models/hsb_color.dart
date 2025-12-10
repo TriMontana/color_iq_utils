@@ -292,6 +292,7 @@ class HsbColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
+  @override
   HsbColor copyWith({final double? h, final double? s, final Percent? b}) {
     return HsbColor(h ?? this.h, s ?? this.s, b ?? brightnessHsb);
   }

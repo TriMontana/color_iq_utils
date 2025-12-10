@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
-import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hsluv.dart';
 
 /// A representation of color in the HSLuv color space.
@@ -103,6 +102,7 @@ class HsluvColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.
+  @override
   HsluvColor copyWith({
     final double? h,
     final double? s,

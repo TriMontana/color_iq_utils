@@ -7,12 +7,14 @@ void main() {
       const HSL hsl = HSL(0, 0, 0.5); // 50% lightness
       final HSL lightened = hsl.lighten(20);
       expect(lightened.l, closeTo(0.7, 0.001)); // 50% + 20% = 70%
+      print('✓ HslColor lighten increases lightness');
     });
 
     test('HslColor lighten clamps to 1.0', () {
       const HSL hsl = HSL(0, 0, 0.9);
       final HSL lightened = hsl.lighten(20);
       expect(lightened.l, 1.0);
+      print('✓ HslColor lighten clamps to 1.0');
     });
 
     test('ColorIQ lighten works via HSL conversion', () {

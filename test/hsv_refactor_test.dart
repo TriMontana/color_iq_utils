@@ -7,15 +7,16 @@ void main() {
       const HSV color = HSV(0, Percent.max, Percent.mid); // Dark Red
       final HSV whitened = color.whiten(Percent.mid);
 
-      expect(whitened.val, greaterThan(color.val));
+      expect(whitened.valueHsv, greaterThan(color.valueHsv));
       expect(whitened.saturation, lessThan(color.saturation));
+      //
     });
 
     test('blacken decreases value and desaturates', () {
       const HSV color = HSV(0, Percent.max, Percent.max); // Red
       final HSV blackened = color.blacken(Percent.mid);
 
-      expect(blackened.val, lessThan(color.val));
+      expect(blackened.valueHsv, lessThan(color.valueHsv));
       // lerp(cBlack, 0.5) -> cBlack is (0, 0, 0).
       // Red is (0, 1, 1).
       // Mid is (0, 0.5, 0.5).
@@ -30,7 +31,7 @@ void main() {
 
       expect(mid.h, closeTo(60, 0.1)); // Yellow
       expect(mid.saturation, closeTo(1.0, 0.01));
-      expect(mid.val, closeTo(1.0, 0.01));
+      expect(mid.valueHsv, closeTo(1.0, 0.01));
     });
 
     test('intensify increases saturation', () {
@@ -56,7 +57,7 @@ void main() {
 
       expect(blended.h, closeTo(60, 0.1)); // Yellow
       expect(blended.saturation, closeTo(1.0, 0.01));
-      expect(blended.val, closeTo(1.0, 0.01));
+      expect(blended.valueHsv, closeTo(1.0, 0.01));
     });
 
     test('opaquer increases alpha', () {

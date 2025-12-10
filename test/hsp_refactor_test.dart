@@ -9,6 +9,7 @@ void main() {
 
       expect(whitened.p, greaterThan(color.p));
       expect(whitened.s, lessThan(color.s));
+      print('✓ HspColor Refactor Tests');
     });
 
     test('blacken decreases brightness and desaturates', () {
@@ -17,6 +18,7 @@ void main() {
 
       expect(blackened.p, lessThan(color.p));
       expect(blackened.s, lessThan(color.s));
+      print('✓ HspColor Refactor Tests');
     });
 
     test('lerp interpolates correctly', () {
