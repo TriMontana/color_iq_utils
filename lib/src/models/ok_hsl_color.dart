@@ -168,11 +168,6 @@ class OkHslColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  OkHslColor brighten([final double amount = 20]) {
-    return toColor().brighten(amount).toOkHsl();
-  }
-
-  @override
   OkHslColor saturate([final double amount = 25]) {
     return copyWith(s: min(1.0, s + amount / 100));
   }
@@ -181,12 +176,10 @@ class OkHslColor extends CommonIQ implements ColorSpacesIQ {
   OkHslColor desaturate([final double amount = 25]) =>
       copyWith(s: max(0.0, s - amount / 100));
 
-  @override
   OkHslColor intensify([final double amount = 10]) {
     return saturate(amount);
   }
 
-  @override
   OkHslColor deintensify([final double amount = 10]) {
     return desaturate(amount);
   }

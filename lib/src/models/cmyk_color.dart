@@ -150,9 +150,6 @@ class CMYK extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  CMYK intensify([final double amount = 10]) => saturate(amount);
-
-  @override
   CMYK accented([final double amount = 15]) {
     return saturate(amount);
   }

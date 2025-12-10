@@ -1,4 +1,6 @@
 import 'package:color_iq_utils/src/foundation_lib.dart';
+import 'package:color_iq_utils/src/models/coloriq.dart';
+import 'package:color_iq_utils/src/models/lab_color.dart';
 import 'package:color_iq_utils/src/utils_lib.dart';
 
 /// An immutable color value in ARGB format.
@@ -30,7 +32,7 @@ import 'package:color_iq_utils/src/utils_lib.dart';
 /// const ARGBColor c3 = Color.from(alpha: 1.0, red: 1.0, green: 1.0, blue: 1.0);
 /// ```
 ///
-/// [ARGBColor]'s color components are stored as floating-point values. Care should
+/// [AppColor]'s color components are stored as floating-point values. Care should
 /// be taken if one does not want the literal equality provided by `operator==`.
 /// To test equality inside of Flutter tests consider using [`isSameColorAs`][].
 ///
@@ -40,7 +42,7 @@ import 'package:color_iq_utils/src/utils_lib.dart';
 /// store the value as a primitive (final int) and provide an extension type wrapper via a getter.
 /// This strategy allows you to gain the performance benefit of compile-time constants for the underlying
 /// data structure while still leveraging the clean interface of the extension type for the public API.
-class ARGBColor {
+class AppColor {
   /// The alpha channel of this color.
   final double _a;
   Percent get a => Percent(_a);
@@ -83,13 +85,13 @@ class ARGBColor {
   /// ARGBColor(0xFFFF9000)` (`FF` for the alpha, `FF` for the red, `90` for the
   /// green, and `00` for the blue).
   ///
-  const ARGBColor(final int value,
+  const AppColor(final int value,
       {final ColorSpace colorSpace = ColorSpace.sRGB, final double? lrv})
       : this._fromARGBC((value >> 24) & 0xFF, (value >> 16) & 0xFF,
             (value >> 8) & 0xFF, (value) & 0xFF, colorSpace,
             colorId: value, lrv: lrv);
 
-  const ARGBColor.iq(final int value,
+  const AppColor.iq(final int value,
       {final ColorSpace colorSpace = ColorSpace.sRGB, final double? lrv})
       : this._fromARGBC((value >> 24) & 0xFF, (value >> 16) & 0xFF,
             (value >> 8) & 0xFF, (value) & 0xFF, colorSpace,
@@ -113,7 +115,7 @@ class ARGBColor {
   /// // Fully transparent color
   /// const ARGBColor c3 = ARGBColor.from(alpha: 0.0, red: 0.0, green: 0.0, blue: 0.0);
   /// ```
-  const ARGBColor.from({
+  const AppColor.from({
     required final double a,
     required final double r,
     required final double g,
@@ -152,7 +154,7 @@ class ARGBColor {
   /// * `b` is [blue], from 0 to 255.
   ///
   /// Out of range values are brought into range using modulo 255.
-  const ARGBColor.fromARGB(
+  const AppColor.fromARGB(
     final int alphaInt,
     final int redInt,
     final int greenInt,
@@ -167,7 +169,7 @@ class ARGBColor {
   }) : this._fromARGBC(alphaInt, redInt, greenInt, blueInt, colorSpace,
             colorId: colorId, a: a, r: r, g: g, b: b, lrv: lrv);
 
-  const ARGBColor._fromARGBC(
+  const AppColor._fromARGBC(
     final int alpha,
     final int red,
     final int green,
@@ -192,7 +194,7 @@ class ARGBColor {
   ///   transparent and 1.0 being fully opaque.
   ///
   /// Out of range values are brought into range using modulo 255.
-  const ARGBColor.fromRGBO(final int redInt, final int greenInt,
+  const AppColor.fromRGBO(final int redInt, final int greenInt,
       final int blueInt, final int opacity,
       {final int? colorId,
       final ColorSpace colorSpace = ColorSpace.sRGB,
@@ -200,7 +202,7 @@ class ARGBColor {
       : this._fromRGBOC(redInt, greenInt, blueInt, colorSpace,
             opacity: opacity, colorId: colorId, lrv: lrv);
 
-  const ARGBColor._fromRGBOC(
+  const AppColor._fromRGBOC(
     final int redInt,
     final int greenInt,
     final int blueInt,
@@ -319,16 +321,16 @@ class ARGBColor {
   /// /// Create a color with 50% opacity.
   /// ARGBColor makeTransparent(ARGBColor color) => color.withValues(alpha: 0.5);
   /// ```
-  ARGBColor withValues({
+  AppColor withValues({
     final double? aVal,
     final double? red,
     final double? green,
     final double? blue,
     final ColorSpace? colorSpace,
   }) {
-    ARGBColor? updatedComponents;
+    AppColor? updatedComponents;
     if (red != null || green != null || blue != null) {
-      updatedComponents = ARGBColor.from(
+      updatedComponents = AppColor.from(
         a: aVal ?? _a,
         r: red ?? _r,
         g: green ?? _g,
@@ -348,31 +350,31 @@ class ARGBColor {
   /// replaced with `a` (which ranges from 0 to 255).
   ///
   /// Out of range values will have unexpected effects.
-  ARGBColor withAlpha(final int nuAlpha) {
-    return ARGBColor.fromARGB(nuAlpha, red, green, blue);
+  AppColor withAlpha(final int nuAlpha) {
+    return AppColor.fromARGB(nuAlpha, red, green, blue);
   }
 
   /// Returns a new color that matches this color with the red channel replaced
   /// with `r` (which ranges from 0 to 255).
   ///
   /// Out of range values will have unexpected effects.
-  ARGBColor withRed(final int redVal) =>
-      ARGBColor.fromARGB(alpha, redVal.assertRange0to255(), green, blue);
+  AppColor withRed(final int redVal) =>
+      AppColor.fromARGB(alpha, redVal.assertRange0to255(), green, blue);
 
   /// Returns a new color that matches this color with the green channel
   /// replaced with `g` (which ranges from 0 to 255).
   ///
   /// Out of range values will have unexpected effects.
-  ARGBColor withGreen(final int greenVal) {
-    return ARGBColor.fromARGB(alpha, red, greenVal, blue);
+  AppColor withGreen(final int greenVal) {
+    return AppColor.fromARGB(alpha, red, greenVal, blue);
   }
 
   /// Returns a new color that matches this color with the blue channel replaced
   /// with `b` (which ranges from 0 to 255).
   ///
   /// Out of range values will have unexpected effects.
-  ARGBColor withBlue(final int nuBlue) =>
-      ARGBColor.fromARGB(alpha, red, green, nuBlue.assertRange0to255());
+  AppColor withBlue(final int nuBlue) =>
+      AppColor.fromARGB(alpha, red, green, nuBlue.assertRange0to255());
 
   /// Get the luminance
   Percent get lrv => _lrv != null ? Percent(_lrv) : computeLuminance(r, g, b);
@@ -402,11 +404,11 @@ class ARGBColor {
   ///
   /// Values for `t` are usually obtained from an [Animation<double>], such as
   /// an [AnimationController].
-  static ARGBColor? lerp(final ARGBColor x, final ARGBColor y, final double t) {
+  static AppColor? lerp(final AppColor x, final AppColor y, final double t) {
     assert(x.colorSpace != ColorSpace.extendedSRGB);
     assert(y.colorSpace != ColorSpace.extendedSRGB);
     assert(x.colorSpace == y.colorSpace);
-    return ARGBColor.from(
+    return AppColor.from(
       a: clampDoubleDart(lerpDoubleDart(x.a.value, y.a.value, t), 0, 1),
       r: clampDoubleDart(lerpDoubleDart(x.r.value, y.r.value, t), 0, 1),
       g: clampDoubleDart(lerpDoubleDart(x.g.value, y.g.value, t), 0, 1),
@@ -423,8 +425,8 @@ class ARGBColor {
   /// enhancement when trying to avoid needless alpha blending compositing
   /// operations for two things that are solid colors with the same shape, but
   /// overlay each other: instead, just paint one with the combined color.
-  static ARGBColor alphaBlend(
-      final ARGBColor foreground, final ARGBColor background) {
+  static AppColor alphaBlend(
+      final AppColor foreground, final AppColor background) {
     assert(foreground.colorSpace == background.colorSpace);
     assert(foreground.colorSpace != ColorSpace.extendedSRGB);
     final double alpha = foreground.a;
@@ -436,7 +438,7 @@ class ARGBColor {
     double backAlpha = background.a;
     if (backAlpha == 1) {
       // Opaque background case
-      return ARGBColor.from(
+      return AppColor.from(
         a: Percent.max,
         r: alpha * foreground.r.val + invAlpha * background.r.val,
         g: alpha * foreground.g.val + invAlpha * background.g.val,
@@ -448,7 +450,7 @@ class ARGBColor {
       backAlpha = backAlpha * invAlpha;
       final double outAlpha = alpha + backAlpha;
       assert(outAlpha != 0);
-      return ARGBColor.from(
+      return AppColor.from(
         a: Percent(outAlpha),
         r: (foreground.r.value * alpha + background.r.value * backAlpha) /
             outAlpha,
@@ -476,12 +478,12 @@ class ARGBColor {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    if (other is ARGBColor &&
+    if (other is AppColor &&
         other._colorId == _colorId &&
         other.colorSpace == colorSpace) {
       return true;
     }
-    return other is ARGBColor &&
+    return other is AppColor &&
         other._a == _a &&
         other._r == _r &&
         other._g == _g &&
@@ -495,18 +497,23 @@ class ARGBColor {
   @override
   String toString() =>
       'Color(alpha: ${a.toStringAsFixed(4)}, red: ${r.toStringAsFixed(4)}, '
-      'green: ${g.toStringAsFixed(4)}, blue: ${b.toStringAsFixed(4)}, colorSpace: $colorSpace)';
+      'green: ${g.toStrTrimZeros(4)}, blue: ${b.toStringAsFixed(4)}, colorSpace: $colorSpace)';
+
+  LabColor toLabColor() => LabColor.fromInt(_colorId);
+
+  ColorIQ toColor() =>
+      ColorIQ(_colorId, colorSpace: colorSpace, argbColor: this);
 }
 
+/// Color Transform class, courtesy of Dart library
 abstract class ColorTransform {
-  ARGBColor transform(final ARGBColor color, final ColorSpace resultColorSpace);
+  AppColor transform(final AppColor color, final ColorSpace resultColorSpace);
 }
 
 class _IdentityColorTransform implements ColorTransform {
   const _IdentityColorTransform();
   @override
-  ARGBColor transform(
-          final ARGBColor color, final ColorSpace resultColorSpace) =>
+  AppColor transform(final AppColor color, final ColorSpace resultColorSpace) =>
       color;
 }
 
@@ -514,9 +521,8 @@ class _ClampTransform implements ColorTransform {
   const _ClampTransform(this.child);
   final ColorTransform child;
   @override
-  ARGBColor transform(
-      final ARGBColor color, final ColorSpace resultColorSpace) {
-    return ARGBColor.from(
+  AppColor transform(final AppColor color, final ColorSpace resultColorSpace) {
+    return AppColor.from(
       a: Percent(clampDoubleDart(color.a.value, 0, 1)),
       r: clampDoubleDart(color.r.value, 0, 1),
       g: clampDoubleDart(color.g.value, 0, 1),
@@ -533,9 +539,8 @@ class _MatrixColorTransform implements ColorTransform {
   final List<double> values;
 
   @override
-  ARGBColor transform(
-      final ARGBColor color, final ColorSpace resultColorSpace) {
-    return ARGBColor.from(
+  AppColor transform(final AppColor color, final ColorSpace resultColorSpace) {
+    return AppColor.from(
       a: color.a,
       r: values[0] * color.r +
           values[1] * color.g +

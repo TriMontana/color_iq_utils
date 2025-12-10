@@ -89,11 +89,6 @@ class YiqColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  YiqColor brighten([final double amount = 20]) {
-    return toColor().brighten(amount).toYiq();
-  }
-
-  @override
   YiqColor saturate([final double amount = 25]) {
     final double scale = 1.0 + (amount / 100.0);
     return YiqColor(y, i * scale, q * scale);
@@ -105,7 +100,6 @@ class YiqColor extends CommonIQ implements ColorSpacesIQ {
     return YiqColor(y, i * scale, q * scale);
   }
 
-  @override
   YiqColor intensify([final double amount = 10]) {
     return saturate(amount);
   }
@@ -233,9 +227,6 @@ class YiqColor extends CommonIQ implements ColorSpacesIQ {
       .tetrad(offset: offset)
       .map((final ColorIQ c) => c.toYiq())
       .toList();
-
-  @override
-  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
 
   @override
   double contrastWith(final ColorSpacesIQ other) =>

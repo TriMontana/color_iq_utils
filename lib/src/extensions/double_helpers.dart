@@ -2,6 +2,7 @@ import 'dart:developer' as developer;
 import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:color_iq_utils/src/extensions/hue360_ext_type.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/utils/error_handling.dart';
 
@@ -36,10 +37,12 @@ extension DoubleHelpersIQ on double {
   }
 
   double get clampHue => clampDouble(this, min: kMinHue, max: kMaxHue);
+  Hue get clampToHue => Hue(clampDouble(this, min: kMinHue, max: kMaxHue));
   double get clampChromaHct =>
       clampDouble(this, min: kMinChroma, max: kMaxChroma);
   double get clampToneHct => clampDouble(this, min: kMinTone, max: kMaxTone);
   double get clamp0to1 => clampDouble(this, min: 0.0, max: 1.0);
+  Percent get clampToPercent => Percent(clampDouble(this, min: 0.0, max: 1.0));
   double assertRangeHue([final String? msg]) {
     if (this < kMinHue || this > kMaxHue) {
       throw RangeError(
@@ -112,6 +115,15 @@ extension DoubleHelpersIQ on double {
 
   LinRGB get linearize => srgbToLinear(this);
 
+  double get degreesToRadians => this * (math.pi / 180.0);
+  double get radiansToDegrees => this * (180.0 / math.pi);
+  double get clampMinus1to1 => clamp(-1.0, 1.0).toDouble();
+  double get clamp0to255 => clamp(0.0, 255.0).toDouble();
+  double get clamp0to360 => clamp(0.0, 360.0).toDouble();
+  double get normalizedDegrees => (this % 360.0 + 360.0) % 360.0;
+  double get normalizedRadians =>
+      (this % (2 * math.pi) + (2 * math.pi)) % (2 * math.pi);
+
   /// To String without training zeros.
   String toStrTrimZeros([
     final int decimals = 6,
@@ -156,14 +168,6 @@ extension DoubleHelpersIQ on double {
 
   double get toReciprocal => invertDouble(this);
 
-  double get clampMinus1to1 => clamp(-1.0, 1.0).toDouble();
-  double get clamp0to255 => clamp(0.0, 255.0).toDouble();
-  double get clamp0to360 => clamp(0.0, 360.0).toDouble();
-  double get degreesToRadians => this * (math.pi / 180.0);
-  double get radiansToDegrees => this * (180.0 / math.pi);
-  double get normalizedDegrees => (this % 360.0 + 360.0) % 360.0;
-  double get normalizedRadians =>
-      (this % (2 * math.pi) + (2 * math.pi)) % (2 * math.pi);
   double invertDouble(final double val) => val == 0.0 ? 0.0 : 1.0 / val;
 
   double roundToDecimalPlaces(final int fractionalDigits) {

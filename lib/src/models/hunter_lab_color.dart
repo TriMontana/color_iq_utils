@@ -89,7 +89,6 @@ class HunterLabColor extends CommonIQ implements ColorSpacesIQ {
     return HunterLabColor(l, aLab * scale, bLab * scale);
   }
 
-  @override
   HunterLabColor intensify([final double amount = 10]) {
     return saturate(amount);
   }

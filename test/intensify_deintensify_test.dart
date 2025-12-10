@@ -28,7 +28,8 @@ void main() {
         150,
         200,
       ); // Some blueish color
-      final ColorIQ intensified = color.intensify(20);
+      final ColorIQ intensified =
+          color.intensify(amount: Percent.v20).toColor();
 
       // Convert back to HCT to verify properties
       final HctColor originalHct = color.toHctColor();
@@ -43,7 +44,8 @@ void main() {
 
     test('ColorIQ deintensify delegates to HctColor', () {
       final ColorIQ color = ColorIQ.fromArgbInts(255, 100, 150, 200);
-      final ColorIQ deintensified = color.deintensify(20);
+      final ColorIQ deintensified =
+          color.deintensify(amount: Percent.v20).toColor();
 
       final HctColor originalHct = color.toHctColor();
       final HctColor deintensifiedHct = deintensified.toHctColor();
@@ -54,7 +56,8 @@ void main() {
 
     test('LabColor intensify delegates correctly', () {
       final LabColor lab = LabColor(50, 20, 20);
-      final LabColor intensified = lab.intensify(10);
+      final LabColor intensified =
+          lab.toColor().intensify(amount: Percent.v10).toLabColor();
 
       // Check if it's different
       expect(intensified.l, isNot(equals(lab.l)));

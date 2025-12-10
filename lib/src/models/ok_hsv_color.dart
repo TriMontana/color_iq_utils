@@ -148,7 +148,6 @@ class OkHsvColor extends CommonIQ implements ColorSpacesIQ {
   OkHsvColor desaturate([final double amount = 25]) =>
       copyWith(saturation: max(0.0, saturation - amount / 100));
 
-  @override
   OkHsvColor intensify([final double amount = 10]) {
     return OkHsvColor(
       hue,
@@ -158,7 +157,6 @@ class OkHsvColor extends CommonIQ implements ColorSpacesIQ {
     );
   }
 
-  @override
   OkHsvColor deintensify([final double amount = 10]) {
     return OkHsvColor(
       hue,
@@ -374,7 +372,6 @@ class OkHsvColor extends CommonIQ implements ColorSpacesIQ {
         _withHueShift(180),
         _withHueShift(180 + offset),
       ];
-  @override
   double distanceTo(final ColorSpacesIQ other) =>
       toCam16().distance(other.toCam16());
 

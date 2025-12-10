@@ -13,7 +13,7 @@ void main() {
 
     test('brighten decreases blackness', () {
       const HwbColor color = HwbColor(0.0, 0.0, 0.5); // B = 0.5
-      final HwbColor brightened = color.brighten(20);
+      final HwbColor brightened = color.brighten(Percent.v20);
       expect(brightened.b, closeTo(0.3, 0.001));
       expect(brightened.w, color.w);
       expect(brightened.h, color.h);
@@ -27,7 +27,7 @@ void main() {
 
     test('brighten clamps to 0.0', () {
       const HwbColor color = HwbColor(0.0, 0.0, 0.1);
-      final HwbColor brightened = color.brighten(20);
+      final HwbColor brightened = color.brighten(Percent.v20);
       expect(brightened.b, 0.0);
     });
   });

@@ -144,11 +144,6 @@ class OkLCH extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  OkLCH brighten([final double amount = 20]) {
-    return toColor().brighten(amount).toOkLch();
-  }
-
-  @override
   OkLCH saturate([final double amount = 25]) {
     return OkLCH(l, c + amount / 100, h, alpha: alpha);
   }
@@ -156,16 +151,6 @@ class OkLCH extends CommonIQ implements ColorSpacesIQ {
   @override
   OkLCH desaturate([final double amount = 25]) {
     return OkLCH(l, max(0.0, c - amount / 100), h, alpha: alpha);
-  }
-
-  @override
-  OkLCH intensify([final double amount = 10]) {
-    return toColor().intensify(amount).toOkLch();
-  }
-
-  @override
-  OkLCH deintensify([final double amount = 10]) {
-    return toColor().deintensify(amount).toOkLch();
   }
 
   @override
@@ -311,7 +296,6 @@ class OkLCH extends CommonIQ implements ColorSpacesIQ {
     ];
   }
 
-  @override
   double distanceTo(final ColorSpacesIQ other) =>
       toCam16().distance(other.toCam16());
 

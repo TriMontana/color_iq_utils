@@ -24,12 +24,6 @@ void main() {
       expect(const HSL(0, 1.0, 0.5).names, isEmpty);
     });
 
-    test('HsvColor stores names', () {
-      const HSV color = HSV(0, 1.0, Percent.max, names: testNames);
-      expect(color.names, equals(testNames));
-      expect(const HSV(0, 1.0, Percent.max).names, isEmpty);
-    });
-
     test('HsbColor stores names', () {
       const HsbColor color = HsbColor(0, 1.0, Percent.max, names: testNames);
       expect(color.names, equals(testNames));

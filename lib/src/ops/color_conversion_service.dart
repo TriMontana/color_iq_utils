@@ -1,4 +1,3 @@
-// Placeholder for a single color in the input list
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hsv_color.dart';
@@ -33,7 +32,7 @@ List<HctColorSegment> convertHsvListToHctList(
         .fromAHSV(
           Percent.max, // Full opacity
           hsvSegment.hue,
-          hsvSegment.saturation,
+          Percent(hsvSegment.saturation),
           Percent(hsvSegment.value),
         )
         .toColor();

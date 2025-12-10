@@ -9,6 +9,7 @@ import 'package:material_color_utilities/utils/color_utils.dart';
 /// accurate color measurement system that can also accurately render what
 /// colors will appear as in different lighting environments.
 /// credit: Adapted from material_color_utilities
+/// See also [HctData]
 @Deprecated('Use Hct Data')
 class HctColor extends CommonIQ implements ColorSpacesIQ {
   final double hue;
@@ -150,7 +151,6 @@ class HctColor extends CommonIQ implements ColorSpacesIQ {
     return HctColor(hue, nuChroma, tone, argb: hexID);
   }
 
-  @override
   HctColor intensify([final double amount = 10]) {
     amount.assertRange0to100('intensify');
     final double nuChroma = min(kMaxChroma, chroma + amount);
@@ -167,7 +167,6 @@ class HctColor extends CommonIQ implements ColorSpacesIQ {
   ///
   /// The [amount] must be between 0 and 100.
   /// Defaults to 10.
-  @override
   HctColor deintensify([final double amount = 10]) {
     amount.assertRange0to100('deintensify');
     final double nuChroma = max(kMinChroma, chroma - amount);
@@ -196,6 +195,7 @@ class HctColor extends CommonIQ implements ColorSpacesIQ {
     return toColor().simulate(type).toHctColor();
   }
 
+  @Deprecated('Use Hct Data')
   HctColor get grayscale => HctColor(hue, 0, tone, argb: value);
 
   @override

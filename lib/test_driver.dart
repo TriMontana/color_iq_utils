@@ -1,15 +1,15 @@
 // ignore_for_file: avoid_print
 
 import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:color_iq_utils/src/models/hct_data.dart';
 import 'package:material_color_utilities/hct/hct.dart';
 
 void main() {
-  final ColorIQ color = cBurlyWood;
+  final HTML color = cCadetBlue;
   final HSV hsv = color.hsv; // HSVColor.fromColor(color);
   final HSL hsl = color.hsl; // mapHSL.getOrCreate(id);
   print('color: ${color.hexStr}');
-  print('lrv: ${color.lrv.toStrTrimZeros(6)},');
+  final double lrv = color.lrv;
+  print('lrv: ${lrv.toStrTrimZeros(6)},');
 
   // print('brightness: ${ThemeData.estimateBrightnessForColor(color)},');
   // print('brightness2: ${mapBrightness.getOrCreate(color.id).name},');
@@ -22,8 +22,13 @@ void main() {
   final Hct hct = Hct.fromInt(color.value);
   final HctData hct2 = HctData.fromInt(color.value);
   print('hct: $hct');
-  print('hct2: $hct2');
-  print('lrv: ${color.lrv.toStrTrimZeros(6)},');
+  print(
+      'hct: const ${hct2.createStr(5)}, lrv: Percent(${lrv.toStrTrimZeros(6)}),');
+  print(hsv.toString());
+  print(
+      "${color.names}-->${color.hexStr}--${calculateBrightness(Percent(lrv))}");
+  // print('oklch: ${color.oklch.createStr(5)}');
+  // print('xyz: ${color.xyz.createStr(5)}');
   // print(hct.createStr());
   // final OkLCH okLCH = color.oklch; // mapOkLCH.getOrCreate(color.id);
   // print(okLCH.createStr(5));

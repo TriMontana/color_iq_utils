@@ -111,11 +111,6 @@ class LabColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  LabColor brighten([final double amount = 20]) {
-    return toColor().brighten(amount).lab;
-  }
-
-  @override
   LabColor darken([final double amount = 20]) {
     return LabColor(max(0, l - amount), aLab, bLab);
   }
@@ -128,16 +123,6 @@ class LabColor extends CommonIQ implements ColorSpacesIQ {
   @override
   LabColor desaturate([final double amount = 25]) {
     return toLch().desaturate(amount).toLab();
-  }
-
-  @override
-  LabColor intensify([final double amount = 10]) {
-    return toColor().intensify(amount).lab;
-  }
-
-  @override
-  LabColor deintensify([final double amount = 10]) {
-    return toColor().deintensify(amount).lab;
   }
 
   @override
@@ -248,8 +233,8 @@ class LabColor extends CommonIQ implements ColorSpacesIQ {
   List<LabColor> tetrad({final double offset = 60}) =>
       toColor().tetrad(offset: offset).map((final ColorIQ c) => c.lab).toList();
 
-  @override
-  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
+  // @override
+  // double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
 
   @override
   double contrastWith(final ColorSpacesIQ other) =>

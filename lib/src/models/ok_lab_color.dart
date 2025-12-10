@@ -180,11 +180,6 @@ class OkLabColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  OkLabColor brighten([final double amount = 20]) {
-    return toColor().brighten(amount).toOkLab();
-  }
-
-  @override
   OkLabColor darken([final double amount = 20]) {
     return OkLabColor(max(0.0, l - amount / 100), aLab, bLab, alpha: alpha);
   }
@@ -197,16 +192,6 @@ class OkLabColor extends CommonIQ implements ColorSpacesIQ {
   @override
   OkLabColor desaturate([final double amount = 25]) {
     return (toOkLch().desaturate(amount)).toOkLab();
-  }
-
-  @override
-  OkLabColor intensify([final double amount = 10]) {
-    return toColor().intensify(amount).toOkLab();
-  }
-
-  @override
-  OkLabColor deintensify([final double amount = 10]) {
-    return toColor().deintensify(amount).toOkLab();
   }
 
   @override

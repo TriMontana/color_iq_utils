@@ -66,7 +66,7 @@ class HwbColor extends CommonIQ implements ColorSpacesIQ {
     final double v = 1 - bNorm;
     final double s = (v == 0) ? 0 : 1 - wNorm / v;
 
-    return HSV(h, s, Percent(v), alpha: alpha).value;
+    return HSV(h, Percent(s), Percent(v), a: alpha).hexId;
   }
 
 // /// Represents a color in the HWB color space.
@@ -157,9 +157,10 @@ class HwbColor extends CommonIQ implements ColorSpacesIQ {
     }
 
     final double v = 1 - bNorm;
-    final double s = (v == 0) ? 0 : 1 - wNorm / v;
+    final Percent s =
+        Percent(((v == 0) ? 0 : 1 - wNorm / v).clamp(0.0, 1.0).toDouble());
 
-    return HSV(h, s, Percent(v), alpha: a).toColor();
+    return HSV(h, s, Percent(v), a: a).toColor();
   }
 
   @override
@@ -167,9 +168,8 @@ class HwbColor extends CommonIQ implements ColorSpacesIQ {
       copyWith(b: (blackness + amount / 100).clamp(0.0, 1.0));
 
   @override
-  HwbColor brighten([final double amount = 20]) {
-    return copyWith(b: (blackness - amount / 100).clamp(0.0, 1.0));
-  }
+  HwbColor brighten([final Percent amount = Percent.v20]) =>
+      copyWith(b: blackness - amount);
 
   @override
   HwbColor saturate([final double amount = 25]) {
@@ -193,15 +193,9 @@ class HwbColor extends CommonIQ implements ColorSpacesIQ {
     return copyWith(whiteness: w + add, b: blackness + add);
   }
 
-  @override
-  HwbColor intensify([final double amount = 10]) {
-    return saturate(amount);
-  }
+  HwbColor intensify([final double amount = 10]) => saturate(amount);
 
-  @override
-  HwbColor deintensify([final double amount = 10]) {
-    return desaturate(amount);
-  }
+  HwbColor deintensify([final double amount = 10]) => desaturate(amount);
 
   @override
   HwbColor accented([final double amount = 15]) {

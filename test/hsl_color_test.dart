@@ -14,12 +14,9 @@ void main() {
     });
 
     test('contrastWith calculates contrast ratio', () {
-      const HSL black = HSL(0, 0, 0, hexId: hxBlack);
-      const HSL white = HSL(0, 0, 1, hexId: hxWhite);
-
       // Contrast between black and white should be 21.0
-      expect(black.contrastWith(white), closeTo(21.0, 0.1));
-      expect(white.contrastWith(black), closeTo(21.0, 0.1));
+      expect(kHslBlack.contrastWith(kHslWhite), closeTo(21.0, 0.1));
+      expect(kHslWhite.contrastWith(kHslBlack), closeTo(21.0, 0.1));
     });
   });
 }

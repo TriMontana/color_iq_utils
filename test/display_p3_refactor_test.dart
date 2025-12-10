@@ -5,7 +5,7 @@ void main() {
   group('DisplayP3Color Refactor Tests', () {
     test('whiten increases RGB values', () {
       const DisplayP3Color color =
-          DisplayP3Color(Percent.half, Percent.zero, Percent.zero); // Dark Red
+          DisplayP3Color(Percent.v50, Percent.zero, Percent.zero); // Dark Red
       final DisplayP3Color whitened = color.whiten(50);
 
       expect(whitened.r, greaterThan(color.r));
@@ -15,7 +15,7 @@ void main() {
 
     test('blacken decreases RGB values', () {
       const DisplayP3Color color =
-          DisplayP3Color(Percent.max, Percent.half, Percent.half); // Light Red
+          DisplayP3Color(Percent.max, Percent.mid, Percent.mid); // Light Red
       final DisplayP3Color blackened = color.blacken(50);
 
       expect(blackened.r, lessThan(color.r));
@@ -37,7 +37,7 @@ void main() {
 
     test('lighterPalette generates lighter colors', () {
       const DisplayP3Color color =
-          DisplayP3Color(Percent.half, Percent.zero, Percent.zero);
+          DisplayP3Color(Percent.v50, Percent.zero, Percent.zero);
       final List<ColorSpacesIQ> palette = color.lighterPalette(10);
 
       expect(palette.length, 5);
@@ -51,7 +51,7 @@ void main() {
 
     test('darkerPalette generates darker colors', () {
       const DisplayP3Color color =
-          DisplayP3Color(Percent.half, Percent.zero, Percent.zero);
+          DisplayP3Color(Percent.v50, Percent.zero, Percent.zero);
       final List<ColorSpacesIQ> palette = color.darkerPalette(10);
 
       expect(palette.length, 5);

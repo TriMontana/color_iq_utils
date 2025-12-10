@@ -154,8 +154,8 @@ const List<String> kBurgundy = <String>[
   'Borgoña',
 ];
 const List<String> kBurlyWood = <String>[
-  'Burly Wood',
   'Burlywood',
+  'Burly Wood',
   'Madera',
 ];
 const List<String> kCadet = <String>[

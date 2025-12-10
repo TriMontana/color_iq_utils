@@ -92,16 +92,6 @@ class LchColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  LchColor intensify([final double amount = 10]) {
-    return toColor().intensify(amount).toLch();
-  }
-
-  @override
-  LchColor deintensify([final double amount = 10]) {
-    return toColor().deintensify(amount).toLch();
-  }
-
-  @override
   LchColor accented([final double amount = 15]) {
     return toColor().accented(amount).toLch();
   }
@@ -171,11 +161,6 @@ class LchColor extends CommonIQ implements ColorSpacesIQ {
   @override
   LchColor lighten([final double amount = 20]) {
     return LchColor(min(100.0, l + amount), c, h);
-  }
-
-  @override
-  LchColor brighten([final double amount = 20]) {
-    return toColor().brighten(amount).toLch();
   }
 
   /// Creates a copy of this color with the given fields replaced with the new values.

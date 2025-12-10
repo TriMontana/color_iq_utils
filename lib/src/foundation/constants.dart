@@ -35,6 +35,26 @@ const double kGammaDelinearize = 0.0031308;
 const double chi = 0.040449936; // 0.04045; from MCU
 // this is the DART color version of gammaLinearize  0.03928,
 
+// https://github.com/bernaferrari/hsluv-dart/blob/main/lib/hsluv.dart
+const double refU = 0.19783000664283;
+const double refV = 0.46831999493879;
+const double refY = 1.0;
+
+/// π/180° is the conversion factor from degrees to radians.
+/// e.g. radians = angle in degrees x (math.pi / 180)
+/// One complete revolution or circle is equal to 2π radians or 360°.
+/// Degrees × (π/180) = Radians
+/// 360 Degrees = 2π Radians
+/// 180 Degrees = π Radians
+const double degreesInRadian = math.pi / 180.0;
+
+/// The value 180 / π (pi) represents the number of degrees in one radian.
+/// 1 radian is equal to 180/pi (approximately 57.2958) degrees
+/// Radians  × (180/π) = Degrees
+/// 360 Degrees = 2π Radians
+/// 180 Degrees = π Radians
+const double oneRadianInDegrees = 180.0 / math.pi;
+
 /// Values used in converting from sRGB to linear rgb.
 /// See transfer function ("gamma") in <https://en.wikipedia.org/wiki/SRGB>
 const double kAlphaGammaVal = 0.055;

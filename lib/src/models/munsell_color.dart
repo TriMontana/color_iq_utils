@@ -108,12 +108,10 @@ class MunsellColor extends CommonIQ implements ColorSpacesIQ {
     return MunsellColor(hue, munsellValue, max(0.0, chroma - (amount / 5)));
   }
 
-  @override
   MunsellColor intensify([final double amount = 10]) {
     return saturate(amount);
   }
 
-  @override
   MunsellColor deintensify([final double amount = 10]) {
     return desaturate(amount);
   }
@@ -276,9 +274,6 @@ class MunsellColor extends CommonIQ implements ColorSpacesIQ {
       .tetrad(offset: offset)
       .map((final ColorIQ c) => c.toMunsell())
       .toList();
-
-  @override
-  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
 
   @override
   double contrastWith(final ColorSpacesIQ other) =>

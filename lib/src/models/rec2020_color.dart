@@ -77,11 +77,6 @@ class Rec2020Color extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  Rec2020Color brighten([final double amount = 20]) {
-    return toColor().brighten(amount).toRec2020();
-  }
-
-  @override
   Rec2020Color saturate([final double amount = 25]) {
     return toColor().saturate(amount).toRec2020();
   }
@@ -89,16 +84,6 @@ class Rec2020Color extends CommonIQ implements ColorSpacesIQ {
   @override
   Rec2020Color desaturate([final double amount = 25]) {
     return toColor().desaturate(amount).toRec2020();
-  }
-
-  @override
-  Rec2020Color intensify([final double amount = 10]) {
-    return toColor().intensify(amount).toRec2020();
-  }
-
-  @override
-  Rec2020Color deintensify([final double amount = 10]) {
-    return toColor().deintensify(amount).toRec2020();
   }
 
   @override
@@ -253,9 +238,6 @@ class Rec2020Color extends CommonIQ implements ColorSpacesIQ {
       .tetrad(offset: offset)
       .map((final ColorIQ c) => c.toRec2020())
       .toList();
-
-  @override
-  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
 
   @override
   double contrastWith(final ColorSpacesIQ other) =>

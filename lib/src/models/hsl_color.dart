@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:color_iq_utils/color_iq_utils.dart';
 import 'package:color_iq_utils/src/models/argb_color.dart';
+import 'package:material_color_utilities/hct/cam16.dart';
 
 /// A color in the HSL (Hue, Saturation, Lightness) color space.
 ///
@@ -14,7 +15,7 @@ import 'package:color_iq_utils/src/models/argb_color.dart';
 ///   100% is the full color. It is represented as a double from 0.0 to 1.0.
 /// - **Lightness**: The "brightness" of the color. 0% is black, 100% is white,
 ///   and 50% is the "normal" color. It is represented as a double from 0.0 to 1.0.
-class HSL extends CommonIQ implements ColorSpacesIQ {
+class HSL extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   /// The hue value, ranging from 0.0 to 360.0.
   final double h;
 
@@ -27,6 +28,8 @@ class HSL extends CommonIQ implements ColorSpacesIQ {
   /// The luminance of this color, LRV rating, 0.0 to 1.0
   final Percent? lrv;
 
+  final int? colorIdHsl;
+
   /// Creates an HSL color and calculates the `hexId` automatically.
   ///
   /// This is a convenience constructor that calculates the integer hex value
@@ -36,7 +39,8 @@ class HSL extends CommonIQ implements ColorSpacesIQ {
       final int? hexId,
       this.lrv,
       final List<String>? names})
-      : super(hexId, alpha: alpha, names: names ?? kEmptyNames);
+      : colorIdHsl = hexId,
+        super(hexId, alpha: alpha, names: names ?? kEmptyNames);
 
   @override
   int get value => super.colorId ?? HSL.hexIdFromHSL(h, s, l, alpha: alpha);
@@ -49,6 +53,9 @@ class HSL extends CommonIQ implements ColorSpacesIQ {
     return HSL.fromRgbValues(
         r: color.r, g: color.g, b: color.b, alpha: color.a2);
   }
+
+  @override
+  int get hexId => colorIdHsl ?? HSL.hexIdFromHSL(h, s, l, alpha: alpha);
 
   /// Creates an [HSL] from an RGB [Color].
   ///
@@ -123,13 +130,13 @@ class HSL extends CommonIQ implements ColorSpacesIQ {
   }
 
   /// Converts ARGB to HSL.
-  static HSL fromARGB(final ARGBColor color) {
+  static HSL fromARGB(final AppColor color) {
     return HSL.fromRgbValues(
         r: color.r, g: color.g, b: color.b, alpha: color.a);
   }
 
   static HSL fromColor(final ColorIQ color) {
-    final ARGBColor argb = color.argb;
+    final AppColor argb = color.argb;
     return HSL.fromARGB(argb);
   }
 
@@ -156,11 +163,9 @@ class HSL extends CommonIQ implements ColorSpacesIQ {
   HSL desaturate([final double amount = 25]) =>
       copyWith(saturation: max(0.0, s - amount / 100));
 
-  @override
   HSL intensify([final double amount = 10]) =>
       copyWith(saturation: min(1.0, s + amount / 100));
 
-  @override
   HSL deintensify([final double amount = 10]) =>
       copyWith(saturation: max(0.0, s - amount / 100));
 
@@ -438,4 +443,7 @@ class HSL extends CommonIQ implements ColorSpacesIQ {
     final double darker = min(l1, l2);
     return (lighter + 0.05) / (darker + 0.05);
   }
+
+  @override
+  Cam16 get cam16 => Cam16.fromInt(value);
 }

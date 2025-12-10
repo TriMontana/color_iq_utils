@@ -105,13 +105,18 @@ extension StringHelpers on String {
   /// Example:
   ///   '12.34000'.removeTrailingZeroes(2) => '12.34'
   String removeTrailingZeroes([final int decimalsToRetain = 1]) {
-    if (!contains(dot)) return this;
+    // print('original is $this');
+    if (!contains(dot)) {
+      return this;
+    }
     final int dotIndex = indexOf(dot);
     final int minLength = dotIndex + 1 + decimalsToRetain;
     int end = length;
 
     // Find the position to trim trailing zeroes, but keep at least [decimalsToRetain] decimals
     while (end > minLength && this[end - 1] == '0') {
+      // print(
+      //     "min length is $minLength and end is ${end - 1} and this is ${this.charAt(end - 1)}");
       end--;
     }
 
@@ -119,7 +124,7 @@ extension StringHelpers on String {
     if (this[end - 1] == dot) {
       end--;
     }
-
+    // print("returning ${substring(0, end)}");
     return substring(0, end);
   }
 

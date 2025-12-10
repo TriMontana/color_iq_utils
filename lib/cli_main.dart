@@ -1,5 +1,4 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:color_iq_utils/src/models/hct_data.dart';
 
 void main() {
   final ColorIQ c = ColorIQ.fromHexStr('#BED3E5');

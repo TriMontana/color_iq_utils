@@ -250,12 +250,10 @@ class HSP extends CommonIQ implements ColorSpacesIQ {
     return HSP(h, max(0.0, s - amount / 100), p, alpha: alpha);
   }
 
-  @override
   HSP intensify([final double amount = 10]) {
     return HSP(h, min(1.0, s + amount / 100), p, alpha: alpha);
   }
 
-  @override
   HSP deintensify([final double amount = 10]) {
     return HSP(h, max(0.0, s - amount / 100), p, alpha: alpha);
   }

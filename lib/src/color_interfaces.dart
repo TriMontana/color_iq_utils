@@ -1,5 +1,5 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:material_color_utilities/hct/cam16.dart' as mcu;
+import 'package:material_color_utilities/hct/cam16.dart';
 
 export 'color_wheels.dart';
 export 'utils/color_blindness.dart';
@@ -65,7 +65,7 @@ abstract interface class ColorSpacesIQ {
   /// attributes like hue, chroma, and lightness.  Note: This uses
   /// [Cam16] from MaterialColorUtilities (not Cam16Color), as it is frequently
   /// used for distance computations
-  mcu.Cam16 toCam16() => mcu.Cam16.fromInt(value);
+  Cam16 toCam16() => Cam16.fromInt(value);
 
   /// Converts this color to HSL (Hue, Saturation, Lightness).
   HSL toHslColor() => HSL.fromInt(value);
@@ -98,7 +98,7 @@ abstract interface class ColorSpacesIQ {
 
   /// Brightens the color by the given [amount] (0-100).
   /// Increases the brightness/value (HSV Value).
-  ColorSpacesIQ brighten([final double amount = 20]);
+  ColorSpacesIQ brighten([final Percent amount = Percent.v20]);
 
   /// Saturates the color by the given [amount] (0-100).
   ColorSpacesIQ saturate([final double amount = 25]);
@@ -120,13 +120,6 @@ abstract interface class ColorSpacesIQ {
   /// Minimum Transparency (fully opaque) = Alpha 0xFF (255)
   ColorSpacesIQ increaseTransparency([final Percent amount = Percent.v20]);
   ColorSpacesIQ decreaseTransparency([final Percent amount = Percent.v20]);
-
-  /// Creates a new instance of this color type from an HCT color.
-  /// Intensifies the color by increasing chroma and slightly decreasing tone.
-  ColorSpacesIQ intensify([final double amount = 10]);
-
-  /// De-intensifies (mutes) the color by decreasing chroma and slightly increasing tone.
-  ColorSpacesIQ deintensify([final double amount = 10]);
 
   /// Creates an accented version of this color.
   /// Increases chroma and brightness to make the color stand out.
@@ -203,12 +196,12 @@ abstract interface class ColorSpacesIQ {
   /// [offset] is the hue offset for the second color pair (default 60).
   List<ColorSpacesIQ> tetrad({final double offset = 60});
 
-  /// Calculates the distance to another color using Cam16-UCS.
-  double distanceTo(final ColorSpacesIQ other) =>
-      toCam16().distance(other.toCam16());
-
-  /// Calculates the distance to another color ID using Cam16-UCS.
-  double distanceToArgb(final int argb) => toCam16().distance(argb.toCam16);
+  // /// Calculates the distance to another color using Cam16-UCS.
+  // double distanceTo(final ColorSpacesIQ other) =>
+  //     toCam16().distance(other.toCam16());
+  //
+  // /// Calculates the distance to another color ID using Cam16-UCS.
+  // double distanceToArgb(final int argb) => toCam16().distance(argb.toCam16);
 
   /// Calculates the contrast ratio with another color (1.0 to 21.0).
   double contrastWith(final ColorSpacesIQ other);

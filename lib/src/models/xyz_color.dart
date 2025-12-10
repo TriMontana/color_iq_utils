@@ -113,9 +113,6 @@ class XYZ extends CommonIQ {
     return XYZ(x ?? this.x, y ?? this.y, z ?? this.z, alpha: alpha ?? super.a);
   }
 
-  @override
-  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
-
   bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) {
     if (gamut == Gamut.sRGB) {
       // Convert to sRGB linear

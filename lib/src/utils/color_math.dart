@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'dart:math';
 
+import 'package:color_iq_utils/src/extensions/hue360_ext_type.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/xyz_color.dart';
@@ -20,8 +21,43 @@ const Percent Function(double linearRgb, {String? msg}) applyGamma = oetf;
 // -------------------------------------------------------------------
 typedef RgbInts = ({int red, int green, int blue});
 typedef RgbDoubles = ({double r, double g, double b});
-typedef RgbaInts = ({int alpha, int red, int green, int blue});
-typedef RgbaDoubles = ({double a, double r, double g, double b});
+typedef ArgbInts = ({int alpha, int red, int green, int blue});
+typedef ArgbDoubles = ({double a, double r, double g, double b});
+
+abstract class ColorMathIQ {
+  ColorMathIQ._();
+
+  /// Converts hue `degrees` to radians.
+  /// e.g. radians = angle in degrees x (math.pi / 180)
+  /// Degree x π/180 = Radian.  This translates to the equation
+  /// of 1 radian = 57.2958 degrees.
+  /// For example, if you wanted to convert 180 degrees to radians, you
+  /// would divide 180 by 57.2958 to get 3.1416 radians.
+  /// return degrees / 360 * 2 * pi;
+  /// 2 * pi(rad) = 360(deg)
+//
+// pi(rad) = 360(deg) / 2
+//
+// pi(rad) = 180(deg)
+  static Radians degreesToRadians(final double degrees) {
+    double rads = degrees * degreesInRadian;
+    if (rads < 0) {
+      rads += 360;
+    }
+    return Radians(rads);
+  }
+
+  /// Converts radians to degrees, normalizing the result to [0, 360).
+  /// Radians  × (180/π) = Degrees
+  static Degrees radiansToDegrees(final double radians) {
+    double degrees = radians * oneRadianInDegrees;
+    degrees = degrees % 360.0;
+    if (degrees < 0) {
+      degrees += 360.0;
+    }
+    return Degrees(degrees);
+  }
+}
 
 /// Returns the alpha, red, green, and blue components of a color in ARGB format.
 List<int> argbToComponents(final int argb) {
@@ -35,7 +71,7 @@ List<int> argbToComponents(final int argb) {
 /// [argb] is the 32-bit integer representing the color.
 ///
 /// Returns a record [RgbaInts].
-RgbaInts hexIdToComponents(final int argb) {
+ArgbInts hexIdToComponents(final int argb) {
   final int alpha = (argb >> 24) & 0xFF;
   final int red = (argb >> 16) & 0xFF;
   final int green = (argb >> 8) & 0xFF;
@@ -50,7 +86,7 @@ RgbaInts hexIdToComponents(final int argb) {
 /// [argb] is the 32-bit integer representing the color.
 ///
 /// Returns a record [RgbaDoubles] where each component is between 0.0 and 1.0.
-RgbaDoubles hexIdToNormalizedComponents(final int argb) {
+ArgbDoubles hexIdToNormalizedComponents(final int argb) {
   final double an = (((argb >> 24) & 0xFF) / 255.0).clamp(0.0, 1.0);
   final double rn = (((argb >> 16) & 0xFF) / 255.0).clamp(0.0, 1.0);
   final double gn = (((argb >> 8) & 0xFF) / 255.0).clamp(0.0, 1.0);

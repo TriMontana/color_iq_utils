@@ -307,7 +307,10 @@ extension type const Percent._(double _) implements FloatIQ {
   double get value => _;
 
   /// Adds another [Percent] value, clamping the result to the `0.0-1.0` range.
-  Percent operator +(final Percent otherVal) => Percent(_ + otherVal._);
+  Percent operator +(final Percent otherVal) =>
+      Percent((_ + otherVal._).clamp0to1);
+  Percent operator -(final Percent otherVal) =>
+      Percent((_ - otherVal._).clamp0to1);
 
   /// Multiplies this percentage by a [double].
   ///
@@ -318,6 +321,8 @@ extension type const Percent._(double _) implements FloatIQ {
   Percent replace(final double val) => Percent(val);
   Percent decreaseBy(final Percent amount) =>
       Percent((_ - amount.value).clamp(0.0, 1.0));
+
+  Percent get half => Percent((_ / 2.0).clamp(0.0, 1.0));
 
   static Percent? validOrNull(
     final double? val, {
@@ -438,7 +443,6 @@ extension type const Percent._(double _) implements FloatIQ {
   static const Percent min = Percent(0.0); // 0% or 0.0
   static const Percent zero = Percent(0.0);
   static const Percent mid = Percent(0.50); // 50% or 0.5
-  static const Percent half = Percent.mid;
   static const Percent max = Percent(1.0);
   static const Percent v0 = Percent(0.0);
   static const Percent v05 = Percent(0.05);

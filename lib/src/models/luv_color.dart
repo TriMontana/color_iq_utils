@@ -126,16 +126,6 @@ class LuvColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  LuvColor intensify([final double amount = 10]) {
-    return toColor().intensify(amount).toLuv();
-  }
-
-  @override
-  LuvColor deintensify([final double amount = 10]) {
-    return toColor().deintensify(amount).toLuv();
-  }
-
-  @override
   LuvColor accented([final double amount = 15]) {
     return toColor().accented(amount).toLuv();
   }
@@ -143,11 +133,6 @@ class LuvColor extends CommonIQ implements ColorSpacesIQ {
   @override
   LuvColor simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).toLuv();
-  }
-
-  @override
-  LuvColor brighten([final double amount = 20]) {
-    return toColor().brighten(amount).toLuv();
   }
 
   @override
@@ -238,7 +223,6 @@ class LuvColor extends CommonIQ implements ColorSpacesIQ {
       .map((final ColorIQ c) => c.toLuv())
       .toList();
 
-  @override
   double distanceTo(final ColorSpacesIQ other) =>
       toCam16().distance(other.toCam16());
 

@@ -215,11 +215,9 @@ class HsbColor extends CommonIQ implements ColorSpacesIQ {
   HsbColor desaturate([final double amount = 25]) =>
       HsbColor(h, max(0.0, s - amount / 100), b);
 
-  @override
   HsbColor intensify([final double amount = 10]) =>
       HsbColor(h, min(1.0, s + amount / 100), b);
 
-  @override
   HsbColor deintensify([final double amount = 10]) =>
       HsbColor(h, max(0.0, s - amount / 100), b);
 

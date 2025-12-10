@@ -28,7 +28,7 @@ void main() {
     });
 
     test('toJson and fromJson for HsvColor', () {
-      const HSV hsv = HSV(120, 0.5, Percent.v80);
+      const HSV hsv = HSV(120, Percent.v50, Percent.v80);
       final Map<String, dynamic> json = hsv.toJson();
       expect(json['type'], 'HsvColor');
       expect(json['hue'], 120);
@@ -37,8 +37,8 @@ void main() {
 
       final HSV fromJson = ColorIQ.fromJson(json) as HSV;
       expect(fromJson.h, 120);
-      expect(fromJson.s, 0.5);
-      expect(fromJson.v, 0.8);
+      expect(fromJson.saturation, 0.5);
+      expect(fromJson.value, 0.8);
     });
 
     test('toJson and fromJson for HslColor', () {

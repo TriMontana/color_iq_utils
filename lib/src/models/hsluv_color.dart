@@ -83,11 +83,6 @@ class HsluvColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  HsluvColor brighten([final double amount = 20]) {
-    return toColor().brighten(amount).toHsluv();
-  }
-
-  @override
   HsluvColor saturate([final double amount = 25]) {
     return HsluvColor(h, min(100.0, s + amount), l);
   }
@@ -95,16 +90,6 @@ class HsluvColor extends CommonIQ implements ColorSpacesIQ {
   @override
   HsluvColor desaturate([final double amount = 25]) {
     return HsluvColor(h, max(0.0, s - amount), l);
-  }
-
-  @override
-  HsluvColor intensify([final double amount = 10]) {
-    return toColor().intensify(amount).toHsluv();
-  }
-
-  @override
-  HsluvColor deintensify([final double amount = 10]) {
-    return toColor().deintensify(amount).toHsluv();
   }
 
   @override
@@ -202,9 +187,6 @@ class HsluvColor extends CommonIQ implements ColorSpacesIQ {
       .tetrad(offset: offset)
       .map((final ColorIQ c) => c.toHsluv())
       .toList();
-
-  @override
-  double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
 
   @override
   double contrastWith(final ColorSpacesIQ other) =>

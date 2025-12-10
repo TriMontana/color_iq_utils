@@ -131,11 +131,6 @@ class DisplayP3Color extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  DisplayP3Color brighten([final double amount = 20]) {
-    return toColor().brighten(amount).toDisplayP3();
-  }
-
-  @override
   DisplayP3Color saturate([final double amount = 25]) {
     return toColor().saturate(amount).toDisplayP3();
   }
@@ -143,16 +138,6 @@ class DisplayP3Color extends CommonIQ implements ColorSpacesIQ {
   @override
   DisplayP3Color desaturate([final double amount = 25]) {
     return toColor().desaturate(amount).toDisplayP3();
-  }
-
-  @override
-  DisplayP3Color intensify([final double amount = 10]) {
-    return toColor().intensify(amount).toDisplayP3();
-  }
-
-  @override
-  DisplayP3Color deintensify([final double amount = 10]) {
-    return toColor().deintensify(amount).toDisplayP3();
   }
 
   @override

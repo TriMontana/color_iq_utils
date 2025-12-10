@@ -24,8 +24,8 @@ void main() {
       final ColorIQ color = ColorIQ.fromArgbInts(255, 0, 255, 0);
       final HSV hsv = color.hsv;
       expect(hsv.h, closeTo(120, 0.1));
-      expect(hsv.s, closeTo(1.0, 0.1));
-      expect(hsv.v, closeTo(1.0, 0.1));
+      expect(hsv.saturation, closeTo(1.0, 0.1));
+      expect(hsv.value, closeTo(1.0, 0.1));
       expect(hsv.value, 0xFF00FF00);
     });
 

@@ -1,19 +1,20 @@
+import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:material_color_utilities/hct/cam16.dart';
+import 'package:material_color_utilities/hct/hct.dart';
+
 // 1. A pure data class (Const capable!)
 // Create a custom class that holds the HCT values as simple
 // double primitives. This gives you the immutability you want
 // and allows for a more efficient pre-computation strategy.
 // This class is "dumb." It doesn't know how to calculate HCT;
 // it just holds the result of a calculation. This allows it to be const.
-
-import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:material_color_utilities/hct/hct.dart';
-
-class HctData {
+class HctData implements ColorWheelInf {
   final double hue;
   final double chroma;
   final double tone;
+  final int? colorId;
 
-  const HctData(this.hue, this.chroma, this.tone)
+  const HctData(this.hue, this.chroma, this.tone, {this.colorId})
       : assert(hue >= 0.0 && hue <= 360.0,
             'Hue must be between 0 and 360, was $hue'),
         assert(chroma >= 0.0 && chroma <= kMaxChroma,
@@ -29,13 +30,36 @@ class HctData {
     final Hct heavyObject = Hct.fromInt(colorId);
 
     // Discard the heavy object, keep only the 3 doubles
-    return HctData(heavyObject.hue, heavyObject.chroma, heavyObject.tone);
+    return HctData(heavyObject.hue, heavyObject.chroma, heavyObject.tone,
+        colorId: colorId);
   }
 
   @override
-  String toString() => 'HctData(h: ${hue.toStrTrimZeros(2)}, ' //
+  int get hexId {
+    if (colorId != null) {
+      return colorId!;
+    }
+    // Use the heavy library ONCE to do the math
+    final Hct heavyObject = Hct.from(hue, chroma, tone);
+    // Discard the heavy object, keep only the 3 doubles
+    return heavyObject.toInt();
+  }
+
+  int toInt() => hexId;
+
+  @override
+  String toString() => 'HctData(h: ${hue.toStrTrimZeros(3)}, ' //
       'c: ${chroma.toStrTrimZeros(2)}, ' //
       't: ${tone.toStrTrimZeros(2)})';
+
+  /// calculate the colorID
+  static int calculateColorID(
+      final double hue, final double chroma, final double tone) {
+    // Use the heavy library ONCE to do the math
+    final Hct heavyObject = Hct.from(hue, chroma, tone);
+    // Discard the heavy object, keep only the 3 doubles
+    return heavyObject.toInt();
+  }
 
   // Equality operator is vital if you plan to compare colors logically
   @override
@@ -49,6 +73,12 @@ class HctData {
 
   @override
   int get hashCode => hue.hashCode ^ chroma.hashCode ^ tone.hashCode;
+
+  @override
+  Cam16 get cam16 => Cam16.fromInt(hexId);
+
+  @override
+  ColorSlice closestColorSlice() => hexId.closestColorSlice();
 }
 
 // This extension operates on your immutable HctData wrapper.
@@ -59,14 +89,14 @@ extension HctManipulation on HctData {
   /// @param amount: The amount to add (0-100 scale). e.g., 10.0 adds 10% lightness.
   HctData lighten(final double amount) {
     // Clamp to ensure we don't exceed 100 (Absolute White)
-    final double newTone = (tone + amount).clamp(0.0, 100.0);
+    final double newTone = (tone + amount).clampToneHct;
     return HctData(hue, chroma, newTone);
   }
 
   /// Returns a new HctData with the Tone reduced.
   HctData darken(final double amount) {
     // Clamp to ensure we don't go below 0 (Absolute Black)
-    final double newTone = (tone - amount).clamp(0.0, 100.0);
+    final double newTone = (tone - amount).clampToneHct;
     return HctData(hue, chroma, newTone);
   }
 
@@ -75,17 +105,80 @@ extension HctManipulation on HctData {
     // HCT Chroma theoretically goes higher, but ~150 is a safe practical cap for checks
     // The solver will handle gamut mapping if it's too high.
     final double newChroma = chroma + amount;
-    return HctData(hue, newChroma, tone);
+    return HctData(hue, newChroma.clampChromaHct, tone);
   }
 
   /// Returns a new HctData with Chroma decreased (more gray).
   HctData desaturate(final double amount) {
-    final double newChroma = (chroma - amount).clamp(0.0, 200.0);
+    final double newChroma = (chroma - amount).clampChromaHct;
     return HctData(hue, newChroma, tone);
   }
 
-  String createStr([final int precision = 4]) =>
+  HctData withHue(final double newHue) {
+    wrapHue(newHue);
+    return HctData(wrapHue(newHue), chroma, tone);
+  }
+
+  String createStr([final int precision = 5]) =>
       'HctData(h: ${hue.toStrTrimZeros(precision)}, ' //
       'c: ${chroma.toStrTrimZeros(precision)}, ' //
       't: ${tone.toStrTrimZeros(precision)})';
+}
+
+// --- HCT Strategy ---
+class HctStrategy extends ManipulationStrategy {
+  const HctStrategy();
+
+  @override
+  int lighten(final int argb, final double amount, {HctData? hct}) {
+    // 1. Convert Int -> HctData
+    hct ??= HctData.fromInt(argb);
+    // 2. Use your existing Extension logic
+    final HctData modified = hct.lighten(amount);
+    // 3. Convert HctData -> Int
+    return modified.hexId;
+  }
+
+  // ... implement darken, saturate, etc. using HCT math
+  @override
+  int darken(final int argb, final double amount) =>
+      HctData.fromInt(argb).darken(amount).hexId;
+
+  @override
+  int saturate(final int argb, final double amount) =>
+      HctData.fromInt(argb).saturate(amount).hexId;
+
+  @override
+  int desaturate(final int argb, final double amount) =>
+      HctData.fromInt(argb).desaturate(amount).hexId;
+
+  @override
+  int rotateHue(final int argb, final double amount) => HctData.fromInt(argb)
+      .withHue((HctData.fromInt(argb).hue + amount) % 360)
+      .hexId;
+
+  /// Intensifies the color by increasing chroma and slightly decreasing tone (half of factor).
+  @override
+  int intensify(final int argb,
+      {final Percent amount = Percent.v15, HctData? hct}) {
+    hct ??= HctData.fromInt(argb);
+
+    final double newChroma = (hct.chroma + amount).clampChromaHct;
+    final double newTone = (hct.tone - (amount.val / 2)).clampToneHct;
+
+    return HctData(hct.hue, newChroma, newTone).hexId;
+  }
+
+  /// De-intensifies (mutes) the color by decreasing chroma and
+  /// slightly increasing tone (half of factor).
+  @override
+  int deintensify(final int argb,
+      {final Percent amount = Percent.v15, HctData? hct}) {
+    hct ??= HctData.fromInt(argb);
+
+    final double newChroma = (hct.chroma - amount).clampChromaHct;
+    final double newTone = (hct.tone + (amount.val / 2)).clampToneHct;
+
+    return HctData(hct.hue, newChroma, newTone).hexId;
+  }
 }

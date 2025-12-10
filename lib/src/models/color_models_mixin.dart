@@ -16,6 +16,28 @@ import 'package:color_iq_utils/src/utils/misc_utils.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 import 'package:material_color_utilities/hct/src/hct_solver.dart';
 
+// First, define the "Menu" of available models and the "Contract" that every model must fulfill.
+/// The menu of available math models
+enum ColorModel { hct, hsv, hsl, rgb }
+
+/// The Strategy Interface
+/// All logic classes must implement these standard transformations.
+abstract class ManipulationStrategy {
+  const ManipulationStrategy();
+
+  int lighten(final int argb, final double amount);
+  int darken(final int argb, final double amount);
+  int saturate(final int argb, final double amount);
+  int desaturate(final int argb, final double amount);
+  int rotateHue(final int argb, final double amount);
+
+  /// Intensifies the color by increasing chroma and slightly decreasing tone (half of factor).
+  int intensify(final int argb, {final Percent amount = Percent.v15});
+
+  /// De-intensifies (mutes) the color by decreasing chroma and slightly increasing tone (half of factor).
+  int deintensify(final int argb, {final Percent amount = Percent.v15});
+}
+
 /// A mixin that provides common color model conversion methods.
 mixin ColorModelsMixin {
   /// Returns the 32-bit integer ID (ARGB) of this color.
@@ -41,17 +63,17 @@ mixin ColorModelsMixin {
   LinRGB get greenLinear => linearizeColorComponentDart(g);
   LinRGB get blueLinear => linearizeColorComponentDart(b);
 
-  RgbaInts get rgbaInts =>
+  ArgbInts get rgbaInts =>
       (alpha: alphaInt, red: red, green: green, blue: blue);
   RgbInts get rgbInts => (red: red, green: green, blue: blue);
-  RgbaDoubles get rgbaDoubles => (a: a, r: r, g: g, b: b);
+  ArgbDoubles get rgbaDoubles => (a: a, r: r, g: g, b: b);
   List<LinRGB> get rgbaLinearized =>
       <LinRGB>[redLinearized, greenLinearized, blueLinearized, alphaLinearized];
   List<double> get linearSrgb =>
       <double>[redLinearized, greenLinearized, blueLinearized];
 
   List<int> get argb255Ints => <int>[alphaInt, red, green, blue];
-  RgbaDoubles get rgbasNormalized => (r: r.val, g: g.val, b: b.val, a: a.val);
+  ArgbDoubles get rgbasNormalized => (r: r.val, g: g.val, b: b.val, a: a.val);
 
   /// Returns the transparency (alpha) as a double (0.0-1.0).
   double get transparency => value.a;
@@ -129,16 +151,17 @@ mixin ColorModelsMixin {
     }
   }
 
-  /// A measure of the perceptual difference between two colors.
-  ///
-  /// A value of 0 means the colors are identical, and a value of 100 means
-  /// they are the furthest apart.
-  ///
-  /// The distance is calculated in the CAM16-UCS color space.
-  double distanceTo(final ColorSpacesIQ other) =>
-      toCam16().distance(other.toCam16());
+  // /// A measure of the perceptual difference between two colors.
+  // ///
+  // /// A value of 0 means the colors are identical, and a value of 100 means
+  // /// they are the furthest apart.
+  // ///
+  // /// The distance is calculated in the CAM16-UCS color space.
+  //  double distanceTo(final int other) =>
+  //       toCam16().distance(other.toCam16());
 
-  double distanceToArgb(final int argb) => toCam16().distance(argb.toCam16);
+  double distanceToArgb(final int otherColorId) =>
+      toCam16().distance(otherColorId.toCam16);
 
   /// Returns the grayscale value of the color.
   /// Converts a 32-bit ARGB color to grayscale using the given [method].
@@ -148,8 +171,8 @@ mixin ColorModelsMixin {
   int get inverted => rgbToHexID(
       red: 255 - red, green: 255 - green, blue: 255 - blue, alpha: alphaInt);
 
-  ColorSpacesIQ deintensify([final double amount = 10]) =>
-      toHctColor().deintensify(amount);
+  // ColorSpacesIQ deintensify([final double amount = 10]) =>
+  //     toHctColor().deintensify(amount);
 
   /// Decreases the transparency of a color by moving the Alpha channel closer to 255 (opaque).
   /// -- Maximum Transparency (fully invisible) = Alpha 0x00 (0)
@@ -201,7 +224,7 @@ mixin ColorModelsMixin {
     double minDistance = double.infinity;
 
     for (final ColorSlice slice in hctSlices) {
-      final double dist = distanceTo(slice.color);
+      final double dist = distanceToArgb(slice.color.hexId);
       if (dist < minDistance) {
         minDistance = dist;
         closest = slice;
@@ -221,6 +244,10 @@ mixin ColorModelsMixin {
     final double nuChroma = max(kMinChroma, hct.chroma - amount);
     final int hexID = HctSolver.solveToInt(hct.hue, nuChroma, hct.tone);
     return hct.copyWith(chroma: nuChroma, argb: hexID);
+  }
+
+  ColorSpacesIQ brighten([final Percent amount = Percent.v20]) {
+    return toHsvColor().brighten(amount).toColor();
   }
 
   // Calculate

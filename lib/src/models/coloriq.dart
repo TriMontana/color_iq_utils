@@ -4,6 +4,7 @@ import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/argb_color.dart';
 import 'package:color_iq_utils/src/models/cmyk_color.dart';
+import 'package:color_iq_utils/src/models/color_models_mixin.dart';
 import 'package:color_iq_utils/src/models/display_p3_color.dart';
 import 'package:color_iq_utils/src/models/hct_color.dart';
 import 'package:color_iq_utils/src/models/hct_data.dart';
@@ -24,6 +25,7 @@ import 'package:color_iq_utils/src/models/rec2020_color.dart';
 import 'package:color_iq_utils/src/models/xyz_color.dart';
 import 'package:color_iq_utils/src/models/yiq_color.dart';
 import 'package:color_iq_utils/src/models/yuv_color.dart';
+import 'package:color_iq_utils/src/ops/color_manipulator.dart';
 import 'package:color_iq_utils/src/utils_lib.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 
@@ -45,9 +47,10 @@ import 'package:material_color_utilities/hct/cam16.dart';
 /// - Simulating color blindness.
 /// - Calculating color properties like luminance, contrast, and perceptual
 ///   distance.
-class ColorIQ extends CommonIQ implements ColorSpacesIQ {
+class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   /// The 32-bit integer representation of the color, in `0xAARRGGBB` format.
   /// This is the canonical value for the color instance.
+  @override
   final int hexId;
 
   /// An optional, pre-computed [HctData] instance.
@@ -55,9 +58,9 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
   /// Otherwise, this is lazily computed for performance reasons.
   final HctData? _hct;
 
-  /// An optional, pre-computed [ARGBColor] instance.
+  /// An optional, pre-computed [AppColor] instance.
   /// Used for optimization to avoid re-parsing the `hexId` if components are known.
-  final ARGBColor? _argb;
+  final AppColor? _argb;
 
   /// The color space in which the color is defined.
   /// Defaults to [ColorSpace.sRGB].
@@ -74,29 +77,29 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
   /// Creates a [ColorIQ] instance from a 32-bit integer [hexId].
   ///
   /// Optional parameters can be provided to pre-compute and cache values like
-  /// [hctData], [argbColor], [lrv], and [brightness], which can improve
+  /// [hct], [argbColor], [lrv], and [brightness], which can improve
   /// performance if these values are already available.
   ColorIQ(
     this.hexId, {
     this.colorSpace = ColorSpace.sRGB,
-    final HctData? hctData,
-    final ARGBColor? argbColor,
+    final HctData? hct,
+    final AppColor? argbColor,
     final List<String> names = kEmptyNames,
     final Percent? lrv,
     final Brightness? brightness,
     final Percent? alpha,
-  })  : _hct = hctData,
+  })  : _hct = hct,
         _argb = argbColor,
         _lrv = lrv ?? argbColor?.lrv,
         _brightness = brightness ?? argbColor?.brightness,
         super(hexId, names: names, alpha: alpha ?? argbColor?.a ?? hexId.a2);
 
-  /// An [ARGBColor] instance representing the ARGB components of the color.
+  /// An [AppColor] instance representing the ARGB components of the color.
   ///
   /// This is lazily initialized, either from a provided `argbColor` during
   /// construction or by creating a new `ARGBColor` from the `hexId`. It provides
   /// access to individual color components (alpha, red, green, blue).
-  late final ARGBColor argb = _argb ?? ARGBColor(hexId);
+  late final AppColor argb = _argb ?? AppColor(hexId);
 
   /// The relative luminance of the color, calculated according to WCAG standards.
   ///
@@ -141,21 +144,21 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
     final Percent? lrv,
     final HctData? hctColor,
   }) {
-    final ARGBColor argbColor =
-        ARGBColor.fromARGB(alpha, red, green, blue, a: a, r: r, g: g, b: b);
+    final AppColor argbColor =
+        AppColor.fromARGB(alpha, red, green, blue, a: a, r: r, g: g, b: b);
     return ColorIQ(
       argbColor.value,
       argbColor: argbColor,
       names: names ?? kEmptyNames,
       colorSpace: colorSpace,
       lrv: lrv,
-      hctData: hctColor,
+      hct: hctColor,
     );
   }
 
   /// Construct a color from 4 integers, a, r, g, b.
   factory ColorIQ.fromArgbColor(
-    final ARGBColor argbColor, {
+    final AppColor argbColor, {
     final ColorSpace colorSpace = ColorSpace.sRGB,
     final List<String>? names,
     final Percent? lrv,
@@ -167,7 +170,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
       names: names ?? kEmptyNames,
       colorSpace: colorSpace,
       lrv: lrv ?? argbColor.lrv,
-      hctData: hctColor,
+      hct: hctColor,
       brightness: argbColor.brightness,
     );
   }
@@ -182,14 +185,14 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
     final ColorSpace colorSpace = ColorSpace.sRGB,
     final List<String>? names,
     final HctData? hctColor,
-    ARGBColor? argbColor,
+    AppColor? argbColor,
   }) {
-    argbColor ??= ARGBColor.from(a: a, r: r, g: g, b: b);
+    argbColor ??= AppColor.from(a: a, r: r, g: g, b: b);
     luminance = luminance ?? argbColor.lrv;
     return ColorIQ(argbColor.value,
         colorSpace: colorSpace,
         lrv: luminance,
-        hctData: hctColor,
+        hct: hctColor,
         names: names ?? kEmptyNames);
   }
 
@@ -228,7 +231,9 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
 
   late final LabColor lab = mapLAB.getOrCreate(value);
   late final HctData hct = _hct ?? HctData.fromInt(value);
+  @override
   late final Cam16 cam16 = Cam16.fromInt(value);
+  double distanceTo(final ColorWheelInf other) => cam16.distance(other.cam16);
 
   late final XYZ xyz = XYZ.xyxFromRgb(red, green, blue);
   late final HSV hsv = HSV.fromARGB(argb);
@@ -252,7 +257,6 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
   ///
   /// Example:
   /// ```dart
-  /// import 'dart:ui';
   /// /// Create a color with 50% opacity.
   /// Color makeTransparent(Color color) => color.withValues(alpha: 0.5);
   /// ```
@@ -263,9 +267,9 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
     final Percent? bVal,
     final ColorSpace? colorSpace,
   }) {
-    ARGBColor? updatedComponents;
+    AppColor? updatedComponents;
     if (aVal != null || rVal != null || gVal != null || bVal != null) {
-      updatedComponents = ARGBColor.from(
+      updatedComponents = AppColor.from(
         a: aVal ?? a,
         r: rVal ?? r,
         g: gVal ?? g,
@@ -276,7 +280,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
     if (colorSpace != null && colorSpace != this.colorSpace) {
       final ColorTransform transform =
           getColorTransform(this.colorSpace, colorSpace);
-      final ARGBColor argbComponents =
+      final AppColor argbComponents =
           transform.transform(updatedComponents ?? argb, colorSpace);
 
       return ColorIQ.fromArgbColor(argbComponents);
@@ -301,6 +305,30 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
     final double v = 0.615 * r - 0.51499 * g - 0.10001 * b;
 
     return YuvColor(y, u, v);
+  }
+
+  /// Makes the color brighter and more vivid
+  AppColor intensify(
+      {final Percent amount = Percent.v20,
+      final ColorModel model = ColorModel.hct}) {
+    return AppColor(ColorManipulator.transform(
+      color: value,
+      model: model,
+      type: TransformType.intensify,
+      amount: amount,
+    ));
+  }
+
+  /// Makes the color darker and more muted
+  AppColor deintensify(
+      {final Percent amount = Percent.v20,
+      final ColorModel model = ColorModel.hct}) {
+    return AppColor(ColorManipulator.transform(
+      color: value,
+      model: model,
+      type: TransformType.deintensify,
+      amount: amount,
+    ));
   }
 
   /// Converts this color to OkHSL.
@@ -349,7 +377,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
 
   /// Converts this color to HSB (Alias for HSV).
   HsbColor toHsb() {
-    return HsbColor(hsv.h, hsv.s, hsv.v);
+    return HsbColor(hsv.h, hsv.saturation, hsv.value);
   }
 
   /// Converts this color to HWB.
@@ -475,7 +503,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  ColorIQ brighten([final double amount = 20]) {
+  ColorIQ brighten([final Percent amount = Percent.v20]) {
     return hsv.brighten(amount).toColor();
   }
 
@@ -487,16 +515,6 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
   @override
   ColorIQ desaturate([final double amount = 25]) {
     return hsl.desaturate(amount).toColor();
-  }
-
-  @override
-  ColorIQ intensify([final double amount = 10]) {
-    return toHctColor().intensify(amount).toColor();
-  }
-
-  @override
-  ColorIQ deintensify([final double amount = 10]) {
-    return toHctColor().deintensify(amount).toColor();
   }
 
   @override
@@ -762,10 +780,6 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  double distanceTo(final ColorSpacesIQ other) =>
-      toCam16().distance(other.toCam16());
-
-  @override
   double contrastWith(final ColorSpacesIQ other) {
     final double l1 = luminance;
     final double l2 = other.luminance;
@@ -810,13 +824,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ {
         return ColorIQ(json[kValue] as int);
       case 'HctColor':
         return HctColor(json['hue'], json[kChroma], json['tone']);
-      case 'HsvColor':
-        return HSV(
-          json['hue'],
-          json['saturation'],
-          json['value'],
-          alpha: json['alpha'] ?? 1.0,
-        );
+
       case 'HslColor':
         return HSL(
           json['hue'],

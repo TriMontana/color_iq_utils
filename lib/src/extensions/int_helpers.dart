@@ -2,14 +2,13 @@ import 'dart:math' as math;
 import 'dart:math';
 
 import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:color_iq_utils/src/models/hct_data.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 
 /// Extension for integers
 extension IntHelperIQ on int {
   String get toHexStr => '0x${toRadixString(16).toUpperCase().padLeft(8, '0')}';
-  RgbaInts get rgbaInts => hexIdToComponents(this);
-  RgbaDoubles get rgbaDoubles => hexIdToNormalizedComponents(this);
+  ArgbInts get rgbaInts => hexIdToComponents(this);
+  ArgbDoubles get rgbaDoubles => hexIdToNormalizedComponents(this);
 
   int get clamp0to255 => clampInt(this, min: 0, max: 255);
 
@@ -19,7 +18,7 @@ extension IntHelperIQ on int {
     double minDistance = double.infinity;
 
     for (final ColorSlice slice in hctSlices) {
-      final double dist = distanceTo(slice.color.value);
+      final double dist = distanceTo(slice.color.hexId);
       if (dist < minDistance) {
         minDistance = dist;
         closest = slice;
@@ -209,8 +208,7 @@ extension IntHelperIQ on int {
     final HctColor hct1 = thisColor.toHctColor();
 
     // Representative colors for each family (using pure/typical colors)
-    final Map<ColorFamilyHTML, HtmlColor> familyColors =
-        <ColorFamilyHTML, HtmlColor>{
+    final Map<ColorFamilyHTML, HTML> familyColors = <ColorFamilyHTML, HTML>{
       ColorFamilyHTML.red: cRed,
       ColorFamilyHTML.orange: cOrangeHtml,
       ColorFamilyHTML.yellow: cYellow,

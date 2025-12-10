@@ -1,13 +1,20 @@
 import 'package:color_iq_utils/src/colors_lib.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
-import 'package:color_iq_utils/src/models/hct_color.dart';
+import 'package:color_iq_utils/src/models/hct_data.dart';
 import 'package:color_iq_utils/src/models/hsv_color.dart';
+import 'package:material_color_utilities/hct/cam16.dart';
+
+abstract interface class ColorWheelInf {
+  int get hexId; // aka ColorID
+  Cam16 get cam16;
+  ColorSlice closestColorSlice();
+}
 
 /// Represents a slice of a color wheel.
 class ColorSlice {
-  /// The color of this slice.
-  final ColorSpacesIQ color;
+  /// The color of this slice, e.g. HsvColor or HctColor.
+  final ColorWheelInf color;
 
   /// The starting angle of this slice in degrees (inclusive).
   final double startAngle;
@@ -40,6 +47,34 @@ List<ColorSlice> generateHsvWheel({
   );
 }
 
+// List<ColorSlice> _generateHSVWheelInternal(
+//   final HSV Function(double hue) colorFactory,
+//   final double param1,
+//   final double param2, {
+//   final List<String> Function(int index)? nameProvider,
+// }) {
+//   final List<ColorSlice> slices = <ColorSlice>[];
+//   const double step = 6.0; // 360 / 60
+//   final List<String> Function(int index) getName =
+//       nameProvider ?? _getColorName;
+//
+//   for (int i = 0; i < 60; i++) {
+//     final double startAngle = i * step;
+//     final double endAngle = (i + 1) * step;
+//     final double centerAngle = startAngle + (step / 2);
+//
+//     slices.add(
+//       ColorSlice(
+//         color: colorFactory(centerAngle),
+//         startAngle: startAngle,
+//         endAngle: endAngle,
+//         name: getName(i),
+//       ),
+//     );
+//   }
+//   return slices;
+// }
+
 /// Generates a 60-section HSV color wheel as a Map of names to slices.
 /// [saturation] and [value] can be customized (default 100).
 Map<String, ColorSlice> getHsvWheelMap({
@@ -62,7 +97,7 @@ List<ColorSlice> generateHctWheel({
   final double tone = 50,
 }) {
   return _generateWheel(
-    (final double hue) => HctColor.alt(hue, chroma, tone),
+    (final double hue) => HctData(hue, chroma, tone),
     chroma,
     tone,
     nameProvider: _getHctColorName,
@@ -85,7 +120,7 @@ Map<String, ColorSlice> getHctWheelMap({
 final List<ColorSlice> hctSlices = generateHctWheel();
 
 List<ColorSlice> _generateWheel(
-  final ColorSpacesIQ Function(double hue) colorFactory,
+  final ColorWheelInf Function(double hue) colorFactory,
   final double param1,
   final double param2, {
   final List<String> Function(int index)? nameProvider,

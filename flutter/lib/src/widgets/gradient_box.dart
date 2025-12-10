@@ -15,3 +15,13 @@ Widget gradientBox(final ColorIQ c1, final ColorIQ c2) {
     ),
   );
 }
+
+HSVColor hsvColor = HSVColor.fromColor(Colors.red);
+void printHsvColor() {
+  print(hsvColor.toString());
+}
+
+HSLColor hslColor = HSLColor.fromColor(Colors.red);
+void printHslColor() {
+  print(hslColor.toString());
+}

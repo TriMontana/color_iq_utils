@@ -261,24 +261,6 @@ class HclUv extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
-  ColorSpacesIQ intensify([final double amount = 10]) {
-    // TODO: implement intensify
-    throw UnimplementedError();
-  }
-
-  @override
-  bool isEqual(final ColorSpacesIQ other) {
-    // TODO: implement isEqual
-    throw UnimplementedError();
-  }
-
-  @override
-  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) {
-    // TODO: implement isWithinGamut
-    throw UnimplementedError();
-  }
-
-  @override
   ColorSpacesIQ lerp(final ColorSpacesIQ other, final double t) {
     // TODO: implement lerp
     throw UnimplementedError();
@@ -359,6 +341,18 @@ class HclUv extends CommonIQ implements ColorSpacesIQ {
   @override
   ColorSpacesIQ whiten([final double amount = 20]) {
     // TODO: implement whiten
+    throw UnimplementedError();
+  }
+
+  @override
+  bool isEqual(final ColorSpacesIQ other) {
+    // TODO: implement isEqual
+    throw UnimplementedError();
+  }
+
+  @override
+  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) {
+    // TODO: implement isWithinGamut
     throw UnimplementedError();
   }
 }
