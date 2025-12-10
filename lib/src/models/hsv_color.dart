@@ -102,6 +102,7 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
   }
 
   /// Returns this color in RGB.
+  @override
   ColorIQ toColor() {
     final double chroma = saturation * val.val;
     final double secondary = chroma * (1.0 - (((h / 60.0) % 2.0) - 1.0).abs());
@@ -238,44 +239,92 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
   HSV get complementary => adjustHue(180);
 
   @override
-  ColorSpacesIQ accented([final double amount = 15]) =>
-      toColor().accented(amount);
+  HSV accented([final double amount = 15]) => intensify(amount);
 
   @override
-  ColorSpacesIQ decreaseTransparency([final Percent amount = Percent.v20]) =>
-      toColor().decreaseTransparency(amount);
+  HSV decreaseTransparency([final Percent amount = Percent.v20]) =>
+      copyWith(alpha: min(1.0, alpha + amount).clampToPercent);
 
   @override
-  ColorSpacesIQ increaseTransparency([final Percent amount = Percent.v20]) =>
-      toColor().increaseTransparency(amount);
+  HSV increaseTransparency([final Percent amount = Percent.v20]) =>
+      copyWith(alpha: max(0.0, alpha - amount).clampToPercent);
 
   @override
-  List<ColorSpacesIQ> get monochromatic => toColor().monochromatic;
+  List<HSV> get monochromatic {
+    final List<HSV> results = <HSV>[];
+    for (int i = 0; i < 5; i++) {
+      final double delta = (i - 2) * 10;
+      results.add(withValue((val + Percent(delta / 100)).clampToPercent));
+    }
+    return results;
+  }
 
   @override
-  List<ColorSpacesIQ> lighterPalette([final double? step]) =>
-      toColor().lighterPalette(step);
+  List<HSV> lighterPalette([final double? step]) {
+    final double s = step ?? 10.0;
+    return <HSV>[
+      lighten(s),
+      lighten(s * 2),
+      lighten(s * 3),
+    ];
+  }
 
   @override
-  List<ColorSpacesIQ> darkerPalette([final double? step]) =>
-      toColor().darkerPalette(step);
+  List<HSV> darkerPalette([final double? step]) {
+    final double s = step ?? 10.0;
+    return <HSV>[
+      darken(s),
+      darken(s * 2),
+      darken(s * 3),
+    ];
+  }
 
   @override
-  ColorSpacesIQ get random => toColor().random;
+  HSV get random {
+    final Random rng = Random();
+    return HSV(
+      rng.nextDouble() * 360.0,
+      Percent(rng.nextDouble()),
+      Percent(rng.nextDouble()),
+    );
+  }
 
   @override
   bool isEqual(final ColorSpacesIQ other) => hexId == other.value;
 
   @override
-  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) =>
-      toColor().isWithinGamut(gamut);
+  bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) {
+    // HSV is typically defined within sRGB range [0-1] for S and V.
+    if (gamut == Gamut.sRGB) {
+      return saturation.val >= 0 &&
+          saturation.val <= 1 &&
+          val.val >= 0 &&
+          val.val <= 1;
+    }
+    return toColor().isWithinGamut(gamut);
+  }
 
   @override
-  ColorSpacesIQ simulate(final ColorBlindnessType type) =>
-      toColor().simulate(type);
+  HSV simulate(final ColorBlindnessType type) {
+    // Simulation requires RGB space. Convert, simulate, convert back.
+    // This avoids returning ColorIQ.
+    final int simulatedHex = toColor().simulate(type).value;
+    return HSV.fromInt(simulatedHex);
+  }
 
   @override
-  List<ColorSpacesIQ> tonesPalette() => toColor().tonesPalette();
+  List<HSV> tonesPalette() {
+    // Gray in HSV is (0, 0, 0.5) roughly, or just desaturated.
+    // ColorIQ uses 0xFF808080 which is HSV(0, 0, 0.502).
+    final HSV gray = HSV(0.0, Percent.zero, Percent(0.50196));
+    return <HSV>[
+      this,
+      lerp(gray, 0.15),
+      lerp(gray, 0.30),
+      lerp(gray, 0.45),
+      lerp(gray, 0.60),
+    ];
+  }
 
   @override
   List<ColorSpacesIQ> analogous({
@@ -322,7 +371,6 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
     };
   }
 
-  @override
   String createStr([final int precision = 4]) =>
       'HsvColor(h: ${h.toStrTrimZeros(precision)}, ' //
       's: ${saturation.toStringAsFixed(precision)}, v: ${val.toStringAsFixed(precision)}, '

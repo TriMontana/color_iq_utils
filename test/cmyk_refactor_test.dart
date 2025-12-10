@@ -49,6 +49,7 @@ void main() {
         // Expect increasing K (darker)
         expect(c2.k, greaterThanOrEqualTo(c1.k));
       }
+      print('✓ CMYK.darkerPalette generates darker colors');
     });
   });
 }
