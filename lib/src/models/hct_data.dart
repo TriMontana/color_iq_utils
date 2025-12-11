@@ -180,9 +180,9 @@ extension HctManipulation on HctData {
   }
 
   String createStr([final int precision = 5]) =>
-      'HctData(h: ${hue.toStrTrimZeros(precision)}, ' //
-      'c: ${chroma.toStrTrimZeros(precision)}, ' //
-      't: ${tone.toStrTrimZeros(precision)})';
+      'const HctData(${hue.toStrTrimZeros(precision)}, ' //
+      ' ${chroma.toStrTrimZeros(precision)}, ' //
+      ' ${tone.toStrTrimZeros(precision)})';
 }
 
 // --- HCT Strategy ---
