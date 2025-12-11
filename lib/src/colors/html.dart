@@ -43,13 +43,35 @@ const int hxAliceBlue = 0xFFF0F8FF;
 final HTML cAliceBlue =
     HTML(hxAliceBlue, names: kAliceBlue, hct: const HctData(210, 0, 100));
 const int hxAntiqueWhite = 0xFFFAEBD7;
-final ColorIQ cAntiqueWhite = ColorIQ(hxAntiqueWhite, names: kAntiqueWhite);
+final HTML cAntiqueWhite = HTML(
+  hxAntiqueWhite,
+  names: kAntiqueWhite,
+  hct: const HctData(34, 9, 98),
+);
 const int hxAqua = 0xFF00FFFF;
-final HTML cAqua = HTML(hxAqua, names: kAqua, hct: null, red: null);
+final HTML cAqua = HTML(
+  hxAqua,
+  names: kAqua,
+  hct: const HctData(193, 100, 88),
+  red: 0,
+  green: 255,
+  blue: 255,
+);
 const int hxAquamarine = 0xFF7FFFD4;
-final ColorIQ cAquamarine = ColorIQ(hxAquamarine, names: kAquamarine);
+final HTML cAquamarine = HTML(
+  hxAquamarine,
+  names: kAquamarine,
+  hct: const HctData(160, 95, 91),
+  red: 127,
+  green: 255,
+  blue: 212,
+);
 const int hxBeige = 0xFFF5F5DC;
-final ColorIQ cBeige = ColorIQ(hxBeige, names: kBeige);
+final HTML cBeige = HTML(
+  hxBeige,
+  names: kBeige,
+  hct: const HctData(60, 10, 96),
+);
 const int hxBisque = 0xFFFFE4C4;
 final ColorIQ cBisque = ColorIQ(hxBisque, names: kBisque);
 const int hxBlack = 0xFF000000;
@@ -108,9 +130,17 @@ const int hxDarkBlue = 0xFF00008B;
 final HTML cDarkBlue =
     HTML(hxDarkBlue, names: kDarkBlue, hct: const HctData(274, 54, 12));
 const int hxDarkCyan = 0xFF008B8B;
-final ColorIQ cDarkCyan = ColorIQ(hxDarkCyan, names: kDarkCyan);
+final HTML cDarkCyan = HTML(
+  hxDarkCyan,
+  names: kDarkCyan,
+  hct: const HctData(180, 51, 27),
+);
 const int hxDarkGoldenRod = 0xFFB8860B;
-final ColorIQ cDarkGoldenRod = ColorIQ(hxDarkGoldenRod, names: kDarkGoldenRod);
+final HTML cDarkGoldenRod = HTML(
+  hxDarkGoldenRod,
+  names: kDarkGoldenRod,
+  hct: const HctData(43, 96, 53),
+);
 const int hxDarkGray = 0xFFA9A9A9;
 final ColorIQ cDarkGray = ColorIQ(hxDarkGray, names: kDarkGray);
 const int hxDarkGreenHtml = 0xFF006400;
@@ -140,8 +170,8 @@ const int hxDarkSlateGray = 0xFF2F4F4F;
 final HTML cDarkSlateGray = HTML(hxDarkSlateGray,
     names: kDarkSlateGray, hct: const HctData(210, 20, 56));
 const int hxDarkTurquoise = 0xFF00CED1;
-final HTML cDarkTurquoise =
-    HTML(hxDarkTurquoise, names: kDarkTurquoise, hct: null);
+final HTML cDarkTurquoise = HTML(hxDarkTurquoise,
+    names: kDarkTurquoise, hct: HctData.fromInt(hxDarkTurquoise));
 const int hxDarkViolet = 0xFF9400D3;
 final ColorIQ cDarkViolet = ColorIQ(hxDarkViolet, names: kDarkViolet);
 const int hxDarkYellowHtml = 0xFF8B8B00;
@@ -449,7 +479,8 @@ const int hxSpringGreen = 0xFF00FF7F;
 final HTML cSpringGreen =
     HTML(hxSpringGreen, names: kSpringGreen, hct: const HctData(160, 115, 50));
 const int hxSteelBlue = 0xFF4682B4;
-final HTML cSteelBlue = HTML(hxSteelBlue, names: kSteelBlue, hct: null);
+final HTML cSteelBlue =
+    HTML(hxSteelBlue, names: kSteelBlue, hct: HctData.fromInt(hxSteelBlue));
 const int hxTan = 0xFFD2B48C;
 final ColorIQ cTan = ColorIQ(hxTan, names: kTan);
 const int hxTeal = 0xFF008080;
