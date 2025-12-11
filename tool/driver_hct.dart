@@ -49,18 +49,18 @@ void main(final List<String> args) {
 
   // ARGB Integers (0-255)
   print('ARGB Integers (0-255):');
-  print('  Alpha: ${argbInts.alpha}');
-  print('  Red:   ${argbInts.red}');
-  print('  Green: ${argbInts.green}');
-  print('  Blue:  ${argbInts.blue}');
+  print('  aphaInt: ${argbInts.alpha}');
+  print('  red: Uint8IQ(${argbInts.red}),');
+  print('  geen: Uint8IQ(${argbInts.green})');
+  print('  blue: Uint8IQ(${argbInts.blue}),');
   print('');
 
   // Normalized sRGB (0.0-1.0)
   print('Normalized sRGB (0.0-1.0):');
-  print('  Alpha: ${argbDoubles.a.toStringAsFixed(6)}');
-  print('  Red:   ${argbDoubles.r.toStringAsFixed(6)}');
-  print('  Green: ${argbDoubles.g.toStringAsFixed(6)}');
-  print('  Blue:  ${argbDoubles.b.toStringAsFixed(6)}');
+  print('  a: const Percent(${argbDoubles.a.toStringAsFixed(6)}),');
+  print('  r: const Percent(${argbDoubles.r.toStringAsFixed(6)})');
+  print('  g: const Percent(${argbDoubles.g.toStringAsFixed(6)}),');
+  print('  b: const Percent(${argbDoubles.b.toStringAsFixed(6)})');
   print('');
 
   // HSV values

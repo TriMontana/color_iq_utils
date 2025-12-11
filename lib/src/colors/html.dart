@@ -9,6 +9,10 @@ class HTML extends ColorIQ implements ColorWheelInf {
   HTML(super.argb,
       {required super.names,
       required HctData super.hct,
+      super.a,
+      super.r,
+      super.g,
+      super.b,
       super.alphaInt,
       super.red,
       super.green,
@@ -40,31 +44,46 @@ enum ColorFamilyHTML {
 }
 
 const int hxAliceBlue = 0xFFF0F8FF;
-final HTML cAliceBlue =
-    HTML(hxAliceBlue, names: kAliceBlue, hct: const HctData(210, 0, 100));
-const int hxAntiqueWhite = 0xFFFAEBD7;
-final HTML cAntiqueWhite = HTML(
-  hxAntiqueWhite,
-  names: kAntiqueWhite,
-  hct: const HctData(34, 9, 98),
+final HTML cAliceBlue = HTML(
+  hxAliceBlue,
+  names: kAliceBlue,
+  hct: const HctData(234.34451, 8.7741, 97.17891),
+  lrv: const Percent(0.928801),
+  brightness: Brightness.light,
+  a: const Percent(1.000000),
+  r: const Percent(0.941176),
+  g: const Percent(0.972549),
+  b: const Percent(1.000000),
 );
+const int hxAntiqueWhite = 0xFFFAEBD7;
+final HTML cAntiqueWhite = HTML(hxAntiqueWhite,
+    names: kAntiqueWhite,
+    hct: const HctData(81.50196, 8.9519, 93.73077),
+    lrv: const Percent(0.84647),
+    brightness: Brightness.light,
+    alphaInt: UI8.max,
+    red: const UI8(250),
+    green: const UI8(235),
+    blue: const UI8(215));
 const int hxAqua = 0xFF00FFFF;
 final HTML cAqua = HTML(
   hxAqua,
   names: kAqua,
   hct: const HctData(193, 100, 88),
-  red: 0,
-  green: 255,
-  blue: 255,
+  red: UI8.zero,
+  green: UI8.max,
+  blue: UI8.max,
 );
 const int hxAquamarine = 0xFF7FFFD4;
 final HTML cAquamarine = HTML(
   hxAquamarine,
   names: kAquamarine,
-  hct: const HctData(160, 95, 91),
+  hct: const HctData(169.2657, 100, 86.69089),
+  lrv: const Percent(0.930048),
+  brightness: Brightness.light,
   red: 127,
-  green: 255,
-  blue: 212,
+  green: UI8.max,
+  blue: UI8.v212,
 );
 const int hxBeige = 0xFFF5F5DC;
 final HTML cBeige = HTML(
@@ -88,9 +107,6 @@ final HTML cBlue = HTML(hxBlue,
 const int hxBlueViolet = 0xFF8A2BE2;
 final HTML cBlueViolet = HTML(hxBlueViolet,
     names: kBlueViolet,
-    red: 138,
-    green: 43,
-    blue: 226,
     lrv: const Percent(0.126),
     brightness: Brightness.dark,
     hct: const HctData(292, 102, 41));
@@ -337,7 +353,7 @@ final HTML cOlive =
 const int hxOliveDrab = 0xFF6B8E23;
 final HTML cOliveDrab = HTML(hxOliveDrab,
     names: kOliveDrab,
-    red: 107,
+    red: const UI8(107),
     green: 142,
     blue: 35,
     lrv: const Percent(0.226),

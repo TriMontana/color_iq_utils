@@ -13,3 +13,4 @@ export 'naming/color_description.dart';
 export 'naming/color_names.dart';
 export 'naming/names.dart';
 export 'utils/color_math.dart';
+export 'extensions/int_ext_types.dart';
