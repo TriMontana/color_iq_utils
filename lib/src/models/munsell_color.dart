@@ -69,7 +69,8 @@ class MunsellColor extends CommonIQ implements ColorSpacesIQ {
     // Or better, return a neutral gray based on Value.
     // Value 0-10 maps to L* 0-100 roughly.
     final int grayVal = (munsellValue * 25.5).round().clamp(0, 255);
-    return ColorIQ.fromArgbInts(255, grayVal, grayVal, grayVal);
+    return ColorIQ.fromArgbInts(
+        alpha: 255, red: grayVal, green: grayVal, blue: grayVal);
   }
 
   @override

@@ -50,10 +50,10 @@ class CMYK extends CommonIQ implements ColorSpacesIQ {
     final double g = 255 * (1 - m) * (1 - k);
     final double b = 255 * (1 - y) * (1 - k);
     return ColorIQ.fromArgbInts(
-      255,
-      r.round().clamp(0, 255),
-      g.round().clamp(0, 255),
-      b.round().clamp(0, 255),
+      alpha: 255,
+      red: r.round().clamp(0, 255),
+      green: g.round().clamp(0, 255),
+      blue: b.round().clamp(0, 255),
     );
   }
 

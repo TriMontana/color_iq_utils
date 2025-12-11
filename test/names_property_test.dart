@@ -6,8 +6,8 @@ void main() {
     const List<String> testNames = <String>['Alias1', 'Alias2'];
 
     test('ColorIQ stores names', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(255, 255, 0, 0, names: testNames);
+      final ColorIQ color = ColorIQ.fromArgbInts(
+          alpha: 255, red: 255, green: 0, blue: 0, names: testNames);
       expect(color.names, equals(testNames));
       expect(ColorIQ(0xFFFF0000).names, isEmpty);
     });

@@ -18,7 +18,8 @@ void main() {
     });
 
     test('ColorIQ lighten works via HSL conversion', () {
-      final ColorIQ color = ColorIQ.fromArgbInts(255, 100, 100, 100); // Grey
+      final ColorIQ color = ColorIQ.fromArgbInts(
+          alpha: 255, red: 100, green: 100, blue: 100); // Grey
       final ColorIQ lightened = color.lighten(20);
 
       // Original L approx 0.39 (100/255)

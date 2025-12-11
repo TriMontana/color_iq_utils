@@ -178,16 +178,15 @@ class HclUv extends CommonIQ implements ColorSpacesIQ {
     int toInt(final double val) => (val.clamp(0.0, 1.0) * 255.0).round();
 
     return ColorIQ.fromArgbInts(
-      255, // Full Opacity
-      toInt(r),
-      toInt(g),
-      toInt(b),
+      alpha: 255, // Full Opacity
+      red: toInt(r),
+      green: toInt(g),
+      blue: toInt(b),
     );
   }
 
   @override
   int get value => hexId;
-
 
   int get hexId => super.colorId ?? HclUv.hclUvToColor(h, c, l).value;
 
@@ -273,7 +272,6 @@ class HclUv extends CommonIQ implements ColorSpacesIQ {
     return copyWith(c: math.max(0.0, c - amount));
   }
 
-
   HclUv intensify([final double amount = 10]) {
     // Increase chroma, decrease lightness slightly?
     // Or just delegation to saturate?
@@ -281,7 +279,6 @@ class HclUv extends CommonIQ implements ColorSpacesIQ {
     // For HCL, maybe just C+?
     return saturate(amount);
   }
-
 
   HclUv deintensify([final double amount = 10]) {
     return desaturate(amount);

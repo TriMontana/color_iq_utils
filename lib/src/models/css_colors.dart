@@ -173,7 +173,8 @@ class CssColor {
       a = double.parse(parts[3]);
     }
 
-    return ColorIQ.fromArgbInts((a * 255).round(), r, g, b);
+    return ColorIQ.fromArgbInts(
+        alpha: (a * 255).round(), red: r, green: g, blue: b);
   }
 
   static HSL _parseHsl(final String s) {

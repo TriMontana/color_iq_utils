@@ -13,7 +13,8 @@ void main() {
     });
 
     test('ColorIQ accented delegates to HctColor', () {
-      final ColorIQ color = ColorIQ.fromArgbInts(255, 100, 150, 200);
+      final ColorIQ color =
+          ColorIQ.fromArgbInts(alpha: 255, red: 100, green: 150, blue: 200);
       final ColorIQ accented = color.accented(10);
 
       final HctColor hct = HctColor.fromInt(color.value);
@@ -33,7 +34,8 @@ void main() {
     });
 
     test('Accented works across different color models', () {
-      final ColorIQ rgb = ColorIQ.fromArgbInts(255, 100, 150, 200);
+      final ColorIQ rgb =
+          ColorIQ.fromArgbInts(alpha: 255, red: 100, green: 150, blue: 200);
       final XYZ xyz = rgb.xyz;
       final LabColor lab = rgb.lab;
       final CIELuv luv = CIELuv.fromInt(rgb.value);

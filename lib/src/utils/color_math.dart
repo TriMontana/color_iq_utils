@@ -715,10 +715,10 @@ ColorIQ colorFromHue(
     _ => (chroma, 0.0, secondary),
   };
   return ColorIQ.fromArgbInts(
-    (alpha * 0xFF).round(),
-    ((red + match) * 0xFF).round(),
-    ((green + match) * 0xFF).round(),
-    ((blue + match) * 0xFF).round(),
+    alpha: (alpha * 0xFF).round(),
+    red: ((red + match) * 0xFF).round(),
+    green: ((green + match) * 0xFF).round(),
+    blue: ((blue + match) * 0xFF).round(),
   );
 }
 

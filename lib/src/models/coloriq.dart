@@ -90,6 +90,8 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   /// Used for optimization to avoid re-extracting the alpha component from `hexId`.
   final int? _alpha;
 
+  final HSV? _hsv;
+
   /// Creates a [ColorIQ] instance from a 32-bit integer [hexId].
   ///
   /// Optional parameters can be provided to pre-compute and cache values like
@@ -99,6 +101,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     this.hexId, {
     this.colorSpace = ColorSpace.sRGB,
     final HctData? hct,
+    final HSV? hsv,
     final AppColor? argbColor,
     final List<String> names = kEmptyNames,
     final Percent? lrv,
@@ -112,6 +115,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     final double? g,
     final double? b,
   })  : _hct = hct,
+        _hsv = hsv,
         assert(a == null || a >= 0.0 && a <= 1.0,
             'invalid Opacity $errorMsgFloat0to1 -- $a'),
         assert(red == null || red >= 0 && red <= 255,
@@ -416,7 +420,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   ///
   /// HSV is a cylindrical color model that describes colors in terms of their
   /// hue, saturation, and brightness. This is lazily computed and cached.
-  late final HSV hsv = HSV.fromARGB(argb);
+  late final HSV hsv = _hsv ?? HSV.fromARGB(argb);
 
   /// The HSL (Hue, Saturation, Lightness) color space representation of this color.
   ///

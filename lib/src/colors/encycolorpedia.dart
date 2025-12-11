@@ -3,6 +3,8 @@
 
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
+import 'package:color_iq_utils/src/colors/html.dart';
+import 'package:color_iq_utils/src/models/hct_data.dart';
 
 /// Additional named colors scraped from Encycolorpedia.
 ///
@@ -2311,8 +2313,9 @@ final ColorIQ cGlossyGrape =
 const int hxGoGreen = 0xFF00AB66;
 final ColorIQ cGoGreen = ColorIQ(hxGoGreen, names: const <String>['GO green']);
 
+// https://encycolorpedia.com/ffd700
 const int hxGold = 0xFFA57C00;
-final ColorIQ cGold = ColorIQ(hxGold, names: kGold);
+final HTML cGold = HTML(hxGold, names: kGold, hct: const HctData(55, 57, 62));
 
 const int hxGoldCrayola = 0xFFE6BE8A;
 final ColorIQ cGoldCrayola =
@@ -3829,7 +3832,8 @@ final ColorIQ cOppositeFlowerColor = ColorIQ(hxOppositeFlowerColorMasuhanaIro,
     names: const <String>['Opposite flower color (Masuhana-iro)']);
 
 const int hxOrange = 0xFFFF6600;
-final ColorIQ cOrange = ColorIQ(hxOrange, names: const <String>['Orange']);
+final HTML cOrange =
+    HTML(hxOrange, names: kOrange, hct: const HctData(68, 85, 76));
 
 const int hxOrangeColorWheel = 0xFFFF7F00;
 final ColorIQ cOrangeColorWheel =
@@ -4116,75 +4120,9 @@ const int hxPeachYellow = 0xFFFADFAD;
 final ColorIQ cPeachYellow =
     ColorIQ(hxPeachYellow, names: const <String>['Peach-yellow']);
 
-const int hxPear = 0xFFD1E231;
-final ColorIQ cPear = ColorIQ(hxPear, names: const <String>['Pear']);
-
-const int hxPearl = 0xFFEAE0C8;
-final ColorIQ cPearl = ColorIQ(hxPearl, names: const <String>['Pearl']);
-
-const int hxPearlAqua = 0xFF88D8C0;
-final ColorIQ cPearlAqua =
-    ColorIQ(hxPearlAqua, names: const <String>['Pearl Aqua']);
-
-const int hxPearlyPurple = 0xFFB768A2;
-final ColorIQ cPearlyPurple =
-    ColorIQ(hxPearlyPurple, names: const <String>['Pearly purple']);
-
-const int hxPenguinWhite = 0xFFF5F3EF;
-final ColorIQ cPenguinWhite =
-    ColorIQ(hxPenguinWhite, names: const <String>['Penguin White']);
-
-const int hxPeridot = 0xFFE6E200;
-final ColorIQ cPeridot = ColorIQ(hxPeridot, names: const <String>['Peridot']);
-
-const int hxPeriwinkleCrayola = 0xFFC3CDE6;
-final ColorIQ cPeriwinkleCrayola =
-    ColorIQ(hxPeriwinkleCrayola, names: const <String>['Periwinkle (Crayola)']);
-
-const int hxPermanentGeraniumLake = 0xFFE12C2C;
-final ColorIQ cPermanentGeraniumLake = ColorIQ(hxPermanentGeraniumLake,
-    names: const <String>['Permanent Geranium Lake']);
-
-const int hxPersianBlue = 0xFF1C39BB;
-final ColorIQ cPersianBlue =
-    ColorIQ(hxPersianBlue, names: const <String>['Persian blue']);
-
-const int hxPersianGreen = 0xFF00A693;
-final ColorIQ cPersianGreen =
-    ColorIQ(hxPersianGreen, names: const <String>['Persian green']);
-
-const int hxPersianIndigo = 0xFF32127A;
-final ColorIQ cPersianIndigo =
-    ColorIQ(hxPersianIndigo, names: const <String>['Persian indigo']);
-
-const int hxPersianOrange = 0xFFD99058;
-final ColorIQ cPersianOrange =
-    ColorIQ(hxPersianOrange, names: const <String>['Persian orange']);
-
-const int hxPersianPink = 0xFFF77FBE;
-final ColorIQ cPersianPink =
-    ColorIQ(hxPersianPink, names: const <String>['Persian pink']);
-
-const int hxPersianPlum = 0xFF701C1C;
-final ColorIQ cPersianPlum =
-    ColorIQ(hxPersianPlum, names: const <String>['Persian plum']);
-
-const int hxPersianRed = 0xFFCC3333;
-final ColorIQ cPersianRed =
-    ColorIQ(hxPersianRed, names: const <String>['Persian red']);
-
 const int hxPersianRose = 0xFFFE28A2;
 final ColorIQ cPersianRose =
     ColorIQ(hxPersianRose, names: const <String>['Persian rose']);
-
-const int hxPersimmon = 0xFFEC5800;
-final ColorIQ cPersimmon =
-    ColorIQ(hxPersimmon, names: const <String>['Persimmon']);
-
-const int hxPersimmonJuiceColorKakishibuIro = 0xFF934337;
-final ColorIQ cPersimmonJuiceColorKakishibuIro = ColorIQ(
-    hxPersimmonJuiceColorKakishibuIro,
-    names: const <String>['Persimmon-juice color (Kakishibu-iro)']);
 
 const int hxPewterBlue = 0xFF8BA8B7;
 final ColorIQ cPewterBlue =
@@ -4301,6 +4239,7 @@ const int hxPinkSherbet = 0xFFF78FA7;
 final ColorIQ cPinkSherbet =
     ColorIQ(hxPinkSherbet, names: const <String>['Pink Sherbet']);
 
+// https://encycolorpedia.com/93c572
 const int hxPistachio = 0xFF93C572;
 final ColorIQ cPistachio =
     ColorIQ(hxPistachio, names: const <String>['Pistachio']);

@@ -779,9 +779,115 @@ const List<String> kPeach = <String>[
   'Durazno'
       'Pêssego',
 ];
+const List<String> kPear = <String>[
+  'Pear',
+  'Pera',
+  'Pêra',
+];
+const List<String> kPearl = <String>[
+  'Pearl',
+  'Pérola',
+  'Pêrola',
+];
+const List<String> kPearlAqua = <String>[
+  'Pearl Aqua',
+  'Pérola-Água',
+];
+const List<String> kPearlyPurple = <String>[
+  'Pearly Purple',
+  'Pérola-Claro',
+];
+const List<String> kPenguinWhite = <String>[
+  'Penguin White',
+  'Pinguim-Branco',
+];
 const List<String> kPeru = <String>[
   'Peru',
   'Péro',
+];
+const List<String> kPeridot = <String>[
+  'Peridot',
+  'Peridoto',
+];
+const List<String> kPeriwinkleCrayola = <String>[
+  'Periwinkle (Crayola)',
+  'Periánkilo (Crayola)',
+];
+const List<String> kPermanentGeraniumLake = <String>[
+  'Permanent Geranium Lake',
+  'Pêssego-Permanente',
+];
+const List<String> kPersianBlue = <String>[
+  'Persian Blue',
+  'Azul-Persa',
+];
+const List<String> kPersianGreen = <String>[
+  'Persian Green',
+  'Verde-Persa',
+];
+const List<String> kPersianIndigo = <String>[
+  'Persian Indigo',
+  'Índigo-Persa',
+];
+const List<String> kPersianOrange = <String>[
+  'Persian Orange',
+  'Laranja-Persa',
+];
+const List<String> kPersianPink = <String>[
+  'Persian Pink',
+  'Rosa-Persa',
+];
+const List<String> kPersianPlum = <String>[
+  'Persian Plum',
+  'Pêssego-Persa',
+];
+const List<String> kPersianRed = <String>[
+  'Persian Red',
+  'Vermelho-Persa',
+];
+const List<String> kPersianRose = <String>[
+  'Persian Rose',
+  'Rosa-Persa',
+];
+const List<String> kPersimmon = <String>[
+  'Persimmon',
+  'Pêssego-Persa',
+];
+const List<String> kPersimmonJuiceColorKakishibuIro = <String>[
+  'Persimmon-juice color (Kakishibu-iro)',
+  'Pêssego-suco-color (Kakishibu-iro)',
+];
+const List<String> kPewterBlue = <String>[
+  'Pewter Blue',
+  'Azul-Pewter',
+];
+const List<String> kPhilippineBlue = <String>[
+  'Philippine Blue',
+  'Azul-Filipino',
+];
+const List<String> kPhilippineBronze = <String>[
+  'Philippine Bronze',
+  'Bronze-Filipino',
+];
+const List<String> kPhilippineBrown = <String>[
+  'Philippine Brown',
+  'Castanho-Filipino',
+];
+const List<String> kPhilippineGold = <String>[
+  'Philippine Gold',
+  'Ouro-Filipino',
+];
+const List<String> kPhilippineGray = <String>[
+  'Philippine Gray',
+  'Cinza-Filipino',
+];
+const List<String> kPhilippineGreen = <String>[
+  'Philippine Green',
+  'Verde-Filipino',
+];
+const List<String> kPhilippineOrange = <String>[
+  'Philippine Orange',
+  'Laranja-Filipino',
 ];
 const List<String> kPeriwinkle = <String>[
   'Periwinkle',
@@ -876,7 +982,9 @@ const List<String> kRuby = <String>[
 ];
 const List<String> kSaddleBrown = <String>[
   'Saddle Brown',
+  'Earthy Brown',
   'Castanho-Sela',
+  'Marron-Sela',
 ];
 const List<String> kSalmon = <String>[
   'Salmon',

@@ -1,2 +1,9 @@
 Since your application uses HCT as the source of truth for color perception, your
 manipulation logic should operate directly on those HCT values (Hue, Chroma, Tone).
+
+
+
+
+https://mohanvadivel.com/projects/hct-tonal-palette-generator/
+https://albi005.github.io/MaterialColorUtilities/
+https://www.hct-color-converter.com/

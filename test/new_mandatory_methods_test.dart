@@ -26,9 +26,12 @@ void main() {
     });
 
     test('isEqual', () {
-      final ColorIQ c1 = ColorIQ.fromArgbInts(255, 100, 100, 100);
-      final ColorIQ c2 = ColorIQ.fromArgbInts(255, 100, 100, 100);
-      final ColorIQ c3 = ColorIQ.fromArgbInts(255, 200, 200, 200);
+      final ColorIQ c1 =
+          ColorIQ.fromArgbInts(alpha: 255, red: 100, green: 100, blue: 100);
+      final ColorIQ c2 =
+          ColorIQ.fromArgbInts(alpha: 255, red: 100, green: 100, blue: 100);
+      final ColorIQ c3 =
+          ColorIQ.fromArgbInts(alpha: 255, red: 200, green: 200, blue: 200);
 
       expect(c1.isEqual(c2), isTrue);
       expect(c1.isEqual(c3), isFalse);
@@ -68,16 +71,17 @@ void main() {
       // lum + 0.05 > sqrt(0.15) ~ 0.387
       // lum > 0.337
 
-      final ColorIQ darkGrey =
-          ColorIQ.fromArgbInts(255, 50, 50, 50); // Lum ~ 0.03
+      final ColorIQ darkGrey = ColorIQ.fromArgbInts(
+          alpha: 255, red: 50, green: 50, blue: 50); // Lum ~ 0.03
       expect(darkGrey.brightness, Brightness.dark);
 
       final ColorIQ lightGrey = ColorIQ.fromArgbInts(
-        255,
-        200,
-        200,
-        200,
+        alpha: 255,
+        red: 200,
+        green: 200,
+        blue: 200,
       ); // Lum ~ 0.5
+      // Lum ~ 0.5
       expect(lightGrey.brightness, Brightness.light);
 
       print('✓ Brightness test completed');

@@ -4,7 +4,8 @@ import 'package:test/test.dart';
 void main() {
   group('CopyWith and Monochromatic Tests', () {
     test('ColorIQ copyWith', () {
-      final ColorIQ color = ColorIQ.fromArgbInts(255, 100, 150, 200);
+      final ColorIQ color =
+          ColorIQ.fromArgbInts(alpha: 255, red: 100, green: 150, blue: 200);
       final ColorIQ copy = color.copyWith(red: 255, alpha: 128);
       expect(copy.red, 255);
       expect(copy.alphaInt, 128);
@@ -30,7 +31,8 @@ void main() {
     });
 
     test('ColorIQ Monochromatic', () {
-      final ColorIQ color = ColorIQ.fromArgbInts(255, 255, 0, 0); // Red
+      final ColorIQ color =
+          ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 0, blue: 0); // Red
       final List<ColorSpacesIQ> palette = color.monochromatic;
       expect(palette.length, 5);
       expect(
