@@ -139,7 +139,9 @@ const int hxDarkGoldenRod = 0xFFB8860B;
 final HTML cDarkGoldenRod = HTML(
   hxDarkGoldenRod,
   names: kDarkGoldenRod,
-  hct: const HctData(43, 96, 53),
+  hct: const HctData(82.5057, 48.1271, 59.21854),
+  lrv: const Percent(0.272647),
+  brightness: Brightness.dark,
 );
 const int hxDarkGray = 0xFFA9A9A9;
 final ColorIQ cDarkGray = ColorIQ(hxDarkGray, names: kDarkGray);
