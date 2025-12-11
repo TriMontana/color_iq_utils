@@ -74,6 +74,22 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   /// Used for optimization to avoid re-calculating brightness.
   final Brightness? _brightness;
 
+  /// An optional, pre-computed red channel value (0-255).
+  /// Used for optimization to avoid re-extracting the red component from `hexId`.
+  final int? _red;
+
+  /// An optional, pre-computed green channel value (0-255).
+  /// Used for optimization to avoid re-extracting the green component from `hexId`.
+  final int? _green;
+
+  /// An optional, pre-computed blue channel value (0-255).
+  /// Used for optimization to avoid re-extracting the blue component from `hexId`.
+  final int? _blue;
+
+  /// An optional, pre-computed alpha channel value (0-255).
+  /// Used for optimization to avoid re-extracting the alpha component from `hexId`.
+  final int? _alpha;
+
   /// Creates a [ColorIQ] instance from a 32-bit integer [hexId].
   ///
   /// Optional parameters can be provided to pre-compute and cache values like
@@ -87,15 +103,37 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     final List<String> names = kEmptyNames,
     final Percent? lrv,
     final Brightness? brightness,
-    final Percent? alpha,
+    final Percent? a,
+    final int? red,
+    final int? green,
+    final int? blue,
+    final int? alphaInt,
+    final double? r,
+    final double? g,
+    final double? b,
   })  : _hct = hct,
-        _argb = argbColor,
+        assert(a == null || a >= 0.0 && a <= 1.0,
+            'invalid Opacity $errorMsgFloat0to1 -- $a'),
+        assert(red == null || red >= 0 && red <= 255,
+            'invalid Red $errorMsg0to255 -- $red'),
+        assert(green == null || green >= 0 && green <= 255,
+            'invalid Green $errorMsg0to255 -- $green'),
+        assert(blue == null || blue >= 0 && blue <= 255,
+            'invalid Blue $errorMsg0to255 -- $blue'),
+        assert(alphaInt == null || alphaInt >= 0 && alphaInt <= 255,
+            'invalid Alpha $errorMsg0to255 -- $alphaInt'),
+        _red = red ?? argbColor?.redInt ?? (hexId >> 16) & 0xFF,
+        _green = green ?? argbColor?.greenInt ?? (hexId >> 8) & 0xFF,
+        _blue = blue ?? argbColor?.blueInt ?? hexId & 0xFF,
+        _alpha = alphaInt ?? argbColor?.alphaInt ?? (hexId >> 24) & 0xFF,
+        _argb = argbColor ?? AppColor(hexId),
         _lrv = lrv ?? argbColor?.lrv,
         _brightness = brightness ?? argbColor?.brightness,
-        super(hexId, names: names, alpha: alpha ?? argbColor?.a ?? hexId.a2);
+        super(hexId,
+            names: names,
+            alpha: a ?? Percent.clamped(((hexId >> 24) & 0xFF) / 255.0));
 
   /// An [AppColor] instance representing the ARGB components of the color.
-  ///
   /// This is lazily initialized, either from a provided `argbColor` during
   /// construction or by creating a new `ARGBColor` from the `hexId`. It provides
   /// access to individual color components (alpha, red, green, blue).
@@ -120,21 +158,60 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   /// The 32-bit integer value of the color in `0xAARRGGBB` format.
   @override
   int get value => hexId;
-  @override
-  int get red => argb.redInt;
-  @override
-  int get green => argb.greenInt;
-  @override
-  int get blue => argb.blueInt;
-  @override
-  int get alphaInt => argb.alphaInt;
 
-  /// Construct a color from 4 integers, a, r, g, b.
-  factory ColorIQ.fromArgbInts(
-    final int alpha,
-    final int red,
-    final int green,
-    final int blue, {
+  /// The red channel value as an integer from 0 to 255.
+  ///
+  /// This value is lazily computed and cached. It can be pre-computed during
+  /// construction for performance optimization.
+  @override
+  late final int red = _red ?? argb.redInt;
+
+  /// The green channel value as an integer from 0 to 255.
+  ///
+  /// This value is lazily computed and cached. It can be pre-computed during
+  /// construction for performance optimization.
+  @override
+  late final int green = _green ?? argb.greenInt;
+
+  /// The blue channel value as an integer from 0 to 255.
+  ///
+  /// This value is lazily computed and cached. It can be pre-computed during
+  /// construction for performance optimization.
+  @override
+  late final int blue = _blue ?? argb.blueInt;
+
+  /// The alpha channel value as an integer from 0 to 255.
+  ///
+  /// 0 represents fully transparent, and 255 represents fully opaque.
+  /// This value is lazily computed and cached. It can be pre-computed during
+  /// construction for performance optimization.
+  @override
+  late final int alphaInt = _alpha ?? argb.alphaInt;
+
+  /// Constructs a [ColorIQ] color from four integer channel values.
+  ///
+  /// The [alpha], [red], [green], and [blue] parameters should be in the
+  /// range 0-255, where 0 represents the minimum intensity (or full transparency
+  /// for alpha) and 255 represents maximum intensity (or full opacity for alpha).
+  ///
+  /// Optional parameters can be provided to pre-compute and cache values like
+  /// [hctColor], [lrv], and [brightness], which can improve performance if
+  /// these values are already available.
+  ///
+  /// Example:
+  /// ```dart
+  /// final ColorIQ red = ColorIQ.fromArgbInts(
+  ///   alpha: 255,
+  ///   red: 255,
+  ///   green: 0,
+  ///   blue: 0,
+  /// );
+  /// ```
+  factory ColorIQ.fromArgbInts({
+    final int alpha = 0xFF,
+    required final int red,
+    required final int green,
+    required final int blue,
     final double? a,
     final double? r,
     final double? g,
@@ -142,10 +219,21 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     final ColorSpace colorSpace = ColorSpace.sRGB,
     final List<String>? names,
     final Percent? lrv,
+    final Brightness? brightness,
     final HctData? hctColor,
   }) {
-    final AppColor argbColor =
-        AppColor.fromARGB(alpha, red, green, blue, a: a, r: r, g: g, b: b);
+    red.assertRange0to255('ColorIQ.fromArgbInts');
+    green.assertRange0to255('ColorIQ.fromArgbInts');
+    blue.assertRange0to255('ColorIQ.fromArgbInts');
+    alpha.assertRange0to255('ColorIQ.fromArgbInts');
+    final Percent alphaPercent =
+        a != null ? Percent.clamped(a) : Percent.clamped(alpha / 255.0);
+    final AppColor argbColor = AppColor.fromARGB(alpha, red, green, blue,
+        a: a != null ? Percent.clamped(a) : Percent.clamped(alpha / 255.0),
+        r: r ?? Percent.clamped(red / 255.0),
+        g: g ?? Percent.clamped(green / 255.0),
+        b: b ?? Percent.clamped(blue / 255.0));
+
     return ColorIQ(
       argbColor.value,
       argbColor: argbColor,
@@ -153,10 +241,27 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
       colorSpace: colorSpace,
       lrv: lrv,
       hct: hctColor,
+      a: alphaPercent,
+      red: red,
+      green: green,
+      blue: blue,
+      alphaInt: alpha,
+      brightness: brightness,
     );
   }
 
-  /// Construct a color from 4 integers, a, r, g, b.
+  /// Constructs a [ColorIQ] color from an existing [AppColor] instance.
+  ///
+  /// This factory is useful when you already have an [AppColor] object and
+  /// want to convert it to a [ColorIQ] instance, optionally providing
+  /// additional pre-computed values like [hctColor] or [lrv] for performance
+  /// optimization.
+  ///
+  /// Example:
+  /// ```dart
+  /// final AppColor appColor = AppColor(0xFFFF0000);
+  /// final ColorIQ color = ColorIQ.fromArgbColor(appColor);
+  /// ```
   factory ColorIQ.fromArgbColor(
     final AppColor argbColor, {
     final ColorSpace colorSpace = ColorSpace.sRGB,
@@ -175,7 +280,27 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     );
   }
 
-  /// Construct a color from sRGB delinearized values a, r, g, b (0.0 to 1.0)
+  /// Constructs a [ColorIQ] color from sRGB channel values in the range 0.0 to 1.0.
+  ///
+  /// The [r], [g], and [b] parameters represent the red, green, and blue
+  /// channels as normalized floating-point values (0.0 to 1.0). The [a]
+  /// parameter represents alpha/opacity (defaults to 1.0 for fully opaque).
+  ///
+  /// These values should be delinearized (gamma-encoded) sRGB values, which is
+  /// the standard representation for most color inputs.
+  ///
+  /// Optional parameters can be provided to pre-compute and cache values like
+  /// [luminance], [hctColor], or [argbColor] for performance optimization.
+  ///
+  /// Example:
+  /// ```dart
+  /// final ColorIQ red = ColorIQ.fromSrgb(
+  ///   r: 1.0,
+  ///   g: 0.0,
+  ///   b: 0.0,
+  ///   a: 1.0,
+  /// );
+  /// ```
   factory ColorIQ.fromSrgb({
     required final double r,
     required final double g,
@@ -196,7 +321,28 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
         names: names ?? kEmptyNames);
   }
 
-  /// Accepts hex like "#RRGGBB" or "RRGGBB" or "AARRGGBB".
+  /// Constructs a [ColorIQ] color from a hexadecimal string representation.
+  ///
+  /// Accepts hex strings in the following formats:
+  /// - `"#RRGGBB"` or `"RRGGBB"` - RGB format (alpha defaults to FF/fully opaque)
+  /// - `"#AARRGGBB"` or `"AARRGGBB"` - ARGB format
+  /// - `"#RGB"` or `"RGB"` - Short format (each digit is doubled, e.g., "F00" becomes "FF0000")
+  ///
+  /// The `#` prefix is optional and will be stripped automatically.
+  /// The hex string is case-insensitive.
+  ///
+  /// Note: For 8-character hex strings, the format is expected to be `RRGGBBAA`
+  /// (CSS-style), which will be automatically converted to Dart's `AARRGGBB` format.
+  ///
+  /// Example:
+  /// ```dart
+  /// final ColorIQ red1 = ColorIQ.fromHexStr('#FF0000');
+  /// final ColorIQ red2 = ColorIQ.fromHexStr('FF0000');
+  /// final ColorIQ red3 = ColorIQ.fromHexStr('#F00');
+  /// final ColorIQ semiTransparent = ColorIQ.fromHexStr('#80FF0000');
+  /// ```
+  ///
+  /// Throws [FormatException] if the hex string is invalid.
   factory ColorIQ.fromHexStr(final String hexStr,
       {final List<String> names = kEmptyNames}) {
     String hex = hexStr.replaceAll('#', '').toUpperCase();
@@ -226,25 +372,74 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     throw FormatException('Invalid hex color: #$hex');
   }
 
+  /// Returns this color as a [ColorIQ] instance.
+  ///
+  /// Since this class is already a [ColorIQ], this method simply returns itself.
   @override
   ColorIQ toColor() => this;
 
+  /// The CIELAB color space representation of this color.
+  ///
+  /// This is lazily computed and cached. LAB is a perceptually uniform color
+  /// space, making it useful for measuring color differences.
   late final LabColor lab = mapLAB.getOrCreate(value);
+
+  /// The HCT (Hue, Chroma, Tone) color space representation of this color.
+  ///
+  /// HCT is a perceptually uniform color space developed by Google's Material
+  /// Design team. This value is lazily computed unless pre-computed during
+  /// construction.
   @override
   late final HctData hct = _hct ?? HctData.fromInt(value);
+
+  /// The CAM16 color appearance model representation of this color.
+  ///
+  /// CAM16 is used for perceptual color distance calculations and is lazily
+  /// computed and cached.
   @override
   late final Cam16 cam16 = Cam16.fromInt(value);
+
+  /// Calculates the perceptual distance to another color using CAM16.
+  ///
+  /// Returns a distance value where smaller numbers indicate colors that are
+  /// more perceptually similar. This is useful for finding similar colors or
+  /// grouping colors by appearance.
   double distanceTo(final ColorWheelInf other) => cam16.distance(other.cam16);
 
+  /// The XYZ color space representation of this color (CIE 1931).
+  ///
+  /// XYZ is an intermediate color space often used for conversions between
+  /// different color models. This is lazily computed and cached.
   late final XYZ xyz = XYZ.xyxFromRgb(red, green, blue);
+
+  /// The HSV (Hue, Saturation, Value) color space representation of this color.
+  ///
+  /// HSV is a cylindrical color model that describes colors in terms of their
+  /// hue, saturation, and brightness. This is lazily computed and cached.
   late final HSV hsv = HSV.fromARGB(argb);
+
+  /// The HSL (Hue, Saturation, Lightness) color space representation of this color.
+  ///
+  /// HSL is a cylindrical color model similar to HSV but uses lightness instead
+  /// of value. This is lazily computed and cached.
   late final HSL hsl = HSL.fromARGB(argb);
+
+  /// The CMYK (Cyan, Magenta, Yellow, Key/Black) color space representation of this color.
+  ///
+  /// CMYK is primarily used for color printing. This is lazily computed and cached.
   late final CMYK cmyk = CMYK.fromInt(value);
 
-  /// Converts this color to CIELCH.
+  /// Converts this color to CIELCH (Lightness, Chroma, Hue).
+  ///
+  /// LCH is a cylindrical representation of the LAB color space, providing
+  /// a more intuitive way to work with colors in terms of lightness, chroma
+  /// (saturation), and hue.
   LchColor toLch() => lab.toLch();
 
-  /// Converts this color to HSP.
+  /// The HSP (Hue, Saturation, Perceived brightness) color space representation.
+  ///
+  /// HSP is a color model designed to more accurately represent perceived
+  /// brightness than HSL or HSV. This is lazily computed and cached.
   late final HSP hsp = HSP.fromInt(value);
 
   /// Returns a new color with the provided components updated.
@@ -290,7 +485,13 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     }
   }
 
-  /// Converts this color to YIQ.
+  /// Converts this color to YIQ color space.
+  ///
+  /// YIQ is a color space used in NTSC television broadcasting. The Y component
+  /// represents luminance (brightness), while I and Q represent chrominance
+  /// information.
+  ///
+  /// Returns a [YiqColor] instance with Y, I, and Q components.
   YiqColor toYiq() {
     final double y = 0.299 * r + 0.587 * g + 0.114 * b;
     final double i = 0.596 * r - 0.274 * g - 0.322 * b;
@@ -299,7 +500,13 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     return YiqColor(y, i, q);
   }
 
-  /// Converts this color to YUV.
+  /// Converts this color to YUV color space.
+  ///
+  /// YUV is a color encoding system used in video and digital photography.
+  /// The Y component represents luminance (brightness), while U and V represent
+  /// chrominance (color information).
+  ///
+  /// Returns a [YuvColor] instance with Y, U, and V components.
   YuvColor toYuv() {
     final double y = 0.299 * r + 0.587 * g + 0.114 * b;
     final double u = -0.14713 * r - 0.28886 * g + 0.436 * b;
@@ -308,7 +515,17 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     return YuvColor(y, u, v);
   }
 
-  /// Makes the color brighter and more vivid
+  /// Makes the color brighter and more vivid.
+  ///
+  /// Increases both the brightness and saturation of the color to create a
+  /// more intense, vibrant appearance. The transformation is performed in the
+  /// specified [model] color space (defaults to [ColorModel.hct] for
+  /// perceptually uniform results).
+  ///
+  /// The [amount] parameter controls the intensity of the transformation,
+  /// where [Percent.v20] represents a 20% increase (default).
+  ///
+  /// Returns an [AppColor] instance with the intensified color.
   AppColor intensify(
       {final Percent amount = Percent.v20,
       final ColorModel model = ColorModel.hct}) {
@@ -320,7 +537,17 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     ));
   }
 
-  /// Makes the color darker and more muted
+  /// Makes the color darker and more muted.
+  ///
+  /// Decreases both the brightness and saturation of the color to create a
+  /// more subdued, muted appearance. The transformation is performed in the
+  /// specified [model] color space (defaults to [ColorModel.hct] for
+  /// perceptually uniform results).
+  ///
+  /// The [amount] parameter controls the intensity of the transformation,
+  /// where [Percent.v20] represents a 20% decrease (default).
+  ///
+  /// Returns an [AppColor] instance with the deintensified color.
   AppColor deintensify(
       {final Percent amount = Percent.v20,
       final ColorModel model = ColorModel.hct}) {
@@ -332,13 +559,29 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     ));
   }
 
-  /// Converts this color to OkHSL.
+  /// Converts this color to OkHSL (Oklab-based HSL).
+  ///
+  /// OkHSL is a perceptually uniform color space based on Oklab that provides
+  /// a more intuitive HSL-like interface while maintaining perceptual uniformity.
+  ///
+  /// Returns an [OkHslColor] instance.
   OkHslColor toOkHsl() => toOkLab().toOkHsl();
 
-  /// Converts this color to OkHSV.
+  /// Converts this color to OkHSV (Oklab-based HSV).
+  ///
+  /// OkHSV is a perceptually uniform color space based on Oklab that provides
+  /// a more intuitive HSV-like interface while maintaining perceptual uniformity.
+  ///
+  /// Returns an [OkHsvColor] instance.
   OkHsvColor toOkHsv() => toOkLab().toOkHsv();
 
-  /// Converts this color to Hunter Lab.
+  /// Converts this color to Hunter Lab color space.
+  ///
+  /// Hunter Lab is a color space designed to be more perceptually uniform than
+  /// the original LAB color space. It uses D65 illuminant reference values to
+  /// match sRGB/XYZ white point.
+  ///
+  /// Returns a [HunterLabColor] instance with L, a, and b components.
   HunterLabColor toHunterLab() {
     final XYZ xyz = XYZ.fromInt(value);
     final double x = xyz.x;
@@ -362,7 +605,12 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     return HunterLabColor(lOut, aOut, bOut);
   }
 
-  /// Converts this color to HSLuv.
+  /// Converts this color to HSLuv color space.
+  ///
+  /// HSLuv is a perceptually uniform variant of HSL that ensures equal
+  /// saturation steps correspond to equal perceptual changes in color.
+  ///
+  /// Returns an [HsluvColor] instance with hue, chroma, and lightness components.
   HsluvColor toHsluv() {
     final CIELuv luv = toLuv();
     final double c = sqrt(luv.u * luv.u + luv.v * luv.v);
@@ -371,17 +619,37 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     return HsluvColor(h, c, luv.l);
   }
 
-  /// Converts this color to Munsell.
+  /// Converts this color to Munsell color system.
+  ///
+  /// The Munsell color system is a color space that specifies colors based on
+  /// three dimensions: hue, value (lightness), and chroma (saturation).
+  ///
+  /// Note: This is a placeholder implementation that returns a neutral color.
+  /// Full Munsell conversion requires more complex calculations.
+  ///
+  /// Returns a [MunsellColor] instance.
   MunsellColor toMunsell() {
     return const MunsellColor("N", 0, 0);
   }
 
-  /// Converts this color to HSB (Alias for HSV).
+  /// Converts this color to HSB (Hue, Saturation, Brightness).
+  ///
+  /// HSB is functionally identical to HSV (Hue, Saturation, Value), where
+  /// brightness corresponds to value. This is an alias for HSV conversion.
+  ///
+  /// Returns an [HsbColor] instance with hue, saturation, and brightness components.
   HsbColor toHsb() {
     return HsbColor(hsv.h, hsv.saturation, hsv.valueHsv);
   }
 
-  /// Converts this color to HWB.
+  /// Converts this color to HWB (Hue, Whiteness, Blackness) color space.
+  ///
+  /// HWB is an intuitive color model where colors are specified by their hue,
+  /// along with how much white or black to mix with it. This makes it easier
+  /// to create tints and shades than with HSL or HSV.
+  ///
+  /// Returns an [HwbColor] instance with hue (0-360°), whiteness (0.0-1.0),
+  /// and blackness (0.0-1.0) components.
   HwbColor toHwb() {
     final double r = red / 255.0;
     final double g = green / 255.0;
@@ -411,7 +679,18 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     return HwbColor(h * 360, w, bl);
   }
 
-  /// Converts this color to Display P3.
+  /// Converts this color to Display P3 color space.
+  ///
+  /// Display P3 is a wide-gamut color space used in Apple displays and devices.
+  /// It has a larger color gamut than sRGB, allowing for more vibrant colors.
+  ///
+  /// The conversion process involves:
+  /// 1. Linearizing the sRGB values
+  /// 2. Converting to XYZ (D65)
+  /// 3. Converting to Display P3 linear
+  /// 4. Applying the sRGB gamma curve (Display P3 uses the same transfer function)
+  ///
+  /// Returns a [DisplayP3Color] instance with RGB components in Display P3 space.
   DisplayP3Color toDisplayP3() {
     // Linearize sRGB
     double r = red / 255.0;
@@ -446,7 +725,20 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
         Percent(bP3.clamp(0.0, 1.0)));
   }
 
-  /// Converts this color to Rec. 2020.
+  /// Converts this color to Rec. 2020 (ITU-R Recommendation BT.2020) color space.
+  ///
+  /// Rec. 2020 is a wide-gamut color space used in UHDTV and HDR content. It
+  /// has a significantly larger color gamut than sRGB, covering approximately
+  /// 75.8% of the CIE 1931 color space.
+  ///
+  /// The conversion process involves:
+  /// 1. Linearizing the sRGB values
+  /// 2. Converting to XYZ (D65)
+  /// 3. Converting to Rec. 2020 linear
+  /// 4. Applying the Rec. 2020 transfer function (piecewise function with
+  ///    alpha = 1.099 and beta = 0.018)
+  ///
+  /// Returns a [Rec2020Color] instance with RGB components in Rec. 2020 space.
   Rec2020Color toRec2020() {
     // Linearize sRGB
     double r = red / 255.0;
@@ -546,7 +838,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
         r: gammaCorrect(sim[0]),
         g: gammaCorrect(sim[1]),
         b: gammaCorrect(sim[2]),
-        a: a);
+        a: alpha);
   }
 
   ColorIQ get grayscale => desaturate(100);
@@ -561,6 +853,20 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     return lerp(cBlack, amount / 100) as ColorIQ;
   }
 
+  /// Linearly interpolates between this color and [other] by [t].
+  ///
+  /// The [t] parameter should be between 0.0 and 1.0. When [t] is 0.0, this
+  /// color is returned. When [t] is 1.0, [other] is returned. Values in between
+  /// produce intermediate colors.
+  ///
+  /// Interpolation is performed on each ARGB channel independently.
+  ///
+  /// Example:
+  /// ```dart
+  /// final ColorIQ middle = red.lerp(blue, 0.5); // A color halfway between red and blue
+  /// ```
+  ///
+  /// Returns a new [ColorIQ] instance representing the interpolated color.
   @override
   ColorSpacesIQ lerp(final ColorSpacesIQ other, final double t) {
     if (other is! ColorIQ) {
@@ -569,37 +875,84 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
 
     final ColorIQ otherColor = other;
     return ColorIQ.fromArgbInts(
-      (alphaInt + (otherColor.alphaInt - alphaInt) * t).round(),
-      (red + (otherColor.red - red) * t).round(),
-      (green + (otherColor.green - green) * t).round(),
-      (blue + (otherColor.blue - blue) * t).round(),
+      alpha: (alphaInt + (otherColor.alphaInt - alphaInt) * t).round(),
+      red: (red + (otherColor.red - red) * t).round(),
+      green: (green + (otherColor.green - green) * t).round(),
+      blue: (blue + (otherColor.blue - blue) * t).round(),
     );
   }
 
+  /// Adjusts the transparency (alpha) of this color.
+  ///
+  /// Reduces the alpha channel by the specified [amount] percentage. The
+  /// [amount] parameter should be between 0 and 100, where 100 would make
+  /// the color fully transparent.
+  ///
+  /// Example:
+  /// ```dart
+  /// final ColorIQ semiTransparent = color.adjustTransparency(50); // 50% more transparent
+  /// ```
+  ///
+  /// Returns a new [ColorIQ] instance with adjusted transparency.
   ColorIQ adjustTransparency([final double amount = 20]) {
     return ColorIQ.fromArgbInts(
-      (alphaInt * (1 - amount / 100)).round().clamp(0, 255),
-      red,
-      green,
-      blue,
+      alpha: (alphaInt * (1 - amount / 100)).round().clamp(0, 255),
+      red: red,
+      green: green,
+      blue: blue,
     );
   }
 
-  ColorIQ withAlpha(final int newA) =>
-      ColorIQ.fromArgbInts(newA.clamp(0, 255), red, green, blue);
+  /// Creates a copy of this color with a new alpha value.
+  ///
+  /// The [newA] parameter should be an integer from 0 (fully transparent)
+  /// to 255 (fully opaque).
+  ///
+  /// Returns a new [ColorIQ] instance with the specified alpha value.
+  ColorIQ withAlpha(final int newA) => ColorIQ.fromArgbInts(
+      alpha: newA.clamp(0, 255), red: red, green: green, blue: blue);
 
+  /// Creates a copy of this color with new RGB channel values.
+  ///
+  /// Only the specified channels are changed; others remain the same.
+  /// Each channel value should be an integer from 0 to 255.
+  ///
+  /// Example:
+  /// ```dart
+  /// final ColorIQ darker = color.withRgb(
+  ///   red: (color.red * 0.8).round(),
+  ///   green: (color.green * 0.8).round(),
+  ///   blue: (color.blue * 0.8).round(),
+  /// );
+  /// ```
+  ///
+  /// Returns a new [ColorIQ] instance with the specified RGB values.
   ColorIQ withRgb({final int? red, final int? green, final int? blue}) =>
       ColorIQ.fromArgbInts(
-          alphaInt, red ?? this.red, green ?? this.green, blue ?? this.blue);
+          alpha: alphaInt,
+          red: red ?? this.red,
+          green: green ?? this.green,
+          blue: blue ?? this.blue);
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   @override
   ColorIQ copyWith(
       {final int? alpha, final int? red, final int? green, final int? blue}) {
-    return ColorIQ.fromArgbInts(alpha ?? alphaInt, red ?? this.red,
-        green ?? this.green, blue ?? this.blue);
+    return ColorIQ.fromArgbInts(
+        alpha: alpha ?? alphaInt,
+        red: red ?? this.red,
+        green: green ?? this.green,
+        blue: blue ?? this.blue);
   }
 
+  /// Generates a monochromatic color palette based on this color.
+  ///
+  /// A monochromatic palette consists of variations of the same hue with
+  /// different lightness values. This method generates 5 colors by adjusting
+  /// the lightness in steps of 10% around the current color's lightness.
+  ///
+  /// Returns a list of 5 [ColorIQ] colors ranging from darker to lighter
+  /// variations of this color.
   @override
   List<ColorSpacesIQ> get monochromatic {
     // Generate 5 variations based on lightness/tone.
@@ -642,10 +995,10 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   ColorSpacesIQ get random {
     final Random rng = Random();
     return ColorIQ.fromArgbInts(
-      255,
-      rng.nextInt(256),
-      rng.nextInt(256),
-      rng.nextInt(256),
+      alpha: 255,
+      red: rng.nextInt(256),
+      green: rng.nextInt(256),
+      blue: rng.nextInt(256),
     );
   }
 
@@ -736,6 +1089,14 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     ];
   }
 
+  /// Generates a tones palette by mixing this color with gray.
+  ///
+  /// Creates a palette of 5 colors by progressively mixing this color with
+  /// medium gray (0xFF808080). This produces variations that maintain the
+  /// original hue while reducing saturation and adjusting lightness.
+  ///
+  /// Returns a list of 5 [ColorIQ] colors, with the original color first,
+  /// followed by increasingly grayed-out versions.
   @override
   List<ColorIQ> tonesPalette() {
     // Mix with gray (0xFF808080)
@@ -749,6 +1110,23 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     ];
   }
 
+  /// Generates an analogous color palette.
+  ///
+  /// An analogous palette consists of colors that are adjacent on the color
+  /// wheel, creating harmonious color schemes. The [count] parameter specifies
+  /// how many colors to generate (defaults to 5), and [offset] specifies the
+  /// hue step in degrees (defaults to 30°).
+  ///
+  /// When [count] is 3, generates one color on each side of this color.
+  /// Otherwise, generates [count] colors centered around this color.
+  ///
+  /// Example:
+  /// ```dart
+  /// final List<ColorIQ> palette = blue.analogous(count: 5, offset: 30);
+  /// // Returns: cyan-ish, blue-cyan, blue, blue-purple, purple-ish
+  /// ```
+  ///
+  /// Returns a list of [ColorIQ] colors with analogous hues.
   @override
   List<ColorIQ> analogous({final int count = 5, final double offset = 30}) {
     final List<ColorIQ> results = <ColorIQ>[];
@@ -769,11 +1147,32 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     return results;
   }
 
+  /// Generates a square color scheme palette.
+  ///
+  /// A square color scheme uses four colors evenly spaced around the color
+  /// wheel (90° apart). This creates vibrant, contrasting color combinations
+  /// that are visually balanced.
+  ///
+  /// Returns a list of 4 [ColorIQ] colors, starting with this color followed
+  /// by colors at 90°, 180°, and 270° hue shifts.
   @override
   List<ColorIQ> square() {
     return <ColorIQ>[this, adjustHue(90), adjustHue(180), adjustHue(270)];
   }
 
+  /// Generates a tetradic (double complementary) color scheme palette.
+  ///
+  /// A tetradic color scheme uses four colors arranged in two complementary
+  /// pairs. The [offset] parameter (defaults to 60°) controls the spacing
+  /// between the complementary pairs.
+  ///
+  /// The palette consists of:
+  /// - This color
+  /// - A color offset by [offset] degrees
+  /// - The complementary color (180° from this color)
+  /// - The complementary of the offset color (180° + [offset])
+  ///
+  /// Returns a list of 4 [ColorIQ] colors forming a tetradic scheme.
   @override
   List<ColorIQ> tetrad({final double offset = 60}) {
     return <ColorIQ>[
@@ -784,6 +1183,20 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     ];
   }
 
+  /// Calculates the contrast ratio between this color and [other].
+  ///
+  /// The contrast ratio is calculated according to WCAG (Web Content
+  /// Accessibility Guidelines) standards using the formula:
+  /// `(L1 + 0.05) / (L2 + 0.05)` where L1 is the lighter luminance and L2
+  /// is the darker luminance.
+  ///
+  /// Contrast ratios range from 1:1 (no contrast, same color) to 21:1
+  /// (maximum contrast, e.g., black on white). WCAG recommends:
+  /// - 4.5:1 for normal text
+  /// - 3:1 for large text
+  /// - 7:1 for enhanced accessibility
+  ///
+  /// Returns the contrast ratio as a double.
   @override
   double contrastWith(final ColorSpacesIQ other) {
     final double l1 = luminance;
@@ -793,6 +1206,13 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     return (lighter + 0.05) / (darker + 0.05);
   }
 
+  /// Finds the closest color slice from the predefined HCT color slices.
+  ///
+  /// Color slices represent predefined regions in the HCT color space,
+  /// useful for color organization and palette generation. This method uses
+  /// perceptual distance (CAM16) to find the slice that best matches this color.
+  ///
+  /// Returns the [ColorSlice] that is perceptually closest to this color.
   @override
   ColorSlice closestColorSlice() {
     ColorSlice? closest;
@@ -808,6 +1228,17 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     return closest!;
   }
 
+  /// Checks whether this color is within the specified color gamut.
+  ///
+  /// Since [ColorIQ] represents colors as 8-bit clamped values in sRGB space,
+  /// they are always within the sRGB gamut by definition. When checking
+  /// against wider gamuts (like Display P3 or Rec. 2020), sRGB colors are
+  /// also considered within those gamuts as sRGB is a subset of wider gamuts.
+  ///
+  /// The [gamut] parameter specifies which gamut to check against
+  /// (defaults to [Gamut.sRGB]).
+  ///
+  /// Returns `true` as sRGB colors are always within any valid gamut.
   @override
   bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) {
     // For standard sRGB Color objects, they are always within sRGB gamut
@@ -821,7 +1252,24 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     return <String, dynamic>{'type': 'ColorIQ', 'value': value};
   }
 
-  /// Creates a ColorSpacesIQ instance from a JSON map.
+  /// Creates a [ColorSpacesIQ] instance from a JSON map.
+  ///
+  /// This method supports deserializing various color types from JSON,
+  /// including [ColorIQ], [HctColor], [HslColor], [HsvColor], [CmykColor],
+  /// [LabColor], [XyzColor], and [LchColor].
+  ///
+  /// The JSON map must contain a `'type'` field indicating the color type,
+  /// along with the appropriate fields for that color type.
+  ///
+  /// Example:
+  /// ```dart
+  /// final ColorIQ color = ColorIQ.fromJson({
+  ///   'type': 'ColorIQ',
+  ///   'value': 0xFFFF0000,
+  /// });
+  /// ```
+  ///
+  /// Throws [FormatException] if the color type is unknown or the JSON is invalid.
   static CommonIQ fromJson(final Map<String, dynamic> json) {
     final String type = json['type'] as String;
     switch (type) {
@@ -856,10 +1304,21 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     }
   }
 
+  /// Returns a string representation of this color.
+  ///
+  /// The string format is `ColorIQ(0xAARRGGBB)` where AARRGGBB is the
+  /// hexadecimal representation of the color value.
   @override
   String toString() =>
       'ColorIQ(0x${value.toRadixString(16).toUpperCase().padLeft(8, '0')})';
 
+  /// Calculates the tone difference between this color and [other] in HCT space.
+  ///
+  /// Tone in HCT represents the perceived lightness of a color. This method
+  /// returns the absolute difference in tone values, which is useful for
+  /// comparing color lightness in a perceptually uniform way.
+  ///
+  /// Returns the tone difference as a double.
   @override
   double toneDifference(final ColorWheelInf other) {
     return hct.toneDifference(other);
