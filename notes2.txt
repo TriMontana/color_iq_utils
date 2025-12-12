@@ -1,0 +1,125 @@
+https://apps.colorjs.io/convert/?color=%23850101&precision=6 << KEEP has excellent stuff
+https://github.com/flutter/samples
+https://api.flutter.dev/flutter/widgets/
+https://api.flutter.dev/flutter/widgets/ListenableBuilder-class.html
+https://docs.flutter.dev/get-started/fundamentals/state-management
+https://github.com/flutter/samples/tree/main
+https://docs.flutter.dev/reference/learning-resources
+https://docs.flutter.dev/cookbook/plugins/picture-using-camera
+// https://github.com/TriMontana/gallery
+https://github.com/flutter/gallery/tree/main
+https://github.com/flutter/codelabs/tree/main
+https://convertingcolors.com/named-colors.html
+https://colors.artyclick.com/
+https://colorizer.org/
+https://colorate.azurewebsites.net/Color/FFFADA
+https://www.colorxs.com/color/hex-f2f3f4
+https://www.colorhexa.com/A08D83
+https://www.beautycolorcode.com/A08D83
+https://theultralinx.com/2015/09/the-six-basic-colour-harmonies--infographic/
+https://colorhunt.co/
+https://www.easyrgb.com/en/math.php
+https://www.designwizard.com/blog/design-trends/colour-combination
+https://bottosson.github.io/posts/colorpicker/
+http://www.1728.org/RGB3.htm
+https://www.colorion.co/base-colors
+https://hexcolor.co/color-names
+https://www.javatpoint.com/html-color-names
+https://simplicable.com/en/color-hues
+https://hexcolor.co/gradient/8F00FF
+https://hackmd.io/@Markdown-It/S1qnTXni7?type=view#Red-color-hue-range-355-10%C2%B0
+https://tympanus.net/codrops/2021/12/07/coloring-with-code-a-programmatic-approach-to-design/
+https://hct-color-converter.com/
+https://color.fandom.com/wiki/RYB_Primary,_Secondary,_Tertiary,_Quaternary,_and_Quinary_colors
+https://www.color-name.com/hex/00cccc
+colorhexa.com
+colorizer.org
+ColorJS.io Converter << KEEP THIS THIS IS IT!!
+https://apps.colorjs.io/convert/
+https://github.com/color-js/color.js
+https://github.com/color-js/color.js/tree/main/src
+https://github.com/color-js/color.js/tree/main/src/spaces  *** KEEP ***
+
+  NOTE: To fix the yaml issue, you must destroy the pub.cache under
+  NOTE: To fix the yaml issue, you must destroy the pub.cache under
+  C:\Users\trimo\AppData\Local\Pub
+
+Classifications: Darkest, Darker, Dark -- Light, Lighter, Lightest
+
+class MainApp extends StatelessWidget {
+  const MainApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final FxInheritedNotifier fa = FxInheritedNotifier.of(context);
+    final LoboColor currentColor = fa.colorLobo;
+    return FutureBuilder<Map<Uint32, LoboColor>>(
+      future: fa.getColors(),
+      builder: (context, AsyncSnapshot<Map<Uint32, LoboColor>> snapshot) {
+        if (snapshot.hasData) {
+          final Map<Uint32, LoboColor> data = snapshot.data!;
+          return Feed(currentUser: currentColor, data: data.values);
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
+    );
+  }
+}
+
+https://material-foundation.github.io/material-theme-builder/
+
+      brightness: MediaQuery.platformBrightnessOf(context),
+
+
+As init methods is called once when widget is rendering. There is a method just to be called once after the whole widget is finished rendering itself and then you can get your context also.
+
+WidgetsBinding.instance.addPostFrameCallback((_) {
+  /// Here you can have your context and do what ever you want
+});
+
+
+As init methods is called once when widget is rendering. There is a method just to be called once after the whole widget is finished rendering itself and then you can get your context also.
+
+WidgetsBinding.instance.addPostFrameCallback((_) {
+  /// Here you can have your context and do what ever you want
+});
+this callback must be used inside initState and after super.initState().
+
+// MUST ADD THIS TO THE constructor
+  final GlobalKey<NavigatorState> key =
+  new GlobalKey<NavigatorState>();
+
+
+
+  const String _title = 'AnimatedBuilder Demo';
+  const ThemeMode _themeMode = ThemeMode.dark;
+  const Color _seedColor = cYellow;
+  void main() => runApp(
+    FxProvider(
+      themeMode: _themeMode,
+      title: _title,
+      seedColor: _seedColor,
+      create: () => AuthState(),
+      child: Builder(
+        builder: (context) {
+          if (context.watch<AuthState>().isLoggedIn) {
+            return FxProvider(
+              create: () => AppState.create(
+                themeMode: themeMode,
+                seedColor: _seedColor,
+                title: _title,
+              ),
+              child: const AnimatedBuilderDemo1(),
+            );
+          } else {
+            return MaterialApp(home: const LoginPage());
+          }
+        },
+      ),
+    ),
+  );
+
+  NOTE: To fix the yaml issue, you must destroy the pub.cache under
+  NOTE: To fix the yaml issue, you must destroy the pub.cache under
+  C:\Users\trimo\AppData\Local\Pub

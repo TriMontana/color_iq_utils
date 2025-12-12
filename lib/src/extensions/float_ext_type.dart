@@ -1,12 +1,7 @@
 import 'dart:math' as math;
 
-import 'package:color_iq_utils/src/extensions/double_helpers.dart';
+import 'package:color_iq_utils/color_iq_utils.dart';
 import 'package:color_iq_utils/src/extensions/num_helpers.dart';
-import 'package:color_iq_utils/src/extensions/string_helpers.dart';
-import 'package:color_iq_utils/src/foundation/constants.dart';
-import 'package:color_iq_utils/src/foundation/enums.dart';
-import 'package:color_iq_utils/src/foundation/range.dart';
-import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/utils/error_handling.dart';
 
 /// An extension type representing a percentage value in the range of 0.0 to 1.0.
@@ -121,6 +116,40 @@ extension type const Percent._(double _) implements double {
       return null;
     }
     return Percent((val / 255).clamp0to1);
+  }
+
+  static Percent fromInt(final int val, {final String? msg}) {
+    if (val.isInfinite || val.isNaN) {
+      throw ArgumentError.value(val, 'Error in Percent.fromInta');
+    }
+    if (val < 0 || val > 255) {
+      throw ArgumentError.value(val, 'Error in Percent.fromInt-$val');
+    }
+    if (val == 0) {
+      return Percent.v0;
+    }
+    if (val == 255) {
+      return Percent.v100;
+    }
+    return Percent((val / 255).clamp0to1);
+  }
+
+  static String fromIntAsString(final int val, {final String? msg}) {
+    if (val.isInfinite || val.isNaN) {
+      throw ArgumentError.value(val, 'Error in Percent.fromInta');
+    }
+    if (val < 0 || val > 255) {
+      throw ArgumentError.value(val, 'Error in Percent.fromInt-$val');
+    }
+    if (val == 0) {
+      return 'Percent.v0';
+    }
+    if (val == 255) {
+      return 'Percent.v100';
+    }
+    final double pVal = (val / 255).clamp0to1;
+    return 'Percent($pVal)';
+
   }
 
   /// Constant constructor used as a functional pointer by the legend,
@@ -302,17 +331,35 @@ extension type const Percent._(double _) implements double {
   static const Percent mid = Percent(0.50); // 50% or 0.5
   static const Percent max = Percent(1.0);
   static const Percent v0 = Percent(0.0);
+  static const Percent v1 = Percent(0.01);
+  static const Percent v2 = Percent(0.02);
+  static const Percent v3 = Percent(0.03);
+  static const Percent v4 = Percent(0.04);
   static const Percent v05 = Percent(0.05);
   static const Percent v5 = Percent.v05;
+  static const Percent v6 = Percent(0.06);
+  static const Percent v7 = Percent(0.07);
+  static const Percent v8 = Percent(0.08);
+  static const Percent v9 = Percent(0.09);
   static const Percent v10 = Percent(0.10);
   static const Percent tenth = Percent.v10;
+  static const Percent v11 = Percent(0.11);
   static const Percent v12 = Percent(0.12);
+  static const Percent v13 = Percent(0.13);
+  static const Percent v14 = Percent(0.14);
   static const Percent v15 = Percent(0.15);
+  static const Percent v16 = Percent(0.16);
   static const Percent v20 = Percent(0.20);
+  static const Percent v21 = Percent(0.21);
+  static const Percent v22 = Percent(0.22);
+  static const Percent v24 = Percent(0.24);
   static const Percent v25 = Percent(0.25);
+  static const Percent v26 = Percent(0.26);
+  static const Percent v27 = Percent(0.27);
   static const Percent v30 = Percent(0.30); //
   static const Percent v40 = Percent(0.40);
   static const Percent v50 = Percent(0.50);
+  static const Percent v51 = Percent(0.51);
   static const Percent v55 = Percent(0.55);
   static const Percent v58 = Percent(0.58);
   static const Percent v60 = Percent(0.60);
@@ -320,7 +367,13 @@ extension type const Percent._(double _) implements double {
   static const Percent v75 = Percent(0.75);
   static const Percent v80 = Percent(0.80);
   static const Percent v85 = Percent(0.85);
+  static const Percent v86 = Percent(0.86);
   static const Percent v87 = Percent(0.87);
+  static const Percent v90 = Percent(0.90);
+  static const Percent v95 = Percent(0.95);
+  static const Percent v98 = Percent(0.98);
+  static const Percent v99 = Percent(0.99);
+  static const Percent v100 = Percent(1.0);
 }
 
 /// An extension type representing a linear RGB channel value in the range of
@@ -371,6 +424,55 @@ extension type const LinRGB._(double _) implements Percent {
     );
   }
 
+  /// Clamped factory constructor, with validation
+  factory LinRGB.fromInt(
+      final int val, {
+        final String? msg,
+        final double? tolerance,
+      }) {
+    if (val.isInfinite || val.isNaN) {
+      throw Error0to1(val, msg: msg);
+    }
+    if (val < 0 || val > 255) {
+      throw Error0to1(val, msg: msg);
+    }
+    if (val == 0) {
+      return LinRGB.v0;
+
+    }
+    if (val == 255) {
+      return LinRGB.v100;
+    }
+    final double nor = (val.assertRange0to255( msg) / 255.0).clamp(0.0, 1.0);
+    return LinRGB(eotf(nor, msg: msg));
+
+  }
+
+
+  /// Clamped factory constructor, with validation
+  static String fromIntToString(
+      final int val, {
+        final String? msg,
+        final double? tolerance,
+      }) {
+    if (val.isInfinite || val.isNaN) {
+      throw Error0to1(val, msg: msg);
+    }
+    if (val < 0 || val > 255) {
+      throw Error0to1(val, msg: msg);
+    }
+    if (val == 0) {
+      return 'LinRGB.v0';
+
+    }
+    if (val == 255) {
+      return 'LinRGB.v100';
+    }
+    final double nor = (val.assertRange0to255( msg) / 255.0).clamp(0.0, 1.0);
+    return 'LinRGB(${srgbToLinear(nor)})';
+
+  }
+
   factory LinRGB.checkOrThrow(final num vl, {final String? msg}) =>
       LinRGB._legend.checkOrThrow(vl.toDouble(), msg: msg);
 
@@ -380,6 +482,21 @@ extension type const LinRGB._(double _) implements Percent {
   static const LinearRGBLegend _legend = legendLinearRGB;
 
   LinearRGBLegend get toDescriptor => LinRGB._legend;
+
+  /// Converts sRGB to linear RGB
+  ///
+  /// c is in [0,1]
+  ///
+  /// if (c <= 0.04045) return c / 12.92;
+  /// return math.pow((c + 0.055) / 1.055, 2.4).toDouble();
+  static double srgbToLinear(final double c) {
+    c.assertRange0to1();
+    if (c <= chi) {
+      return LinRGB(c / 12.92).clamp0to1;
+    }
+    return LinRGB(
+        math.pow((c + 0.055) / 1.055, 2.4).toDouble().clamp0to1);
+  }
 
   /// Linearly interpolate to minimum
   LinRGB lerpToMin(
@@ -503,7 +620,6 @@ extension type const LinRGB._(double _) implements Percent {
   /// Invert a factored float (aka RGB percent or ARGB normalized)
   LinRGB get complement => LinRGB(1 - _);
 
-  // LinRGB get inverted => _.invertFactored();
 
   /// Get the delinearized (non-linear) value (sRGB)
   Percent get linearToSrgb => Percent(applyGamma(_));
@@ -551,8 +667,8 @@ Percent oetf(
   }
 }
 
-/// EOTF (Electro-Optical Transfer Function): Converts a non-linear sRGB value
-/// back to a linear RGB value.
+/// EOTF (Electro-Optical Transfer Function): Converts a non-linear/delinearized
+/// sRGB value back to a linear RGB value.
 ///
 /// This function performs the inverse of the `oetf` operation by removing
 /// the gamma correction from an sRGB color channel. The result is a "linear"
