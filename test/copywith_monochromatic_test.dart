@@ -5,7 +5,7 @@ void main() {
   group('CopyWith and Monochromatic Tests', () {
     test('ColorIQ copyWith', () {
       final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 100, green: 150, blue: 200);
+          ColorIQ.fromArgbInts( red: Iq255.v100, green: Iq255.v150, blue: 200);
       final ColorIQ copy = color.copyWith(red: 255, alpha: 128);
       expect(copy.red, 255);
       expect(copy.alphaInt, 128);

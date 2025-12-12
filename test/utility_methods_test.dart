@@ -6,7 +6,7 @@ void main() {
   group('Utility Methods Tests', () {
     test('ColorIQ inverted', () {
       final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 0, green: 100, blue: 200);
+          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v0, green: Iq255.v100, blue: Iq255.v200);
       final ColorIQ inverted = ColorIQ(color.inverted);
       expect(inverted.red, 255);
       expect(inverted.green, 155);
@@ -16,8 +16,7 @@ void main() {
     });
 
     test('ColorIQ grayscale', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 0, blue: 0); // Red
+      final ColorIQ color = cRed; // Red
       final ColorIQ grayscale = color.grayscale;
       // Desaturate(100) should result in gray.
       // HSL for red is (0, 1.0, 0.5). Desaturated: (0, 0.0, 0.5).
@@ -39,8 +38,7 @@ void main() {
     });
 
     test('ColorIQ blacken', () {
-      final ColorIQ color = ColorIQ.fromArgbInts(
-          alpha: 255, red: 255, green: 255, blue: 255); // White
+      final ColorIQ color = cWhite; // White
       final ColorIQ blackened = color.blacken(50); // Mix 50% with black
       expect(blackened.red, closeTo(128, 1));
       expect(blackened.green, closeTo(128, 1));
@@ -48,10 +46,9 @@ void main() {
     });
 
     test('ColorIQ lerp', () {
-      final ColorIQ start =
-          ColorIQ.fromArgbInts(alpha: 255, red: 0, green: 0, blue: 0);
+      final ColorIQ start = cBlack;
       final ColorIQ end =
-          ColorIQ.fromArgbInts(alpha: 255, red: 100, green: Iq255.v200, blue: 255);
+          ColorIQ.fromArgbInts(red: Iq255.v100, green: Iq255.v200, blue: Iq255.v255);
       final ColorIQ mid = start.lerp(end, 0.5) as ColorIQ;
       expect(mid.red, 50);
       expect(mid.green, 100);

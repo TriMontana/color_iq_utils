@@ -77,15 +77,15 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
 
   /// An optional, pre-computed red channel value (0-255).
   /// Used for optimization to avoid re-extracting the red component from `hexId`.
-  final Iq255? _red;
+  final Iq255 _red;
 
   /// An optional, pre-computed green channel value (0-255).
   /// Used for optimization to avoid re-extracting the green component from `hexId`.
-  final Iq255? _green;
+  final Iq255 _green;
 
   /// An optional, pre-computed blue channel value (0-255).
   /// Used for optimization to avoid re-extracting the blue component from `hexId`.
-  final int? _blue;
+  final Iq255 _blue;
 
   /// An optional, pre-computed alpha channel value (0-255).
   /// Used for optimization to avoid re-extracting the alpha component from `hexId`.
@@ -110,7 +110,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     final Percent? a,
     final Iq255? red,
     final Iq255? green,
-    final int? blue,
+    final Iq255? blue,
     final int? alphaInt,
     final Percent? r,
     final Percent? g,
@@ -120,13 +120,12 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
         assert(a == null || a >= 0.0 && a <= 1.0,
             'invalid Opacity $errorMsgFloat0to1 -- $a'),
 
-        assert(blue == null || blue >= 0 && blue <= 255,
-            'invalid Blue $errorMsg0to255 -- $blue'),
+
         assert(alphaInt == null || alphaInt >= 0 && alphaInt <= 255,
             'invalid Alpha $errorMsg0to255 -- $alphaInt'),
         _red = red ?? Iq255.getIq255((hexId >> 16) & 0xFF),
         _green = green ?? Iq255.getIq255( (hexId >> 8) & 0xFF),
-        _blue = blue ?? argbColor?.blueInt ?? hexId & 0xFF,
+        _blue = blue ?? Iq255.getIq255(  hexId & 0xFF),
         _alpha = alphaInt ?? argbColor?.alphaInt ?? (hexId >> 24) & 0xFF,
         _argb = argbColor ?? AppColor(hexId),
         _lrv = lrv ?? argbColor?.lrv,
@@ -165,20 +164,21 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   ///
   /// This value is lazily computed and cached. It can be pre-computed during
   /// construction for performance optimization.
+  @override
   late final Iq255 redIQ = _red ?? Iq255.getIq255((hexId >> 16) & 0xFF);
 
   /// The green channel value as an integer from 0 to 255.
   ///
   /// This value is lazily computed and cached. It can be pre-computed during
   /// construction for performance optimization.
+  @override
   late final Iq255 greenIQ = _green ?? Iq255.getIq255( (hexId >> 8) & 0xFF);
 
   /// The blue channel value as an integer from 0 to 255.
   ///
   /// This value is lazily computed and cached. It can be pre-computed during
   /// construction for performance optimization.
-  @override
-  late final int blue = _blue ?? argb.blueInt;
+  late final Iq255 blueIQ = _blue;
 
   /// The alpha channel value as an integer from 0 to 255.
   ///
@@ -208,13 +208,12 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   /// );
   /// ```
   factory ColorIQ.fromArgbInts({
-    final int alpha = 0xFF,
+    final Iq255 alpha = Iq255.max,
     required final Iq255 red,
     required final Iq255 green,
-    required final int blue,
+    required final Iq255 blue,
     final double? a,
     final Percent? r,
-    final Percent? g,
     final Percent? b,
     final ColorSpace colorSpace = ColorSpace.sRGB,
     final List<String>? names,
@@ -222,15 +221,15 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     final Brightness? brightness,
     final HctData? hctColor,
   }) {
-    blue.assertRange0to255('ColorIQ.fromArgbInts');
+
     alpha.assertRange0to255('ColorIQ.fromArgbInts');
     final Percent alphaPercent =
         a != null ? Percent.clamped(a) : Percent.clamped(alpha / 255.0);
-    final AppColor argbColor = AppColor.fromARGB(alpha, red.intVal, green.intVal, blue,
+    final AppColor argbColor = AppColor.fromARGB(alpha, red.intVal, green.intVal, blue.intVal,
         a: a != null ? Percent.clamped(a) : Percent.clamped(alpha / 255.0),
         r: r ?? red.norm,
         g: g ?? green.norm,
-        b: b ?? Percent.clamped(blue / 255.0));
+        b: b ?? blue.norm);
 
     return ColorIQ(
       argbColor.value,
@@ -300,7 +299,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   /// );
   /// ```
   factory ColorIQ.fromSrgb({
-    required final double r,
+    required final Percent r,
     required final double g,
     required final double b,
     final Percent a = Percent.max,
@@ -876,7 +875,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
       alpha: (alphaInt + (otherColor.alphaInt - alphaInt) * t).round(),
       red: (red + (otherColor.red - red) * t).round().toIq255,
       green: (green + (otherColor.green - green) * t).round().toIq255,
-      blue: (blue + (otherColor.blue - blue) * t).round(),
+      blue: (blue + (otherColor.blue - blue) * t).round().toIq255,
     );
   }
 
@@ -895,9 +894,9 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   ColorIQ adjustTransparency([final double amount = 20]) {
     return ColorIQ.fromArgbInts(
       alpha: (alphaInt * (1 - amount / 100)).round().clamp(0, 255),
-      red: red.toIq255,
-      green: green.toIq255,
-      blue: blue,
+      red: _red,
+      green: _green,
+      blue: _blue,
     );
   }
 
@@ -908,7 +907,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   ///
   /// Returns a new [ColorIQ] instance with the specified alpha value.
   ColorIQ withAlpha(final int newA) => ColorIQ.fromArgbInts(
-      alpha: newA.clamp(0, 255), red: red, green: green, blue: blue);
+      alpha: newA.clamp(0, 255), red: _red, green: _green, blue: _blue);
 
   /// Creates a copy of this color with new RGB channel values.
   ///
@@ -925,17 +924,17 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   /// ```
   ///
   /// Returns a new [ColorIQ] instance with the specified RGB values.
-  ColorIQ withRgb({final int? red, final int? green, final int? blue}) =>
+  ColorIQ withRgb({final Iq255? red, final Iq255? green, final int? blue}) =>
       ColorIQ.fromArgbInts(
           alpha: alphaInt,
-          red: red ?? this.red,
-          green: green ?? this.green,
+          red: red ?? this._red,
+          green: green ?? this._green,
           blue: blue ?? this.blue);
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   @override
   ColorIQ copyWith(
-      {final int? alpha, final int? red, final int? green, final int? blue}) {
+      {final int? alpha, final Iq255? red, final Iq255? green, final int? blue}) {
     return ColorIQ.fromArgbInts(
         alpha: alpha ?? alphaInt,
         red: red ?? this.red,

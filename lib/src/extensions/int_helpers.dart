@@ -2,7 +2,6 @@ import 'dart:math' as math;
 import 'dart:math';
 
 import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:color_iq_utils/src/foundation/num_iq.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 
 /// Extension for integers
@@ -53,11 +52,15 @@ extension IntHelperIQ on int {
   /// 8 bits. The & 0xFF mask ensures only that byte remains.
   int get red => ((this >> 16) & 0xFF);
   int get redInt => (0x00ff0000 & this) >> 16;
+  Iq255 get redIQ => redInt.toIq255;
+
 
   /// Shifts the Green byte 8 bits to the right, placing it in the lowest
   /// 8 bits. The & 0xFF mask ensures only that byte remains.
   int get green => ((this >> 8) & 0xFF);
   int get greenInt => (0x0000ff00 & this) >> 8;
+  Iq255 get greenIQ => greenInt.toIq255;
+
 
   /// Shifts the Blue byte 0 bits to the right, placing it in the lowest
   /// 8 bits. The & 0xFF mask ensures only that byte remains.

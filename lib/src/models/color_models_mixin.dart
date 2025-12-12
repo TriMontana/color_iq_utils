@@ -47,7 +47,9 @@ mixin ColorModelsMixin {
   String get hexStr => value.toHexStr;
   int get alphaInt => value.alphaInt;
   int get red => value.redInt;
+  Iq255 get redIQ => value.redIQ;
   int get green => value.greenInt;
+  Iq255 get greenIQ => value.greenIQ;
   int get blue => value.blueInt;
   Percent get a => value.a2;
   Percent get r => value.r2;

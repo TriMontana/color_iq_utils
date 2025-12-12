@@ -7,7 +7,7 @@ void main() {
 
     test('ColorIQ stores names', () {
       final ColorIQ color = ColorIQ.fromArgbInts(
-          alpha: 255, red: 255, green: 0, blue: 0, names: testNames);
+          alpha: Iq255.v255, red: Iq255.v255, green: Iq255.v0, blue: Iq255.v0, names: testNames);
       expect(color.names, equals(testNames));
       expect(ColorIQ(0xFFFF0000).names, isEmpty);
     });

@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 
 import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:color_iq_utils/src/extensions/num_helpers.dart';
 import 'package:color_iq_utils/src/utils/error_handling.dart';
 
 /// An extension type representing a percentage value in the range of 0.0 to 1.0.

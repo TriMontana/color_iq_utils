@@ -1,14 +1,13 @@
 
 
 import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:color_iq_utils/src/foundation/num_iq.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('Advanced Color Conversion Tests', () {
     test('RGB to XYZ conversion (White)', () {
       final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: Iq255.max, green: Iq255.max, blue: 255);
+          ColorIQ.fromArgbInts(red: Iq255.max, green: Iq255.max, blue: Iq255.v255);
       final XYZ xyz = color.xyz;
 
       // D65 White point
@@ -79,8 +78,7 @@ void main() {
     });
 
     test('Black conversion', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 0, green: 0, blue: 0);
+      final ColorIQ color = cBlack;
 
       final XYZ xyz = color.xyz;
       expect(xyz.x, 0);

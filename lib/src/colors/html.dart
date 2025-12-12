@@ -58,7 +58,7 @@ final HTML cAntiqueWhite = HTML(hxAntiqueWhite,
     alphaInt: UI8.max,
     red: Iq255.v250,
     green: Iq255.v235,
-    blue: UI8.v215);
+    blue: Iq255.v215);
 const int hxAqua = 0xFF00FFFF;
 final HTML cAqua = HTML(
   hxAqua,
@@ -68,7 +68,7 @@ final HTML cAqua = HTML(
   brightness: Brightness.light,
   red: Iq255.v0,
   green: Iq255.max,
-  blue: UI8.max,
+  blue: Iq255.max,
 );
 const int hxAquamarine = 0xFF7FFFD4;
 final HTML cAquamarine = HTML(
@@ -80,7 +80,7 @@ final HTML cAquamarine = HTML(
   alphaInt: UI8.max,
   red: Iq255.v127,
   green: Iq255.max,
-  blue: UI8.v212,
+  blue: Iq255.v212,
 );
 const int hxBeige = 0xFFF5F5DC;
 final HTML cBeige = HTML(
@@ -92,7 +92,7 @@ final HTML cBeige = HTML(
   alphaInt: UI8.max,
   red: Iq255.v245,
   green: Iq255.v245,
-  blue: UI8.v220,
+  blue: Iq255.v220,
 );
 const int hxBisque = 0xFFFFE4C4;
 final HTML cBisque = HTML(
@@ -114,7 +114,7 @@ final ColorIQ cBlanchedAlmond =
     ColorIQ(hxBlanchedAlmond, names: kBlanchedAlmond);
 const int hxBlue = 0xFF0000FF;
 final HTML cBlue = HTML(hxBlue,
-    names: kBlue, red: Iq255.v0, green: Iq255.v0, blue: 255, hct: const HctData(266, 87, 32));
+    names: kBlue, red: Iq255.v0, green: Iq255.v0, blue: Iq255.v255, hct: const HctData(266, 87, 32));
 const int hxBlueViolet = 0xFF8A2BE2;
 final HTML cBlueViolet = HTML(hxBlueViolet,
     names: kBlueViolet,
@@ -202,7 +202,7 @@ final HTML cDarkBlue = HTML(
   alphaInt: UI8.v255,
   red: Iq255.v0,
   green: Iq255.v0,
-  blue: UI8.v139,
+  blue: Iq255.v139,
   hsv: const HSV.alt(
     h: Hue.v240,
     s: Percent.max,

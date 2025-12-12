@@ -4,8 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('Color Blindness Tests', () {
     test('Simulate Protanopia', () {
-      final ColorIQ red =
-          ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 0, blue: 0);
+      final ColorIQ red = cRed;
       final ColorIQ simulated = red.simulate(ColorBlindnessType.protanopia);
       // Red should look much darker/brownish in Protanopia
       expect(simulated.red, lessThan(150));
@@ -16,7 +15,7 @@ void main() {
 
     test('Simulate Deuteranopia', () {
       final ColorIQ green =
-          ColorIQ.fromArgbInts(alpha: 255, red: 0, green: 255, blue: 0);
+          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v0, green: Iq255.v255, blue: Iq255.v0);
       final ColorIQ simulated = green.simulate(ColorBlindnessType.deuteranopia);
       // Green looks yellowish/brownish
       expect(simulated.red, greaterThan(150));

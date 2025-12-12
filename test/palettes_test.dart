@@ -1,12 +1,11 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:color_iq_utils/src/foundation/num_iq.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('Palette Methods Tests', () {
     test('generateBasicPalette returns 7 colors', () {
       final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 100, green: 150, blue: 200);
+          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v100, green: Iq255.v150, blue: Iq255.v200);
       final List<ColorIQ> palette = color.generateBasicPalette();
       expect(palette.length, 7);
       expect(palette[3], equals(color)); // Base color

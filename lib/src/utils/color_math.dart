@@ -8,7 +8,7 @@ import 'package:color_iq_utils/src/models/xyz_color.dart';
 /// Add gamma correction to a linear RGB component, aka delinear or delinearized
 const double Function(double linearComponent) delinearize =
     linearToSrgb; // aka gammaCorrect
-const double Function(double linearComponent) gammaCorrect = linearToSrgb;
+const Percent Function(double linearComponent) gammaCorrect = linearToSrgb;
 const double Function(double linearComponent) fromLinear = linearToSrgb;
 const double Function(double srgbComponent) linearize = srgbToLinear;
 const double Function(double srgbComponent) toLinear = srgbToLinear;
@@ -737,11 +737,15 @@ const List<List<double>> srgbToXyzMatrix = <List<double>>[
 
 /// SrgbToXYZ matrix
 /// CREDIT: color.js/src/spaces/srgb-linear.js
-const List<List<double>> toXYZ_M = <List<double>>[
-  <double>[ 0.41239079926595934, 0.357584339383878,   0.1804807884018343  ],
-  <double>[ 0.21263900587151027, 0.715168678767756,   0.07219231536073371 ],
-  <double>[ 0.01933081871559182, 0.11919477979462598, 0.9505321522496607  ],
-];
+/// sRGB (linear) to CIEXYZ transformation matrix.
+  /// Converts linear sRGB tristimulus values to CIEXYZ using a D65 white point.
+  /// Values sourced from color.js / Material Color Utilities.
+  /// CREDIT: color.js/src/spaces/srgb-linear.js
+  const List<List<double>> toXyzMatrix = <List<double>>[
+    <double>[0.41239079926595934, 0.357584339383878, 0.1804807884018343],
+    <double>[0.21263900587151027, 0.715168678767756, 0.07219231536073371],
+    <double>[0.01933081871559182, 0.11919477979462598, 0.9505321522496607],
+  ];
 
 /// XYZ to SRGB, CREDIT: Material Color Utilities
 const List<List<double>> xyzToSrgbMatrix = <List<double>>[
@@ -782,22 +786,31 @@ const List<List<double>> srgbToXyzMatrix2 = <List<double>>[
   <double>[0.019330818715591, 0.11919477979462, 0.95053215224966]
 ];
 
-// Recalculated for consistent reference white
-// https://github.com/color-js/color.js/blob/main/src/spaces/oklab.js
-const List<List<double>> XYZtoLMS_M = <List<double>>[
-  <double>[ 0.8190224379967030, 0.3619062600528904, -0.1288737815209879 ],
-  <double>[ 0.0329836539323885, 0.9292868615863434,  0.0361446663506424 ],
-  <double>[ 0.0481771893596242, 0.2642395317527308,  0.6335478284694309 ],
-];
+
+/// Matrix to convert from CIEXYZ to LMS (Long, Medium, Short) cone responses.
+  ///
+  /// Used in Oklab / LMS conversions as the first stage transforming CIEXYZ
+  /// tristimulus values into cone response space. Values recalculated for a
+  /// consistent reference white.
+  ///
+  /// CREDIT: https://github.com/color-js/color.js/blob/main/src/spaces/oklab.js
+  const List<List<double>> xyzToLmsMatrix = <List<double>>[
+    <double>[0.8190224379967030, 0.3619062600528904, -0.1288737815209879],
+    <double>[0.0329836539323885, 0.9292868615863434, 0.0361446663506424],
+    <double>[0.0481771893596242, 0.2642395317527308, 0.6335478284694309],
+  ];
+
 // inverse of XYZtoLMS_M
 // https://github.com/color-js/color.js/blob/main/src/spaces/oklab.js
-const List<List<double>> LMStoXYZ_M = <List<double>>[
-  <double>[  1.2268798758459243, -0.5578149944602171,  0.2813910456659647 ],
-  <double>[ -0.0405757452148008,  1.1122868032803170, -0.0717110580655164 ],
-  <double>[ -0.0763729366746601, -0.4214933324022432,  1.5869240198367816 ],
+/// Matrix to convert LMS (Long, Medium, Short) values back to CIEXYZ.
+/// This is the inverse transform of `XYZtoLMS_M`.
+const List<List<double>> lmsToXyzMatrix = <List<double>>[
+  <double>[1.2268798758459243, -0.5578149944602171, 0.2813910456659647],
+  <double>[-0.0405757452148008, 1.1122868032803170, -0.0717110580655164],
+  <double>[-0.0763729366746601, -0.4214933324022432, 1.5869240198367816],
 ];
+
 // https://github.com/color-js/color.js/blob/main/src/spaces/oklab.js
-// prettier-ignore
 const List<List<double>> LMStoLab_M = <List<double>>[
   <double>[ 0.2104542683093140,  0.7936177747023054, -0.0040720430116193 ],
   <double>[ 1.9779985324311684, -2.4285922420485799,  0.4505937096174110 ],
@@ -812,7 +825,7 @@ const List<List<double>> LabtoLMS_M = <List<double>>[
 ];
 
 // https://github.com/color-js/color.js/blob/main/src/spaces/p3-linear.js
-// prettier-ignore
+
 const List<List<double>> p3toXYZ_M = <List<double>>[
   <double>[0.4865709486482162, 0.26566769316909306, 0.1982172852343625],
   <double>[0.2289745640697488, 0.6917385218365064,  0.079286914093745],

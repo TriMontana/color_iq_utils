@@ -14,7 +14,7 @@ void main() {
 
     test('ColorIQ accented delegates to HctColor', () {
       final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 100, green: 150, blue: 200);
+          ColorIQ.fromArgbInts(red: Iq255.v100, green: Iq255.v150, blue: 200);
       final ColorIQ accented = color.accented(10);
 
       final HctColor hct = HctColor.fromInt(color.value);

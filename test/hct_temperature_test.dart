@@ -64,14 +64,14 @@ void main() {
         ColorTemperature.warm,
       ); // Orange
       expect(
-        ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 255, blue: 0)
+        ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v255, green: Iq255.v255, blue: 0)
             .temperature,
         ColorTemperature.warm,
       ); // Yellow
 
       // Cool colors
       expect(
-        ColorIQ.fromArgbInts(alpha: 255, red: 0, green: 255, blue: 0)
+        ColorIQ.fromArgbInts(alpha: 255, red: 0, green: Iq255.v255, blue: 0)
             .temperature,
         ColorTemperature.cool,
       ); // Green

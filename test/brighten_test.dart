@@ -29,7 +29,7 @@ void main() {
 
     test('Brighten vs Lighten', () {
       final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 200, green: 0, blue: 0); // Red
+          ColorIQ.fromArgbInts(red: Iq255.v200, green: Iq255.v0, blue: Iq255.v0); // Red
 
       final ColorIQ brightened = color.brighten(Percent.v20);
       // Increases Value (maxes out at 1.0)

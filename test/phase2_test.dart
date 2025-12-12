@@ -7,14 +7,13 @@ void main() {
   group('Phase 2 Color Space Tests', () {
     test('ColorIQ implements ColorSpacesIQ', () {
       final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 0, blue: 0);
+          ColorIQ.fromArgbInts(alpha: 255, red: Iq255.v255, green: 0, blue: 0);
       expect(color, isA<ColorSpacesIQ>());
       expect(color.value, 0xFFFF0000);
     });
 
     test('RGB to HSL conversion (Red)', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 0, blue: 0);
+      final ColorIQ color = cRed;
       final HSL hsl = color.hsl;
       expect(hsl.h, closeTo(0, 0.1));
       expect(hsl.s, closeTo(1.0, 0.1));
@@ -24,7 +23,7 @@ void main() {
 
     test('RGB to HSV conversion (Green)', () {
       final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 0, green: 255, blue: 0);
+          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v0, green: Iq255.v255, blue: Iq255.v0);
       final HSV hsv = color.hsv;
       expect(hsv.h, closeTo(120, 0.1));
       expect(hsv.saturation, closeTo(1.0, 0.1));
@@ -43,8 +42,7 @@ void main() {
     });
 
     test('RGB to HWB conversion (Red)', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 0, blue: 0);
+      final ColorIQ color = cRed;
       final HwbColor hwb = color.toHwb();
       expect(hwb.h, closeTo(0, 0.1));
       expect(hwb.w, closeTo(0.0, 0.1));
@@ -53,8 +51,7 @@ void main() {
     });
 
     test('RGB to Hct conversion (Red)', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 0, blue: 0);
+      final ColorIQ color = cRed;
       final HctColor hct = color.toHctColor();
       // Hct hue for sRGB Red is approx 27-28 degrees (Cam16 hue)
       expect(hct.hue, closeTo(27, 2.0));
@@ -62,16 +59,14 @@ void main() {
     });
 
     test('RGB to Cam16 conversion (Red)', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 0, blue: 0);
+      final ColorIQ color = cRed;
       final Cam16 cam = color.toCam16();
       expect(cam.hue, closeTo(27, 2.0));
       expect(cam.value, 0xFFFF0000);
     });
 
     test('RGB to Display P3 conversion (Red)', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 0, blue: 0);
+      final ColorIQ color = cRed;
       final DisplayP3Color p3 = color.toDisplayP3();
       // sRGB Red (1,0,0) in P3 is approx (0.917, 0.200, 0.138)
       expect(p3.r, closeTo(0.917, 0.05));

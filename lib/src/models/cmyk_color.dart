@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/color_models_lib.dart';
 import 'package:color_iq_utils/src/colors/html.dart';
-import 'package:color_iq_utils/src/foundation/num_iq.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 
 /// A color model representing color in the CMYK (Cyan, Magenta, Yellow, Key/Black) color space.
@@ -54,7 +53,7 @@ class CMYK extends CommonIQ implements ColorSpacesIQ {
       alpha: 255,
       red: Iq255.getIq255(r.round().clamp(0, 255)),
       green: Iq255.getIq255(g.round().clamp(0, 255)),
-      blue: b.round().clamp(0, 255),
+      blue: Iq255.getIq255(b.round().clamp0to255),
     );
   }
 

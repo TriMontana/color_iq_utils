@@ -45,10 +45,10 @@ void main() {
 
     test('ColorIQ Lighter Palette (Custom Step)', () {
       final ColorIQ color = ColorIQ.fromArgbInts(
-        alpha: 255,
-        red: 128,
-        green: 128,
-        blue: 128,
+        alpha: Iq255.v255,
+        red: Iq255.v128,
+        green: Iq255.v128,
+        blue: Iq255.v128,
       ); // Grey (L=0.5)
       final List<ColorSpacesIQ> palette = color.lighterPalette(10); // 10% steps
       expect(palette.length, 5);

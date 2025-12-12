@@ -1,5 +1,4 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:color_iq_utils/src/foundation/num_iq.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -24,8 +23,7 @@ void main() {
     });
 
     test('ColorIQ linearSrgb getter (Mid Gray)', () {
-      final ColorIQ gray =
-          ColorIQ.fromArgbInts(alpha: 255, red: 128, green: 128, blue: 128);
+      final ColorIQ gray = cGray;
       // 128/255 = 0.50196
       // ((0.50196 + 0.055) / 1.055) ^ 2.4 = 0.21586
       final List<double> linear = gray.rgbaLinearized;
@@ -43,7 +41,7 @@ void main() {
 
     test('ColorIQ linearSrgb getter (Dark Gray - Linear Segment)', () {
       final ColorIQ dark =
-          ColorIQ.fromArgbInts(alpha: 255, red: 10, green: 10, blue: 10);
+          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v10, green: Iq255.v10, blue: Iq255.v10);
       // 10/255 = 0.039215
       // 0.039215 / 12.92 = 0.003035
       final List<double> linear = dark.rgbaLinearized;

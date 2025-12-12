@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:color_iq_utils/src/foundation/num_iq.dart';
 import 'package:test/test.dart';
 
 void main() {
