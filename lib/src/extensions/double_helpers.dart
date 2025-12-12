@@ -2,7 +2,6 @@ import 'dart:developer' as developer;
 import 'dart:io';
 import 'dart:math' as math;
 
-import 'package:color_iq_utils/src/extensions/hue360_ext_type.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/utils/error_handling.dart';
 
@@ -43,6 +42,17 @@ extension DoubleHelpersIQ on double {
   double get clampToneHct => clampDouble(this, min: kMinTone, max: kMaxTone);
   double get clamp0to1 => clampDouble(this, min: 0.0, max: 1.0);
   Percent get clampToPercent => Percent(clampDouble(this, min: 0.0, max: 1.0));
+  String toPercentStr([final int decimals = 4]) {
+    final double percentVal = clampDouble(this, min: 0.0, max: 1.0);
+    if (percentVal >= 1.0) {
+      return 'Percent.max';
+    }
+    if (percentVal <= 0.0) {
+      return 'Percent.min';
+    }
+    return 'const Percent(${percentVal.toStrTrimZeros(decimals)})';
+  }
+
   double assertRangeHue([final String? msg]) {
     if (this < kMinHue || this > kMaxHue) {
       throw RangeError(

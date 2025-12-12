@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 import 'dart:math';
 
-import 'package:color_iq_utils/src/extensions/hue360_ext_type.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/xyz_color.dart';
@@ -444,9 +443,9 @@ int delinearized100Based(final double rgbComponent) {
 ///
 /// If the hue is negative, it will be wrapped to the positive equivalent.
 /// For example, `-10` will become `350`.
-double wrapHue(final double hue) {
+Hue wrapHue(final double hue) {
   final double mod = hue % 360.0;
-  return mod < 0 ? mod + 360.0 : mod;
+  return Hue(mod < 0 ? mod + 360.0 : mod);
 }
 
 /// Sanitizes a degree measure as an integer.
@@ -467,12 +466,12 @@ int sanitizeDegreesInt(int degrees) {
 /// Returns a degree measure between 0.0 (inclusive) and 360.0
 /// (exclusive).
 /// CREDIT: MaterialColorUtilities
-double sanitizeDegreesDouble(double degrees) {
+Hue sanitizeDegreesDouble(double degrees) {
   degrees = degrees % 360.0;
   if (degrees < 0) {
     degrees = degrees + 360.0;
   }
-  return degrees;
+  return Hue(degrees);
 }
 
 /// Distance of two points on a circle, represented using degrees.
@@ -509,7 +508,7 @@ double rotationDirection(final double from, final double to) {
 /// [a] is the starting hue, in degrees.
 /// [b] is the ending hue, in degrees.
 /// [t] is the interpolation factor, in the range [0, 1].
-double lerpHue(double a, double b, final double t) {
+Hue lerpHue(double a, double b, final double t) {
   t.assertRange0to1('lerpHue');
   final double delta = b - a;
   if (delta.abs() > 180.0) {
@@ -519,7 +518,7 @@ double lerpHue(double a, double b, final double t) {
       b += 360.0;
     }
   }
-  return (a + (b - a) * t) % 360.0;
+  return Hue((a + (b - a) * t) % 360.0);
 }
 
 /// Linearly interpolates between two hues.
@@ -675,7 +674,7 @@ double cbrt(final double val) {
 // -------------------------------------------------------------------
 
 /// CREDIT: Dart.ui library
-double getHue(
+Hue getHue(
   final double red,
   final double green,
   final double blue,
@@ -695,7 +694,7 @@ double getHue(
 
   /// Set hue to 0.0 when red == green == blue.
   hue = hue.isNaN ? 0.0 : hue;
-  return hue;
+  return Hue(hue);
 }
 
 /// CREDIT: Dart.ui library

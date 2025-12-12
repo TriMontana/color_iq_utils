@@ -4,7 +4,7 @@ import 'package:color_iq_utils/src/models/hsv_color.dart';
 import 'package:material_color_utilities/hct/hct.dart';
 
 class HsvColorSegment {
-  final double hue; // 0.0 to 360.0
+  final Hue hue; // 0.0 to 360.0
   final double saturation; // 0.0 to 1.0
   final double value; // 0.0 to 1.0
   HsvColorSegment(this.hue, this.saturation, this.value);

@@ -94,24 +94,39 @@ extension type const Hue._(double _) implements double {
   /// Shorthand constants for Degrees
   static const Hue deg5 = Hue(0.5);
   static const Hue deg10 = Hue(10.0);
-  static const Hue deg15 = Hue(15.0);
-  static const Hue deg20 = Hue(20.0);
-  static const Hue deg25 = Hue(25.0);
-  static const Hue deg30 = Hue(30.0);
-  static const Hue deg40 = Hue(40.0);
-  static const Hue deg45 = Hue(45.0);
+  static const Hue v15 = Hue(15.0);
+  static const Hue v20 = Hue(20.0);
+  static const Hue v25 = Hue(25.0);
+  static const Hue v30 = Hue(30.0);
+  static const Hue v40 = Hue(40.0);
+  static const Hue v45 = Hue(45.0);
+  static const Hue v48 = Hue(48.0);
+  static const Hue v50 = Hue(50.0);
+  static const Hue v55 = Hue(55.0);
+  static const Hue v58 = Hue(58.0);
   static const Hue v60 = Hue(60.0);
   static const Hue v90 = Hue(90.0);
-  static const Hue deg95 = Hue(95.0);
-  static const Hue deg100 = Hue(100.0);
-  static const Hue v120 = Hue(120);
+  static const Hue v95 = Hue(95.0);
 
+  static const Hue v99 = Hue(99.0);
+
+  static const Hue v100 = Hue(100.0);
+  static const Hue v120 = Hue(120);
+  static const Hue v125 = Hue(125.0);
+  static const Hue v135 = Hue(135.0);
+  static const Hue v140 = Hue(140.0);
+  static const Hue v150 = Hue(150.0);
+  static const Hue v180 = Hue(180.0);
+  static const Hue v195 = Hue(195.0);
   static const Hue v210 = Hue(210.0);
   static const Hue v240 = Hue(240.0);
   static const Hue v270 = Hue(270.0);
-  static const Hue deg300 = Hue(300.0);
-  static const Hue deg310 = Hue(310.0);
-  static const Hue deg330 = Hue(330.0);
+  static const Hue v300 = Hue(300.0);
+  static const Hue v310 = Hue(310.0);
+  static const Hue v330 = Hue(330.0);
+  static const Hue v345 = Hue(345.0);
+  static const Hue v348 = Hue(348.0);
+  static const Hue v360 = Hue(360.0);
 
   /// 'Add' operator, with return type in [Hue]
   Hue operator +(final Hue otherDegrees) =>

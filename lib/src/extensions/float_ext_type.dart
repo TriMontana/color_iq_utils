@@ -9,8 +9,6 @@ import 'package:color_iq_utils/src/foundation/range.dart';
 import 'package:color_iq_utils/src/utils/color_math.dart';
 import 'package:color_iq_utils/src/utils/error_handling.dart';
 
-
-
 /// An extension type representing a percentage value in the range of 0.0 to 1.0.
 ///
 /// `Percent` is a specialized version of [FloatIQ] that ensures its underlying
@@ -315,6 +313,8 @@ extension type const Percent._(double _) implements double {
   static const Percent v30 = Percent(0.30); //
   static const Percent v40 = Percent(0.40);
   static const Percent v50 = Percent(0.50);
+  static const Percent v55 = Percent(0.55);
+  static const Percent v58 = Percent(0.58);
   static const Percent v60 = Percent(0.60);
   static const Percent v70 = Percent(0.70);
   static const Percent v75 = Percent(0.75);
@@ -831,8 +831,6 @@ sealed class PropertyLegend<T extends num> {
   }
 }
 
-
-
 /// Function pointers to RgbLinear legend
 final class PercentsLegend extends PropertyLegend<Percent> {
   const PercentsLegend({
@@ -916,8 +914,6 @@ extension type const Xxyz._(double _) implements double {
 
   static String get name => capitalLetterX;
 
-
-
   // https://www.sttmedia.com/colormodel-xyz/colormodels
   static const double minXyzX = 0.0;
   static const double maxXyzX = 95.05;
@@ -999,16 +995,10 @@ extension type const Zxyz._(double _) implements double {
   factory Zxyz.clamped(final double vl, {final String? msg}) =>
       Zxyz.fromUnchecked(vl.clamp(Zxyz.minZval, Zxyz.maxZval), msg: msg);
 
-
-
-
-
   static const double minZval = 0.0;
   static const double maxZval = 108.883; // but some go beyond this
   static const Zxyz minInst = Zxyz(minZval);
   static const Zxyz maxInst = Zxyz(maxZval);
-
-
 
   /// Division operator
   Zxyz operator /(final Zxyz otherVal) => Zxyz.clamped(_ / otherVal._);

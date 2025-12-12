@@ -47,7 +47,7 @@ void main() {
     });
 
     test('Delegation works', () {
-      const HSV hsv = HSV(0, Percent.max, Percent.max); // Red
+      const HSV hsv = HSV(Hue.zero, Percent.max, Percent.max); // Red
       final ColorSlice slice = hsv.closestColorSlice();
       expect(slice.name, equals(kRed));
     });

@@ -18,7 +18,7 @@ void main() {
     });
 
     test('HsvColor.brighten increases Value', () {
-      const HSV color = HSV(0, Percent.max, Percent.v50); // Dark Red
+      const HSV color = HSV(Hue.zero, Percent.max, Percent.v50); // Dark Red
       final HSV brightened = color.brighten(Percent.v20);
 
       expect(brightened.valueHsv, closeTo(0.7, 0.01));

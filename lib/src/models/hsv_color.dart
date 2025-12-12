@@ -22,13 +22,23 @@ import 'package:material_color_utilities/hct/cam16.dart';
 /// saturation, and finding harmonies.
 /// See also [ColorIQ]
 class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
-  final double h;
+  final Hue h;
   final Percent saturation;
   final Percent valueHsv;
 
   const HSV(this.h, this.saturation, this.valueHsv,
       {final Percent a = Percent.max, final int? colorId})
       : super(colorId, alpha: a);
+
+  const HSV.alt(
+      {required this.h,
+      required final Percent s,
+      required final Percent v,
+      final Percent a = Percent.max,
+      final int? colorId})
+      : saturation = s,
+        valueHsv = v,
+        super(colorId, alpha: a);
 
   const HSV.fromAHSV(final Percent a, this.h, this.saturation, this.valueHsv,
       {final int? colorId})
@@ -47,7 +57,7 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
     final double min = math.min(r.val, math.min(g.val, b.val));
     final double delta = max - min;
 
-    final double hue = getHue(r.val, g.val, b.val, max, delta);
+    final Hue hue = getHue(r.val, g.val, b.val, max, delta);
     final Percent saturation = Percent(max == 0.0 ? 0.0 : delta / max);
     final Percent value = Percent(max);
 
@@ -105,7 +115,8 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
   @override
   ColorIQ toColor() {
     final double chroma = saturation * valueHsv.val;
-    final double secondary = chroma * (1.0 - (((h / 60.0) % 2.0) - 1.0).abs());
+    final double secondary =
+        chroma * (1.0 - (((h.val / 60.0) % 2.0) - 1.0).abs());
     final double match = valueHsv.val - chroma;
 
     return colorFromHue(alpha.val, h, chroma, secondary, match);
@@ -212,7 +223,7 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
   /// Creates a copy of this color with the given fields replaced with the new values.
   @override
   HSV copyWith({
-    final double? hue,
+    final Hue? hue,
     final Percent? saturation,
     final Percent? val,
     final Percent? alpha,
@@ -234,7 +245,7 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
 
   @override
   HSV adjustHue([final double amount = 20]) =>
-      copyWith(hue: wrapHue(h + amount));
+      copyWith(hue: wrapHue(h.val + amount));
 
   @override
   HSV get complementary => adjustHue(180);
@@ -249,7 +260,6 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
   @override
   HSV increaseTransparency([final Percent amount = Percent.v20]) =>
       copyWith(alpha: max(0.0, alpha - amount).clampToPercent);
-
 
   @override
   List<HSV> get monochromatic {
@@ -285,7 +295,7 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
   HSV get random {
     final Random rng = Random();
     return HSV(
-      rng.nextDouble() * 360.0,
+      Hue(rng.nextDouble() * 360.0),
       Percent(rng.nextDouble()),
       Percent(rng.nextDouble()),
     );
@@ -318,7 +328,7 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
   List<HSV> tonesPalette() {
     // Gray in HSV is (0, 0, 0.5) roughly, or just desaturated.
     // ColorIQ uses 0xFF808080 which is HSV(0, 0, 0.502).
-    const HSV gray = HSV(0.0, Percent.zero, Percent(0.50196));
+    const HSV gray = HSV(Hue.zero, Percent.zero, Percent(0.50196));
     return <HSV>[
       this,
       lerp(gray, 0.15),
@@ -334,11 +344,13 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
     final double offset = 30,
   }) {
     final List<HSV> palette = <HSV>[];
-    final double startHue = h - ((count - 1) / 2) * offset;
+    final double startHue = h.val - ((count - 1) / 2) * offset;
     for (int i = 0; i < count; i++) {
       double newHue = (startHue + i * offset) % 360;
-      if (newHue < 0) newHue += 360;
-      palette.add(copyWith(hue: newHue));
+      if (newHue < 0) {
+        newHue += 360;
+      }
+      palette.add(copyWith(hue: Hue(newHue)));
     }
     return palette;
   }
@@ -374,14 +386,22 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
 
     // Calculate shortest path difference
     double diff = targetHue - currentHue;
-    if (diff > 180) diff -= 360;
-    if (diff < -180) diff += 360;
+    if (diff > 180) {
+      diff -= 360;
+    }
+    if (diff < -180) {
+      diff += 360;
+    }
 
     double newHue = currentHue + (diff * amount / 100);
-    if (newHue < 0) newHue += 360;
-    if (newHue >= 360) newHue -= 360;
+    if (newHue < 0) {
+      newHue += 360;
+    }
+    if (newHue >= 360) {
+      newHue -= 360;
+    }
 
-    return copyWith(hue: newHue);
+    return copyWith(hue: Hue(newHue));
   }
 
   @override
@@ -391,14 +411,22 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
 
     // Calculate shortest path difference
     double diff = targetHue - currentHue;
-    if (diff > 180) diff -= 360;
-    if (diff < -180) diff += 360;
+    if (diff > 180) {
+      diff -= 360;
+    }
+    if (diff < -180) {
+      diff += 360;
+    }
 
     double newHue = currentHue + (diff * amount / 100);
-    if (newHue < 0) newHue += 360;
-    if (newHue >= 360) newHue -= 360;
+    if (newHue < 0) {
+      newHue += 360;
+    }
+    if (newHue >= 360) {
+      newHue -= 360;
+    }
 
-    return copyWith(hue: newHue);
+    return copyWith(hue: Hue(newHue));
   }
 
   @override
@@ -424,9 +452,10 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
   }
 
   String createStr([final int precision = 4]) =>
-      'HsvColor(h: ${h.toStrTrimZeros(precision)}, ' //
-      's: ${saturation.toStringAsFixed(precision)}, v: ${valueHsv.toStringAsFixed(precision)}, '
-      'a: ${alpha.toStringAsFixed(precision)})';
+      'const HSV.alt(h: Hue(${h.toStrTrimZeros(precision)}), ' //
+      's: ${saturation.toPercentStr(precision)}, '
+      'v: ${valueHsv.toPercentStr(precision)}, '
+      'a: ${alpha.toPercentStr(precision)}),';
 }
 
 // --- HSV Strategy ---
@@ -446,14 +475,39 @@ class HsvStrategy extends ManipulationStrategy {
 
   // ... implement others using HSV math
   @override
-  int darken(final int argb, final double amount) =>
-      0; // Implementation hidden for brevity
+  int darken(final int argb, final double amount) {
+    final HSV hsv = HSV.fromInt(argb);
+    final HSV modified =
+        hsv.withValue((hsv.valueHsv.val - (amount / 100)).clampToPercent);
+    return modified.toColor().value;
+  }
+
   @override
-  int saturate(final int argb, final double amount) => 0;
+  int saturate(final int argb, final double amount) {
+    final HSV hsv = HSV.fromInt(argb);
+    final HSV modified = hsv
+        .withSaturation((hsv.saturation.val + (amount / 100)).clampToPercent);
+    return modified.toColor().value;
+  }
+
   @override
-  int desaturate(final int argb, final double amount) => 0;
+  int desaturate(final int argb, final double amount) {
+    final HSV hsv = HSV.fromInt(argb);
+    final HSV modified = hsv
+        .withSaturation((hsv.saturation.val - (amount / 100)).clampToPercent);
+    return modified.toColor().value;
+  }
+
   @override
-  int rotateHue(final int argb, final double amount) => 0;
+  int rotateHue(final int argb, final double amount) {
+    final HSV hsv = HSV.fromInt(argb);
+    double newHue = (hsv.h.val + amount) % 360;
+    if (newHue < 0) {
+      newHue += 360;
+    }
+    final HSV modified = hsv.copyWith(hue: Hue(newHue));
+    return modified.toColor().value;
+  }
 
   /// Intensifies the color by increasing chroma and slightly decreasing tone (half of factor).
   @override

@@ -14,3 +14,5 @@ export 'naming/color_names.dart';
 export 'naming/names.dart';
 export 'utils/color_math.dart';
 export 'extensions/int_ext_types.dart';
+
+export 'extensions/hue360_ext_type.dart';

@@ -50,10 +50,10 @@ final HTML cAliceBlue = HTML(
   hct: const HctData(234.34451, 8.7741, 97.17891),
   lrv: const Percent(0.928801),
   brightness: Brightness.light,
-  a: const Percent(1.000000),
+  a: const Percent(1.0),
   r: const Percent(0.941176),
   g: const Percent(0.972549),
-  b: const Percent(1.000000),
+  b: const Percent(1.0),
 );
 const int hxAntiqueWhite = 0xFFFAEBD7;
 final HTML cAntiqueWhite = HTML(hxAntiqueWhite,
@@ -62,14 +62,16 @@ final HTML cAntiqueWhite = HTML(hxAntiqueWhite,
     lrv: const Percent(0.84647),
     brightness: Brightness.light,
     alphaInt: UI8.max,
-    red: const UI8(250),
-    green: const UI8(235),
-    blue: const UI8(215));
+    red: UI8.v250,
+    green: UI8.v235,
+    blue: UI8.v215);
 const int hxAqua = 0xFF00FFFF;
 final HTML cAqua = HTML(
   hxAqua,
   names: kAqua,
-  hct: const HctData(193, 100, 88),
+  hct: const HctData(196.5449, 58.95441, 91.11652),
+  lrv: const Percent(0.7874),
+  brightness: Brightness.light,
   red: UI8.zero,
   green: UI8.max,
   blue: UI8.max,
@@ -78,10 +80,11 @@ const int hxAquamarine = 0xFF7FFFD4;
 final HTML cAquamarine = HTML(
   hxAquamarine,
   names: kAquamarine,
-  hct: const HctData(169.2657, 100, 86.69089),
-  lrv: const Percent(0.930048),
+  hct: const HctData(171.85628, 50.44456, 92.03615),
+  lrv: const Percent(0.807855),
   brightness: Brightness.light,
-  red: 127,
+  alphaInt: UI8.max,
+  red: UI8.v127,
   green: UI8.max,
   blue: UI8.v212,
 );
@@ -89,10 +92,24 @@ const int hxBeige = 0xFFF5F5DC;
 final HTML cBeige = HTML(
   hxBeige,
   names: kBeige,
-  hct: const HctData(60, 10, 96),
+  hct: const HctData(117.3517, 11.18285, 95.94888),
+  lrv: const Percent(0.898846),
+  brightness: Brightness.light,
+  alphaInt: UI8.max,
+  red: UI8.v245,
+  green: UI8.v245,
+  blue: UI8.v220,
 );
 const int hxBisque = 0xFFFFE4C4;
-final ColorIQ cBisque = ColorIQ(hxBisque, names: kBisque);
+final HTML cBisque = HTML(
+  hxBisque,
+  names: kBisque,
+  hct: const HctData(74.35239, 14.8926, 92.01245),
+  lrv: const Percent(0.807323),
+  hsv: const HSV.alt(
+      h: Hue(32.54237), s: Percent(0.23137), v: Percent.max, a: Percent.max),
+  brightness: Brightness.light,
+);
 const int hxBlack = 0xFF000000;
 const HctData hxBlackData = HctData(0, 0, 0);
 final HTML cBlack = HTML(hxBlack, names: kBlack, hct: hxBlackData);
@@ -125,31 +142,99 @@ const int hxCadetBlue = 0xFF5F9EA0;
 final HTML cCadetBlue =
     HTML(hxCadetBlue, names: kCadetBlue, hct: const HctData(223, 21, 61));
 const int hxChartreuse = 0xFF7FFF00;
-final HTML cChartreuse =
-    HTML(hxChartreuse, names: kChartreuse, hct: const HctData(118, 115, 86));
+final HTML cChartreuse = HTML(
+  hxChartreuse,
+  names: kChartreuse,
+  hct: const HctData(136.07161, 98.07271, 89.87421),
+  lrv: const Percent(0.76032),
+  brightness: Brightness.light,
+  a: const Percent(1.0),
+  r: const Percent(0.498039),
+  g: const Percent(1.0),
+  b: const Percent(0.0),
+);
 const int hxChocolate = 0xFFD2691E;
-final HTML cChocolate =
-    HTML(hxChocolate, names: kChocolate, hct: const HctData(46, 74, 54));
+final HTML cChocolate = HTML(
+  hxChocolate,
+  names: kChocolate,
+  hct: const HctData(48.87847, 57.64034, 55.98605),
+  lrv: const Percent(0.238985),
+  brightness: Brightness.dark,
+);
 const int hxCoral = 0xFFFF7F50;
-final HTML cCoral =
-    HTML(hxCoral, names: kCoral, hct: const HctData(43, 83, 64));
+final HTML cCoral = HTML(
+  hxCoral,
+  names: kCoral,
+  hct: const HctData(37.66124, 59.72545, 67.29048),
+  lrv: const Percent(0.370179),
+  brightness: Brightness.light,
+);
 const int hxCornflowerBlue = 0xFF6495ED;
-final HTML cCornflowerBlue = HTML(hxCornflowerBlue,
-    names: kCornflowerBlue, hct: const HctData(258, 39, 62));
+final HTML cCornflowerBlue = HTML(
+  hxCornflowerBlue,
+  names: kCornflowerBlue,
+  hct: const HctData(265.03593, 52.41255, 61.92819),
+  lrv: const Percent(0.303186),
+  brightness: Brightness.dark,
+  alphaInt: UI8.v255,
+  red: UI8.v100,
+  green: UI8.v149,
+  blue: UI8.v237,
+  hsv: const HSV.alt(
+      h: Hue(218.54015),
+      s: Percent(0.5781),
+      v: Percent(0.92941),
+      a: Percent.max),
+);
 const int hxCornSilk = 0xFFFFF8DC;
-final ColorIQ cCornSilk = ColorIQ(hxCornSilk, names: kCornsilk);
+final HTML cCornSilk = HTML(
+  hxCornSilk,
+  names: kCornsilk,
+  hsv: const HSV.alt(
+      h: Hue.v48, s: Percent(0.1373), v: Percent.max, a: Percent.max),
+  hct: const HctData(103.64912, 11.66316, 97.45527),
+  lrv: const Percent(0.935621),
+  brightness: Brightness.light,
+);
 const int hxCrimson = 0xFFDC143C;
-final ColorIQ cCrimson = ColorIQ(hxCrimson, names: kCrimson);
+final HTML cCrimson = HTML(
+  hxCrimson,
+  names: kCrimson,
+  hsv: const HSV.alt(
+      h: Hue.v348, s: Percent(0.9091), v: Percent(0.86275), a: Percent.max),
+  hct: const HctData(17.34394, 93.91811, 47.02981),
+  lrv: const Percent(0.160422),
+  brightness: Brightness.dark,
+);
 const int hxCyan = 0xFF00FFFF;
 final HTML cCyan = HTML(hxCyan, names: kCyan, hct: const HctData(192, 58, 91));
 const int hxDarkBlue = 0xFF00008B;
-final HTML cDarkBlue =
-    HTML(hxDarkBlue, names: kDarkBlue, hct: const HctData(274, 54, 12));
+final HTML cDarkBlue = HTML(
+  hxDarkBlue,
+  names: kDarkBlue,
+  alphaInt: UI8.v255,
+  red: UI8.v0,
+  green: UI8.v0,
+  blue: UI8.v139,
+  hsv: const HSV.alt(
+    h: Hue.v240,
+    s: Percent.max,
+    v: Percent(0.5451),
+    a: Percent.max,
+  ),
+  hct: const HctData(282.84947, 59.72758, 14.75716),
+  lrv: const Percent(0.018641),
+  brightness: Brightness.dark,
+);
 const int hxDarkCyan = 0xFF008B8B;
 final HTML cDarkCyan = HTML(
   hxDarkCyan,
   names: kDarkCyan,
-  hct: const HctData(180, 51, 27),
+  hsv: const HSV.alt(
+      h: Hue.v180, s: Percent.max, v: Percent(0.5451), a: Percent.max),
+  hct: const HctData(196.5602, 40.81774, 52.20752),
+  lrv: const Percent(0.203293),
+  brightness: Brightness.dark,
 );
 const int hxDarkGoldenRod = 0xFFB8860B;
 final HTML cDarkGoldenRod = HTML(
@@ -160,17 +245,71 @@ final HTML cDarkGoldenRod = HTML(
   brightness: Brightness.dark,
 );
 const int hxDarkGray = 0xFFA9A9A9;
-final ColorIQ cDarkGray = ColorIQ(hxDarkGray, names: kDarkGray);
+final HTML cDarkGray = HTML(
+  hxDarkGray,
+  names: kDarkGray,
+  alphaInt: UI8.v255,
+  red: UI8.v169,
+  green: UI8.v169,
+  blue: UI8.v169,
+  hsv: const HSV.alt(
+      h: Hue.zero, s: Percent.min, v: Percent(0.66275), a: Percent.max),
+  hct: const HctData(209.49322, 2.23928, 69.2378),
+  lrv: const Percent(0.396755),
+  brightness: Brightness.light,
+);
 const int hxDarkGreenHtml = 0xFF006400;
-final ColorIQ cDarkGreenHtml = ColorIQ(hxDarkGreenHtml, names: kDarkGreen);
+final HTML cDarkGreenHtml = HTML(
+  hxDarkGreenHtml,
+  names: kDarkGreen,
+  hct: const HctData(142.2504, 61.32012, 36.20352),
+  lrv: const Percent(0.091143),
+  brightness: Brightness.dark,
+);
 const int hxDarkKhaki = 0xFFBDB76B;
-final HTML cDarkKhaki =
-    HTML(hxDarkKhaki, names: kDarkKhaki, hct: const HctData(88, 53, 55));
+final HTML cDarkKhaki = HTML(
+  hxDarkKhaki,
+  names: kDarkKhaki,
+  hct: const HctData(107.25974, 32.85193, 73.38128),
+  lrv: const Percent(0.457473),
+  brightness: Brightness.light,
+);
 const int hxDarkMagenta = 0xFF8B008B;
-final ColorIQ cDarkMagenta = ColorIQ(hxDarkMagenta, names: kDarkMagenta);
+final HTML cDarkMagenta = HTML(
+  hxDarkMagenta,
+  names: kDarkMagenta,
+  hct: const HctData(334.57389, 73.8946, 32.59748),
+  lrv: const Percent(0.07353),
+  alphaInt: UI8.v255,
+  red: UI8.v139,
+  green: UI8.v0,
+  blue: UI8.v139,
+  a: Percent.max,
+  r: const Percent(0.545098),
+  g: Percent.min,
+  b: const Percent(0.545098),
+  hsv: const HSV.alt(
+      h: Hue.v300, s: Percent.max, v: Percent(0.5451), a: Percent.max),
+  brightness: Brightness.dark,
+);
 const int hxDarkOliveGreen = 0xFF556B2F;
-final HTML cDarkOliveGreen = HTML(hxDarkOliveGreen,
-    names: kDarkOliveGreen, hct: const HctData(112, 53, 55));
+final HTML cDarkOliveGreen = HTML(
+  hxDarkOliveGreen,
+  names: kDarkOliveGreen,
+  hct: const HctData(128.62385, 34.96939, 42.23403),
+  lrv: const Percent(0.126519),
+  brightness: Brightness.dark,
+  a: Percent.max,
+  r: const Percent(0.333333),
+  g: const Percent(0.419608),
+  b: const Percent(0.184314),
+  alphaInt: UI8.v255,
+  red: UI8.v85,
+  green: UI8.v107,
+  blue: UI8.v47,
+  hsv: const HSV.alt(
+      h: Hue(82.0), s: Percent(0.56075), v: Percent(0.41961), a: Percent.max),
+);
 const int hxDarkOrange = 0xFFFF8C00;
 final ColorIQ cDarkOrange = ColorIQ(hxDarkOrange, names: kDarkOrange);
 const int hxDarkOrchid = 0xFF9932CC;
@@ -228,7 +367,8 @@ final ColorIQ cGrey = cGray;
 const int hxGreenHtml = 0xFF008000;
 final HTML cGreenHtml =
     HTML(hxGreenHtml, names: kGreen, hct: const HctData(142, 71, 46));
-const HSV hsvGreen = HSV(120, Percent.max, Percent.max, colorId: hxGreenHtml);
+const HSV hsvGreen =
+    HSV(Hue.v120, Percent.max, Percent.max, colorId: hxGreenHtml);
 const HSL hslGreen =
     HSL(120, Percent.max, Percent.mid, hexId: hxGreenHtml, names: kGreen);
 
@@ -248,7 +388,23 @@ final HTML cIvory =
     HTML(hxIvory, names: kIvory, hct: const HctData(108, 5, 99));
 const int hxKhaki = 0xFFF0E68C;
 const int hxLightKhaki = hxKhaki;
-final ColorIQ cKhaki = ColorIQ(hxKhaki, names: kKhaki);
+final HTML cKhaki = HTML(
+  hxKhaki,
+  names: kKhaki,
+  hct: const HctData(105.60575, 36.00867, 90.3273),
+  lrv: const Percent(0.770123),
+  alphaInt: UI8.v255,
+  red: UI8.v240,
+  green: UI8.v230,
+  blue: UI8.v140,
+  a: Percent.max,
+  r: const Percent(0.941176),
+  g: const Percent(0.901961),
+  b: const Percent(0.54902),
+  hsv: const HSV.alt(
+      h: Hue(54.0), s: Percent(0.41667), v: Percent(0.94118), a: Percent.max),
+  brightness: Brightness.light,
+);
 const int hxLavender = 0xFFE6E6FA;
 final ColorIQ cLavender = ColorIQ(hxLavender, names: kLavender);
 const int hxLavenderBlush = 0xFFFFF0F5;
@@ -338,8 +494,19 @@ const int hxMistyRose = 0xFFFFE4E1;
 final HTML cMistyRose =
     HTML(hxMistyRose, names: kMistyRose, hct: const HctData(13, 11, 91));
 const int hxMoccasin = 0xFFFFE4B5;
-final HTML cMoccasin =
-    HTML(hxMoccasin, names: kMoccasin, hct: const HctData(83, 32, 90));
+final HTML cMoccasin = HTML(
+  hxMoccasin,
+  names: kMoccasin,
+  hct: const HctData(83.92093, 19.97986, 91.72209),
+  hsv: const HSV.alt(
+      h: Hue(38.10811), s: Percent(0.2902), v: Percent.max, a: Percent.max),
+  a: Percent.max,
+  r: Percent.max,
+  g: const Percent(0.894118),
+  b: const Percent(0.709804),
+  lrv: const Percent(0.80083),
+  brightness: Brightness.light,
+);
 const int hxNavajoWhite = 0xFFFFDEAD;
 final ColorIQ cNavajoWhite = ColorIQ(hxNavajoWhite, names: kNavajoWhite);
 const int hxNavy = 0xFF000080;
@@ -446,15 +613,31 @@ const int hxPowderBlue = 0xFFB0E0E6;
 final HTML cPowderBlue =
     HTML(hxPowderBlue, names: kPowderBlue, hct: const HctData(221, 24, 87));
 const int hxPurpleHtml = 0xFF800080;
-final HTML cPurpleHtml =
-    HTML(hxPurpleHtml, names: kPurple, hct: const HctData(335, 70, 30));
+final HTML cPurpleHtml = HTML(
+  hxPurpleHtml,
+  names: kPurple,
+  hct: const HctData(334.56803, 70.27262, 29.7821),
+  a: Percent.max,
+  r: const Percent(0.501961),
+  g: Percent.min,
+  b: const Percent(0.501961),
+  alphaInt: UI8.v255,
+  red: UI8.v128,
+  green: UI8.v0,
+  blue: UI8.v128,
+  hsv: const HSV.alt(
+      h: Hue.v300, s: Percent.max, v: Percent(0.50196), a: Percent.max),
+  lrv: const Percent(0.061477),
+  brightness: Brightness.dark,
+);
+HTML fnPurple() => cPurpleHtml;
 const int hxRebeccaPurple = 0xFF663399;
 final ColorIQ cRebeccaPurple = ColorIQ(hxRebeccaPurple, names: kRebeccaPurple);
 const int hxRed = 0xFFFF0000;
 final HTML cRed = HTML(hxRed, names: kRed, hct: const HctData(27, 113, 53));
 const HSL kHslRed =
     HSL(0, Percent.max, Percent.mid, hexId: hxRed, names: kRed); // Red
-const HSV kHsvRed = HSV(0, Percent.max, Percent.max, colorId: hxRed);
+const HSV kHsvRed = HSV(Hue.zero, Percent.max, Percent.max, colorId: hxRed);
 const int hxRosyBrown = 0xFFBC8F8F;
 final ColorIQ cRosyBrown = ColorIQ(hxRosyBrown, names: kRosyBrown);
 const int hxRoyalBlue = 0xFF4169E1;
@@ -651,7 +834,7 @@ enum HtmlEN {
   pink(hxPink, kPink, ColorFamilyHTML.pink),
   plum(hxPlumHtml, kPlum, ColorFamilyHTML.purple),
   powderBlue(hxPowderBlue, kPowderBlue, ColorFamilyHTML.blue),
-  purple(hxPurple, kPurple, ColorFamilyHTML.purple),
+  purple(hxPurple, kPurple, ColorFamilyHTML.purple, tdHtml: fnPurple),
   rebeccaPurple(hxRebeccaPurple, kRebeccaPurple, ColorFamilyHTML.purple),
   red(hxRed, kRed, ColorFamilyHTML.red),
   rosyBrown(hxRosyBrown, kRosyBrown, ColorFamilyHTML.brown),

@@ -292,7 +292,7 @@ class OkLCH extends CommonIQ implements ColorSpacesIQ {
       OkLCH(const Percent(0.6), c, h, alpha: alpha), // 400
       OkLCH(const Percent(0.5), c, h, alpha: alpha), // 500
       OkLCH(const Percent(0.4), c, h, alpha: alpha), // 600
-      OkLCH(const Percent(0.3), c, h, alpha: alpha), // 700
+      OkLCH(Percent.v30, c, h, alpha: alpha), // 700
       OkLCH(const Percent(0.2), c, h, alpha: alpha), // 800
       OkLCH(const Percent(0.1), c, h, alpha: alpha), // 900
     ];

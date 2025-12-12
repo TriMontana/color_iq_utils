@@ -66,7 +66,7 @@ class HwbColor extends CommonIQ implements ColorSpacesIQ {
     final double v = 1 - bNorm;
     final double s = (v == 0) ? 0 : 1 - wNorm / v;
 
-    return HSV(h, Percent(s), Percent(v), a: alpha).hexId;
+    return HSV(Hue(h), Percent(s), Percent(v), a: alpha).hexId;
   }
 
 // /// Represents a color in the HWB color space.
@@ -160,7 +160,7 @@ class HwbColor extends CommonIQ implements ColorSpacesIQ {
     final Percent s =
         Percent(((v == 0) ? 0 : 1 - wNorm / v).clamp(0.0, 1.0).toDouble());
 
-    return HSV(h, s, Percent(v), a: a).toColor();
+    return HSV(Hue(h), s, Percent(v), a: a).toColor();
   }
 
   @override

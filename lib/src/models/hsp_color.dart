@@ -378,8 +378,12 @@ class HSP extends CommonIQ implements ColorSpacesIQ {
 
     // Calculate shortest path difference
     double diff = targetHue - currentHue;
-    if (diff > 0.5) diff -= 1.0;
-    if (diff < -0.5) diff += 1.0;
+    if (diff > 0.5) {
+      diff -= 1.0;
+    }
+    if (diff < -0.5) {
+      diff += 1.0;
+    }
 
     double newHue = currentHue + (diff * amount / 100);
     // Wrap to 0.0-1.0 range
@@ -398,7 +402,9 @@ class HSP extends CommonIQ implements ColorSpacesIQ {
     // Calculate shortest path difference
     double diff = targetHue - currentHue;
     if (diff > 0.5) diff -= 1.0;
-    if (diff < -0.5) diff += 1.0;
+    if (diff < -0.5) {
+      diff += 1.0;
+    }
 
     double newHue = currentHue + (diff * amount / 100);
     // Wrap to 0.0-1.0 range

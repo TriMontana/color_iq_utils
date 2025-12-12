@@ -42,7 +42,9 @@ class Rec2020Color extends CommonIQ implements ColorSpacesIQ {
   static int toHexID(final double r, final double g, final double b) {
     // Rec. 2020 decoding (Gamma to Linear)
     double transferInv(final double v) {
-      if (v < 0.018 * 4.5) return v / 4.5;
+      if (v < 0.018 * 4.5) {
+        return v / 4.5;
+      }
       return pow((v + 0.099) / 1.099, 1 / 0.45).toDouble();
     }
 
@@ -106,7 +108,9 @@ class Rec2020Color extends CommonIQ implements ColorSpacesIQ {
 
   @override
   Rec2020Color lerp(final ColorSpacesIQ other, final double t) {
-    if (t == 0.0) return this;
+    if (t == 0.0) {
+      return this;
+    }
     final Rec2020Color otherRec =
         other is Rec2020Color ? other : other.toColor().toRec2020();
     if (t == 1.0) return otherRec;
@@ -127,8 +131,11 @@ class Rec2020Color extends CommonIQ implements ColorSpacesIQ {
 
   /// Creates a copy of this color with the given fields replaced with the new values.
   @override
-  Rec2020Color copyWith(
-      {final Percent? r, final Percent? g, final Percent? b}) {
+  Rec2020Color copyWith({
+    final Percent? r,
+    final Percent? g,
+    final Percent? b,
+  }) {
     return Rec2020Color(r ?? this.r, g ?? this.g, b ?? this.b);
   }
 

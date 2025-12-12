@@ -49,36 +49,34 @@ void main(final List<String> args) {
 
   // ARGB Integers (0-255)
   print('ARGB Integers (0-255):');
-  print('  aphaInt: ${argbInts.alpha}');
-  print('  red: Uint8IQ(${argbInts.red}),');
-  print('  geen: Uint8IQ(${argbInts.green})');
-  print('  blue: Uint8IQ(${argbInts.blue}),');
+  print('  alphaInt: UI8.v${argbInts.alpha},');
+  print('  red: UI8.v${argbInts.red},');
+  print('  green: UI8.v${argbInts.green},');
+  print('  blue: UI8.v${argbInts.blue},');
   print('');
 
   // Normalized sRGB (0.0-1.0)
   print('Normalized sRGB (0.0-1.0):');
-  print('  a: const Percent(${argbDoubles.a.toStringAsFixed(6)}),');
-  print('  r: const Percent(${argbDoubles.r.toStringAsFixed(6)})');
-  print('  g: const Percent(${argbDoubles.g.toStringAsFixed(6)}),');
-  print('  b: const Percent(${argbDoubles.b.toStringAsFixed(6)})');
+  print('  a:  ${argbDoubles.a.toPercentStr(6)},');
+  print('  r:  ${argbDoubles.r.toPercentStr(6)},');
+  print('  g:  ${argbDoubles.g.toPercentStr(6)},');
+  print('  b:   ${argbDoubles.b.toPercentStr(6)},');
   print('');
 
   // HSV values
   print('HSV (Hue, Saturation, Value):');
   print('  Hue:        ${hsv.h.toStringAsFixed(3)}°');
-  print(
-      '  Saturation: ${hsv.saturation.toStringAsFixed(6)} (${(hsv.saturation.val * 100).toStringAsFixed(2)}%)');
-  print(
-      '  Value:      ${hsv.valueHsv.toStringAsFixed(6)} (${(hsv.valueHsv.val * 100).toStringAsFixed(2)}%)');
-  print(
-      '  Alpha:      ${hsv.alpha.toStringAsFixed(6)} (${(hsv.alpha.val * 100).toStringAsFixed(2)}%)');
+  print('  Saturation: ${hsv.saturation.toStrTrimZeros(5)})');
+  print('  Value:      ${hsv.valueHsv.toStrTrimZeros(5)}');
+  print('  Alpha:      ${hsv.alpha.toStrTrimZeros(5)}');
   print('');
+  print('hsv: ${hsv.createStr(5)}, ');
 
   // HCT values (Material Color Utilities)
   print('HCT (Hue, Chroma, Tone) - Material Color Utilities:');
-  print('  Hue:    ${hct.hue.toStringAsFixed(3)}°');
-  print('  Chroma: ${hct.chroma.toStringAsFixed(6)}');
-  print('  Tone:   ${hct.tone.toStringAsFixed(6)}');
+  print('  Hue:    ${hct.hue.toStrTrimZeros(4)}°');
+  print('  Chroma: ${hct.chroma.toStrTrimZeros(4)}');
+  print('  Tone:   ${hct.tone.toStrTrimZeros(4)}');
   print('');
   print('hct: ${hct.createStr(5)}, ');
   print('lrv: const Percent(${color.lrv.toStrTrimZeros(6)}),');

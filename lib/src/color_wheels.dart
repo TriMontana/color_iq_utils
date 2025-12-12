@@ -44,7 +44,7 @@ List<ColorSlice> generateHsvWheel({
 }) {
   return _generateWheel(
     (final double hue) =>
-        HSV(hue, Percent(saturation / 100), Percent(value / 100)),
+        HSV(Hue(hue), Percent(saturation / 100), Percent(value / 100)),
     saturation,
     value,
   );

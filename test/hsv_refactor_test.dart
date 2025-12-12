@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('HsvColor Refactor Tests', () {
     test('whiten increases value and desaturates', () {
-      const HSV color = HSV(0, Percent.max, Percent.mid); // Dark Red
+      const HSV color = HSV(Hue.zero, Percent.max, Percent.mid); // Dark Red
       final HSV whitened = color.whiten(Percent.mid);
 
       expect(whitened.valueHsv, greaterThan(color.valueHsv));
@@ -13,7 +13,7 @@ void main() {
     });
 
     test('blacken decreases value and desaturates', () {
-      const HSV color = HSV(0, Percent.max, Percent.max); // Red
+      const HSV color = HSV(Hue.zero, Percent.max, Percent.max); // Red
       final HSV blackened = color.blacken(Percent.mid);
 
       expect(blackened.valueHsv, lessThan(color.valueHsv));
@@ -25,8 +25,8 @@ void main() {
     });
 
     test('lerp interpolates correctly', () {
-      const HSV start = HSV(0, Percent.max, Percent.max); // Red
-      const HSV end = HSV(120, Percent.max, Percent.max); // Green
+      const HSV start = HSV(Hue.zero, Percent.max, Percent.max); // Red
+      const HSV end = HSV(Hue.v120, Percent.max, Percent.max); // Green
       final HSV mid = start.lerp(end, 0.5);
 
       expect(mid.h, closeTo(60, 0.1)); // Yellow
@@ -35,7 +35,7 @@ void main() {
     });
 
     test('intensify increases saturation', () {
-      const HSV color = HSV(0, Percent.mid, Percent.max);
+      const HSV color = HSV(Hue.zero, Percent.mid, Percent.max);
       final HSV intensified = color.intensify(20);
 
       expect(intensified.saturation, closeTo(0.7, 0.01));
@@ -43,7 +43,7 @@ void main() {
     });
 
     test('deintensify decreases saturation', () {
-      const HSV color = HSV(0, Percent.mid, Percent.max);
+      const HSV color = HSV(Hue.zero, Percent.mid, Percent.max);
       final HSV deintensified = color.deintensify(20);
 
       expect(deintensified.saturation, closeTo(0.3, 0.01));
@@ -51,8 +51,10 @@ void main() {
     });
 
     test('blend interpolates correctly', () {
-      const HSV start = HSV(0, Percent.max, Percent.max); // Red (0, 1, 1)
-      const HSV end = HSV(120, Percent.max, Percent.max); // Green (120, 1, 1)
+      const HSV start =
+          HSV(Hue.zero, Percent.max, Percent.max); // Red (0, 1, 1)
+      const HSV end =
+          HSV(Hue.v120, Percent.max, Percent.max); // Green (120, 1, 1)
       final HSV blended = start.blend(end, 50);
 
       expect(blended.h, closeTo(60, 0.1)); // Yellow
@@ -61,7 +63,7 @@ void main() {
     });
 
     test('opaquer increases alpha', () {
-      const HSV color = HSV(0, Percent.max, Percent.max, a: Percent.mid);
+      const HSV color = HSV(Hue.zero, Percent.max, Percent.max, a: Percent.mid);
       final HSV opaque = color.opaquer(20);
 
       expect(opaque.a, closeTo(0.7, 0.01));
@@ -69,14 +71,14 @@ void main() {
     });
 
     test('adjustHue rotates hue', () {
-      const HSV color = HSV(0, Percent.max, Percent.max); // 0
+      const HSV color = HSV(Hue.zero, Percent.max, Percent.max); // 0
       final HSV adjusted = color.adjustHue(90);
 
       expect(adjusted.h, closeTo(90, 0.1));
     });
 
     test('complementary rotates hue by 180', () {
-      const HSV color = HSV(0, Percent.max, Percent.max); // 0
+      const HSV color = HSV(Hue.zero, Percent.max, Percent.max); // 0
       final HSV comp = color.complementary;
 
       expect(comp.h, closeTo(180, 0.1)); // Cyan
