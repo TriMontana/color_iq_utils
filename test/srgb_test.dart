@@ -1,11 +1,12 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:color_iq_utils/src/foundation/num_iq.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('sRGB and Linear sRGB Tests', () {
     test('ColorIQ srgb getter', () {
       final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 100, green: 150, blue: 200);
+          ColorIQ.fromArgbInts(alpha: 255, red: Iq255.v100, green: Iq255.v150, blue: 200);
       expect(color.argb255Ints, <int>[255, 100, 150, 200]);
 
       print('✓ ColorIQ srgb getter test completed');

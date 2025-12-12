@@ -43,8 +43,7 @@ void main() {
 
     test('ColorIQ saturate/desaturate (via HSL)', () {
       // Red: HSL(0, 1.0, 0.5)
-      final ColorIQ red =
-          ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 0, blue: 0);
+      final ColorIQ red = cRed;
       final ColorIQ desaturated = red.desaturate(50);
       // HSL(0, 0.5, 0.5) -> RGB approx (191, 64, 64)
       final HSL hsl = desaturated.hsl;

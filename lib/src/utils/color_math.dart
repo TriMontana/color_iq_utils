@@ -753,7 +753,13 @@ const List<List<double>> xyzToSrgbMatrix = <List<double>>[
 /// XYZ to SRGB, CREDIT: color.js/src/spaces/xyz-linear.js
 /// This matrix is the inverse of the above; XYZ to SRGB
 // again it agrees with the official definition when rounded to 8 decimal places
- const List<List<double>> fromXYZ_M = <List<double>>[
+//  const List<List<double>> fromXYZ_M = <List<double>>[
+//   <double>[  3.2409699419045226,  -1.537383177570094,   -0.4986107602930034  ],
+//   <double>[ -0.9692436362808796,   1.8759675015077202,   0.04155505740717559 ],
+//   <double>[  0.05563007969699366, -0.20397695888897652,  1.0569715142428786  ],
+// ];
+
+const List<List<double>> xyzToSrgbMatrixMaterial = <List<double>>[
   <double>[  3.2409699419045226,  -1.537383177570094,   -0.4986107602930034  ],
   <double>[ -0.9692436362808796,   1.8759675015077202,   0.04155505740717559 ],
   <double>[  0.05563007969699366, -0.20397695888897652,  1.0569715142428786  ],

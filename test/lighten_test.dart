@@ -1,4 +1,5 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:color_iq_utils/src/foundation/num_iq.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -19,7 +20,7 @@ void main() {
 
     test('ColorIQ lighten works via HSL conversion', () {
       final ColorIQ color = ColorIQ.fromArgbInts(
-          alpha: 255, red: 100, green: 100, blue: 100); // Grey
+          alpha: 255, red: Iq255.v100, green: 100, blue: 100); // Grey
       final ColorIQ lightened = color.lighten(20);
 
       // Original L approx 0.39 (100/255)

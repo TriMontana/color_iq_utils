@@ -1,11 +1,14 @@
+
+
 import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:color_iq_utils/src/foundation/num_iq.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('Advanced Color Conversion Tests', () {
     test('RGB to XYZ conversion (White)', () {
       final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 255, blue: 255);
+          ColorIQ.fromArgbInts(alpha: 255, red: Iq255.max, green: Iq255.max, blue: 255);
       final XYZ xyz = color.xyz;
 
       // D65 White point

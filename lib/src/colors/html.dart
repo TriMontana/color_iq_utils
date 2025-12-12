@@ -1,5 +1,6 @@
 import 'package:color_iq_utils/src/color_models_lib.dart';
 import 'package:color_iq_utils/src/colors/encycolorpedia.dart';
+import 'package:color_iq_utils/src/foundation/num_iq.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/maps/registry.dart';
 
@@ -9,10 +10,7 @@ class HTML extends ColorIQ implements ColorWheelInf {
   HTML(super.argb,
       {required super.names,
       required HctData super.hct,
-      super.a,
-      super.r,
-      super.g,
-      super.b,
+        super.argbColor,
       super.alphaInt,
       super.red,
       super.green,
@@ -50,10 +48,6 @@ final HTML cAliceBlue = HTML(
   hct: const HctData(234.34451, 8.7741, 97.17891),
   lrv: const Percent(0.928801),
   brightness: Brightness.light,
-  a: const Percent(1.0),
-  r: const Percent(0.941176),
-  g: const Percent(0.972549),
-  b: const Percent(1.0),
 );
 const int hxAntiqueWhite = 0xFFFAEBD7;
 final HTML cAntiqueWhite = HTML(hxAntiqueWhite,
@@ -62,8 +56,8 @@ final HTML cAntiqueWhite = HTML(hxAntiqueWhite,
     lrv: const Percent(0.84647),
     brightness: Brightness.light,
     alphaInt: UI8.max,
-    red: UI8.v250,
-    green: UI8.v235,
+    red: Iq255.v250,
+    green: Iq255.v235,
     blue: UI8.v215);
 const int hxAqua = 0xFF00FFFF;
 final HTML cAqua = HTML(
@@ -72,8 +66,8 @@ final HTML cAqua = HTML(
   hct: const HctData(196.5449, 58.95441, 91.11652),
   lrv: const Percent(0.7874),
   brightness: Brightness.light,
-  red: UI8.zero,
-  green: UI8.max,
+  red: Iq255.v0,
+  green: Iq255.max,
   blue: UI8.max,
 );
 const int hxAquamarine = 0xFF7FFFD4;
@@ -84,8 +78,8 @@ final HTML cAquamarine = HTML(
   lrv: const Percent(0.807855),
   brightness: Brightness.light,
   alphaInt: UI8.max,
-  red: UI8.v127,
-  green: UI8.max,
+  red: Iq255.v127,
+  green: Iq255.max,
   blue: UI8.v212,
 );
 const int hxBeige = 0xFFF5F5DC;
@@ -96,8 +90,8 @@ final HTML cBeige = HTML(
   lrv: const Percent(0.898846),
   brightness: Brightness.light,
   alphaInt: UI8.max,
-  red: UI8.v245,
-  green: UI8.v245,
+  red: Iq255.v245,
+  green: Iq255.v245,
   blue: UI8.v220,
 );
 const int hxBisque = 0xFFFFE4C4;
@@ -120,7 +114,7 @@ final ColorIQ cBlanchedAlmond =
     ColorIQ(hxBlanchedAlmond, names: kBlanchedAlmond);
 const int hxBlue = 0xFF0000FF;
 final HTML cBlue = HTML(hxBlue,
-    names: kBlue, red: 0, green: 0, blue: 255, hct: const HctData(266, 87, 32));
+    names: kBlue, red: Iq255.v0, green: Iq255.v0, blue: 255, hct: const HctData(266, 87, 32));
 const int hxBlueViolet = 0xFF8A2BE2;
 final HTML cBlueViolet = HTML(hxBlueViolet,
     names: kBlueViolet,
@@ -148,10 +142,6 @@ final HTML cChartreuse = HTML(
   hct: const HctData(136.07161, 98.07271, 89.87421),
   lrv: const Percent(0.76032),
   brightness: Brightness.light,
-  a: const Percent(1.0),
-  r: const Percent(0.498039),
-  g: const Percent(1.0),
-  b: const Percent(0.0),
 );
 const int hxChocolate = 0xFFD2691E;
 final HTML cChocolate = HTML(
@@ -176,10 +166,7 @@ final HTML cCornflowerBlue = HTML(
   hct: const HctData(265.03593, 52.41255, 61.92819),
   lrv: const Percent(0.303186),
   brightness: Brightness.dark,
-  alphaInt: UI8.v255,
-  red: UI8.v100,
-  green: UI8.v149,
-  blue: UI8.v237,
+
   hsv: const HSV.alt(
       h: Hue(218.54015),
       s: Percent(0.5781),
@@ -213,8 +200,8 @@ final HTML cDarkBlue = HTML(
   hxDarkBlue,
   names: kDarkBlue,
   alphaInt: UI8.v255,
-  red: UI8.v0,
-  green: UI8.v0,
+  red: Iq255.v0,
+  green: Iq255.v0,
   blue: UI8.v139,
   hsv: const HSV.alt(
     h: Hue.v240,
@@ -248,10 +235,7 @@ const int hxDarkGray = 0xFFA9A9A9;
 final HTML cDarkGray = HTML(
   hxDarkGray,
   names: kDarkGray,
-  alphaInt: UI8.v255,
-  red: UI8.v169,
-  green: UI8.v169,
-  blue: UI8.v169,
+
   hsv: const HSV.alt(
       h: Hue.zero, s: Percent.min, v: Percent(0.66275), a: Percent.max),
   hct: const HctData(209.49322, 2.23928, 69.2378),
@@ -280,14 +264,7 @@ final HTML cDarkMagenta = HTML(
   names: kDarkMagenta,
   hct: const HctData(334.57389, 73.8946, 32.59748),
   lrv: const Percent(0.07353),
-  alphaInt: UI8.v255,
-  red: UI8.v139,
-  green: UI8.v0,
-  blue: UI8.v139,
-  a: Percent.max,
-  r: const Percent(0.545098),
-  g: Percent.min,
-  b: const Percent(0.545098),
+
   hsv: const HSV.alt(
       h: Hue.v300, s: Percent.max, v: Percent(0.5451), a: Percent.max),
   brightness: Brightness.dark,
@@ -299,14 +276,7 @@ final HTML cDarkOliveGreen = HTML(
   hct: const HctData(128.62385, 34.96939, 42.23403),
   lrv: const Percent(0.126519),
   brightness: Brightness.dark,
-  a: Percent.max,
-  r: const Percent(0.333333),
-  g: const Percent(0.419608),
-  b: const Percent(0.184314),
-  alphaInt: UI8.v255,
-  red: UI8.v85,
-  green: UI8.v107,
-  blue: UI8.v47,
+
   hsv: const HSV.alt(
       h: Hue(82.0), s: Percent(0.56075), v: Percent(0.41961), a: Percent.max),
 );
@@ -393,14 +363,7 @@ final HTML cKhaki = HTML(
   names: kKhaki,
   hct: const HctData(105.60575, 36.00867, 90.3273),
   lrv: const Percent(0.770123),
-  alphaInt: UI8.v255,
-  red: UI8.v240,
-  green: UI8.v230,
-  blue: UI8.v140,
-  a: Percent.max,
-  r: const Percent(0.941176),
-  g: const Percent(0.901961),
-  b: const Percent(0.54902),
+
   hsv: const HSV.alt(
       h: Hue(54.0), s: Percent(0.41667), v: Percent(0.94118), a: Percent.max),
   brightness: Brightness.light,
@@ -500,11 +463,7 @@ final HTML cMoccasin = HTML(
   hct: const HctData(83.92093, 19.97986, 91.72209),
   hsv: const HSV.alt(
       h: Hue(38.10811), s: Percent(0.2902), v: Percent.max, a: Percent.max),
-  a: Percent.max,
-  r: Percent.max,
-  g: const Percent(0.894118),
-  b: const Percent(0.709804),
-  lrv: const Percent(0.80083),
+
   brightness: Brightness.light,
 );
 const int hxNavajoWhite = 0xFFFFDEAD;
@@ -520,9 +479,7 @@ final HTML cOlive =
 const int hxOliveDrab = 0xFF6B8E23;
 final HTML cOliveDrab = HTML(hxOliveDrab,
     names: kOliveDrab,
-    red: const UI8(107),
-    green: 142,
-    blue: 35,
+
     lrv: const Percent(0.226),
     hct: const HctData(128, 53, 55));
 const int hxOrangeHtml = 0xFFFFA500;
@@ -617,14 +574,7 @@ final HTML cPurpleHtml = HTML(
   hxPurpleHtml,
   names: kPurple,
   hct: const HctData(334.56803, 70.27262, 29.7821),
-  a: Percent.max,
-  r: const Percent(0.501961),
-  g: Percent.min,
-  b: const Percent(0.501961),
-  alphaInt: UI8.v255,
-  red: UI8.v128,
-  green: UI8.v0,
-  blue: UI8.v128,
+
   hsv: const HSV.alt(
       h: Hue.v300, s: Percent.max, v: Percent(0.50196), a: Percent.max),
   lrv: const Percent(0.061477),

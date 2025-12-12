@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:color_iq_utils/src/foundation/num_iq.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -28,8 +29,7 @@ void main() {
     });
 
     test('RGB to YUV conversion (White)', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 255, blue: 255);
+      final ColorIQ color = cWhite;
       final YuvColor yuv = color.toYuv();
 
       expect(yuv.y, closeTo(1.0, 0.01));
@@ -52,7 +52,7 @@ void main() {
     test('RGB to OkLch conversion (Red)', () {
       // Red is approx L=0.627, C=0.257, h=29.2
       final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 0, blue: 0);
+          ColorIQ.fromArgbInts(alpha: 255, red: Iq255.max, green: Iq255.min, blue: 0);
       final OkLCH oklch = color.toOkLch();
 
       expect(oklch.l, closeTo(0.627, 0.05));
@@ -63,7 +63,7 @@ void main() {
 
     test('RGB to Hunter Lab conversion (White)', () {
       final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 255, blue: 255);
+          ColorIQ.fromArgbInts(alpha: 255, red: Iq255.max, green: Iq255.max, blue: 255);
       final HunterLabColor hunter = color.toHunterLab();
 
       expect(hunter.l, closeTo(100.0, 0.1));

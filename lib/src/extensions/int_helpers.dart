@@ -2,10 +2,13 @@ import 'dart:math' as math;
 import 'dart:math';
 
 import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:color_iq_utils/src/foundation/num_iq.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 
 /// Extension for integers
 extension IntHelperIQ on int {
+
+  Iq255 get toIq255 => Iq255.getIq255(this);
   String get toHexStr => '0x${toRadixString(16).toUpperCase().padLeft(8, '0')}';
   ArgbInts get rgbaInts => hexIdToComponents(this);
   ArgbDoubles get rgbaDoubles => hexIdToNormalizedComponents(this);

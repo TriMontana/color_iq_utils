@@ -1,4 +1,5 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:color_iq_utils/src/foundation/num_iq.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -50,7 +51,7 @@ void main() {
       final ColorIQ start =
           ColorIQ.fromArgbInts(alpha: 255, red: 0, green: 0, blue: 0);
       final ColorIQ end =
-          ColorIQ.fromArgbInts(alpha: 255, red: 100, green: 200, blue: 255);
+          ColorIQ.fromArgbInts(alpha: 255, red: 100, green: Iq255.v200, blue: 255);
       final ColorIQ mid = start.lerp(end, 0.5) as ColorIQ;
       expect(mid.red, 50);
       expect(mid.green, 100);

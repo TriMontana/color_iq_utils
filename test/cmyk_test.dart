@@ -4,8 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('CMYK Conversion Tests', () {
     test('Black conversion', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 0, green: 0, blue: 0);
+      final ColorIQ color = cBlack;
       final CMYK cmyk = CMYK.fromColorSpacesIQ(color);
       expect(cmyk.c, 0.0);
       expect(cmyk.m, 0.0);
@@ -19,8 +18,7 @@ void main() {
     });
 
     test('White conversion', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 255, blue: 255);
+      final ColorIQ color = cWhite;
       final CMYK cmyk = CMYK.fromColorSpacesIQ(color);
       expect(cmyk.c, 0.0);
       expect(cmyk.m, 0.0);
@@ -64,8 +62,7 @@ void main() {
     });
 
     test('Blue conversion', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 0, green: 0, blue: 255);
+      final ColorIQ color = cBlue;
       final CMYK cmyk = CMYK.fromColorSpacesIQ(color);
       expect(cmyk.c, 1.0);
       expect(cmyk.m, 1.0);

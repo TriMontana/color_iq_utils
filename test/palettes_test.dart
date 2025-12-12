@@ -1,4 +1,5 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
+import 'package:color_iq_utils/src/foundation/num_iq.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -17,7 +18,7 @@ void main() {
 
     test('tonesPalette returns 5 colors', () {
       final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 0, blue: 0); // Red
+          ColorIQ.fromArgbInts(alpha: 255, red: Iq255.v255, green: Iq255.v0, blue: 0); // Red
       final List<ColorIQ> palette = color.tonesPalette();
       expect(palette.length, 5);
       expect(palette[0], equals(color)); // Base color

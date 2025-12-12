@@ -82,8 +82,7 @@ void main() {
     });
 
     test('RGB to Rec. 2020 conversion (Red)', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 0, blue: 0);
+      final ColorIQ color = cRed;
       final Rec2020Color rec2020 = color.toRec2020();
       // sRGB Red (1,0,0) in Rec2020 is approx (0.708, 0.292, 0.0) - wait, checking math
       // Actually sRGB gamut is smaller, so sRGB Red fits inside Rec2020.
