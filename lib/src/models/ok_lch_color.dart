@@ -25,7 +25,7 @@ class OkLCH extends CommonIQ implements ColorSpacesIQ {
       {final Percent alpha = Percent.max,
       final int? hexId,
       final List<String>? names})
-      : assert(l >= 0 && l <= 1, 'L must be between 0 and 1'),
+      : assert(l >= 0 && l <= 1.0, 'L must be between 0 and 1-$l'),
         assert(c >= 0, 'C must be non-negative'),
         assert(h >= 0 && h <= 360, 'H must be between 0 and 360'),
         super(hexId, alpha: alpha, names: names ?? kEmptyNames);

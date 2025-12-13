@@ -8,7 +8,6 @@ void main() {
     test('RGB to HSP conversion (Red)', () {
       final ColorIQ color = cRed;
       final HSP hsp = color.hsp;
-
       expect(hsp.h, closeTo(0, 0.1));
       expect(hsp.s, closeTo(1.0, 0.1));
       expect(hsp.p, closeTo(sqrt(0.299), 0.01));
@@ -18,7 +17,6 @@ void main() {
     test('RGB to YIQ conversion (White)', () {
       final ColorIQ color = cWhite;
       final YiqColor yiq = color.toYiq();
-
       expect(yiq.y, closeTo(1.0, 0.01));
       expect(yiq.i, closeTo(0.0, 0.01));
       expect(yiq.q, closeTo(0.0, 0.01));
@@ -38,7 +36,6 @@ void main() {
     test('RGB to OkLab conversion (White)', () {
       final ColorIQ color = cWhite;
       final OkLabColor oklab = color.toOkLab();
-
       expect(oklab.l, closeTo(1.0, 0.01));
       expect(oklab.aLab, closeTo(0.0, 0.01));
       expect(oklab.bLab, closeTo(0.0, 0.01));

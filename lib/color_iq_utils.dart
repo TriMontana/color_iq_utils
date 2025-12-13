@@ -5,4 +5,4 @@ export 'src/foundation_lib.dart';
 export 'src/palette/color_harmony.dart';
 export 'src/utils_lib.dart';
 
-// TODO: Export any libraries intended for clients of this package.
+// Export other files the CLIENTS may need

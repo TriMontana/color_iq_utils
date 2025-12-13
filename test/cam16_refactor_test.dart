@@ -9,14 +9,14 @@ void main() {
       final Cam16 whitened = color.whiten(50);
 
       expect(whitened.j, greaterThan(color.j));
-      //
+      print('✓ whiten increases J');
     });
 
     test('blacken decreases J', () {
       final Cam16 color = Cam16.fromJch(50.0, 0.0, 0.0); // Gray
       final Cam16 blackened = color.blacken(50);
-
       expect(blackened.j, lessThan(color.j));
+      print('✓ blacken decreases J');
     });
 
     test('lerp interpolates correctly', () {
@@ -25,6 +25,7 @@ void main() {
       final Cam16 mid = start.lerp(end, 0.5);
 
       expect(mid.j, closeTo(50.0, 0.01));
+      print('✓ lerp interpolates correctly');
     });
 
     test('lerp handles hue wrapping', () {
@@ -34,6 +35,7 @@ void main() {
 
       // Shortest path is through 0/360, so average is 0 or 360
       expect(mid.hue, closeTo(0.0, 0.01));
+      print('✓ lerp handles hue wrapping correctly');
     });
 
     test('saturate increases chroma', () {
@@ -41,6 +43,7 @@ void main() {
       final Cam16 saturated = color.saturate(10);
 
       expect(saturated.chroma, greaterThan(color.chroma));
+      print('saturate increases chroma');
     });
 
     test('desaturate decreases chroma', () {
@@ -48,6 +51,7 @@ void main() {
       final Cam16 desaturated = color.desaturate(10);
 
       expect(desaturated.chroma, lessThan(color.chroma));
+      print('desaturate decreases chroma');
     });
 
     test('intensify increases s', () {
@@ -55,6 +59,7 @@ void main() {
       final Cam16 intensified = color.intensify(10);
 
       expect(intensified.s, greaterThan(color.s));
+      print('intensify increases s');
     });
 
     test('deintensify decreases s', () {
@@ -62,6 +67,7 @@ void main() {
       final Cam16 deintensified = color.deintensify(10);
 
       expect(deintensified.s, lessThan(color.s));
+      print('deintensify decreases s');
     });
   });
 }

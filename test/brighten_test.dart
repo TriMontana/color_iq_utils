@@ -5,7 +5,10 @@ void main() {
   group('Brighten', () {
     test('ColorIQ.brighten increases HSV Value', () {
       final ColorIQ color = ColorIQ.fromArgbInts(
-          alpha: Iq255.v255, red: Iq255.v100, green: Iq255.v0, blue: Iq255.v0); // Dark Red
+          alpha: Iq255.v255,
+          red: Iq255.v100,
+          green: Iq255.v0,
+          blue: Iq255.v0); // Dark Red
       final ColorIQ brightened = color.brighten(Percent.v20);
 
       final HSV hsvOriginal = color.hsv;
@@ -20,7 +23,6 @@ void main() {
     test('HsvColor.brighten increases Value', () {
       const HSV color = HSV(Hue.zero, Percent.max, Percent.v50); // Dark Red
       final HSV brightened = color.brighten(Percent.v20);
-
       expect(brightened.valueHsv, closeTo(0.7, 0.01));
       expect(brightened.h, equals(0));
       expect(brightened.saturation, equals(1.0));
@@ -28,8 +30,8 @@ void main() {
     });
 
     test('Brighten vs Lighten', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(red: Iq255.v200, green: Iq255.v0, blue: Iq255.v0); // Red
+      final ColorIQ color = ColorIQ.fromArgbInts(
+          red: Iq255.v200, green: Iq255.v0, blue: Iq255.v0); // Red
 
       final ColorIQ brightened = color.brighten(Percent.v20);
       // Increases Value (maxes out at 1.0)
@@ -39,7 +41,6 @@ void main() {
 
       // Brightening a saturated red shouldn't change it much if it's already high value,
       // but lightening it should make it pink.
-
       final HSV hsvBright = brightened.hsv;
       final HSV hsvLight = lightened.hsv;
 

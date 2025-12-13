@@ -1,13 +1,11 @@
-
-
 import 'package:color_iq_utils/color_iq_utils.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('Advanced Color Conversion Tests', () {
     test('RGB to XYZ conversion (White)', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(red: Iq255.max, green: Iq255.max, blue: Iq255.v255);
+      final ColorIQ color = ColorIQ.fromArgbInts(
+          red: Iq255.max, green: Iq255.max, blue: Iq255.v255);
       final XYZ xyz = color.xyz;
 
       // D65 White point
@@ -40,8 +38,8 @@ void main() {
     });
 
     test('RGB to Luv conversion (Green)', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v0, green: Iq255.v255, blue: Iq255.v0);
+      final ColorIQ color = ColorIQ.fromArgbInts(
+          alpha: Iq255.v255, red: Iq255.v0, green: Iq255.v255, blue: Iq255.v0);
       final CIELuv luv = color.toLuv();
 
       // Approximate values for pure green in sRGB -> Luv (D65)
@@ -54,6 +52,7 @@ void main() {
       expect(backToColor.red, 0);
       expect(backToColor.green, 255);
       expect(backToColor.blue, 0);
+      print('Tested RGB to Luv conversion and back successfully.');
     });
 
     test('RGB to LCH conversion (Blue)', () {
@@ -99,6 +98,7 @@ void main() {
       // Hue is undefined for black/gray, but implementation might return 0 or something else.
       // Our implementation: atan2(0,0) is 0.
       expect(lch.h, 0);
+      print('Tested black color conversions successfully.');
     });
   });
 }

@@ -39,9 +39,9 @@ class XYZ extends CommonIQ {
   }
 
   /// Converts this color to XYZ.
-  static XYZ xyxFromRgb(final int red, final int green, final int blue) =>
+  static XYZ xyxFromRgb(final Iq255 red, final Iq255 green, final Iq255 blue) =>
       XYZ.xyzFromRgbLinearized(
-          red.linearizeUint8, green.linearizeUint8, blue.linearizeUint8);
+          red.linearized, green.linearized, blue.linearized);
 
   /// Converts this color to XYZ.  Values are expected to be in the range of 0.0 to 1.0
   /// and are expected to be in the sRGB color space, not linearized.

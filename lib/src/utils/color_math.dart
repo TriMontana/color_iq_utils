@@ -73,8 +73,6 @@ abstract class ColorMathIQ {
     final double z = r * 0.0193339 + g * 0.1191920 + b * 0.9503041;
     return <double>[x, y, z];
   }
-
-
 }
 
 /// Returns the alpha, red, green, and blue components of a color in ARGB format.
@@ -738,14 +736,14 @@ const List<List<double>> srgbToXyzMatrix = <List<double>>[
 /// SrgbToXYZ matrix
 /// CREDIT: color.js/src/spaces/srgb-linear.js
 /// sRGB (linear) to CIEXYZ transformation matrix.
-  /// Converts linear sRGB tristimulus values to CIEXYZ using a D65 white point.
-  /// Values sourced from color.js / Material Color Utilities.
-  /// CREDIT: color.js/src/spaces/srgb-linear.js
-  const List<List<double>> toXyzMatrix = <List<double>>[
-    <double>[0.41239079926595934, 0.357584339383878, 0.1804807884018343],
-    <double>[0.21263900587151027, 0.715168678767756, 0.07219231536073371],
-    <double>[0.01933081871559182, 0.11919477979462598, 0.9505321522496607],
-  ];
+/// Converts linear sRGB tristimulus values to CIEXYZ using a D65 white point.
+/// Values sourced from color.js / Material Color Utilities.
+/// CREDIT: color.js/src/spaces/srgb-linear.js
+const List<List<double>> toXyzMatrix = <List<double>>[
+  <double>[0.41239079926595934, 0.357584339383878, 0.1804807884018343],
+  <double>[0.21263900587151027, 0.715168678767756, 0.07219231536073371],
+  <double>[0.01933081871559182, 0.11919477979462598, 0.9505321522496607],
+];
 
 /// XYZ to SRGB, CREDIT: Material Color Utilities
 const List<List<double>> xyzToSrgbMatrix = <List<double>>[
@@ -764,11 +762,10 @@ const List<List<double>> xyzToSrgbMatrix = <List<double>>[
 // ];
 
 const List<List<double>> xyzToSrgbMatrixMaterial = <List<double>>[
-  <double>[  3.2409699419045226,  -1.537383177570094,   -0.4986107602930034  ],
-  <double>[ -0.9692436362808796,   1.8759675015077202,   0.04155505740717559 ],
-  <double>[  0.05563007969699366, -0.20397695888897652,  1.0569715142428786  ],
+  <double>[3.2409699419045226, -1.537383177570094, -0.4986107602930034],
+  <double>[-0.9692436362808796, 1.8759675015077202, 0.04155505740717559],
+  <double>[0.05563007969699366, -0.20397695888897652, 1.0569715142428786],
 ];
-
 
 /// CREDIT: https://github.com/bernaferrari/hsluv-dart/blob/main/lib/hsluv.dart
 /// CREDIT: Material Color Utilities, aka 'm
@@ -786,19 +783,18 @@ const List<List<double>> srgbToXyzMatrix2 = <List<double>>[
   <double>[0.019330818715591, 0.11919477979462, 0.95053215224966]
 ];
 
-
 /// Matrix to convert from CIEXYZ to LMS (Long, Medium, Short) cone responses.
-  ///
-  /// Used in Oklab / LMS conversions as the first stage transforming CIEXYZ
-  /// tristimulus values into cone response space. Values recalculated for a
-  /// consistent reference white.
-  ///
-  /// CREDIT: https://github.com/color-js/color.js/blob/main/src/spaces/oklab.js
-  const List<List<double>> xyzToLmsMatrix = <List<double>>[
-    <double>[0.8190224379967030, 0.3619062600528904, -0.1288737815209879],
-    <double>[0.0329836539323885, 0.9292868615863434, 0.0361446663506424],
-    <double>[0.0481771893596242, 0.2642395317527308, 0.6335478284694309],
-  ];
+///
+/// Used in Oklab / LMS conversions as the first stage transforming CIEXYZ
+/// tristimulus values into cone response space. Values recalculated for a
+/// consistent reference white.
+///
+/// CREDIT: https://github.com/color-js/color.js/blob/main/src/spaces/oklab.js
+const List<List<double>> xyzToLmsMatrix = <List<double>>[
+  <double>[0.8190224379967030, 0.3619062600528904, -0.1288737815209879],
+  <double>[0.0329836539323885, 0.9292868615863434, 0.0361446663506424],
+  <double>[0.0481771893596242, 0.2642395317527308, 0.6335478284694309],
+];
 
 // inverse of XYZtoLMS_M
 // https://github.com/color-js/color.js/blob/main/src/spaces/oklab.js
@@ -820,33 +816,44 @@ const List<List<double>> lmsToLabMatrix = <List<double>>[
   <double>[1.9779985324311684, -2.4285922420485799, 0.4505937096174110],
   <double>[0.0259040424655478, 0.7827717124575296, -0.8086757549230774],
 ];
+
 // LMStoIab_M inverted
 // https://github.com/color-js/color.js/blob/main/src/spaces/oklab.js
 /// Matrix converting from Lab (L, a, b) values to LMS cone responses.
-  /// Each inner list represents a row of the 3×3 transform matrix.
-  /// Source: color-js / Material Color Utilities.
-  const List<List<double>> labToLmsMatrix = <List<double>>[
-    <double>[1.0, 0.3963377773761749, 0.2158037573099136],
-    <double>[1.0, -0.1055613458156586, -0.0638541728258133],
-    <double>[1.0, -0.0894841775298119, -1.2914855480194092],
-  ];
+/// Each inner list represents a row of the 3×3 transform matrix.
+/// Source: color-js / Material Color Utilities.
+const List<List<double>> labToLmsMatrix = <List<double>>[
+  <double>[1.0, 0.3963377773761749, 0.2158037573099136],
+  <double>[1.0, -0.1055613458156586, -0.0638541728258133],
+  <double>[1.0, -0.0894841775298119, -1.2914855480194092],
+];
 
-// https://github.com/color-js/color.js/blob/main/src/spaces/p3-linear.js
-
-const List<List<double>> p3toXYZ_M = <List<double>>[
+/// Matrix to convert from Display P3 (linear) color space to CIEXYZ.
+///
+/// Display P3 is a wide-gamut color space used in modern displays (Apple devices,
+/// HDR monitors). This matrix transforms linear Display P3 RGB tristimulus values
+/// to CIEXYZ D65 values. Each row represents the contribution of R, G, and B
+/// components to X, Y, and Z respectively.
+///
+/// Source: https://github.com/color-js/color.js/blob/main/src/spaces/p3-linear.js
+const List<List<double>> p3ToXyzMatrix = <List<double>>[
   <double>[0.4865709486482162, 0.26566769316909306, 0.1982172852343625],
-  <double>[0.2289745640697488, 0.6917385218365064,  0.079286914093745],
+  <double>[0.2289745640697488, 0.6917385218365064, 0.079286914093745],
   <double>[0.0000000000000000, 0.04511338185890264, 1.043944368900976],
 ];
 
-// https://github.com/color-js/color.js/blob/main/src/spaces/p3-linear.js
-// prettier-ignore
-const List<List<double>> p3fromXYZ_M = <List<double>>[
-  <double>[ 2.493496911941425,   -0.9313836179191239, -0.40271078445071684],
-  <double>[-0.8294889695615747,   1.7626640603183463,  0.023624685841943577],
-  <double>[ 0.03584583024378447, -0.07617238926804182, 0.9568845240076872],
+/// Matrix to convert from CIEXYZ to Display P3 (linear) color space.
+///
+/// This is the inverse transform of `p3toXYZ_M`. Each row represents
+/// the coefficients for calculating one component (R, G, or B) of linear
+/// Display P3 from CIEXYZ tristimulus values.
+///
+/// Source: https://github.com/color-js/color.js/blob/main/src/spaces/p3-linear.js
+const List<List<double>> p3FromXyzMatrix = <List<double>>[
+  <double>[2.493496911941425, -0.9313836179191239, -0.40271078445071684],
+  <double>[-0.8294889695615747, 1.7626640603183463, 0.023624685841943577],
+  <double>[0.03584583024378447, -0.07617238926804182, 0.9568845240076872],
 ];
-
 
 /// Converts a color from ARGB to XYZ;
 /// Generates a 32-bit hexId from the given x, y, and z values.

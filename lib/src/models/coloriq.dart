@@ -91,6 +91,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   final Iq255 _alpha;
 
   final HSV? _hsv;
+  final Cam16? _cam16;
 
   /// Creates a [ColorIQ] instance from a 32-bit integer [hexId].
   ///
@@ -101,6 +102,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     this.hexId, {
     this.colorSpace = ColorSpace.sRGB,
     final HctData? hct,
+    final Cam16? cam16,
     final HSV? hsv,
     final AppColor? argbColor,
     final List<String> names = kEmptyNames,
@@ -116,15 +118,13 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     final Percent? b,
   })  : _hct = hct,
         _hsv = hsv,
+        _cam16 = cam16,
         assert(a == null || a >= 0.0 && a <= 1.0,
             'invalid Opacity $errorMsgFloat0to1 -- $a'),
-
-
-
         _red = red ?? Iq255.getIq255((hexId >> 16) & 0xFF),
-        _green = green ?? Iq255.getIq255( (hexId >> 8) & 0xFF),
-        _blue = blue ?? Iq255.getIq255(  hexId & 0xFF),
-        _alpha = alphaInt ?? Iq255.getIq255( (hexId >> 24) & 0xFF),
+        _green = green ?? Iq255.getIq255((hexId >> 8) & 0xFF),
+        _blue = blue ?? Iq255.getIq255(hexId & 0xFF),
+        _alpha = alphaInt ?? Iq255.getIq255((hexId >> 24) & 0xFF),
         _argb = argbColor ?? AppColor(hexId),
         _lrv = lrv ?? argbColor?.lrv,
         _brightness = brightness ?? argbColor?.brightness,
@@ -170,7 +170,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   /// This value is lazily computed and cached. It can be pre-computed during
   /// construction for performance optimization.
   @override
-  late final Iq255 greenIQ = _green; //  ?? Iq255.getIq255( (hexId >> 8) & 0xFF);
+  late final Iq255 greenIQ = _green;
 
   /// The blue channel value as an integer from 0 to 255.
   ///
@@ -209,23 +209,15 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     required final Iq255 red,
     required final Iq255 green,
     required final Iq255 blue,
-    final double? a,
-    final Percent? r,
-
     final ColorSpace colorSpace = ColorSpace.sRGB,
     final List<String>? names,
     final Percent? lrv,
     final Brightness? brightness,
     final HctData? hctColor,
   }) {
-
-    final Percent alphaPercent =
-        a != null ? Percent.clamped(a) : alpha.norm;
-    final AppColor argbColor = AppColor.fromARGB(alpha.intVal, red.intVal, green.intVal, blue.intVal,
-        a: a != null ? Percent.clamped(a) : alpha.norm,
-        r: r ?? red.norm,
-        g: green.norm,
-        b: blue.norm);
+    final AppColor argbColor = AppColor.fromARGB(
+        alpha.intVal, red.intVal, green.intVal, blue.intVal,
+        a: alpha.norm, r: red.norm, g: green.norm, b: blue.norm);
 
     return ColorIQ(
       argbColor.value,
@@ -234,7 +226,6 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
       colorSpace: colorSpace,
       lrv: lrv,
       hct: hctColor,
-      a: alphaPercent,
       red: red,
       green: green,
       blue: blue,
@@ -296,7 +287,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   /// ```
   factory ColorIQ.fromSrgb({
     required final Percent r,
-    required final double g,
+    required final Percent g,
     required final double b,
     final Percent a = Percent.max,
     Percent? luminance,
@@ -390,7 +381,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   /// CAM16 is used for perceptual color distance calculations and is lazily
   /// computed and cached.
   @override
-  late final Cam16 cam16 = Cam16.fromInt(value);
+  late final Cam16 cam16 = _cam16 ?? Cam16.fromInt(value);
 
   /// Calculates the perceptual distance to another color using CAM16.
   ///
@@ -403,7 +394,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   ///
   /// XYZ is an intermediate color space often used for conversions between
   /// different color models. This is lazily computed and cached.
-  late final XYZ xyz = XYZ.xyxFromRgb(red, green, blue);
+  late final XYZ xyz = XYZ.xyxFromRgb(_red, _green, _blue);
 
   /// The HSV (Hue, Saturation, Value) color space representation of this color.
   ///
@@ -930,7 +921,10 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   /// Creates a copy of this color with the given fields replaced with the new values.
   @override
   ColorIQ copyWith(
-      {final Iq255? alpha, final Iq255? red, final Iq255? green, final Iq255? blue}) {
+      {final Iq255? alpha,
+      final Iq255? red,
+      final Iq255? green,
+      final Iq255? blue}) {
     return ColorIQ.fromArgbInts(
         alpha: alpha ?? _alpha,
         red: red ?? _red,
@@ -988,7 +982,6 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   ColorSpacesIQ get random {
     final Random rng = Random();
     return ColorIQ.fromArgbInts(
-
       red: rng.nextInt(256).toIq255,
       green: rng.nextInt(256).toIq255,
       blue: rng.nextInt(256).toIq255,
@@ -1008,7 +1001,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   @override
   ColorIQ opaquer([final double amount = 20]) {
     // Increase alpha by amount%
-    final  Iq255 newAlpha =
+    final Iq255 newAlpha =
         (alphaInt + (255 * amount / 100)).round().clamp(0, 255).toIq255;
     return copyWith(alpha: newAlpha);
   }

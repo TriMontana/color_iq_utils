@@ -6,7 +6,6 @@ void main() {
     test('whiten decreases K', () {
       const CMYK color = CMYK(0.0, 0.0, 0.0, 0.5); // Gray
       final CMYK whitened = color.whiten(50);
-
       expect(whitened.k, lessThan(color.k));
       print('✓ CMYK.whiten decreases K');
     });
@@ -23,8 +22,8 @@ void main() {
       const CMYK start = CMYK(0.0, 0.0, 0.0, 1.0); // Black
       const CMYK end = CMYK(0.0, 0.0, 0.0, 0.0); // White
       final CMYK mid = start.lerp(end, 0.5);
-
       expect(mid.k, closeTo(0.5, 0.01));
+      print('✓ CMYK.lerp interpolates correctly');
     });
 
     test('lighterPalette generates lighter colors', () {
@@ -38,6 +37,7 @@ void main() {
         // Expect decreasing K (lighter)
         expect(c2.k, lessThanOrEqualTo(c1.k));
       }
+      print('✓ CMYK.lighterPalette generates lighter colors');
     });
 
     test('darkerPalette generates darker colors', () {
