@@ -41,6 +41,7 @@ void main() {
       // V: 0.5
       expect(whitened.saturation, closeTo(0.5, 0.001));
       expect(whitened.val, closeTo(0.5, 0.001));
+      print('✓ OkHsvColor Tests');
     });
 
     test('blacken moves towards black', () {

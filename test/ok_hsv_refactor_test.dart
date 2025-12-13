@@ -13,6 +13,7 @@ void main() {
     test('transparency returns alpha', () {
       const OkHsvColor color = OkHsvColor(0.0, 0.0, 0.0, alpha: Percent(0.5));
       expect(color.transparency, closeTo(0.5, 0.01));
+      print('✓ OkHsvColor Refactor Tests');
     });
 
     test('temperature returns correct value', () {
@@ -21,6 +22,7 @@ void main() {
 
       expect(warm.temperature, ColorTemperature.warm);
       expect(cool.temperature, ColorTemperature.cool);
+      print('✓ OkHsvColor Refactor Tests');
     });
 
     test('whiten increases value', () {
@@ -40,6 +42,7 @@ void main() {
       const OkHsvColor end = OkHsvColor(0.0, 0.0, 1.0);
       final OkHsvColor mid = start.lerp(end, 0.5);
       expect(mid.val, closeTo(0.5, 0.01));
+      print('✓ OkHsvColor Refactor Tests');
     });
 
     test('intensify increases saturation', () {

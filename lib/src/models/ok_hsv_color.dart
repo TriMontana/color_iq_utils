@@ -358,6 +358,27 @@ class OkHsvColor extends CommonIQ implements ColorSpacesIQ {
         copyWith(hue: wrapHue(hue + 180)),
         copyWith(hue: wrapHue(hue + 180 + offset)),
       ];
+
+  @override
+  List<OkHsvColor> split({final double offset = 30}) => <OkHsvColor>[
+        this,
+        copyWith(hue: wrapHue(hue + 180 - offset)),
+        copyWith(hue: wrapHue(hue + 180 + offset)),
+      ];
+
+  @override
+  List<OkHsvColor> triad({final double offset = 120}) => <OkHsvColor>[
+        this,
+        copyWith(hue: wrapHue(hue + offset)),
+        copyWith(hue: wrapHue(hue - offset)),
+      ];
+
+  @override
+  List<OkHsvColor> twoTone({final double offset = 60}) => <OkHsvColor>[
+        this,
+        copyWith(hue: wrapHue(hue + offset)),
+      ];
+
   double distanceTo(final ColorSpacesIQ other) =>
       toCam16().distance(other.toCam16());
 

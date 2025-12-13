@@ -4,8 +4,11 @@ import 'package:test/test.dart';
 void main() {
   group('sRGB and Linear sRGB Tests', () {
     test('ColorIQ srgb getter', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v100, green: Iq255.v150, blue: Iq255.v200);
+      final ColorIQ color = ColorIQ.fromArgbInts(
+          alpha: Iq255.v255,
+          red: Iq255.v100,
+          green: Iq255.v150,
+          blue: Iq255.v200);
       expect(color.argb255Ints, <int>[255, 100, 150, 200]);
 
       print('✓ ColorIQ srgb getter test completed');
@@ -16,7 +19,6 @@ void main() {
     test('ColorIQ linearSrgb getter (Red)', () {
       final ColorIQ red = cRed;
       expect(red.rgbaLinearized, <double>[1.0, 0.0, 0.0, 1.0]);
-
       print('✓ ColorIQ linearSrgb getter (Red) test completed');
       print('  Linear sRGB values: ${red.redLinearized}');
     });
@@ -39,8 +41,8 @@ void main() {
     });
 
     test('ColorIQ linearSrgb getter (Dark Gray - Linear Segment)', () {
-      final ColorIQ dark =
-          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v10, green: Iq255.v10, blue: Iq255.v10);
+      final ColorIQ dark = ColorIQ.fromArgbInts(
+          alpha: Iq255.v255, red: Iq255.v10, green: Iq255.v10, blue: Iq255.v10);
       // 10/255 = 0.039215
       // 0.039215 / 12.92 = 0.003035
       final List<double> linear = dark.rgbaLinearized;

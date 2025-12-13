@@ -9,6 +9,7 @@ void main() {
 
       expect(intensified.w, lessThan(color.w));
       expect(intensified.b, lessThan(color.b));
+      print('✓ intensify decreases whiteness and blackness');
     });
 
     test('deintensify increases whiteness and blackness', () {
@@ -17,6 +18,7 @@ void main() {
 
       expect(deintensified.w, greaterThan(color.w));
       expect(deintensified.b, greaterThan(color.b));
+      print('✓ deintensify increases whiteness and blackness');
     });
 
     test('accented delegates to intensify', () {
@@ -25,6 +27,7 @@ void main() {
 
       expect(accented.w, lessThan(color.w));
       expect(accented.b, lessThan(color.b));
+      print('✓ accented delegates to intensify');
     });
   });
 }

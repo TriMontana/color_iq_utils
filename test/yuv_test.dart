@@ -9,6 +9,7 @@ void main() {
       expect(darkened.y, closeTo(0.3, 0.001));
       expect(darkened.u, equals(color.u));
       expect(darkened.v, equals(color.v));
+      print('✓ YuvColor Tests');
     });
 
     test('brighten increases Y', () {
@@ -17,6 +18,7 @@ void main() {
       expect(brightened.y, closeTo(0.7, 0.001));
       expect(brightened.u, equals(color.u));
       expect(brightened.v, equals(color.v));
+      print('✓ YuvColor Tests');
     });
 
     test('lighten increases Y', () {
@@ -34,6 +36,7 @@ void main() {
       expect(saturated.y, equals(color.y));
       expect(saturated.u, closeTo(0.12, 0.001));
       expect(saturated.v, closeTo(-0.12, 0.001));
+      print('✓ YuvColor Tests');
     });
 
     test('desaturate decreases U and V magnitude', () {
@@ -55,6 +58,7 @@ void main() {
       expect(whitened.y, closeTo(0.5, 0.001));
       expect(whitened.u, closeTo(0.05, 0.001));
       expect(whitened.v, closeTo(0.05, 0.001));
+      print('✓ YuvColor Tests');
     });
 
     test('blacken moves towards black', () {
@@ -76,6 +80,7 @@ void main() {
       expect(lerped.y, closeTo(0.5, 0.001));
       expect(lerped.u, closeTo(0.5, 0.001));
       expect(lerped.v, closeTo(0.5, 0.001));
+      print('✓ YuvColor Tests');
     });
   });
 }

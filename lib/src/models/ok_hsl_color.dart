@@ -371,6 +371,26 @@ class OkHslColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
+  List<OkHslColor> split({final double offset = 30}) => <OkHslColor>[
+        this,
+        adjustHue(180 - offset),
+        adjustHue(180 + offset),
+      ];
+
+  @override
+  List<OkHslColor> triad({final double offset = 120}) => <OkHslColor>[
+        this,
+        adjustHue(offset),
+        adjustHue(-offset),
+      ];
+
+  @override
+  List<OkHslColor> twoTone({final double offset = 60}) => <OkHslColor>[
+        this,
+        adjustHue(offset),
+      ];
+
+  @override
   double contrastWith(final ColorSpacesIQ other) =>
       toColor().contrastWith(other);
 

@@ -13,8 +13,8 @@ void main() {
     test('blacken decreases brightness', () {
       const YuvColor color = YuvColor(0.5, 0.0, 0.0); // Gray
       final YuvColor blackened = color.blacken(50);
-
       expect(blackened.y, lessThan(color.y));
+      print('✓ YuvColor Refactor Tests');
     });
 
     test('lerp interpolates correctly', () {
@@ -25,6 +25,7 @@ void main() {
       expect(mid.y, closeTo(0.75, 0.01));
       expect(mid.u, closeTo(0.0, 0.01));
       expect(mid.v, closeTo(0.0, 0.01));
+      print('✓ YuvColor Refactor Tests');
     });
 
     test('saturate increases chrominance', () {
@@ -41,6 +42,7 @@ void main() {
 
       expect(desaturated.u.abs(), lessThan(color.u.abs()));
       expect(desaturated.v.abs(), lessThan(color.v.abs()));
+      print('✓ YuvColor Refactor Tests');
     });
   });
 }

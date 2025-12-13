@@ -4,8 +4,11 @@ import 'package:test/test.dart';
 void main() {
   group('Utility Methods Tests', () {
     test('ColorIQ inverted', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v0, green: Iq255.v100, blue: Iq255.v200);
+      final ColorIQ color = ColorIQ.fromArgbInts(
+          alpha: Iq255.v255,
+          red: Iq255.v0,
+          green: Iq255.v100,
+          blue: Iq255.v200);
       final ColorIQ inverted = ColorIQ(color.inverted);
       expect(inverted.red, 255);
       expect(inverted.green, 155);
@@ -24,6 +27,7 @@ void main() {
       expect(grayscale.green, closeTo(128, 1));
       expect(grayscale.blue, closeTo(128, 1));
       expect(grayscale.alphaInt, 255);
+      print('✓ ColorIQ grayscale');
     });
 
     test('ColorIQ whiten', () {
@@ -41,12 +45,13 @@ void main() {
       expect(blackened.red, closeTo(128, 1));
       expect(blackened.green, closeTo(128, 1));
       expect(blackened.blue, closeTo(128, 1));
+      print('✓ ColorIQ blacken');
     });
 
     test('ColorIQ lerp', () {
       final ColorIQ start = cBlack;
-      final ColorIQ end =
-          ColorIQ.fromArgbInts(red: Iq255.v100, green: Iq255.v200, blue: Iq255.v255);
+      final ColorIQ end = ColorIQ.fromArgbInts(
+          red: Iq255.v100, green: Iq255.v200, blue: Iq255.v255);
       final ColorIQ mid = start.lerp(end, 0.5) as ColorIQ;
       expect(mid.red, 50);
       expect(mid.green, 100);
@@ -60,6 +65,7 @@ void main() {
       expect(gray.s, 0.0);
       expect(gray.h, 120);
       expect(gray.l, 0.5);
+      print('✓ HslColor grayscale optimization');
     });
 
     test('Other models delegation (CmykColor)', () {
@@ -67,6 +73,7 @@ void main() {
       final CMYK inverted =
           CMYK.fromInt(cmyk.inverted); // Should be White (0, 0, 0, 0)
       expect(inverted.k, 0.0);
+      print('✓ Other models delegation (CmykColor)');
     });
   });
 }

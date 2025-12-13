@@ -9,14 +9,15 @@ void main() {
 
       expect(whitened.l, greaterThan(color.l));
       expect(whitened.c, lessThan(color.c));
+      print('✓ OkLCH whiten test completed');
     });
 
     test('blacken decreases lightness', () {
       const OkLCH color = OkLCH(Percent(0.5), 0.2, 0); // Red-ish
       final OkLCH blackened = color.blacken(50);
-
       expect(blackened.l, lessThan(color.l));
       expect(blackened.c, lessThan(color.c));
+      print('✓ OkLCH blacken test completed');
     });
 
     test('lerp interpolates correctly', () {

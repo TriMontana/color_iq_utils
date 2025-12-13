@@ -455,6 +455,26 @@ class HsbColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
+  List<HsbColor> split({final double offset = 30}) => <HsbColor>[
+        this,
+        HsbColor((h + 180 - offset) % 360, s, b),
+        HsbColor((h + 180 + offset) % 360, s, b),
+      ];
+
+  @override
+  List<HsbColor> triad({final double offset = 120}) => <HsbColor>[
+        this,
+        HsbColor((h + offset) % 360, s, b),
+        HsbColor((h - offset + 360) % 360, s, b),
+      ];
+
+  @override
+  List<HsbColor> twoTone({final double offset = 60}) => <HsbColor>[
+        this,
+        HsbColor((h + offset) % 360, s, b),
+      ];
+
+  @override
   double get luminance {
     // Calculate luminance from HSB -> RGB -> Luminance
     // We can use argbFromHsb to get the int, then extract RGB and compute.

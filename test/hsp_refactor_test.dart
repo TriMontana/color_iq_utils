@@ -34,15 +34,15 @@ void main() {
     test('intensify increases saturation', () {
       const HSP color = HSP(0, Percent.mid, Percent.max);
       final HSP intensified = color.intensify(20);
-
       expect(intensified.s, closeTo(0.7, 0.01));
+      print('✓ HspColor Refactor Tests');
     });
 
     test('deintensify decreases saturation', () {
       const HSP color = HSP(0, Percent.mid, Percent.max);
       final HSP deintensified = color.deintensify(20);
-
       expect(deintensified.s, closeTo(0.3, 0.01));
+      print('✓ HspColor Refactor Tests');
     });
   });
 }

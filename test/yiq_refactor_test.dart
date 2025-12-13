@@ -13,8 +13,8 @@ void main() {
     test('blacken decreases brightness', () {
       const YiqColor color = YiqColor(0.5, 0.0, 0.0); // Gray
       final YiqColor blackened = color.blacken(50);
-
       expect(blackened.y, lessThan(color.y));
+      print('✓ YiqColor Refactor Tests');
     });
 
     test('lerp interpolates correctly', () {
@@ -33,6 +33,7 @@ void main() {
 
       expect(saturated.i.abs(), greaterThan(color.i.abs()));
       expect(saturated.q.abs(), greaterThan(color.q.abs()));
+      print('✓ YiqColor Refactor Tests');
     });
 
     test('desaturate decreases chrominance', () {

@@ -373,6 +373,26 @@ class HSL extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
         HSL(_wrapHue(h + 180.0 + offset), s, l, alpha: alpha),
       ];
 
+  @override
+  List<HSL> split({final double offset = 30}) => <HSL>[
+        this,
+        copyWith(hue: _wrapHue(h + 180 - offset)),
+        copyWith(hue: _wrapHue(h + 180 + offset)),
+      ];
+
+  @override
+  List<HSL> triad({final double offset = 120}) => <HSL>[
+        this,
+        copyWith(hue: _wrapHue(h + offset)),
+        copyWith(hue: _wrapHue(h - offset)),
+      ];
+
+  @override
+  List<HSL> twoTone({final double offset = 60}) => <HSL>[
+        this,
+        copyWith(hue: _wrapHue(h + offset)),
+      ];
+
   double _wrapHue(final double hue) {
     final double mod = hue % 360.0;
     return mod < 0 ? mod + 360.0 : mod;

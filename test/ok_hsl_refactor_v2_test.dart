@@ -15,6 +15,7 @@ void main() {
       final OkHslColor deintensified = color.deintensify(10);
 
       expect(deintensified.s, lessThan(color.s));
+      print('✓ OkHslColor Refactor V2 Tests');
     });
 
     test('accented increases saturation', () {

@@ -56,8 +56,8 @@ class CIELab extends CommonIQ implements ColorSpacesIQ {
   /// * `names` — optional list of descriptive names for the color.
   CIELab(this.l, this.aLab, this.bLab,
       {final int? hexId,
-        final Percent alpha = Percent.max,
-        final List<String>? names})
+      final Percent alpha = Percent.max,
+      final List<String>? names})
       : assert(l >= 0 && l <= 100, 'L must be between 0 and 100'),
         super(hexId, alpha: alpha, names: names ?? kEmptyNames);
 
@@ -172,9 +172,9 @@ class CIELab extends CommonIQ implements ColorSpacesIQ {
   @override
   CIELab copyWith(
       {final double? l,
-        final double? a,
-        final double? b,
-        final Percent? alpha}) {
+      final double? a,
+      final double? b,
+      final Percent? alpha}) {
     return CIELab(l ?? this.l, a ?? aLab, b ?? bLab, alpha: alpha ?? super.a);
   }
 
@@ -283,19 +283,19 @@ class CIELab extends CommonIQ implements ColorSpacesIQ {
   /// Generate a basic 5-color palette centered on this color.
   @override
   List<CIELab> generateBasicPalette() => <CIELab>[
-    darken(40),
-    darken(20),
-    this,
-    lighten(20),
-    lighten(40),
-  ];
+        darken(40),
+        darken(20),
+        this,
+        lighten(20),
+        lighten(40),
+      ];
 
   /// Generate a tonal palette of 6 steps from black to white (L values).
   @override
   List<CIELab> tonesPalette() => List<CIELab>.generate(
-    6,
+        6,
         (final int index) => copyWith(l: (index / 5 * 100).clamp(0.0, 100.0)),
-  );
+      );
 
   /// Returns analogous colors via the LCH intermediary.
   @override
@@ -320,6 +320,26 @@ class CIELab extends CommonIQ implements ColorSpacesIQ {
       .map((final ColorSpacesIQ c) => (c as LchColor).toLab())
       .toList();
 
+  /// Split complementary via LCH intermediary.
+  @override
+  List<CIELab> split({final double offset = 30}) => toLch()
+      .split(offset: offset)
+      .map((final ColorSpacesIQ c) => (c as LchColor).toLab())
+      .toList();
+
+  /// Triadic harmony via LCH intermediary.
+  @override
+  List<CIELab> triad({final double offset = 120}) => toLch()
+      .triad(offset: offset)
+      .map((final ColorSpacesIQ c) => (c as LchColor).toLab())
+      .toList();
+
+  /// Two-tone harmony via LCH intermediary.
+  @override
+  List<CIELab> twoTone({final double offset = 60}) => toLch()
+      .twoTone(offset: offset)
+      .map((final ColorSpacesIQ c) => (c as LchColor).toLab())
+      .toList();
 
   /// Contrast ratio with another color (delegated to ColorIQ).
   @override
@@ -396,5 +416,5 @@ class CIELab extends CommonIQ implements ColorSpacesIQ {
   @override
   String toString() =>
       'LabColor(l: ${l.toStrTrimZeros(3)}, a: ${aLab.toStrTrimZeros(2)}, ' //
-          'b: ${bLab.toStrTrimZeros(3)})';
+      'b: ${bLab.toStrTrimZeros(3)})';
 }

@@ -32,6 +32,7 @@ void main() {
       const HsbColor red = HsbColor(0, 1.0, Percent.max);
       final HsbColor cooledRed = red.cooler(20);
       expect(cooledRed.h, closeTo(330, 0.1));
+      print('✓ HsbColor Warmer/Cooler Tests');
     });
   });
 }

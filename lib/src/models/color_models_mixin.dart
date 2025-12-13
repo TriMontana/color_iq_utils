@@ -251,6 +251,105 @@ mixin ColorModelsMixin {
     return toHsvColor().brighten(amount).toColor();
   }
 
+  // ============================================================== //
+  // Default implementations for color harmony methods.
+  // Classes with native hue support should override these.
+  // ============================================================== //
+
+  /// Split complementary: Base + two colors at 180±offset degrees.
+  /// Default uses HSL for hue rotation. Override for native implementation.
+  List<ColorSpacesIQ> split({final double offset = 30}) {
+    final HSL hsl = toHslColor();
+    return <ColorSpacesIQ>[
+      this as ColorSpacesIQ,
+      hsl.adjustHue(180 - offset).toColor(),
+      hsl.adjustHue(180 + offset).toColor(),
+    ];
+  }
+
+  /// Triadic: Base + two colors at ±offset degrees (default 120).
+  /// Default uses HSL for hue rotation. Override for native implementation.
+  List<ColorSpacesIQ> triad({final double offset = 120}) {
+    final HSL hsl = toHslColor();
+    return <ColorSpacesIQ>[
+      this as ColorSpacesIQ,
+      hsl.adjustHue(offset).toColor(),
+      hsl.adjustHue(-offset).toColor(),
+    ];
+  }
+
+  /// Two-tone: Base + one color at +offset degrees (default 60).
+  /// Default uses HSL for hue rotation. Override for native implementation.
+  List<ColorSpacesIQ> twoTone({final double offset = 60}) {
+    final HSL hsl = toHslColor();
+    return <ColorSpacesIQ>[
+      this as ColorSpacesIQ,
+      hsl.adjustHue(offset).toColor(),
+    ];
+  }
+
+  /// Split complementary harmony: alias for split method.
+  List<ColorSpacesIQ> splitComplementary({final double offset = 30}) =>
+      split(offset: offset);
+
+  // ============================================================== //
+  // Default implementations for palette methods.
+  // ============================================================== //
+
+  /// Returns a palette of 5 colors progressively lighter (tints).
+  /// Alias for lighterPalette.
+  List<ColorSpacesIQ> tintsPalette([final double? step]) {
+    final double s = step ?? 10.0;
+    return <ColorSpacesIQ>[
+      (this as ColorSpacesIQ).toColor().lighten(s),
+      (this as ColorSpacesIQ).toColor().lighten(s * 2),
+      (this as ColorSpacesIQ).toColor().lighten(s * 3),
+      (this as ColorSpacesIQ).toColor().lighten(s * 4),
+      (this as ColorSpacesIQ).toColor().lighten(s * 5),
+    ];
+  }
+
+  /// Returns a palette of 5 colors progressively darker (shades).
+  /// Alias for darkerPalette.
+  List<ColorSpacesIQ> shadesPalette([final double? step]) {
+    final double s = step ?? 10.0;
+    return <ColorSpacesIQ>[
+      (this as ColorSpacesIQ).toColor().darken(s),
+      (this as ColorSpacesIQ).toColor().darken(s * 2),
+      (this as ColorSpacesIQ).toColor().darken(s * 3),
+      (this as ColorSpacesIQ).toColor().darken(s * 4),
+      (this as ColorSpacesIQ).toColor().darken(s * 5),
+    ];
+  }
+
+  /// Returns nearest colors from the color registry based on CAM16 distance.
+  List<ColorIQ> nearestColors() {
+    final Cam16 thisCam = toCam16();
+    final List<MapEntry<int, double>> distances = colorRegistry.entries
+        .map((final MapEntry<int, ColorIQ> e) => MapEntry<int, double>(
+            e.key, thisCam.distance(Cam16.fromInt(e.key))))
+        .toList()
+      ..sort((final MapEntry<int, double> a, final MapEntry<int, double> b) =>
+          a.value.compareTo(b.value));
+    return distances
+        .take(5)
+        .map((final MapEntry<int, double> e) => ColorIQ(e.key))
+        .toList();
+  }
+
+  /// Returns true if this color is web-safe (one of the 216 web-safe colors).
+  /// Web-safe colors have RGB values that are multiples of 51 (0x33).
+  bool get isWebSafe {
+    final int r = (value >> 16) & 0xFF;
+    final int g = (value >> 8) & 0xFF;
+    final int b = value & 0xFF;
+    return r % 51 == 0 && g % 51 == 0 && b % 51 == 0;
+  }
+
+  /// Returns true if this color is achromatic (near grayscale).
+  /// A color is considered achromatic if its saturation is below 5%.
+  bool get isAchromatic => toHslColor().s < 0.05;
+
   // Calculate
   double calculateLrvAsPercent() {
     // Decode RGB
@@ -267,5 +366,239 @@ mixin ColorModelsMixin {
 
     // Scale to 0-100 range for standard LRV usage
     return (y * 100.0);
+  }
+
+  // ============================================================== //
+  // Data Visualization Palettes (HCT-based)
+  // ============================================================== //
+
+  /// Returns a qualitative palette for categorical data.
+  /// Distinct hues with consistent chroma/tone for equal visual weight.
+  List<ColorSpacesIQ> qualitativePalette({
+    final int count = 5,
+    final double chroma = 48,
+    final double tone = 65,
+  }) {
+    final HctColor base = toHctColor();
+    final double hueStep = 360.0 / count;
+    return List<ColorSpacesIQ>.generate(
+      count,
+      (final int i) => HctColor(
+        (base.hue + i * hueStep) % 360,
+        chroma,
+        tone,
+      ).toColor(),
+    );
+  }
+
+  /// Returns a sequential palette for ordered data (single hue).
+  /// Varies tone from light to dark while maintaining the base hue.
+  List<ColorSpacesIQ> sequentialPalette({
+    final int count = 5,
+    final double startTone = 90,
+    final double endTone = 30,
+  }) {
+    final HctColor base = toHctColor();
+    final double toneStep = (endTone - startTone) / (count - 1);
+    return List<ColorSpacesIQ>.generate(
+      count,
+      (final int i) => HctColor(
+        base.hue,
+        base.chroma,
+        startTone + i * toneStep,
+      ).toColor(),
+    );
+  }
+
+  /// Returns a sequential multi-hue palette for ordered data.
+  /// Transitions through multiple hues with varying tone.
+  List<ColorSpacesIQ> sequentialMultiHuePalette({
+    final int count = 5,
+    required final double endHue,
+  }) {
+    final HctColor base = toHctColor();
+    // Calculate shortest hue path
+    double hueDiff = endHue - base.hue;
+    if (hueDiff > 180) hueDiff -= 360;
+    if (hueDiff < -180) hueDiff += 360;
+    final double hueStep = hueDiff / (count - 1);
+    final double toneStep = (30 - base.tone) / (count - 1);
+
+    return List<ColorSpacesIQ>.generate(
+      count,
+      (final int i) => HctColor(
+        (base.hue + i * hueStep + 360) % 360,
+        base.chroma,
+        base.tone + i * toneStep,
+      ).toColor(),
+    );
+  }
+
+  /// Returns a diverging palette for data with a meaningful midpoint.
+  /// Two distinct hues diverging from a neutral/light center.
+  List<ColorSpacesIQ> divergingPalette({
+    final int count = 5,
+    required final double endHue,
+  }) {
+    final HctColor base = toHctColor();
+    final int midIndex = count ~/ 2;
+    final List<ColorSpacesIQ> result = <ColorSpacesIQ>[];
+
+    // First half: base hue getting lighter toward center
+    for (int i = 0; i < midIndex; i++) {
+      final double t = i / midIndex;
+      result.add(HctColor(
+        base.hue,
+        base.chroma * (1 - t * 0.7),
+        base.tone + (95 - base.tone) * t,
+      ).toColor());
+    }
+
+    // Center: neutral/light
+    result.add(HctColor(base.hue, 5, 95).toColor());
+
+    // Second half: end hue getting more saturated
+    for (int i = 1; i <= midIndex; i++) {
+      final double t = i / midIndex;
+      result.add(HctColor(
+        endHue,
+        base.chroma * t,
+        95 - (95 - base.tone) * t,
+      ).toColor());
+    }
+
+    return result;
+  }
+
+  /// Returns an analogous palette with varying chroma.
+  /// Colors near the base hue with different saturation levels.
+  List<ColorSpacesIQ> analogousPalette({
+    final int count = 5,
+    final double hueRange = 30,
+  }) {
+    final HctColor base = toHctColor();
+    final double hueStep = hueRange / (count - 1);
+    final double startHue = base.hue - hueRange / 2;
+
+    return List<ColorSpacesIQ>.generate(
+      count,
+      (final int i) => HctColor(
+        (startHue + i * hueStep + 360) % 360,
+        base.chroma,
+        base.tone,
+      ).toColor(),
+    );
+  }
+
+  /// Returns a chroma palette varying saturation at constant hue/tone.
+  /// Useful for showing intensity variations.
+  List<ColorSpacesIQ> chromaPalette({final int count = 5}) {
+    final HctColor base = toHctColor();
+    final double chromaStep = base.chroma / (count - 1);
+
+    return List<ColorSpacesIQ>.generate(
+      count,
+      (final int i) => HctColor(
+        base.hue,
+        chromaStep * i,
+        base.tone,
+      ).toColor(),
+    );
+  }
+
+  // ============================================================== //
+  // R-Style Named Palettes (HCT-based)
+  // Based on R colorspace package
+  // ============================================================== //
+
+  /// Returns a pastel palette with high luminance and low chroma.
+  /// Qualitative palette with soft, light colors.
+  List<ColorSpacesIQ> pastelPalette({final int count = 5}) {
+    final HctColor base = toHctColor();
+    final double hueStep = 360.0 / count;
+    // Pastel: high tone (85), low chroma (35)
+    return List<ColorSpacesIQ>.generate(
+      count,
+      (final int i) => HctColor(
+        (base.hue + i * hueStep) % 360,
+        35, // Low chroma for pastel
+        85, // High tone for light colors
+      ).toColor(),
+    );
+  }
+
+  /// Returns a teal sequential palette (hue ~180°).
+  /// Sequential palette from light to dark teal.
+  List<ColorSpacesIQ> tealPalette({
+    final int count = 5,
+    final bool reverse = false,
+  }) {
+    const double hue = 180; // Teal hue
+    const double startTone = 95;
+    const double endTone = 25;
+    const double startChroma = 20;
+    const double endChroma = 50;
+    final double toneStep = (endTone - startTone) / (count - 1);
+    final double chromaStep = (endChroma - startChroma) / (count - 1);
+
+    final List<ColorSpacesIQ> colors = List<ColorSpacesIQ>.generate(
+      count,
+      (final int i) => HctColor(
+        hue,
+        startChroma + i * chromaStep,
+        startTone + i * toneStep,
+      ).toColor(),
+    );
+    return reverse ? colors.reversed.toList() : colors;
+  }
+
+  /// Returns a mint sequential palette (hue ~140°).
+  /// Sequential palette from light to dark mint green.
+  List<ColorSpacesIQ> mintPalette({
+    final int count = 5,
+    final bool reverse = false,
+  }) {
+    const double hue = 140; // Mint/green hue
+    const double startTone = 95;
+    const double endTone = 25;
+    const double startChroma = 20;
+    const double endChroma = 50;
+    final double toneStep = (endTone - startTone) / (count - 1);
+    final double chromaStep = (endChroma - startChroma) / (count - 1);
+
+    final List<ColorSpacesIQ> colors = List<ColorSpacesIQ>.generate(
+      count,
+      (final int i) => HctColor(
+        hue,
+        startChroma + i * chromaStep,
+        startTone + i * toneStep,
+      ).toColor(),
+    );
+    return reverse ? colors.reversed.toList() : colors;
+  }
+
+  /// Returns a purple sequential palette (hue ~280°).
+  /// Sequential palette from light to dark purple.
+  List<ColorSpacesIQ> purplePalette({
+    final int count = 5,
+    final bool reverse = false,
+  }) {
+    const double hue = 280; // Purple hue
+    const double startTone = 95;
+    const double endTone = 25;
+    const double startChroma = 25;
+    const double endChroma = 55;
+    final double toneStep = (endTone - startTone) / (count - 1);
+    final double chromaStep = (endChroma - startChroma) / (count - 1);
+
+    final List<ColorSpacesIQ> colors = List<ColorSpacesIQ>.generate(
+      count,
+      (final int i) => HctColor(
+        hue,
+        startChroma + i * chromaStep,
+        startTone + i * toneStep,
+      ).toColor(),
+    );
+    return reverse ? colors.reversed.toList() : colors;
   }
 }

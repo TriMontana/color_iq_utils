@@ -10,6 +10,7 @@ void main() {
 
       final HSL desaturated = hsl.desaturate(25);
       expect(desaturated.s, closeTo(0.25, 0.01));
+      print('✓ HslColor saturate/desaturate test completed');
     });
 
     test('HsvColor saturate/desaturate', () {
@@ -19,6 +20,7 @@ void main() {
 
       final HSV desaturated = hsv.desaturate(25);
       expect(desaturated.saturation, closeTo(0.25, 0.01));
+      print('✓ HsvColor saturate/desaturate test completed');
     });
 
     test('LchColor saturate/desaturate', () {

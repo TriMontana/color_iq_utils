@@ -8,6 +8,7 @@ void main() {
       final HunterLabColor whitened = color.whiten(50);
 
       expect(whitened.l, greaterThan(color.l));
+      print('✓ whiten: ${color.l} -> ${whitened.l}');
     });
 
     test('blacken decreases lightness', () {
@@ -15,6 +16,7 @@ void main() {
       final HunterLabColor blackened = color.blacken(50);
 
       expect(blackened.l, lessThan(color.l));
+      print('✓ blacken: ${color.l} -> ${blackened.l}');
     });
 
     test('lerp interpolates correctly', () {

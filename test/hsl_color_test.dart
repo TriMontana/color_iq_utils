@@ -13,6 +13,7 @@ void main() {
       const HSL cyan = HSL(180, 1.0, Percent.mid, hexId: hxCyan);
       // expect(cyan.closestColorSlice().name, equals('Cyan'));
       expect(cyan.closestColorSlice().name.first, equals('Cyan'));
+      print('✓ HslColor Tests');
       //
     });
 
@@ -20,6 +21,7 @@ void main() {
       // Contrast between black and white should be 21.0
       expect(kHslBlack.contrastWith(kHslWhite), closeTo(21.0, 0.1));
       expect(kHslWhite.contrastWith(kHslBlack), closeTo(21.0, 0.1));
+      print('✓ HslColor Tests');
     });
   });
 }

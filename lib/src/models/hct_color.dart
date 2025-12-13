@@ -406,6 +406,26 @@ class HctColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
+  List<HctColor> split({final double offset = 30}) => <HctColor>[
+        this,
+        copyWith(hue: (hue + 180 - offset) % 360),
+        copyWith(hue: (hue + 180 + offset) % 360),
+      ];
+
+  @override
+  List<HctColor> triad({final double offset = 120}) => <HctColor>[
+        this,
+        copyWith(hue: (hue + offset) % 360),
+        copyWith(hue: (hue - offset + 360) % 360),
+      ];
+
+  @override
+  List<HctColor> twoTone({final double offset = 60}) => <HctColor>[
+        this,
+        copyWith(hue: (hue + offset) % 360),
+      ];
+
+  @override
   double contrastWith(final ColorSpacesIQ other) =>
       toColor().contrastWith(other);
 

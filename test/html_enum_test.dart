@@ -15,12 +15,13 @@ void main() {
       test('${htmlEnum.name} - Complete color validation', () {
         // Get the color instance from registry or create from value
         // Some colors in registry are ColorIQ, not HTML
-        ColorIQ color;
+        HTML color;
         try {
           color = htmlEnum.html;
         } catch (e) {
-          // If cast fails, create ColorIQ from value
-          color = ColorIQ(htmlEnum.value);
+          // If cast fails, throw exception
+          throw Exception(
+              'Failed to create HTML color from enum value: ${htmlEnum.value}');
         }
 
         // Verify hexId matches enum value
@@ -42,9 +43,8 @@ void main() {
 
         // Test HCT values
         // If it's an HTML instance, test stored HCT (may be approximate)
-        if (color is HTML) {
-          _testHctValuesStored(color, htmlEnum);
-        }
+        _testHctValuesStored(color, htmlEnum);
+
         // Always test recalculated HCT values
         _testHctValuesRecalculated(color, htmlEnum);
       });
@@ -54,11 +54,13 @@ void main() {
     group('HtmlEN - ARGB Integer Validation', () {
       test('All colors have valid ARGB integers (0-255)', () {
         for (final HtmlEN htmlEnum in HtmlEN.values) {
-          ColorIQ color;
+          HTML color;
           try {
             color = htmlEnum.html;
           } catch (e) {
-            color = ColorIQ(htmlEnum.value);
+            // If cast fails, throw exception
+            throw Exception(
+                'Failed to create HTML color from enum value: ${htmlEnum.value}');
           }
           final ArgbInts argb = color.rgbaInts;
 
@@ -197,11 +199,13 @@ void main() {
     group('HtmlEN - HCT Validation', () {
       test('All colors have valid HCT values', () {
         for (final HtmlEN htmlEnum in HtmlEN.values) {
-          ColorIQ color;
+          HTML color;
           try {
             color = htmlEnum.html;
           } catch (e) {
-            color = ColorIQ(htmlEnum.value);
+            // If cast fails, throw exception
+            throw Exception(
+                'Failed to create HTML color from enum value: ${htmlEnum.value}');
           }
           final HctData hct = color.hct;
 
@@ -215,7 +219,7 @@ void main() {
           expect(hct.tone,
               allOf(greaterThanOrEqualTo(0.0), lessThanOrEqualTo(100.0)),
               reason:
-                  '${htmlEnum.name} (${color.hexStr}): HCT Tone must be 0.0-100.0');
+                  '${htmlEnum.name} (${color.hexStr}): HCT Tone must be 0.0-100.0, hct should be ${hct.toString()}');
         }
       });
 

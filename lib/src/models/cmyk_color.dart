@@ -50,7 +50,6 @@ class CMYK extends CommonIQ implements ColorSpacesIQ {
     final double g = 255 * (1 - m) * (1 - k);
     final double b = 255 * (1 - y) * (1 - k);
     return ColorIQ.fromArgbInts(
-
       red: Iq255.getIq255(r.round().clamp(0, 255)),
       green: Iq255.getIq255(g.round().clamp(0, 255)),
       blue: Iq255.getIq255(b.round().clamp0to255),
@@ -370,6 +369,26 @@ class CMYK extends CommonIQ implements ColorSpacesIQ {
         )
         .toList();
   }
+
+  @override
+  List<CMYK> split({final double offset = 30}) => <CMYK>[
+        this,
+        adjustHue(180 - offset),
+        adjustHue(180 + offset),
+      ];
+
+  @override
+  List<CMYK> triad({final double offset = 120}) => <CMYK>[
+        this,
+        adjustHue(offset),
+        adjustHue(-offset),
+      ];
+
+  @override
+  List<CMYK> twoTone({final double offset = 60}) => <CMYK>[
+        this,
+        adjustHue(offset),
+      ];
 
   CMYK get grayscale {
     // Using a weighted average of C, M, Y to determine the gray value for K

@@ -24,6 +24,7 @@ void main() {
       final OkLCH blackened = color.blacken(50);
       // Lerp 50% from White (L=1) to Black (L=0) -> L=0.5
       expect(blackened.l, closeTo(0.5, 0.01));
+      print('✓ OkLchColor Tests');
     });
 
     test('lerp interpolates correctly', () {

@@ -12,17 +12,23 @@ import 'package:color_iq_utils/src/models/hsb_color.dart';
 import 'package:color_iq_utils/src/models/hsl_color.dart';
 import 'package:color_iq_utils/src/models/hsluv_color.dart';
 import 'package:color_iq_utils/src/models/hsp_color.dart';
+import 'package:color_iq_utils/src/models/ipt_color.dart';
+import 'package:color_iq_utils/src/models/jab_color.dart';
+import 'package:color_iq_utils/src/models/jch_color.dart';
 import 'package:color_iq_utils/src/models/hsv_color.dart';
 import 'package:color_iq_utils/src/models/hunter_lab_color.dart';
 import 'package:color_iq_utils/src/models/hwb_color.dart';
 import 'package:color_iq_utils/src/models/lab_color.dart';
+import 'package:color_iq_utils/src/models/lms_color.dart';
 import 'package:color_iq_utils/src/models/lch_color.dart';
 import 'package:color_iq_utils/src/models/luv_color.dart';
 import 'package:color_iq_utils/src/models/munsell_color.dart';
 import 'package:color_iq_utils/src/models/ok_hsl_color.dart';
 import 'package:color_iq_utils/src/models/ok_hsv_color.dart';
+import 'package:color_iq_utils/src/models/prophoto_color.dart';
 import 'package:color_iq_utils/src/models/rec2020_color.dart';
 import 'package:color_iq_utils/src/models/xyz_color.dart';
+import 'package:color_iq_utils/src/models/ycbcr_color.dart';
 import 'package:color_iq_utils/src/models/yiq_color.dart';
 import 'package:color_iq_utils/src/models/yuv_color.dart';
 import 'package:color_iq_utils/src/ops/color_manipulator.dart';
@@ -93,6 +99,8 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   final HSV? _hsv;
   final Cam16? _cam16;
 
+  final XYZ? _xyz;
+
   /// Creates a [ColorIQ] instance from a 32-bit integer [hexId].
   ///
   /// Optional parameters can be provided to pre-compute and cache values like
@@ -104,15 +112,16 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     final HctData? hct,
     final Cam16? cam16,
     final HSV? hsv,
+    final XYZ? xyz,
     final AppColor? argbColor,
     final List<String> names = kEmptyNames,
     final Percent? lrv,
     final Brightness? brightness,
-    final Percent? a,
     final Iq255? red,
     final Iq255? green,
     final Iq255? blue,
     final Iq255? alphaInt,
+    final Percent? a,
     final Percent? r,
     final Percent? g,
     final Percent? b,
@@ -128,62 +137,10 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
         _argb = argbColor ?? AppColor(hexId),
         _lrv = lrv ?? argbColor?.lrv,
         _brightness = brightness ?? argbColor?.brightness,
+        _xyz = xyz,
         super(hexId,
             names: names,
             alpha: a ?? Percent.clamped(((hexId >> 24) & 0xFF) / 255.0));
-
-  /// An [AppColor] instance representing the ARGB components of the color.
-  /// This is lazily initialized, either from a provided `argbColor` during
-  /// construction or by creating a new `ARGBColor` from the `hexId`. It provides
-  /// access to individual color components (alpha, red, green, blue).
-  late final AppColor argb = _argb ?? AppColor(hexId);
-
-  /// The relative luminance of the color, calculated according to WCAG standards.
-  ///
-  /// This value is lazily computed and cached. It is a crucial component for
-  /// determining color contrast and accessibility. The value ranges from 0.0
-  /// (black) to 1.0 (white).
-  late final Percent lrv = _lrv ?? argb.lrv;
-
-  /// The brightness of the color, determined as either [Brightness.light] or
-  /// [Brightness.dark].
-  ///
-  /// This property is lazily computed based on the color's luminance. It's
-  /// useful for determining an appropriate foreground color (e.g., text)
-  /// that would be readable on this color as a background.
-  @override
-  late final Brightness brightness = _brightness ?? argb.brightness;
-
-  /// The 32-bit integer value of the color in `0xAARRGGBB` format.
-  @override
-  int get value => hexId;
-
-  /// The red channel value as an integer from 0 to 255.
-  ///
-  /// This value is lazily computed and cached. It can be pre-computed during
-  /// construction for performance optimization.
-  @override
-  late final Iq255 redIQ = _red; //  ?? Iq255.getIq255((hexId >> 16) & 0xFF);
-
-  /// The green channel value as an integer from 0 to 255.
-  ///
-  /// This value is lazily computed and cached. It can be pre-computed during
-  /// construction for performance optimization.
-  @override
-  late final Iq255 greenIQ = _green;
-
-  /// The blue channel value as an integer from 0 to 255.
-  ///
-  /// This value is lazily computed and cached. It can be pre-computed during
-  /// construction for performance optimization.
-  late final Iq255 blueIQ = _blue;
-
-  /// The alpha channel value as an integer from 0 to 255.
-  ///
-  /// 0 represents fully transparent, and 255 represents fully opaque.
-  /// This value is lazily computed and cached. It can be pre-computed during
-  /// construction for performance optimization.
-  late final Iq255 alphaIQ = _alpha; // ?? argb.alphaInt;
 
   /// Constructs a [ColorIQ] color from four integer channel values.
   ///
@@ -214,6 +171,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     final Percent? lrv,
     final Brightness? brightness,
     final HctData? hctColor,
+    final XYZ? xyz,
   }) {
     final AppColor argbColor = AppColor.fromARGB(
         alpha.intVal, red.intVal, green.intVal, blue.intVal,
@@ -231,6 +189,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
       blue: blue,
       alphaInt: alpha,
       brightness: brightness,
+      xyz: xyz,
     );
   }
 
@@ -252,6 +211,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     final List<String>? names,
     final Percent? lrv,
     final HctData? hctColor,
+    final XYZ? xyz,
   }) {
     return ColorIQ(
       argbColor.value,
@@ -261,6 +221,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
       lrv: lrv ?? argbColor.lrv,
       hct: hctColor,
       brightness: argbColor.brightness,
+      xyz: xyz,
     );
   }
 
@@ -295,6 +256,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     final List<String>? names,
     final HctData? hctColor,
     AppColor? argbColor,
+    final XYZ? xyz,
   }) {
     argbColor ??= AppColor.from(a: a, r: r, g: g, b: b);
     luminance = luminance ?? argbColor.lrv;
@@ -302,7 +264,8 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
         colorSpace: colorSpace,
         lrv: luminance,
         hct: hctColor,
-        names: names ?? kEmptyNames);
+        names: names ?? kEmptyNames,
+        xyz: xyz);
   }
 
   /// Constructs a [ColorIQ] color from a hexadecimal string representation.
@@ -328,7 +291,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   ///
   /// Throws [FormatException] if the hex string is invalid.
   factory ColorIQ.fromHexStr(final String hexStr,
-      {final List<String> names = kEmptyNames}) {
+      {final List<String> names = kEmptyNames, final XYZ? xyz}) {
     String hex = hexStr.replaceAll('#', '').toUpperCase();
     // hex = hex.substring(1);
     if (hex.length == 3) {
@@ -350,11 +313,64 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
       final String b = hex.substring(4, 6);
       final String a = hex.substring(6, 8);
       hex = '$a$r$g$b';
-      return ColorIQ(int.parse(hex, radix: 16), names: names);
+      return ColorIQ(int.parse(hex, radix: 16), names: names, xyz: xyz);
     }
 
     throw FormatException('Invalid hex color: #$hex');
   }
+
+  /// The 32-bit integer value of the color in `0xAARRGGBB` format.
+  @override
+  int get value => hexId;
+
+  /// An [AppColor] instance representing the ARGB components of the color.
+  /// This is lazily initialized, either from a provided `argbColor` during
+  /// construction or by creating a new `ARGBColor` from the `hexId`. It provides
+  /// access to individual color components (alpha, red, green, blue).
+  late final AppColor argb = _argb ?? AppColor(hexId);
+
+  /// The relative luminance of the color, calculated according to WCAG standards.
+  ///
+  /// This value is lazily computed and cached. It is a crucial component for
+  /// determining color contrast and accessibility. The value ranges from 0.0
+  /// (black) to 1.0 (white).
+  late final Percent lrv = _lrv ?? argb.lrv;
+
+  /// The brightness of the color, determined as either [Brightness.light] or
+  /// [Brightness.dark].
+  ///
+  /// This property is lazily computed based on the color's luminance. It's
+  /// useful for determining an appropriate foreground color (e.g., text)
+  /// that would be readable on this color as a background.
+  @override
+  late final Brightness brightness = _brightness ?? argb.brightness;
+
+  /// The red channel value as an integer from 0 to 255.
+  ///
+  /// This value is lazily computed and cached. It can be pre-computed during
+  /// construction for performance optimization.
+  @override
+  late final Iq255 redIQ = _red; //  ?? Iq255.getIq255((hexId >> 16) & 0xFF);
+
+  /// The green channel value as an integer from 0 to 255.
+  ///
+  /// This value is lazily computed and cached. It can be pre-computed during
+  /// construction for performance optimization.
+  @override
+  late final Iq255 greenIQ = _green;
+
+  /// The blue channel value as an integer from 0 to 255.
+  ///
+  /// This value is lazily computed and cached. It can be pre-computed during
+  /// construction for performance optimization.
+  late final Iq255 blueIQ = _blue;
+
+  /// The alpha channel value as an integer from 0 to 255.
+  ///
+  /// 0 represents fully transparent, and 255 represents fully opaque.
+  /// This value is lazily computed and cached. It can be pre-computed during
+  /// construction for performance optimization.
+  late final Iq255 alphaIQ = _alpha; // ?? argb.alphaInt;
 
   /// Returns this color as a [ColorIQ] instance.
   ///
@@ -383,18 +399,11 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   @override
   late final Cam16 cam16 = _cam16 ?? Cam16.fromInt(value);
 
-  /// Calculates the perceptual distance to another color using CAM16.
-  ///
-  /// Returns a distance value where smaller numbers indicate colors that are
-  /// more perceptually similar. This is useful for finding similar colors or
-  /// grouping colors by appearance.
-  double distanceTo(final ColorWheelInf other) => cam16.distance(other.cam16);
-
   /// The XYZ color space representation of this color (CIE 1931).
   ///
   /// XYZ is an intermediate color space often used for conversions between
   /// different color models. This is lazily computed and cached.
-  late final XYZ xyz = XYZ.xyxFromRgb(_red, _green, _blue);
+  late final XYZ xyz = _xyz ?? XYZ.xyxFromRgb(_red, _green, _blue);
 
   /// The HSV (Hue, Saturation, Value) color space representation of this color.
   ///
@@ -425,6 +434,51 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   /// HSP is a color model designed to more accurately represent perceived
   /// brightness than HSL or HSV. This is lazily computed and cached.
   late final HSP hsp = HSP.fromInt(value);
+
+  /// The CAM16-UCS J'a'b' (JAB) color space representation of this color.
+  ///
+  /// JAB is a perceptually uniform color space derived from CAM16 using
+  /// rectangular coordinates. It's useful for calculating perceptual color
+  /// differences and creating uniform gradients. This is lazily computed and cached.
+  late final JabColor jab = JabColor.fromInt(value);
+
+  /// The CAM16-UCS J'C'h (JCH) color space representation of this color.
+  ///
+  /// JCH is the cylindrical form of CAM16-UCS, providing an intuitive hue,
+  /// chroma, and lightness interface. This is lazily computed and cached.
+  late final JchColor jch = JchColor.fromInt(value);
+
+  /// The LMS color space representation of this color.
+  ///
+  /// LMS represents the response of the three cone photoreceptors in the human
+  /// eye (Long, Medium, Short wavelengths). It's fundamental to color blindness
+  /// simulation and chromatic adaptation. This is lazily computed and cached.
+  late final LmsColor lms = LmsColor.fromInt(value);
+
+  /// The YCbCr color space representation of this color (BT.709 standard).
+  ///
+  /// YCbCr separates luminance (Y) from chrominance (Cb, Cr), commonly used in
+  /// video compression and image processing. This is lazily computed and cached.
+  late final YCbCrColor ycbcr = YCbCrColor.fromInt(value);
+
+  /// The IPT color space representation of this color.
+  ///
+  /// IPT (Intensity, Protan, Tritan) is a perceptually uniform color space
+  /// optimized for gamut mapping and hue uniformity. This is lazily computed and cached.
+  late final IptColor ipt = IptColor.fromInt(value);
+
+  /// The ProPhoto RGB (ROMM RGB) color space representation of this color.
+  ///
+  /// ProPhoto RGB is a wide-gamut color space covering ~90% of visible colors,
+  /// commonly used in photography workflows. This is lazily computed and cached.
+  late final ProPhotoRgbColor proPhoto = ProPhotoRgbColor.fromInt(value);
+
+  /// Calculates the perceptual distance to another color using CAM16.
+  ///
+  /// Returns a distance value where smaller numbers indicate colors that are
+  /// more perceptually similar. This is useful for finding similar colors or
+  /// grouping colors by appearance.
+  double distanceTo(final ColorWheelInf other) => cam16.distance(other.cam16);
 
   /// Returns a new color with the provided components updated.
   ///

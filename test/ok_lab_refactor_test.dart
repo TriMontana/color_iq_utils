@@ -9,6 +9,7 @@ void main() {
 
       expect(whitened.l, greaterThan(color.l));
       print('✓ OkLabColor Refactor Tests');
+      print('  whiten: ${whitened.l}');
     });
 
     test('blacken decreases lightness', () {
@@ -16,6 +17,7 @@ void main() {
       final OkLabColor blackened = color.blacken(50);
 
       expect(blackened.l, lessThan(color.l));
+      print('✓ OkLabColor Refactor Tests');
     });
 
     test('lerp interpolates correctly', () {

@@ -336,6 +336,26 @@ class LchColor extends CommonIQ implements ColorSpacesIQ {
   }
 
   @override
+  List<LchColor> split({final double offset = 30}) => <LchColor>[
+        this,
+        adjustHue(180 - offset),
+        adjustHue(180 + offset),
+      ];
+
+  @override
+  List<LchColor> triad({final double offset = 120}) => <LchColor>[
+        this,
+        adjustHue(offset),
+        adjustHue(-offset),
+      ];
+
+  @override
+  List<LchColor> twoTone({final double offset = 60}) => <LchColor>[
+        this,
+        adjustHue(offset),
+      ];
+
+  @override
   double contrastWith(final ColorSpacesIQ other) =>
       toColor().contrastWith(other);
 

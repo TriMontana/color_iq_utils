@@ -6,8 +6,8 @@ import 'package:test/test.dart';
 void main() {
   group('Phase 2 Color Space Tests', () {
     test('ColorIQ implements ColorSpacesIQ', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v255, green: Iq255.v0, blue: Iq255.v0);
+      final ColorIQ color = ColorIQ.fromArgbInts(
+          alpha: Iq255.v255, red: Iq255.v255, green: Iq255.v0, blue: Iq255.v0);
       expect(color, isA<ColorSpacesIQ>());
       expect(color.value, 0xFFFF0000);
     });
@@ -22,8 +22,8 @@ void main() {
     });
 
     test('RGB to HSV conversion (Green)', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v0, green: Iq255.v255, blue: Iq255.v0);
+      final ColorIQ color = ColorIQ.fromArgbInts(
+          alpha: Iq255.v255, red: Iq255.v0, green: Iq255.v255, blue: Iq255.v0);
       final HSV hsv = color.hsv;
       expect(hsv.h, closeTo(120, 0.1));
       expect(hsv.saturation, closeTo(1.0, 0.1));
@@ -47,6 +47,7 @@ void main() {
       expect(hwb.w, closeTo(0.0, 0.1));
       expect(hwb.b, closeTo(0.0, 0.1));
       expect(hwb.value, 0xFFFF0000);
+      print('✓ RGB to HWB conversion (Red)');
     });
 
     test('RGB to Hct conversion (Red)', () {
@@ -55,6 +56,7 @@ void main() {
       // Hct hue for sRGB Red is approx 27-28 degrees (Cam16 hue)
       expect(hct.hue, closeTo(27, 2.0));
       expect(hct.value, 0xFFFF0000);
+      print('✓ RGB to Hct conversion (Red)');
     });
 
     test('RGB to Cam16 conversion (Red)', () {
@@ -73,6 +75,7 @@ void main() {
       expect(p3.b, closeTo(0.138, 0.05));
       // Round trip check (should be close to original Red)
       expect(p3.value, 0xFFFF0000);
+      print('✓ RGB to Display P3 conversion (Red)');
     });
 
     test('RGB to Rec. 2020 conversion (Red)', () {
@@ -85,6 +88,7 @@ void main() {
       // Let's just check it's not 1,0,0 and round trip works.
       expect(rec2020.r, isNot(closeTo(1.0, 0.001)));
       expect(rec2020.value, 0xFFFF0000);
+      print('✓ RGB to Rec. 2020 conversion (Red)');
     });
   });
 }

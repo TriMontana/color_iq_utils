@@ -36,6 +36,7 @@ void main() {
       expect(gray.meetsWcag(cWhite, level: WcagLevel.aa), isTrue);
       // Fails AAA Normal (7.0)
       expect(gray.meetsWcag(cWhite, level: WcagLevel.aaa), isFalse);
+      print('✓ WCAG Tests');
     });
 
     test('Extension works on other models', () {

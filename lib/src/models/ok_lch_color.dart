@@ -328,6 +328,26 @@ class OkLCH extends CommonIQ implements ColorSpacesIQ {
     ];
   }
 
+  @override
+  List<OkLCH> split({final double offset = 30}) => <OkLCH>[
+        this,
+        adjustHue(180 - offset),
+        adjustHue(180 + offset),
+      ];
+
+  @override
+  List<OkLCH> triad({final double offset = 120}) => <OkLCH>[
+        this,
+        adjustHue(offset),
+        adjustHue(-offset),
+      ];
+
+  @override
+  List<OkLCH> twoTone({final double offset = 60}) => <OkLCH>[
+        this,
+        adjustHue(offset),
+      ];
+
   double distanceTo(final ColorSpacesIQ other) =>
       toCam16().distance(other.toCam16());
 

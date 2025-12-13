@@ -4,8 +4,11 @@ import 'package:test/test.dart';
 void main() {
   group('Palette Methods Tests', () {
     test('generateBasicPalette returns 7 colors', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v100, green: Iq255.v150, blue: Iq255.v200);
+      final ColorIQ color = ColorIQ.fromArgbInts(
+          alpha: Iq255.v255,
+          red: Iq255.v100,
+          green: Iq255.v150,
+          blue: Iq255.v200);
       final List<ColorIQ> palette = color.generateBasicPalette();
       expect(palette.length, 7);
       expect(palette[3], equals(color)); // Base color
@@ -16,8 +19,11 @@ void main() {
     });
 
     test('tonesPalette returns 5 colors', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v255, green: Iq255.v0, blue: Iq255.v0); // Red
+      final ColorIQ color = ColorIQ.fromArgbInts(
+          alpha: Iq255.v255,
+          red: Iq255.v255,
+          green: Iq255.v0,
+          blue: Iq255.v0); // Red
       final List<ColorIQ> palette = color.tonesPalette();
       expect(palette.length, 5);
       expect(palette[0], equals(color)); // Base color
@@ -43,6 +49,7 @@ void main() {
       expect(palette3[1].h, closeTo(180, 1.0)); // Base
       expect(palette3[2].h, closeTo(190, 1.0)); // +10
       expect(palette3[0].h, closeTo(170, 1.0)); // -10
+      print('✓ analogous returns correct count and offset');
     });
 
     test('Delegation works for other models', () {
@@ -77,6 +84,7 @@ void main() {
       expect(palette[1].h, closeTo(90, 1.0));
       expect(palette[2].h, closeTo(180, 1.0));
       expect(palette[3].h, closeTo(270, 1.0));
+      print('✓ square returns 4 colors with 90 degree spacing');
     });
 
     test('tetrad returns 4 colors with correct spacing', () {
@@ -95,7 +103,7 @@ void main() {
       expect(palette30.length, 4);
       expect(palette30[1].h, closeTo(30, 1.0));
       expect(palette30[3].h, closeTo(210, 1.0)); // 180 + 30
-      print('✓ Palette Methods Tests');
+      print('✓ tetrad returns 4 colors with correct spacing');
     });
   });
 }

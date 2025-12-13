@@ -376,6 +376,26 @@ class HSV extends CommonIQ implements ColorWheelInf, ColorSpacesIQ {
   }
 
   @override
+  List<HSV> split({final double offset = 30}) => <HSV>[
+        this,
+        adjustHue(180 - offset),
+        adjustHue(180 + offset),
+      ];
+
+  @override
+  List<HSV> triad({final double offset = 120}) => <HSV>[
+        this,
+        adjustHue(offset),
+        adjustHue(-offset),
+      ];
+
+  @override
+  List<HSV> twoTone({final double offset = 60}) => <HSV>[
+        this,
+        adjustHue(offset),
+      ];
+
+  @override
   double contrastWith(final ColorSpacesIQ other) =>
       toColor().contrastWith(other);
 

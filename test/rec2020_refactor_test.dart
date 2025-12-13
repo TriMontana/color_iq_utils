@@ -11,6 +11,7 @@ void main() {
       expect(whitened.r, greaterThan(color.r));
       expect(whitened.g, greaterThan(color.g));
       expect(whitened.b, greaterThan(color.b));
+      print('✓ Rec2020Color Refactor Tests');
     });
 
     test('blacken decreases RGB values', () {
@@ -21,6 +22,7 @@ void main() {
       expect(blackened.r, lessThan(color.r));
       expect(blackened.g, lessThan(color.g));
       expect(blackened.b, lessThan(color.b));
+      print('✓ Rec2020Color Refactor Tests');
     });
 
     test('lerp interpolates correctly', () {
