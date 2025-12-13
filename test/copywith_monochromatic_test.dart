@@ -5,8 +5,8 @@ void main() {
   group('CopyWith and Monochromatic Tests', () {
     test('ColorIQ copyWith', () {
       final ColorIQ color =
-          ColorIQ.fromArgbInts( red: Iq255.v100, green: Iq255.v150, blue: 200);
-      final ColorIQ copy = color.copyWith(red: 255, alpha: 128);
+          ColorIQ.fromArgbInts( red: Iq255.v100, green: Iq255.v150, blue: Iq255.v200);
+      final ColorIQ copy = color.copyWith(red: Iq255.v255, alpha: Iq255.v128);
       expect(copy.red, 255);
       expect(copy.alphaInt, 128);
       expect(copy.green, 150); // Unchanged
@@ -31,8 +31,7 @@ void main() {
     });
 
     test('ColorIQ Monochromatic', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 0, blue: 0); // Red
+      final ColorIQ color = cRed; // Red
       final List<ColorSpacesIQ> palette = color.monochromatic;
       expect(palette.length, 5);
       expect(

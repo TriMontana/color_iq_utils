@@ -174,7 +174,7 @@ class CssColor {
     }
 
     return ColorIQ.fromArgbInts(
-        alpha: (a * 255).round(), red: r, green: g, blue: b);
+        alpha: (a * 255).round().toIq255, red: r.toIq255, green: g.toIq255, blue: b.toIq255);
   }
 
   static HSL _parseHsl(final String s) {

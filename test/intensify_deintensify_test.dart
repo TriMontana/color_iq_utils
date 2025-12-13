@@ -23,10 +23,10 @@ void main() {
 
     test('ColorIQ intensify delegates to HctColor', () {
       final ColorIQ color = ColorIQ.fromArgbInts(
-        alpha: 255,
-        red: 100,
-        green: 150,
-        blue: 200,
+        alpha: Iq255.v255,
+        red: Iq255.v100,
+        green: Iq255.v150,
+        blue: Iq255.v200,
       ); // Some blueish color
       final ColorIQ intensified =
           color.intensify(amount: Percent.v20).toColor();
@@ -44,7 +44,7 @@ void main() {
 
     test('ColorIQ deintensify delegates to HctColor', () {
       final ColorIQ color =
-          ColorIQ.fromArgbInts(red: Iq255.v100, green: Iq255.v150, blue: 200);
+          ColorIQ.fromArgbInts(red: Iq255.v100, green: Iq255.v150, blue: Iq255.v200);
       final ColorIQ deintensified =
           color.deintensify(amount: Percent.v20).toColor();
 

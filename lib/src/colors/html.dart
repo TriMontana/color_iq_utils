@@ -1,6 +1,5 @@
 import 'package:color_iq_utils/src/color_models_lib.dart';
 import 'package:color_iq_utils/src/colors/encycolorpedia.dart';
-import 'package:color_iq_utils/src/foundation/num_iq.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/maps/registry.dart';
 
@@ -55,7 +54,7 @@ final HTML cAntiqueWhite = HTML(hxAntiqueWhite,
     hct: const HctData(81.50196, 8.9519, 93.73077),
     lrv: const Percent(0.84647),
     brightness: Brightness.light,
-    alphaInt: UI8.max,
+    alphaInt: Iq255.max,
     red: Iq255.v250,
     green: Iq255.v235,
     blue: Iq255.v215);
@@ -77,7 +76,7 @@ final HTML cAquamarine = HTML(
   hct: const HctData(171.85628, 50.44456, 92.03615),
   lrv: const Percent(0.807855),
   brightness: Brightness.light,
-  alphaInt: UI8.max,
+  alphaInt: Iq255.max,
   red: Iq255.v127,
   green: Iq255.max,
   blue: Iq255.v212,
@@ -89,7 +88,7 @@ final HTML cBeige = HTML(
   hct: const HctData(117.3517, 11.18285, 95.94888),
   lrv: const Percent(0.898846),
   brightness: Brightness.light,
-  alphaInt: UI8.max,
+  alphaInt: Iq255.max,
   red: Iq255.v245,
   green: Iq255.v245,
   blue: Iq255.v220,
@@ -199,7 +198,7 @@ const int hxDarkBlue = 0xFF00008B;
 final HTML cDarkBlue = HTML(
   hxDarkBlue,
   names: kDarkBlue,
-  alphaInt: UI8.v255,
+
   red: Iq255.v0,
   green: Iq255.v0,
   blue: Iq255.v139,

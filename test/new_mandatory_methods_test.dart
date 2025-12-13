@@ -27,11 +27,11 @@ void main() {
 
     test('isEqual', () {
       final ColorIQ c1 =
-          ColorIQ.fromArgbInts(alpha: 255, red: Iq255.v100, green: 100, blue: 100);
+          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v100, green: Iq255.v100, blue: Iq255.v100);
       final ColorIQ c2 =
-          ColorIQ.fromArgbInts(alpha: 255, red: 100, green: 100, blue: 100);
+          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v100, green: Iq255.v100, blue: Iq255.v100);
       final ColorIQ c3 =
-          ColorIQ.fromArgbInts(alpha: 255, red: 200, green: 200, blue: 200);
+          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v200, green: Iq255.v200, blue: Iq255.v200);
 
       expect(c1.isEqual(c2), isTrue);
       expect(c1.isEqual(c3), isFalse);
@@ -72,14 +72,14 @@ void main() {
       // lum > 0.337
 
       final ColorIQ darkGrey = ColorIQ.fromArgbInts(
-          alpha: Iq255.v255, red: Iq255.v50, green: Iq255.v50, blue: 50); // Lum ~ 0.03
+          alpha: Iq255.v255, red: Iq255.v50, green: Iq255.v50, blue: Iq255.v50); // Lum ~ 0.03
       expect(darkGrey.brightness, Brightness.dark);
 
       final ColorIQ lightGrey = ColorIQ.fromArgbInts(
-        alpha: 255,
-        red: 200,
-        green: 200,
-        blue: 200,
+        alpha: Iq255.v255,
+        red: Iq255.v200,
+        green: Iq255.v200,
+        blue: Iq255.v200,
       ); // Lum ~ 0.5
       // Lum ~ 0.5
       expect(lightGrey.brightness, Brightness.light);

@@ -13,15 +13,15 @@ void main() {
 
     test('indexByNames handles multiple names', () {
       final ColorIQ color1 = ColorIQ.fromArgbInts(
-          alpha: 255,
-          red: 255,
-          green: 0,
-          blue: 0,
+          alpha: Iq255.v255,
+          red: Iq255.v255,
+          green: Iq255.v0,
+          blue: Iq255.v0,
           names: <String>[kRed[0], 'Ruby']);
       final ColorIQ color2 = ColorIQ.fromArgbInts(
-          alpha: 255, red: 0, green: 255, blue: 0, names: <String>[kGreen[0]]);
+          alpha: Iq255.v255, red: Iq255.v0, green: Iq255.v255, blue: Iq255.v0, names: <String>[kGreen[0]]);
       final ColorIQ color3 = ColorIQ.fromArgbInts(
-          alpha: 255, red: 0, green: 0, blue: 255); // No names
+          alpha: Iq255.v255, red: Iq255.v0, green: Iq255.v0, blue: Iq255.v255); // No names
 
       final Map<String, List<ColorSpacesIQ>> index =
           ColorNames.indexByNames(<ColorSpacesIQ>[color1, color2, color3]);

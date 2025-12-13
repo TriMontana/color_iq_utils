@@ -122,10 +122,10 @@ class HSL extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
     }
 
     return ColorIQ.fromArgbInts(
-      alpha: (alpha * 255).round(),
-      red: ((r + m) * 255).round().clamp(0, 255),
-      green: ((g + m) * 255).round().clamp(0, 255),
-      blue: ((b + m) * 255).round().clamp(0, 255),
+      alpha: (alpha * 255).round().toIq255,
+      red: ((r + m) * 255).round().clamp(0, 255).toIq255,
+      green: ((g + m) * 255).round().clamp(0, 255).toIq255,
+      blue: ((b + m) * 255).round().clamp(0, 255).toIq255,
     ).value;
   }
 

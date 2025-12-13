@@ -1,5 +1,4 @@
 import 'package:color_iq_utils/color_iq_utils.dart';
-import 'package:color_iq_utils/src/foundation/num_iq.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -28,8 +27,7 @@ void main() {
     });
 
     test('ColorIQ whiten', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 0, green: 0, blue: 0); // Black
+      final ColorIQ color = cBlack; // Black
       final ColorIQ whitened = color.whiten(50); // Mix 50% with white
       expect(whitened.red, closeTo(128, 1));
       expect(whitened.green, closeTo(128, 1));

@@ -35,6 +35,8 @@ extension DoubleHelpersIQ on double {
     return (this * 255).round().clamp(0, 255);
   }
 
+  Iq255 get toIq255 => Iq255.getIq255(toInt0to255);
+
   double get clampHue => clampDouble(this, min: kMinHue, max: kMaxHue);
   Hue get clampToHue => Hue(clampDouble(this, min: kMinHue, max: kMaxHue));
   double get clampChromaHct =>

@@ -25,8 +25,7 @@ void main() {
     });
 
     test('Simulate Tritanopia', () {
-      final ColorIQ blue =
-          ColorIQ.fromArgbInts(alpha: 255, red: 0, green: 0, blue: 255);
+      final ColorIQ blue = cBlue;
       final ColorIQ simulated = blue.simulate(ColorBlindnessType.tritanopia);
       // Blue looks greenish/teal
       expect(simulated.green, greaterThan(50));
@@ -34,7 +33,7 @@ void main() {
 
     test('Simulate Achromatopsia', () {
       final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 100, green: 150, blue: 200);
+          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v100, green: Iq255.v150, blue: Iq255.v200);
       final ColorIQ simulated = color.simulate(
         ColorBlindnessType.achromatopsia,
       );

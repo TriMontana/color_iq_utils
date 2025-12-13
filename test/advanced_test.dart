@@ -23,8 +23,7 @@ void main() {
     });
 
     test('RGB to Lab conversion (Red)', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 0, blue: 0);
+      final ColorIQ color = cRed;
       final LabColor lab = color.lab;
 
       // Approximate values for pure red in sRGB -> Lab (D65)
@@ -42,7 +41,7 @@ void main() {
 
     test('RGB to Luv conversion (Green)', () {
       final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 0, green: 255, blue: 0);
+          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v0, green: Iq255.v255, blue: Iq255.v0);
       final CIELuv luv = color.toLuv();
 
       // Approximate values for pure green in sRGB -> Luv (D65)
@@ -58,8 +57,7 @@ void main() {
     });
 
     test('RGB to LCH conversion (Blue)', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 0, green: 0, blue: 255);
+      final ColorIQ color = cBlue;
       final LchColor lch = color.toLch();
 
       // Blue Lab: L=32.30, a=79.18, b=-107.86

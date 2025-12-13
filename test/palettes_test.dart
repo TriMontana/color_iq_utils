@@ -17,7 +17,7 @@ void main() {
 
     test('tonesPalette returns 5 colors', () {
       final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: Iq255.v255, green: Iq255.v0, blue: 0); // Red
+          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v255, green: Iq255.v0, blue: Iq255.v0); // Red
       final List<ColorIQ> palette = color.tonesPalette();
       expect(palette.length, 5);
       expect(palette[0], equals(color)); // Base color

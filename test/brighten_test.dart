@@ -5,7 +5,7 @@ void main() {
   group('Brighten', () {
     test('ColorIQ.brighten increases HSV Value', () {
       final ColorIQ color = ColorIQ.fromArgbInts(
-          alpha: 255, red: 100, green: 0, blue: 0); // Dark Red
+          alpha: Iq255.v255, red: Iq255.v100, green: Iq255.v0, blue: Iq255.v0); // Dark Red
       final ColorIQ brightened = color.brighten(Percent.v20);
 
       final HSV hsvOriginal = color.hsv;

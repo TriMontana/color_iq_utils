@@ -32,8 +32,7 @@ void main() {
     });
 
     test('Red conversion', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 0, blue: 0);
+      final ColorIQ color = cRed;
       final CMYK cmyk = CMYK.fromColorSpacesIQ(color);
       expect(cmyk.c, 0.0);
       expect(cmyk.m, 1.0);
@@ -48,7 +47,7 @@ void main() {
 
     test('Green conversion', () {
       final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 0, green: 255, blue: 0);
+          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v0, green: Iq255.v255, blue: Iq255.v0);
       final CMYK cmyk = CMYK.fromColorSpacesIQ(color);
       expect(cmyk.c, 1.0);
       expect(cmyk.m, 0.0);
@@ -78,7 +77,7 @@ void main() {
     test('Arbitrary color conversion', () {
       // Teal-ish color: R=0, G=128, B=128
       final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 0, green: 128, blue: 128);
+          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v0, green: Iq255.v128, blue: Iq255.v128);
       final CMYK cmyk = CMYK.fromColorSpacesIQ(color);
 
       // Expected: C=1.0, M=0.0, Y=0.0, K=0.5 (approx)

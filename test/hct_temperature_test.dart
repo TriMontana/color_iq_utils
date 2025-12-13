@@ -4,8 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('HCT and Temperature Tests', () {
     test('Color to HCT and back', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 0, blue: 0); // Red
+      final ColorIQ color = cRed; // Red
       final HctColor hct = color.toHctColor();
       expect(hct, isA<HctColor>());
       // Hue of red is roughly 27 (in HCT/CAM16) or 0 (in HSL).
@@ -23,7 +22,7 @@ void main() {
 
     test('Transparency Adjustment', () {
       final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 100, green: 150, blue: 200);
+          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v100, green: Iq255.v150, blue: Iq255.v200);
       expect(color.transparency, 1.0);
 
       final ColorIQ transparent = color.adjustTransparency(
@@ -54,34 +53,33 @@ void main() {
     test('Color Temperature', () {
       // Warm colors
       expect(
-        ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 0, blue: 0)
+        ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v255, green: Iq255.v0, blue: Iq255.v0)
             .temperature,
         ColorTemperature.warm,
       ); // Red
       expect(
-        ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 165, blue: 0)
+        ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v255, green: Iq255.v165, blue: Iq255.v0)
             .temperature,
         ColorTemperature.warm,
       ); // Orange
       expect(
-        ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v255, green: Iq255.v255, blue: 0)
+        ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v255, green: Iq255.v255, blue: Iq255.v0)
             .temperature,
         ColorTemperature.warm,
       ); // Yellow
 
       // Cool colors
       expect(
-        ColorIQ.fromArgbInts(alpha: 255, red: 0, green: Iq255.v255, blue: 0)
+        ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v0, green: Iq255.v255, blue: Iq255.v0)
             .temperature,
         ColorTemperature.cool,
       ); // Green
       expect(
-        ColorIQ.fromArgbInts(alpha: 255, red: 0, green: 0, blue: 255)
-            .temperature,
+        cBlue.temperature,
         ColorTemperature.cool,
       ); // Blue
       expect(
-        ColorIQ.fromArgbInts(alpha: 255, red: 0, green: 255, blue: 255)
+        ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v0, green: Iq255.v255, blue: Iq255.v255)
             .temperature,
         ColorTemperature.cool,
       ); // Cyan
@@ -94,14 +92,14 @@ void main() {
       // "Cool: 90-270 (Green-Cyan-Blue-Purple)"
       // So Purple (300) is Warm.
       expect(
-        ColorIQ.fromArgbInts(alpha: 255, red: 128, green: 0, blue: 128)
+        ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v128, green: Iq255.v0, blue: Iq255.v128)
             .temperature,
         ColorTemperature.warm,
       );
 
       // Blue (240) -> Cool.
       expect(
-        ColorIQ.fromArgbInts(alpha: 255, red: 0, green: 0, blue: 255)
+        ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v0, green: Iq255.v0, blue: Iq255.v255)
             .temperature,
         ColorTemperature.cool,
       );

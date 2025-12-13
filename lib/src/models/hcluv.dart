@@ -160,28 +160,27 @@ class HclUv extends CommonIQ implements ColorSpacesIQ {
     final double bLin = x * 0.0556434 + y * -0.2040259 + z * 1.0572252;
 
     // --- 4. Linear RGB to sRGB (Gamma Correction) ---
-    double gammaCorrect(final double linear) {
-      if (linear <= 0.0031308) {
-        return 12.92 * linear;
-      } else {
-        return 1.055 * math.pow(linear, 1.0 / 2.4) - 0.055;
-      }
-    }
+    // double gammaCorrect(final double linear) {
+    //   if (linear <= 0.0031308) {
+    //     return 12.92 * linear;
+    //   } else {
+    //     return 1.055 * math.pow(linear, 1.0 / 2.4) - 0.055;
+    //   }
+    // }
 
-    final double r = gammaCorrect(rLin.clamp(0.0, 1.0));
+    final Percent r = gammaCorrect(rLin.clamp(0.0, 1.0));
     final double g = gammaCorrect(gLin.clamp(0.0, 1.0));
     final double b = gammaCorrect(bLin.clamp(0.0, 1.0));
 
     // --- 5. Clamp and Convert to Color ---
     // HCL values can mathematically produce colors outside the sRGB gamut (r/g/b > 1.0 or < 0.0).
     // We clamp them to displayable range.
-    int toInt(final double val) => (val.clamp(0.0, 1.0) * 255.0).round();
 
     return ColorIQ.fromArgbInts(
-      alpha: 255, // Full Opacity
-      red: toInt(r),
-      green: toInt(g),
-      blue: toInt(b),
+      alpha: Iq255.v255, // Full Opacity
+      red: r.toIq255,
+      green: g.toIq255,
+      blue: b.toIq255,
     );
   }
 

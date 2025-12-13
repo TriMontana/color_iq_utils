@@ -7,7 +7,7 @@ void main() {
   group('Phase 2 Color Space Tests', () {
     test('ColorIQ implements ColorSpacesIQ', () {
       final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: Iq255.v255, green: 0, blue: 0);
+          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v255, green: Iq255.v0, blue: Iq255.v0);
       expect(color, isA<ColorSpacesIQ>());
       expect(color.value, 0xFFFF0000);
     });
@@ -32,8 +32,7 @@ void main() {
     });
 
     test('RGB to HSB conversion (Blue)', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: 0, green: 0, blue: 255);
+      final ColorIQ color = cBlue;
       final HsbColor hsb = color.toHsb();
       expect(hsb.h, closeTo(240, 0.1));
       expect(hsb.s, closeTo(1.0, 0.1));

@@ -5,7 +5,7 @@ void main() {
   group('sRGB and Linear sRGB Tests', () {
     test('ColorIQ srgb getter', () {
       final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: 255, red: Iq255.v100, green: Iq255.v150, blue: 200);
+          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v100, green: Iq255.v150, blue: Iq255.v200);
       expect(color.argb255Ints, <int>[255, 100, 150, 200]);
 
       print('✓ ColorIQ srgb getter test completed');
@@ -14,8 +14,7 @@ void main() {
     });
 
     test('ColorIQ linearSrgb getter (Red)', () {
-      final ColorIQ red =
-          ColorIQ.fromArgbInts(alpha: 255, red: 255, green: 0, blue: 0);
+      final ColorIQ red = cRed;
       expect(red.rgbaLinearized, <double>[1.0, 0.0, 0.0, 1.0]);
 
       print('✓ ColorIQ linearSrgb getter (Red) test completed');

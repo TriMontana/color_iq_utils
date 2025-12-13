@@ -703,10 +703,10 @@ ColorIQ colorFromHue(
     _ => (chroma, 0.0, secondary),
   };
   return ColorIQ.fromArgbInts(
-    alpha: (alpha * 0xFF).round(),
-    red: ((red + match) * 0xFF).round(),
-    green: ((green + match) * 0xFF).round(),
-    blue: ((blue + match) * 0xFF).round(),
+    alpha: (alpha * 0xFF).round().toIq255,
+    red: ((red + match) * 0xFF).round().toIq255,
+    green: ((green + match) * 0xFF).round().toIq255,
+    blue: ((blue + match) * 0xFF).round().toIq255,
   );
 }
 
@@ -811,18 +811,25 @@ const List<List<double>> lmsToXyzMatrix = <List<double>>[
 ];
 
 // https://github.com/color-js/color.js/blob/main/src/spaces/oklab.js
-const List<List<double>> LMStoLab_M = <List<double>>[
-  <double>[ 0.2104542683093140,  0.7936177747023054, -0.0040720430116193 ],
-  <double>[ 1.9779985324311684, -2.4285922420485799,  0.4505937096174110 ],
-  <double>[ 0.0259040424655478,  0.7827717124575296, -0.8086757549230774 ],
+/// Matrix converting LMS (Long, Medium, Short) cone responses to the
+/// intermediate Lab-like space used in certain color conversions (e.g. Oklab).
+/// Each row contains coefficients for a row of the 3x3 transform matrix.
+/// Source/Credit: color-js / Material Color Utilities.
+const List<List<double>> lmsToLabMatrix = <List<double>>[
+  <double>[0.2104542683093140, 0.7936177747023054, -0.0040720430116193],
+  <double>[1.9779985324311684, -2.4285922420485799, 0.4505937096174110],
+  <double>[0.0259040424655478, 0.7827717124575296, -0.8086757549230774],
 ];
 // LMStoIab_M inverted
 // https://github.com/color-js/color.js/blob/main/src/spaces/oklab.js
-const List<List<double>> LabtoLMS_M = <List<double>>[
-  <double>[ 1.0000000000000000,  0.3963377773761749,  0.2158037573099136 ],
-  <double>[ 1.0000000000000000, -0.1055613458156586, -0.0638541728258133 ],
-  <double>[ 1.0000000000000000, -0.0894841775298119, -1.2914855480194092 ],
-];
+/// Matrix converting from Lab (L, a, b) values to LMS cone responses.
+  /// Each inner list represents a row of the 3×3 transform matrix.
+  /// Source: color-js / Material Color Utilities.
+  const List<List<double>> labToLmsMatrix = <List<double>>[
+    <double>[1.0, 0.3963377773761749, 0.2158037573099136],
+    <double>[1.0, -0.1055613458156586, -0.0638541728258133],
+    <double>[1.0, -0.0894841775298119, -1.2914855480194092],
+  ];
 
 // https://github.com/color-js/color.js/blob/main/src/spaces/p3-linear.js
 
