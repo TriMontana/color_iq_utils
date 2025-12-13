@@ -298,6 +298,7 @@ class AppColor {
   int get redInt => (0x00ff0000 & value) >> 16;
   int get red => (_r * 255.0).round().clamp(0, 255);
 
+
   /// The green channel of this color in an 8 bit value.
   int get greenInt => (0x0000ff00 & value) >> 8;
   int get green => _g.toInt0to255;
