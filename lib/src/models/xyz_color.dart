@@ -71,9 +71,9 @@ class XYZ extends CommonIQ {
     return (r: lst[0], g: lst[1], b: lst[2]);
   }
 
-  LabColor toLab() {
+  CIELab toLab() {
     final List<double> lst = labFromXYZ(x, y, z);
-    return LabColor(lst[0], lst[1], lst[2],
+    return CIELab(lst[0], lst[1], lst[2],
         hexId: argbFromLab(lst[0], lst[1], lst[2]));
   }
 

@@ -5,82 +5,78 @@ import 'package:color_iq_utils/src/foundation_lib.dart';
 import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/lch_color.dart';
 
-/// Cache for Lab colors, as they are computationally expensive
-/// to recalculate.
-Map<int, LabColor> mapLAB = <int, LabColor>{
+/// Cache for computed CIELab color objects.
+///
+/// The key is the 32-bit ARGB integer representation of the color and the
+/// value is the corresponding cached [CIELab] instance. Caching avoids
+/// repeated expensive conversions between color spaces.
+Map<int, CIELab> mapLAB = <int, CIELab>{
   //
 };
 
-extension MapLabColorsExtension on Map<int, LabColor> {
-  LabColor getOrCreate(final int key) {
-    final LabColor? color = this[key];
+/// Extension helpers for the `mapLAB` cache.
+///
+/// Provides a convenience method to retrieve a cached [CIELab] or create and
+/// insert one when missing.
+extension MapLabColorsExtension on Map<int, CIELab> {
+  /// Returns the cached [CIELab] for [key], or creates, inserts and returns a
+  /// new one with [CIELab.fromInt] when no cached value exists.
+  ///
+  /// The [key] is expected to be a 32-bit ARGB integer.
+  CIELab getOrCreate(final int key) {
+    final CIELab? color = this[key];
     if (color != null) {
       return color;
     }
-    return putIfAbsent(key, () => LabColor.fromInt(key));
+    return putIfAbsent(key, () => CIELab.fromInt(key));
   }
 }
 
-/// Represents a color in the CIELAB color space.
+/// Represents a color in the CIE L\*a\*b\* (CIELAB) color space.
 ///
-/// The CIELAB color space (also known as CIE L*a*b* or Lab) is a color space
-/// specified by the International Commission on Illumination (CIE). It describes
-/// all the colors visible to the human eye and was created to serve as a
-/// device-independent model to be used as a reference.
-///
-/// The three coordinates of CIELAB represent the lightness of the color (L*),
-/// its position between red and green (a*), and its position between yellow
-/// and blue (b*).
-///
-/// - `l`: Lightness, from 0 (black) to 100 (white).
-/// - `a`: Green to red axis, where negative values indicate green and positive values indicate red.
-/// - `b`: Blue to yellow axis, where negative values indicate blue and positive values indicate yellow.
-class LabColor extends CommonIQ implements ColorSpacesIQ {
-  /// The lightness component (0-100).
+/// Instances are immutable. The class implements common color transformation
+/// helpers and conversions to other color representations used in the library.
+class CIELab extends CommonIQ implements ColorSpacesIQ {
+  /// Lightness component (0..100).
   final double l;
 
-  /// The green-red component.
+  /// Green–red component (negative = green, positive = red).
   final double aLab;
 
-  /// The blue-yellow component.
+  /// Blue–yellow component (negative = blue, positive = yellow).
   final double bLab;
 
-  /// Creates a [LabColor] instance.
+  /// Creates a [CIELab] instance.
   ///
-  /// - [l]: Lightness component, must be between 0 and 100.
-  /// - [aLab]: The green-red component.
-  /// - [bLab]: The blue-yellow component.
-  /// - [hexId]: Optional 32-bit ARGB hex value. If not provided, it's calculated from the LAB values.
-  /// - [alpha]: Alpha transparency, defaults to 100% opaque.
-  /// - [names]: Optional list of names for the color.
-  LabColor(this.l, this.aLab, this.bLab,
+  /// * `l` — Lightness in range 0..100 (asserted).
+  /// * `aLab` — a\* component.
+  /// * `bLab` — b\* component.
+  /// * `hexId` — optional 32-bit ARGB id used to populate the underlying color id.
+  /// * `alpha` — transparency as a [Percent] (defaults to fully opaque).
+  /// * `names` — optional list of descriptive names for the color.
+  CIELab(this.l, this.aLab, this.bLab,
       {final int? hexId,
-      final Percent alpha = Percent.max,
-      final List<String>? names})
+        final Percent alpha = Percent.max,
+        final List<String>? names})
       : assert(l >= 0 && l <= 100, 'L must be between 0 and 100'),
         super(hexId, alpha: alpha, names: names ?? kEmptyNames);
 
   @override
-  int get value => super.colorId ?? LabColor.hexIdFromLAB(l, aLab, bLab);
+  int get value => super.colorId ?? CIELab.hexIdFromLAB(l, aLab, bLab);
 
-  /// Creates a [LabColor] instance from a 32-bit ARGB hex value.
+  /// Constructs a [CIELab] from a 32-bit ARGB integer.
   ///
-  /// The [hexId] is converted to the CIELAB color space.
-  static LabColor fromInt(final int hexId) {
+  /// The ARGB value is converted into CIELab components using the library's
+  /// color conversion utility `labFromArgb`.
+  static CIELab fromInt(final int hexId) {
     final List<double> lab = labFromArgb(hexId);
-    return LabColor(lab[0], lab[1], lab[2], hexId: hexId);
+    return CIELab(lab[0], lab[1], lab[2], hexId: hexId);
   }
 
-  /// Creates a 32-bit ARGB hex value from CIE-LAB components.
+  /// Converts CIE-LAB components to a 32-bit ARGB integer.
   ///
-  /// This is a stand-alone static method that performs the conversion from
-  /// LAB to sRGB and then packs it into a 32-bit integer.
-  ///
-  /// - [l]: Lightness, from 0 (black) to 100 (white).
-  /// - [aLab]: Green to red axis.
-  /// - [bLab]: Blue to yellow axis.
-  ///
-  /// Returns an integer representing the ARGB color.
+  /// Delegates to the shared `argbFromLab` helper which performs
+  /// LAB -> sRGB conversion and packs the result into an ARGB int.
   static int hexIdFromLAB(
       final double l, final double aLab, final double bLab) {
     return argbFromLab(l, aLab, bLab);
@@ -89,6 +85,9 @@ class LabColor extends CommonIQ implements ColorSpacesIQ {
   @override
   ColorIQ toColor() => ColorIQ(value);
 
+  /// Converts this Lab color to the LCH color space.
+  ///
+  /// Returns an [LchColor] with the same lightness and computed chroma and hue.
   LchColor toLch() {
     final double c = sqrt(aLab * aLab + bLab * bLab);
     double h = atan2(bLab, aLab);
@@ -99,82 +98,104 @@ class LabColor extends CommonIQ implements ColorSpacesIQ {
     return LchColor(l, c, h);
   }
 
+  /// Mixes this color with white by [amount] percent (default 20).
   @override
-  LabColor whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
+  CIELab whiten([final double amount = 20]) => lerp(cWhite, amount / 100);
 
+  /// Mixes this color with black by [amount] percent (default 20).
   @override
-  LabColor blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
+  CIELab blacken([final double amount = 20]) => lerp(cBlack, amount / 100);
 
+  /// Returns a lightened version of the color by increasing `l` by `amount`.
+  ///
+  /// `l` is clamped to a maximum of 100.
   @override
-  LabColor lighten([final double amount = 20]) {
-    return LabColor(min(100, l + amount), aLab, bLab);
+  CIELab lighten([final double amount = 20]) {
+    return CIELab(min(100, l + amount), aLab, bLab);
   }
 
+  /// Returns a darkened version of the color by decreasing `l` by `amount`.
+  ///
+  /// `l` is clamped to a minimum of 0.
   @override
-  LabColor darken([final double amount = 20]) {
-    return LabColor(max(0, l - amount), aLab, bLab);
+  CIELab darken([final double amount = 20]) {
+    return CIELab(max(0, l - amount), aLab, bLab);
   }
 
+  /// Increases chroma (saturation) using the LCH intermediary.
   @override
-  LabColor saturate([final double amount = 25]) {
+  CIELab saturate([final double amount = 25]) {
     return toLch().saturate(amount).toLab();
   }
 
+  /// Decreases chroma (saturation) using the LCH intermediary.
   @override
-  LabColor desaturate([final double amount = 25]) {
+  CIELab desaturate([final double amount = 25]) {
     return toLch().desaturate(amount).toLab();
   }
 
+  /// Returns an accented variant of this color.
   @override
-  LabColor accented([final double amount = 15]) {
+  CIELab accented([final double amount = 15]) {
     return toColor().accented(amount).lab;
   }
 
+  /// Simulates a form of color blindness for this color and returns the
+  /// resulting Lab color.
   @override
-  LabColor simulate(final ColorBlindnessType type) {
+  CIELab simulate(final ColorBlindnessType type) {
     return toColor().simulate(type).lab;
   }
 
+  /// Linearly interpolates between this color and [other] by interpolation
+  /// factor `t` in range 0..1.
+  ///
+  /// If [other] is not a [CIELab], it is converted via `toColor().lab`.
   @override
-  LabColor lerp(final ColorSpacesIQ other, final double t) {
+  CIELab lerp(final ColorSpacesIQ other, final double t) {
     if (t == 0.0) return this;
-    final LabColor otherLab = other is LabColor ? other : other.toColor().lab;
+    final CIELab otherLab = other is CIELab ? other : other.toColor().lab;
     if (t == 1.0) {
       return otherLab;
     }
 
-    return LabColor(
+    return CIELab(
       lerpDouble(l, otherLab.l, t),
       lerpDouble(aLab, otherLab.aLab, t),
       lerpDouble(bLab, otherLab.bLab, t),
     );
   }
 
-  /// Creates a copy of this color with the given fields replaced with the new values.
+  /// Returns a copy of this color with the provided fields replaced.
+  ///
+  /// Use this to modify `l`, `a`, `b` or `alpha` while preserving other values.
   @override
-  LabColor copyWith(
+  CIELab copyWith(
       {final double? l,
-      final double? a,
-      final double? b,
-      final Percent? alpha}) {
-    return LabColor(l ?? this.l, a ?? aLab, b ?? bLab, alpha: alpha ?? super.a);
+        final double? a,
+        final double? b,
+        final Percent? alpha}) {
+    return CIELab(l ?? this.l, a ?? aLab, b ?? bLab, alpha: alpha ?? super.a);
   }
 
+  /// Generates a small monochromatic set (5 steps) around this color by
+  /// varying the lightness.
   @override
-  List<LabColor> get monochromatic {
-    final List<LabColor> results = <LabColor>[];
+  List<CIELab> get monochromatic {
+    final List<CIELab> results = <CIELab>[];
     for (int i = 0; i < 5; i++) {
       final double delta = (i - 2) * 10.0;
       final double newL = (l + delta).clamp(0.0, 100.0);
-      results.add(LabColor(newL, aLab, bLab, alpha: alpha));
+      results.add(CIELab(newL, aLab, bLab, alpha: alpha));
     }
     return results;
   }
 
+  /// Returns a palette of progressively lighter variants.
   @override
-  List<LabColor> lighterPalette([final double? step]) {
+  List<CIELab> lighterPalette([final double? step]) {
     final double s = step ?? 10.0;
-    return <LabColor>[
+    return <CIELab>[
       lighten(s),
       lighten(s * 2),
       lighten(s * 3),
@@ -183,10 +204,11 @@ class LabColor extends CommonIQ implements ColorSpacesIQ {
     ];
   }
 
+  /// Returns a palette of progressively darker variants.
   @override
-  List<LabColor> darkerPalette([final double? step]) {
+  List<CIELab> darkerPalette([final double? step]) {
     final double s = step ?? 10.0;
-    return <LabColor>[
+    return <CIELab>[
       darken(s),
       darken(s * 2),
       darken(s * 3),
@@ -195,10 +217,11 @@ class LabColor extends CommonIQ implements ColorSpacesIQ {
     ];
   }
 
+  /// Random Lab color generator (lightness in 0..100, a and b in -128..128).
   @override
-  LabColor get random {
+  CIELab get random {
     final Random rng = Random();
-    return LabColor(
+    return CIELab(
       rng.nextDouble() * 100.0,
       rng.nextDouble() * 256.0 - 128.0,
       rng.nextDouble() * 256.0 - 128.0,
@@ -206,9 +229,10 @@ class LabColor extends CommonIQ implements ColorSpacesIQ {
     );
   }
 
+  /// Tests equality with another color space object using a small epsilon.
   @override
   bool isEqual(final ColorSpacesIQ other) {
-    if (other is LabColor) {
+    if (other is CIELab) {
       const double epsilon = 0.001;
       return (l - other.l).abs() < epsilon &&
           (aLab - other.aLab).abs() < epsilon &&
@@ -218,82 +242,99 @@ class LabColor extends CommonIQ implements ColorSpacesIQ {
     return false;
   }
 
+  /// Returns true if this color is considered light according to brightness.
   @override
   bool get isLight => brightness == Brightness.light;
 
+  /// Blends this color with [other] by `amount` percent (default 50).
   @override
-  LabColor blend(final ColorSpacesIQ other, [final double amount = 50]) {
+  CIELab blend(final ColorSpacesIQ other, [final double amount = 50]) {
     return lerp(other, amount / 100);
   }
 
+  /// Returns a copy with increased opacity (alpha) by [amount] percent.
   @override
-  LabColor opaquer([final double amount = 20]) {
+  CIELab opaquer([final double amount = 20]) {
     return copyWith(alpha: Percent((alpha.val + amount / 100).clamp(0.0, 1.0)));
   }
 
+  /// Adjusts hue through LCH intermediary by [amount] degrees.
   @override
-  LabColor adjustHue([final double amount = 20]) {
+  CIELab adjustHue([final double amount = 20]) {
     return toLch().adjustHue(amount).toLab();
   }
 
+  /// Complement color (180 degrees hue shift).
   @override
-  LabColor get complementary => adjustHue(180);
+  CIELab get complementary => adjustHue(180);
 
+  /// Warmer color by increasing hue through LCH.
   @override
-  LabColor warmer([final double amount = 20]) {
+  CIELab warmer([final double amount = 20]) {
     return toLch().warmer(amount).toLab();
   }
 
+  /// Cooler color by decreasing hue through LCH.
   @override
-  LabColor cooler([final double amount = 20]) {
+  CIELab cooler([final double amount = 20]) {
     return toLch().cooler(amount).toLab();
   }
 
+  /// Generate a basic 5-color palette centered on this color.
   @override
-  List<LabColor> generateBasicPalette() => <LabColor>[
-        darken(40),
-        darken(20),
-        this,
-        lighten(20),
-        lighten(40),
-      ];
+  List<CIELab> generateBasicPalette() => <CIELab>[
+    darken(40),
+    darken(20),
+    this,
+    lighten(20),
+    lighten(40),
+  ];
 
+  /// Generate a tonal palette of 6 steps from black to white (L values).
   @override
-  List<LabColor> tonesPalette() => List<LabColor>.generate(
-        6,
+  List<CIELab> tonesPalette() => List<CIELab>.generate(
+    6,
         (final int index) => copyWith(l: (index / 5 * 100).clamp(0.0, 100.0)),
-      );
+  );
 
+  /// Returns analogous colors via the LCH intermediary.
   @override
-  List<LabColor> analogous({final int count = 5, final double offset = 30}) {
+  List<CIELab> analogous({final int count = 5, final double offset = 30}) {
     return toLch()
         .analogous(count: count, offset: offset)
         .map((final ColorSpacesIQ c) => (c as LchColor).toLab())
         .toList();
   }
 
+  /// Square harmony via LCH intermediary.
   @override
-  List<LabColor> square() => toLch()
+  List<CIELab> square() => toLch()
       .square()
       .map((final ColorSpacesIQ c) => (c as LchColor).toLab())
       .toList();
 
+  /// Tetrad harmony via LCH intermediary.
   @override
-  List<LabColor> tetrad({final double offset = 60}) => toLch()
+  List<CIELab> tetrad({final double offset = 60}) => toLch()
       .tetrad(offset: offset)
       .map((final ColorSpacesIQ c) => (c as LchColor).toLab())
       .toList();
 
-  // @override
-  // double distanceTo(final ColorSpacesIQ other) => toColor().distanceTo(other);
 
+  /// Contrast ratio with another color (delegated to ColorIQ).
   @override
   double contrastWith(final ColorSpacesIQ other) =>
       toColor().contrastWith(other);
 
+  /// Returns the closest named color slice (delegated to ColorIQ).
   @override
   ColorSlice closestColorSlice() => toColor().closestColorSlice();
 
+  /// Checks whether this Lab color is within the specified [gamut].
+  ///
+  /// Current implementation supports sRGB checks by converting to linear sRGB
+  /// and validating component ranges. For other gamuts the method currently
+  /// returns true.
   @override
   bool isWithinGamut([final Gamut gamut = Gamut.sRGB]) {
     if (gamut == Gamut.sRGB) {
@@ -339,18 +380,21 @@ class LabColor extends CommonIQ implements ColorSpacesIQ {
           bL <= 1.0 + epsilon;
     }
     // For other gamuts, we'd need their conversion matrices.
-    // Defaulting to true for now if not sRGB, or delegate to super?
-    // Super returns true.
+    // Defaulting to true for now if not sRGB.
     return true;
   }
 
+  /// Serializes this color to a simple JSON map.
+  ///
+  /// The returned map uses the key `'type'` to identify the color model.
   @override
   Map<String, dynamic> toJson() {
     return <String, dynamic>{'type': 'LabColor', 'l': l, 'a': aLab, 'b': bLab};
   }
 
+  /// Human-friendly string representation.
   @override
   String toString() =>
       'LabColor(l: ${l.toStrTrimZeros(3)}, a: ${aLab.toStrTrimZeros(2)}, ' //
-      'b: ${bLab.toStrTrimZeros(3)})';
+          'b: ${bLab.toStrTrimZeros(3)})';
 }

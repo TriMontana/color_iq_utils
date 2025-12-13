@@ -22,7 +22,7 @@ void main() {
 
     test('RGB to Lab conversion (Red)', () {
       final ColorIQ color = cRed;
-      final LabColor lab = color.lab;
+      final CIELab lab = color.lab;
 
       // Approximate values for pure red in sRGB -> Lab (D65)
       // L=53.24, a=80.09, b=67.20
@@ -82,7 +82,7 @@ void main() {
       expect(xyz.y, 0);
       expect(xyz.z, 0);
 
-      final LabColor lab = color.lab;
+      final CIELab lab = color.lab;
       expect(lab.l, 0);
       expect(lab.aLab, 0);
       expect(lab.bLab, 0);

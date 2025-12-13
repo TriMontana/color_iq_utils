@@ -40,12 +40,12 @@ void main() {
           green: Iq255.v150,
           blue: Iq255.v200);
       final XYZ xyz = rgb.xyz;
-      final LabColor lab = rgb.lab;
+      final CIELab lab = rgb.lab;
       final CIELuv luv = CIELuv.fromInt(rgb.value);
 
       final ColorIQ accentedRgb = rgb.accented();
       final XYZ accentedXyz = xyz.accented();
-      final LabColor accentedLab = lab.accented();
+      final CIELab accentedLab = lab.accented();
       final CIELuv accentedLuv = luv.accented();
 
       // Since they all delegate to ColorIQ -> Hct -> accented -> ColorIQ -> Model

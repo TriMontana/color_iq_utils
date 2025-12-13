@@ -10,6 +10,7 @@ void main() {
       // V: 0.5 - 0.1 = 0.4
       expect(intensified.saturation, closeTo(0.7, 0.001));
       expect(intensified.val, closeTo(0.4, 0.001));
+      print('✓ OkHsvColor Tests');
     });
 
     test('deintensify decreases saturation and increases value', () {
@@ -19,6 +20,7 @@ void main() {
       // V: 0.5 + 0.1 = 0.6
       expect(deintensified.saturation, closeTo(0.3, 0.001));
       expect(deintensified.val, closeTo(0.6, 0.001));
+      print('✓ OkHsvColor Tests');
     });
 
     test('accented increases saturation and increases value', () {

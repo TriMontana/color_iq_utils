@@ -86,7 +86,8 @@ void main() {
 
       print('✓ Brightness test completed');
       print(
-        '  White brightness: ${cWhite.brightness} (lum: ${cWhite.luminance.toStringAsFixed(4)})',
+        '  White brightness: ${cWhite.brightness} ' //
+            '(lum: ${cWhite.luminance.toStringAsFixed(4)})',
       );
       print(
         '  Black brightness: ${cBlack.brightness} (lum: ${cBlack.luminance.toStringAsFixed(4)})',

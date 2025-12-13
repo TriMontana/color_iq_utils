@@ -52,8 +52,8 @@ void main() {
 
     test('LabColor saturate/desaturate (via Lch)', () {
       // Lab(50, 50, 0) -> Lch(50, 50, 0)
-      final LabColor lab = LabColor(Percent.mid, 50, 0);
-      final LabColor saturated = lab.saturate(25);
+      final CIELab lab = CIELab(Percent.mid, 50, 0);
+      final CIELab saturated = lab.saturate(25);
       // Lch(50, 75, 0) -> Lab(50, 75, 0)
       expect(saturated.aLab, closeTo(75, 0.01));
       expect(saturated.bLab, closeTo(0, 0.01));

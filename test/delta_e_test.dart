@@ -14,8 +14,8 @@ void main() {
     test('CIE76 Calculation', () {
       // Lab(50, 10, 10) vs Lab(50, 20, 20)
       // dL=0, da=10, db=10. dE = sqrt(100+100) = 14.14
-      final LabColor c1 = LabColor(50, 10, 10);
-      final LabColor c2 = LabColor(50, 20, 20);
+      final CIELab c1 = CIELab(50, 10, 10);
+      final CIELab c2 = CIELab(50, 20, 20);
       expect(
         c1.deltaE(c2, algorithm: DeltaEAlgorithm.cie76),
         closeTo(14.14, 0.01),
@@ -30,8 +30,8 @@ void main() {
       // S_L = 1 + (0.015 * 25) / sqrt(45) = 1 + 0.375 / 6.708 = 1.0559
       // dE2000 = 10 / 1.0559 = 9.47
 
-      final LabColor c1 = LabColor(50, 0, 0);
-      final LabColor c2 = LabColor(60, 0, 0);
+      final CIELab c1 = CIELab(50, 0, 0);
+      final CIELab c2 = CIELab(60, 0, 0);
       expect(
         c1.deltaE(c2, algorithm: DeltaEAlgorithm.ciede2000),
         closeTo(9.47, 0.1),
@@ -48,8 +48,8 @@ void main() {
       // S_C = 1 + 0.045 * 7.5 = 1.3375.
       // dE = 15 / 1.3375 = 11.21.
 
-      final LabColor c1 = LabColor(50, 0, 0);
-      final LabColor c2 = LabColor(50, 10, 0);
+      final CIELab c1 = CIELab(50, 0, 0);
+      final CIELab c2 = CIELab(50, 10, 0);
       expect(
         c1.deltaE(c2, algorithm: DeltaEAlgorithm.ciede2000),
         closeTo(11.2, 0.5),
@@ -65,8 +65,8 @@ void main() {
       // S_C = 1 + 0.045 * 5 = 1.225.
       // dE = 10 / 1.225 = 8.16.
 
-      final LabColor c1 = LabColor(50, 0, 0);
-      final LabColor c2 = LabColor(50, 0, 10);
+      final CIELab c1 = CIELab(50, 0, 0);
+      final CIELab c2 = CIELab(50, 0, 10);
       expect(
         c1.deltaE(c2, algorithm: DeltaEAlgorithm.ciede2000),
         closeTo(8.16, 0.1),

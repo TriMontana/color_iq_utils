@@ -366,7 +366,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   ///
   /// This is lazily computed and cached. LAB is a perceptually uniform color
   /// space, making it useful for measuring color differences.
-  late final LabColor lab = mapLAB.getOrCreate(value);
+  late final CIELab lab = mapLAB.getOrCreate(value);
 
   /// The HCT (Hue, Chroma, Tone) color space representation of this color.
   ///
@@ -1242,7 +1242,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
   ///
   /// This method supports deserializing various color types from JSON,
   /// including [ColorIQ], [HctColor], [HslColor], [HsvColor], [CmykColor],
-  /// [LabColor], [XyzColor], and [LchColor].
+  /// [CIELab], [XyzColor], and [LchColor].
   ///
   /// The JSON map must contain a `'type'` field indicating the color type,
   /// along with the appropriate fields for that color type.
@@ -1276,7 +1276,7 @@ class ColorIQ extends CommonIQ implements ColorSpacesIQ, ColorWheelInf {
       case 'CmykColor':
         return CMYK(json['c'], json['m'], json['y'], json['k']);
       case 'LabColor':
-        return LabColor(json['l'], json['a'], json['b']);
+        return CIELab(json['l'], json['a'], json['b']);
       case 'XyzColor':
         return XYZ(json['x'], json['y'], json['z']);
       case 'LchColor':

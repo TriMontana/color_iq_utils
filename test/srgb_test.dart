@@ -68,7 +68,7 @@ void main() {
 
     test('Other models delegation (LabColor)', () {
       // Lab approx for Red
-      final LabColor lab = LabColor(53.24, 80.09, 67.20);
+      final CIELab lab = CIELab(53.24, 80.09, 67.20);
       final List<int> srgb = lab.argb255Ints;
       // Precision might vary slightly due to conversions
       expect(srgb[1], closeTo(255, 2));

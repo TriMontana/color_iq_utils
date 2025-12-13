@@ -8,6 +8,7 @@ void main() {
       final OkLabColor whitened = color.whiten(50);
 
       expect(whitened.l, greaterThan(color.l));
+      print('✓ OkLabColor Refactor Tests');
     });
 
     test('blacken decreases lightness', () {

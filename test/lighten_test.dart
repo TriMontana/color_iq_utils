@@ -32,8 +32,8 @@ void main() {
     });
 
     test('LabColor lighten increases L', () {
-      final LabColor lab = LabColor(50, 0, 0);
-      final LabColor lightened = lab.lighten(20);
+      final CIELab lab = CIELab(50, 0, 0);
+      final CIELab lightened = lab.lighten(20);
       expect(lightened.l, closeTo(70, 0.001));
     });
   });

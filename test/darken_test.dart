@@ -13,8 +13,8 @@ void main() {
     });
 
     test('LabColor darken', () {
-      final LabColor lab = LabColor(50, 20, 30);
-      final LabColor darkened = lab.darken(20);
+      final CIELab lab = CIELab(50, 20, 30);
+      final CIELab darkened = lab.darken(20);
       expect(darkened.l, closeTo(30, 0.01));
       expect(darkened.aLab, closeTo(20, 0.01));
       expect(darkened.bLab, closeTo(30, 0.01));

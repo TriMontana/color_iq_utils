@@ -499,7 +499,7 @@ class AppColor {
       'Color(alpha: ${a.toStringAsFixed(4)}, red: ${r.toStringAsFixed(4)}, '
       'green: ${g.toStrTrimZeros(4)}, blue: ${b.toStringAsFixed(4)}, colorSpace: $colorSpace)';
 
-  LabColor toLabColor() => LabColor.fromInt(_colorId);
+  CIELab toLabColor() => CIELab.fromInt(_colorId);
 
   ColorIQ toColor() =>
       ColorIQ(_colorId, colorSpace: colorSpace, argbColor: this);

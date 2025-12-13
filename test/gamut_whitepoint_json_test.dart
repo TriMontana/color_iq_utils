@@ -56,14 +56,14 @@ void main() {
     });
 
     test('toJson and fromJson for LabColor', () {
-      final LabColor lab = LabColor(50, 10, -20);
+      final CIELab lab = CIELab(50, 10, -20);
       final Map<String, dynamic> json = lab.toJson();
       expect(json['type'], 'LabColor');
       expect(json['l'], 50);
       expect(json['a'], 10);
       expect(json['b'], -20);
 
-      final LabColor fromJson = ColorIQ.fromJson(json) as LabColor;
+      final CIELab fromJson = ColorIQ.fromJson(json) as CIELab;
       expect(fromJson.l, 50);
       expect(fromJson.aLab, 10);
       expect(fromJson.bLab, -20);

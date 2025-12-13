@@ -35,15 +35,15 @@ extension DeltaEExtension on ColorSpacesIQ {
   /// - 100: Colors are exact opposite.
   double deltaE(final ColorSpacesIQ other,
       {final DeltaEAlgorithm algorithm = DeltaEAlgorithm.ciede2000}) {
-    final LabColor lab1;
-    if (this is LabColor) {
-      lab1 = this as LabColor;
+    final CIELab lab1;
+    if (this is CIELab) {
+      lab1 = this as CIELab;
     } else {
       lab1 = toColor().lab;
     }
 
-    final LabColor lab2;
-    if (other is LabColor) {
+    final CIELab lab2;
+    if (other is CIELab) {
       lab2 = other;
     } else {
       lab2 = other.toColor().lab;
@@ -59,13 +59,13 @@ extension DeltaEExtension on ColorSpacesIQ {
     }
   }
 
-  double _deltaECie76(final LabColor lab1, final LabColor lab2) {
+  double _deltaECie76(final CIELab lab1, final CIELab lab2) {
     return sqrt(pow(lab1.l - lab2.l, 2) +
         pow(lab1.aLab - lab2.aLab, 2) +
         pow(lab1.bLab - lab2.bLab, 2));
   }
 
-  double _deltaECie94(final LabColor lab1, final LabColor lab2) {
+  double _deltaECie94(final CIELab lab1, final CIELab lab2) {
     final double L1 = lab1.l;
     final double a1 = lab1.aLab;
     final double b1 = lab1.bLab;
@@ -102,7 +102,7 @@ extension DeltaEExtension on ColorSpacesIQ {
         pow(dH / (kH * sH), 2));
   }
 
-  double _deltaECiede2000(final LabColor lab1, final LabColor lab2) {
+  double _deltaECiede2000(final CIELab lab1, final CIELab lab2) {
     // Implementation of CIEDE2000
     // Based on: http://www.brucelindbloom.com/index.html?Eqn_DeltaE_CIE2000.html
 

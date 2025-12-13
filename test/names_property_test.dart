@@ -43,9 +43,9 @@ void main() {
     });
 
     test('LabColor stores names', () {
-      final LabColor color = LabColor(50, 0, 0, names: testNames);
+      final CIELab color = CIELab(50, 0, 0, names: testNames);
       expect(color.names, equals(testNames));
-      expect(LabColor(50, 0, 0).names, isEmpty);
+      expect(CIELab(50, 0, 0).names, isEmpty);
     });
 
     test('XyzColor stores names', () {

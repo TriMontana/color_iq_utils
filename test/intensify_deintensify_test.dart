@@ -56,8 +56,8 @@ void main() {
     });
 
     test('LabColor intensify delegates correctly', () {
-      final LabColor lab = LabColor(50, 20, 20);
-      final LabColor intensified =
+      final CIELab lab = CIELab(50, 20, 20);
+      final CIELab intensified =
           lab.toColor().intensify(amount: Percent.v10).toLabColor();
 
       // Check if it's different
@@ -65,7 +65,7 @@ void main() {
       // We expect it to be more vivid, so distance from gray (0,0) in ab plane should increase?
       // Or just rely on the fact that it delegates to HCT which we tested.
       // Let's verify it returns a valid LabColor.
-      expect(intensified, isA<LabColor>());
+      expect(intensified, isA<CIELab>());
     });
 
     test('HslColor intensify delegates correctly', () {

@@ -71,11 +71,11 @@ class LchColor extends CommonIQ implements ColorSpacesIQ {
     return (alphaInt << 24) | (red << 16) | (green << 8) | blue;
   }
 
-  LabColor toLab() {
+  CIELab toLab() {
     final double hRad = h * pi / 180;
     final double a = c * cos(hRad);
     final double b = c * sin(hRad);
-    return LabColor(l, a, b);
+    return CIELab(l, a, b);
   }
 
   @override
