@@ -84,7 +84,7 @@ void main() {
     });
 
     test('Pure blue is classified as dark', () {
-      final ColorIQ blue = ColorIQ(0xFF0000FF);
+      final ColorIQ blue = cBlue;
       // Blue LRV ≈ 0.0722, (0.0722 + 0.05)^2 ≈ 0.0149 < 0.15
       expect(blue.brightness, equals(Brightness.dark));
       expect(blue.isDark, isTrue);
@@ -139,11 +139,15 @@ void main() {
 
     test('isDark and isLight are mutually exclusive', () {
       final List<ColorIQ> testColors = <ColorIQ>[
-        ColorIQ(0xFFFF0000),
-        ColorIQ(0xFF00FF00),
-        ColorIQ(0xFF0000FF),
-        ColorIQ(0xFFFFFFFF),
-        ColorIQ(0xFF000000),
+        cRed,
+        cGreen,
+        cBlue,
+        cYellow,
+        cCyan,
+        cMagenta,
+        cWhite,
+        cBlack,
+        ColorIQ(0xFF808080), // Gray
       ];
 
       for (final ColorIQ color in testColors) {

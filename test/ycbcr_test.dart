@@ -108,7 +108,7 @@ void main() {
 
   group('YCbCr Chroma Tests', () {
     test('Pure blue has positive Cb', () {
-      final YCbCrColor blue = YCbCrColor.fromInt(0xFF0000FF);
+      final YCbCrColor blue = YCbCrColor.fromInt(hxBlue);
       expect(blue.cb, greaterThan(0));
       print('✓ Blue Cb: ${blue.cb} > 0');
     });

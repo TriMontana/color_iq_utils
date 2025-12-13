@@ -8,8 +8,7 @@ void main() {
       final OkLabColor whitened = color.whiten(50);
 
       expect(whitened.l, greaterThan(color.l));
-      print('✓ OkLabColor Refactor Tests');
-      print('  whiten: ${whitened.l}');
+      print('✓ whiten increases lightness');
     });
 
     test('blacken decreases lightness', () {
@@ -17,7 +16,7 @@ void main() {
       final OkLabColor blackened = color.blacken(50);
 
       expect(blackened.l, lessThan(color.l));
-      print('✓ OkLabColor Refactor Tests');
+      print('✓ blacken decreases lightness');
     });
 
     test('lerp interpolates correctly', () {
@@ -28,6 +27,7 @@ void main() {
       expect(mid.l, closeTo(0.5, 0.01));
       expect(mid.aLab, closeTo(0.0, 0.01));
       expect(mid.bLab, closeTo(0.0, 0.01));
+      print('✓ lerp interpolates correctly');
     });
   });
 }

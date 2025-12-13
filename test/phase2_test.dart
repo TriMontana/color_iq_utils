@@ -37,7 +37,7 @@ void main() {
       expect(hsb.h, closeTo(240, 0.1));
       expect(hsb.s, closeTo(1.0, 0.1));
       expect(hsb.b, closeTo(1.0, 0.1));
-      expect(hsb.value, 0xFF0000FF);
+      expect(hsb.value, hxBlue);
     });
 
     test('RGB to HWB conversion (Red)', () {
@@ -46,7 +46,7 @@ void main() {
       expect(hwb.h, closeTo(0, 0.1));
       expect(hwb.w, closeTo(0.0, 0.1));
       expect(hwb.b, closeTo(0.0, 0.1));
-      expect(hwb.value, 0xFFFF0000);
+      expect(hwb.value, hxRed);
       print('✓ RGB to HWB conversion (Red)');
     });
 
@@ -55,7 +55,7 @@ void main() {
       final HctColor hct = color.toHctColor();
       // Hct hue for sRGB Red is approx 27-28 degrees (Cam16 hue)
       expect(hct.hue, closeTo(27, 2.0));
-      expect(hct.value, 0xFFFF0000);
+      expect(hct.value, hxRed);
       print('✓ RGB to Hct conversion (Red)');
     });
 
@@ -63,7 +63,8 @@ void main() {
       final ColorIQ color = cRed;
       final Cam16 cam = color.toCam16();
       expect(cam.hue, closeTo(27, 2.0));
-      expect(cam.value, 0xFFFF0000);
+      expect(cam.value, hxRed);
+      print('✓ RGB to Cam16 conversion (Red)');
     });
 
     test('RGB to Display P3 conversion (Red)', () {
@@ -74,7 +75,7 @@ void main() {
       expect(p3.g, closeTo(0.200, 0.05));
       expect(p3.b, closeTo(0.138, 0.05));
       // Round trip check (should be close to original Red)
-      expect(p3.value, 0xFFFF0000);
+      expect(p3.value, hxRed);
       print('✓ RGB to Display P3 conversion (Red)');
     });
 
@@ -87,7 +88,7 @@ void main() {
       // sRGB Red in Rec2020 is approx (0.627, 0.329, 0.093) linear?
       // Let's just check it's not 1,0,0 and round trip works.
       expect(rec2020.r, isNot(closeTo(1.0, 0.001)));
-      expect(rec2020.value, 0xFFFF0000);
+      expect(rec2020.value, hxRed);
       print('✓ RGB to Rec. 2020 conversion (Red)');
     });
   });

@@ -41,14 +41,14 @@ void main() {
     });
 
     test('Pure green has highest LRV among primaries', () {
-      final ColorIQ green = ColorIQ(0xFF00FF00);
+      final ColorIQ green = cGreen;
       // LRV = 0.7152 (green coefficient) * 1.0
       expect(green.lrv.val, closeTo(0.7152, 0.001));
       print('✓ Green LRV: ${green.lrv.val}');
     });
 
     test('Pure blue has lowest LRV among primaries', () {
-      final ColorIQ blue = ColorIQ(0xFF0000FF);
+      final ColorIQ blue = cBlue;
       // LRV = 0.0722 (blue coefficient) * 1.0
       expect(blue.lrv.val, closeTo(0.0722, 0.001));
       print('✓ Blue LRV: ${blue.lrv.val}');

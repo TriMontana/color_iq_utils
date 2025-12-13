@@ -189,6 +189,11 @@ class HclUv extends CommonIQ implements ColorSpacesIQ {
 
   int get hexId => super.colorId ?? HclUv.hclUvToColor(h, c, l).value;
 
+  /// Creates a [HclUv] from a 32-bit ARGB integer value.
+  factory HclUv.fromInt(final int argb) {
+    return HclUv.colorToHclUv(ColorIQ(argb));
+  }
+
   @override
   HclUv copyWith({
     final double? h,

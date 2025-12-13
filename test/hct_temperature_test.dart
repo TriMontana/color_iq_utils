@@ -21,8 +21,11 @@ void main() {
     });
 
     test('Transparency Adjustment', () {
-      final ColorIQ color =
-          ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v100, green: Iq255.v150, blue: Iq255.v200);
+      final ColorIQ color = ColorIQ.fromArgbInts(
+          alpha: Iq255.v255,
+          red: Iq255.v100,
+          green: Iq255.v150,
+          blue: Iq255.v200);
       expect(color.transparency, 1.0);
 
       final ColorIQ transparent = color.adjustTransparency(
@@ -36,6 +39,7 @@ void main() {
       ); // Reduce by 80% -> 20% opacity
       expect(moreTransparent.transparency, closeTo(0.2, 0.01));
       expect(moreTransparent.alphaInt, closeTo(51, 2));
+      print('✓ Transparency Adjustment');
     });
 
     test('Transparency on other models (lossy)', () {
@@ -53,24 +57,40 @@ void main() {
     test('Color Temperature', () {
       // Warm colors
       expect(
-        ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v255, green: Iq255.v0, blue: Iq255.v0)
+        ColorIQ.fromArgbInts(
+                alpha: Iq255.v255,
+                red: Iq255.v255,
+                green: Iq255.v0,
+                blue: Iq255.v0)
             .temperature,
         ColorTemperature.warm,
       ); // Red
       expect(
-        ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v255, green: Iq255.v165, blue: Iq255.v0)
+        ColorIQ.fromArgbInts(
+                alpha: Iq255.v255,
+                red: Iq255.v255,
+                green: Iq255.v165,
+                blue: Iq255.v0)
             .temperature,
         ColorTemperature.warm,
       ); // Orange
       expect(
-        ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v255, green: Iq255.v255, blue: Iq255.v0)
+        ColorIQ.fromArgbInts(
+                alpha: Iq255.v255,
+                red: Iq255.v255,
+                green: Iq255.v255,
+                blue: Iq255.v0)
             .temperature,
         ColorTemperature.warm,
       ); // Yellow
 
       // Cool colors
       expect(
-        ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v0, green: Iq255.v255, blue: Iq255.v0)
+        ColorIQ.fromArgbInts(
+                alpha: Iq255.v255,
+                red: Iq255.v0,
+                green: Iq255.v255,
+                blue: Iq255.v0)
             .temperature,
         ColorTemperature.cool,
       ); // Green
@@ -79,7 +99,11 @@ void main() {
         ColorTemperature.cool,
       ); // Blue
       expect(
-        ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v0, green: Iq255.v255, blue: Iq255.v255)
+        ColorIQ.fromArgbInts(
+                alpha: Iq255.v255,
+                red: Iq255.v0,
+                green: Iq255.v255,
+                blue: Iq255.v255)
             .temperature,
         ColorTemperature.cool,
       ); // Cyan
@@ -92,14 +116,18 @@ void main() {
       // "Cool: 90-270 (Green-Cyan-Blue-Purple)"
       // So Purple (300) is Warm.
       expect(
-        ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v128, green: Iq255.v0, blue: Iq255.v128)
+        ColorIQ.fromArgbInts(red: Iq255.v128, green: Iq255.v0, blue: Iq255.v128)
             .temperature,
         ColorTemperature.warm,
       );
 
       // Blue (240) -> Cool.
       expect(
-        ColorIQ.fromArgbInts(alpha: Iq255.v255, red: Iq255.v0, green: Iq255.v0, blue: Iq255.v255)
+        ColorIQ.fromArgbInts(
+                alpha: Iq255.v255,
+                red: Iq255.v0,
+                green: Iq255.v0,
+                blue: Iq255.v255)
             .temperature,
         ColorTemperature.cool,
       );
@@ -115,6 +143,7 @@ void main() {
 
       final HctColor blueHct = HctColor.alt(260, 100, 50);
       expect(blueHct.temperature, ColorTemperature.cool);
+      print('✓ HctColor Temperature');
       //
     });
   });

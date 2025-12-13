@@ -35,6 +35,7 @@ void main() {
       expect(mid.r, closeTo(0.5, 0.01));
       expect(mid.g, closeTo(0.5, 0.01));
       expect(mid.b, closeTo(0.5, 0.01));
+      print('✓ lerp interpolates correctly');
     });
 
     test('lighterPalette generates lighter colors', () {
@@ -62,6 +63,7 @@ void main() {
         final Rec2020Color c2 = palette[i + 1] as Rec2020Color;
         // Expect decreasing brightness/whiteness
         expect(c2.r, lessThanOrEqualTo(c1.r));
+        print('✓ darkerPalette generates darker colors');
       }
     });
   });

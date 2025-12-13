@@ -38,6 +38,25 @@ class YuvColor extends CommonIQ implements ColorSpacesIQ {
   @override
   int get value => super.colorId ?? YuvColor.hexIdFromYUV(y, u, v);
 
+  /// Creates a [YuvColor] instance from a 32-bit ARGB value.
+  factory YuvColor.fromInt(final int argb) {
+    final int red = (argb >> 16) & 0xFF;
+    final int green = (argb >> 8) & 0xFF;
+    final int blue = argb & 0xFF;
+
+    final double r = red / 255.0;
+    final double g = green / 255.0;
+    final double b = blue / 255.0;
+
+    final double y = 0.299 * r + 0.587 * g + 0.114 * b;
+    return YuvColor(
+      y,
+      -0.14713 * r - 0.28886 * g + 0.436 * b,
+      0.615 * r - 0.51499 * g - 0.10001 * b,
+      val: argb,
+    );
+  }
+
   /// Creates a [YuvColor] instance from a 32-bit hex value.
   factory YuvColor.fromHexId(final int hex) {
     final int green = (hex >> 8) & 0xFF;

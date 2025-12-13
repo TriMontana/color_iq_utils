@@ -59,19 +59,19 @@ void main() {
 
   group('IptColor Opponent Tests', () {
     test('Red has positive P (protan)', () {
-      final IptColor red = IptColor.fromInt(0xFFFF0000);
+      final IptColor red = IptColor.fromInt(hxRed);
       expect(red.p, greaterThan(0));
       print('✓ Red P: ${red.p} > 0');
     });
 
     test('Green has negative P (protan)', () {
-      final IptColor green = IptColor.fromInt(0xFF00FF00);
+      final IptColor green = IptColor.fromInt(hxGreen);
       expect(green.p, lessThan(0));
       print('✓ Green P: ${green.p} < 0');
     });
 
     test('Blue has negative T (tritan)', () {
-      final IptColor blue = IptColor.fromInt(0xFF0000FF);
+      final IptColor blue = IptColor.fromInt(hxBlue);
       expect(blue.t, lessThan(0));
       print('✓ Blue T: ${blue.t} < 0');
     });

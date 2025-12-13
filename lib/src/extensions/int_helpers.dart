@@ -6,7 +6,6 @@ import 'package:material_color_utilities/hct/cam16.dart';
 
 /// Extension for integers
 extension IntHelperIQ on int {
-
   Iq255 get toIq255 => Iq255.getIq255(this);
   String get toHexStr => '0x${toRadixString(16).toUpperCase().padLeft(8, '0')}';
   ArgbInts get rgbaInts => hexIdToComponents(this);
@@ -53,14 +52,14 @@ extension IntHelperIQ on int {
   int get red => ((this >> 16) & 0xFF);
   int get redInt => (0x00ff0000 & this) >> 16;
   Iq255 get redIQ => redInt.toIq255;
-
+  LinRGB get redLinearized => redIQ.linearized;
 
   /// Shifts the Green byte 8 bits to the right, placing it in the lowest
   /// 8 bits. The & 0xFF mask ensures only that byte remains.
   int get green => ((this >> 8) & 0xFF);
   int get greenInt => (0x0000ff00 & this) >> 8;
   Iq255 get greenIQ => greenInt.toIq255;
-
+  LinRGB get greenLinearized => greenIQ.linearized;
 
   /// Shifts the Blue byte 0 bits to the right, placing it in the lowest
   /// 8 bits. The & 0xFF mask ensures only that byte remains.
@@ -72,10 +71,9 @@ extension IntHelperIQ on int {
   LinRGB get alphaLinearized => srgbToLinear(a2);
   double get r => (red / kMax8bit).clamp0to1;
   Percent get r2 => Percent((((this >> 16) & 0xFF) / 255.0).clamp0to1);
-  LinRGB get redLinearized => srgbToLinear(r2);
+
   double get g => (green / kMax8bit).clamp0to1;
   Percent get g2 => Percent((((this >> 8) & 0xFF) / 255.0).clamp0to1);
-  LinRGB get greenLinearized => srgbToLinear(g2);
   double get b => (blue / kMax8bit).clamp0to1;
   Percent get b2 => Percent(((this & 0xFF) / 255.0).clamp0to1);
   LinRGB get blueLinearized => srgbToLinear(b2);

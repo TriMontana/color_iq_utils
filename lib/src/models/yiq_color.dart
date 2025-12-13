@@ -35,6 +35,23 @@ class YiqColor extends CommonIQ implements ColorSpacesIQ {
   @override
   int get value => super.colorId ?? YiqColor.hexIdFromYiq(y, i, q);
 
+  /// Creates a [YiqColor] instance from a 32-bit ARGB value.
+  factory YiqColor.fromInt(final int argb) {
+    final int red = (argb >> 16) & 0xFF;
+    final int green = (argb >> 8) & 0xFF;
+    final int blue = argb & 0xFF;
+
+    final double r = red / 255.0;
+    final double g = green / 255.0;
+    final double b = blue / 255.0;
+
+    final double y = 0.299 * r + 0.587 * g + 0.114 * b;
+    final double i = 0.596 * r - 0.274 * g - 0.322 * b;
+    final double q = 0.211 * r - 0.523 * g + 0.312 * b;
+
+    return YiqColor(y, i, q, val: argb);
+  }
+
   /// Converts a 32-bit ARGB color ID (Flutter Color.value) to YIQ components.
   ///
   /// @param argb32 The 32-bit integer color ID (e.g., 0xFFRRGGBB).

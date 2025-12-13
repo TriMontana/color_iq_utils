@@ -39,6 +39,7 @@ void main() {
       expect(mid.l, closeTo(50, 0.1));
       expect(mid.c, closeTo(100, 0.1));
       expect(mid.h, closeTo(60, 0.1)); // Yellow-ish
+      print('✓ lerp interpolates correctly');
     });
 
     test('lerp handles hue wrapping', () {
@@ -47,6 +48,7 @@ void main() {
       final LchColor mid = start.lerp(end, 0.5);
 
       expect(mid.h, closeTo(0, 0.1) /* or 360 */);
+      print('✓ lerp handles hue wrapping');
     });
 
     test('lerp handles achromatic colors', () {
@@ -58,6 +60,7 @@ void main() {
 
       final LchColor mid2 = gray.lerp(color, 0.5);
       expect(mid2.h, closeTo(120, 0.1)); // Should preserve color hue
+      print('✓ lerp handles achromatic colors');
     });
   });
 }

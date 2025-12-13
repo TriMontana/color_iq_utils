@@ -37,6 +37,11 @@ class MunsellColor extends CommonIQ implements ColorSpacesIQ {
   int get value =>
       super.colorId ?? MunsellColor.toHexId(hue, munsellValue, chroma);
 
+  /// Creates a [MunsellColor] from a 32-bit ARGB integer value.
+  factory MunsellColor.fromInt(final int argb) {
+    return ColorIQ(argb).toMunsell();
+  }
+
   /// Creates a 32-bit hex ID from the Munsell properties.
   ///
   /// This method generates a reproducible ARGB integer value based on the
@@ -68,7 +73,7 @@ class MunsellColor extends CommonIQ implements ColorSpacesIQ {
     // Since we don't have the tables, we'll return Black or throw.
     // Or better, return a neutral gray based on Value.
     // Value 0-10 maps to L* 0-100 roughly.
-    final  Iq255 grayVal = (munsellValue * 25.5).round().clamp(0, 255).toIq255;
+    final Iq255 grayVal = (munsellValue * 25.5).round().clamp(0, 255).toIq255;
     return ColorIQ.fromArgbInts(
         alpha: Iq255.v255, red: grayVal, green: grayVal, blue: grayVal);
   }

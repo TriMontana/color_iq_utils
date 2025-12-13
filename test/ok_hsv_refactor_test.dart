@@ -6,8 +6,8 @@ void main() {
     test('adjustTransparency decreases alpha', () {
       const OkHsvColor color = OkHsvColor(0.0, 0.0, 0.0);
       final OkHsvColor transparent = color.increaseTransparency(Percent.v50);
-
       expect(transparent.alpha, closeTo(0.5, 0.01));
+      print('✓ adjustTransparency decreases alpha');
     });
 
     test('transparency returns alpha', () {
@@ -29,12 +29,14 @@ void main() {
       const OkHsvColor color = OkHsvColor(0.0, 0.0, 0.0);
       final OkHsvColor whitened = color.whiten(50);
       expect(whitened.val, greaterThan(color.val));
+      print('✓ whiten increases value');
     });
 
     test('blacken decreases value', () {
       const OkHsvColor color = OkHsvColor(0.0, 0.0, 1.0);
       final OkHsvColor blackened = color.blacken(50);
       expect(blackened.val, lessThan(color.val));
+      print('✓ blacken decreases value');
     });
 
     test('lerp interpolates correctly', () {
@@ -42,19 +44,21 @@ void main() {
       const OkHsvColor end = OkHsvColor(0.0, 0.0, 1.0);
       final OkHsvColor mid = start.lerp(end, 0.5);
       expect(mid.val, closeTo(0.5, 0.01));
-      print('✓ OkHsvColor Refactor Tests');
+      print('✓ lerp interpolates correctly');
     });
 
     test('intensify increases saturation', () {
       const OkHsvColor color = OkHsvColor(0.0, 0.5, 0.5);
       final OkHsvColor intensified = color.intensify(10);
       expect(intensified.saturation, greaterThan(color.saturation));
+      print('✓ intensify increases saturation');
     });
 
     test('deintensify decreases saturation', () {
       const OkHsvColor color = OkHsvColor(0.0, 0.5, 0.5);
       final OkHsvColor deintensified = color.deintensify(10);
       expect(deintensified.saturation, lessThan(color.saturation));
+      print('✓ deintensify decreases saturation');
     });
   });
 }

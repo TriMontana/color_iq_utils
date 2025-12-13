@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
-import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/jch_color.dart';
 import 'package:material_color_utilities/hct/cam16.dart';
 
@@ -98,13 +97,6 @@ class JabColor extends CommonIQ implements ColorSpacesIQ {
         cam16.bstar,
         hexId: cam16.toInt(),
       );
-
-  @override
-  ColorIQ toColor() => ColorIQ(value);
-
-  /// Converts this JAB color to CAM16.
-  @override
-  Cam16 toCam16() => Cam16.fromInt(value);
 
   /// Converts this JAB color to cylindrical JCH representation.
   JchColor toJch() {

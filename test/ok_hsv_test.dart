@@ -41,7 +41,7 @@ void main() {
       // V: 0.5
       expect(whitened.saturation, closeTo(0.5, 0.001));
       expect(whitened.val, closeTo(0.5, 0.001));
-      print('✓ OkHsvColor Tests');
+      print('✓ whiten moves towards white');
     });
 
     test('blacken moves towards black', () {
@@ -50,6 +50,7 @@ void main() {
       // Black is V=0
       // Lerp 50% from V=1 to V=0 -> V=0.5
       expect(blackened.val, closeTo(0.5, 0.001));
+      print('✓ blacken moves towards black');
     });
 
     test('lerp interpolates correctly', () {
@@ -59,6 +60,7 @@ void main() {
       expect(lerped.hue, closeTo(50.0, 0.001));
       expect(lerped.saturation, closeTo(0.5, 0.001));
       expect(lerped.val, closeTo(0.5, 0.001));
+      print('✓ lerp interpolates correctly');
     });
 
     test('monochromatic generates 5 colors', () {
@@ -69,6 +71,7 @@ void main() {
       // Variations in value
       expect((palette[0] as OkHsvColor).val, closeTo(0.3, 0.001));
       expect((palette[4] as OkHsvColor).val, closeTo(0.7, 0.001));
+      print('✓ monochromatic generates 5 colors');
     });
 
     test('lighterPalette generates lighter colors', () {
@@ -77,6 +80,7 @@ void main() {
       expect(palette.length, 5);
       expect((palette[0] as OkHsvColor).val, closeTo(0.6, 0.001));
       expect((palette[4] as OkHsvColor).val, closeTo(1.0, 0.001));
+      print('✓ lighterPalette generates lighter colors');
     });
 
     test('darkerPalette generates darker colors', () {
@@ -85,6 +89,7 @@ void main() {
       expect(palette.length, 5);
       expect((palette[0] as OkHsvColor).val, closeTo(0.4, 0.001));
       expect((palette[4] as OkHsvColor).val, closeTo(0.0, 0.001));
+      print('✓ darkerPalette generates darker colors');
     });
 
     test('random generates valid color', () {
@@ -98,6 +103,7 @@ void main() {
       expect(okHsv.saturation, lessThanOrEqualTo(1.0));
       expect(okHsv.val, greaterThanOrEqualTo(0.0));
       expect(okHsv.val, lessThanOrEqualTo(1.0));
+      print('✓ random generates valid color');
     });
   });
 }

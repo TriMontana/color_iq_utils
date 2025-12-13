@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:color_iq_utils/src/colors/html.dart';
 import 'package:color_iq_utils/src/foundation_lib.dart';
+import 'package:color_iq_utils/src/models/coloriq.dart';
 import 'package:color_iq_utils/src/models/hsluv.dart';
 
 /// A representation of color in the HSLuv color space.
@@ -33,6 +34,11 @@ class HsluvColor extends CommonIQ implements ColorSpacesIQ {
   /// Creates a 32-bit ARGB hex value from HSLuv components.
   @override
   int get value => super.colorId ?? HsluvColor.hexIdFromHSLuv(h: h, s: s, l: l);
+
+  /// Creates a [HsluvColor] from a 32-bit ARGB integer value.
+  factory HsluvColor.fromInt(final int argb) {
+    return ColorIQ(argb).toHsluv();
+  }
 
   static int hexIdFromHSLuv(
       {required final double h,

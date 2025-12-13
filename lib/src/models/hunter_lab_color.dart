@@ -34,6 +34,11 @@ class HunterLabColor extends CommonIQ implements ColorSpacesIQ {
       super.colorId ??
       HunterLabColor.hexIdFromHunter(l, aLab, bLab, alpha: alpha);
 
+  /// Creates a [HunterLabColor] from a 32-bit ARGB integer value.
+  factory HunterLabColor.fromInt(final int argb) {
+    return ColorIQ(argb).toHunterLab();
+  }
+
   /// A stand-alone static method to create a 32-bit hexID/ARGB from l, aLab, bLab.
   static int hexIdFromHunter(
       final double l, final double aLab, final double bLab,

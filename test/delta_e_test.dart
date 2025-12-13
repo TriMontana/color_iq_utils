@@ -20,6 +20,7 @@ void main() {
         c1.deltaE(c2, algorithm: DeltaEAlgorithm.cie76),
         closeTo(14.14, 0.01),
       );
+      print('✓ CIE76 Calculation');
     });
 
     test('CIEDE2000 L-only difference', () {
@@ -36,6 +37,7 @@ void main() {
         c1.deltaE(c2, algorithm: DeltaEAlgorithm.ciede2000),
         closeTo(9.47, 0.1),
       );
+      print('✓ CIEDE2000 L-only difference');
     });
 
     test('CIEDE2000 a-only difference', () {

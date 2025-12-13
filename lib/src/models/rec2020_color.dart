@@ -29,6 +29,11 @@ class Rec2020Color extends CommonIQ implements ColorSpacesIQ {
   @override
   int get value => super.colorId ?? Rec2020Color.toHexID(r, g, b);
 
+  /// Creates a [Rec2020Color] from a 32-bit ARGB integer value.
+  factory Rec2020Color.fromInt(final int argb) {
+    return ColorIQ(argb).toRec2020();
+  }
+
   /// Creates a 32-bit hex ARGB value from the properties of this class.
   ///
   /// This is a convenience method that converts the Rec. 2020 color

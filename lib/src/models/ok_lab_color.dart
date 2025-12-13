@@ -16,7 +16,7 @@ import 'package:color_iq_utils/src/models/ok_lch_color.dart';
 ///
 /// [l] represents lightness (from 0 to 1, where 0 is black and 1 is white).
 /// [aLab] represents the green-red axis.
-/// [b] represents the blue-yellow axis.
+/// [bLab] represents the blue-yellow axis.
 /// [alpha] represents the opacity (from 0.0 for transparent to 1.0 for opaque).
 class OkLabColor extends CommonIQ implements ColorSpacesIQ {
   /// The lightness component of the color, ranging from 0.0 (black) to 1.0 (white).
@@ -38,9 +38,11 @@ class OkLabColor extends CommonIQ implements ColorSpacesIQ {
       {final Percent alpha = Percent.max,
       final int? hexId,
       final List<String>? names})
-      : assert(l >= 0 && l <= 1, 'L must be between 0 and 1'),
-        assert(aLab >= -1 && aLab <= 1, 'A must be between -1 and 1'),
-        assert(bLab >= -1 && bLab <= 1, 'B must be between -1 and 1'),
+      : assert(l >= 0 && l <= 1, 'L must be between 0 and 1, but was $l'),
+        assert(aLab >= -1 && aLab <= 1,
+            'A must be between -1 and 1, but was $aLab'),
+        assert(bLab >= -1 && bLab <= 1,
+            'B must be between -1 and 1, but was $bLab'),
         super(hexId, alpha: alpha, names: names ?? kEmptyNames);
 
   @override

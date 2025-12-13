@@ -9,6 +9,7 @@ void main() {
 
       expect(whitened.brightnessHsb.val, greaterThan(color.brightnessHsb.val));
       expect(whitened.s, lessThan(color.s));
+      print('✓ whiten increases brightness and desaturates');
     });
 
     test('blacken decreases brightness and desaturates', () {
@@ -34,8 +35,8 @@ void main() {
     test('intensify increases saturation', () {
       const HsbColor color = HsbColor(0, 0.5, Percent.mid);
       final HsbColor intensified = color.intensify(20);
-
       expect(intensified.s, closeTo(0.7, 0.01));
+      print('✓ intensify increases saturation');
     });
 
     test('deintensify decreases saturation', () {
@@ -43,6 +44,7 @@ void main() {
       final HsbColor deintensified = color.deintensify(20);
 
       expect(deintensified.s, closeTo(0.3, 0.01));
+      print('✓ deintensify decreases saturation');
     });
   });
 }

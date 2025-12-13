@@ -49,11 +49,11 @@ void main() {
 
     test('Multiple colors match CAM16', () {
       final List<int> colors = <int>[
-        0xFFFF0000, // Red
-        0xFF00FF00, // Green
-        0xFF0000FF, // Blue
-        0xFFFFFF00, // Yellow
-        0xFF808080, // Gray
+        hxRed,
+        hxGreen,
+        hxBlue,
+        hxYellow,
+        hxGray,
       ];
 
       for (final int color in colors) {

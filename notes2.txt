@@ -122,4 +122,9 @@ this callback must be used inside initState and after super.initState().
 
   NOTE: To fix the yaml issue, you must destroy the pub.cache under
   NOTE: To fix the yaml issue, you must destroy the pub.cache under
-  C:\Users\trimo\AppData\Local\Pub
+  C:\Users\trimo\AppData\Local\Pub   
+
+
+
+  dart test test/interface_compliance_test.dart --reporter=expanded 
+  dart test test/interface_compliance_test.dart --chain-stack-traces

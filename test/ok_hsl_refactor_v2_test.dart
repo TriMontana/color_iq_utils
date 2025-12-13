@@ -8,6 +8,7 @@ void main() {
       final OkHslColor intensified = color.intensify(10);
 
       expect(intensified.s, greaterThan(color.s));
+      print('✓ intensify increases saturation');
     });
 
     test('deintensify decreases saturation', () {
@@ -15,7 +16,7 @@ void main() {
       final OkHslColor deintensified = color.deintensify(10);
 
       expect(deintensified.s, lessThan(color.s));
-      print('✓ OkHslColor Refactor V2 Tests');
+      print('✓ deintensify decreases saturation');
     });
 
     test('accented increases saturation', () {
@@ -23,6 +24,7 @@ void main() {
       final OkHslColor accented = color.accented(10);
 
       expect(accented.s, greaterThan(color.s));
+      print('✓ accented increases saturation');
     });
   });
 }

@@ -49,11 +49,11 @@ void main() {
 
     test('J (lightness) matches between JCH and CAM16', () {
       final List<int> colors = <int>[
-        0xFFFF0000,
-        0xFF00FF00,
-        0xFF0000FF,
-        0xFFFFFFFF,
-        0xFF000000,
+        hxRed,
+        hxGreen,
+        hxBlue,
+        hxWhite,
+        hxBlack,
       ];
 
       for (final int color in colors) {
@@ -178,12 +178,14 @@ void main() {
   group('JchColor Hue Properties', () {
     test('Hue is in valid range 0-360', () {
       final List<int> colors = <int>[
-        0xFFFF0000,
-        0xFF00FF00,
-        0xFF0000FF,
-        0xFFFFFF00,
-        0xFF00FFFF,
-        0xFFFF00FF,
+        hxRed,
+        hxGreen,
+        hxBlue,
+        hxYellow,
+        hxCyan,
+        hxMagenta,
+        hxWhite,
+        hxBlack,
       ];
 
       for (final int color in colors) {
@@ -206,9 +208,9 @@ void main() {
     });
 
     test('Saturated colors have high chroma', () {
-      final JchColor red = JchColor.fromInt(0xFFFF0000);
-      final JchColor green = JchColor.fromInt(0xFF00FF00);
-      final JchColor blue = JchColor.fromInt(0xFF0000FF);
+      final JchColor red = JchColor.fromInt(hxRed);
+      final JchColor green = JchColor.fromInt(hxGreen);
+      final JchColor blue = JchColor.fromInt(hxBlue);
 
       expect(red.c, greaterThan(20));
       expect(green.c, greaterThan(20));

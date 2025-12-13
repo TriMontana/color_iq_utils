@@ -96,9 +96,9 @@ mixin ColorModelsMixin {
   double get luminance => computeLuminanceViaHexId(value);
 
   /// Same as luminance, but stored in global cache.
-  Percent get toLrv => mapLRVs.getOrCreate(value);
+  Percent get toLrv => mapLRVs.getOrCreateLRV(value);
 
-  Brightness get brightness => calculateBrightness(toLrv);
+  Brightness get brightness => mapBrightness.getOrCreate(value);
 
   bool get isDark => brightness == Brightness.dark;
 
