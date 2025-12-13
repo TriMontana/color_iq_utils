@@ -9,7 +9,7 @@ class HTML extends ColorIQ implements ColorWheelInf {
   HTML(super.argb,
       {required super.names,
       required HctData super.hct,
-        super.argbColor,
+      super.argbColor,
       super.alphaInt,
       super.red,
       super.green,
@@ -36,6 +36,7 @@ enum ColorFamilyHTML {
   black(hxBlack, kBlack);
 
   const ColorFamilyHTML(this.argb, this.names);
+
   final int argb;
   final List<String> names;
 }
@@ -113,7 +114,11 @@ final ColorIQ cBlanchedAlmond =
     ColorIQ(hxBlanchedAlmond, names: kBlanchedAlmond);
 const int hxBlue = 0xFF0000FF;
 final HTML cBlue = HTML(hxBlue,
-    names: kBlue, red: Iq255.v0, green: Iq255.v0, blue: Iq255.v255, hct: const HctData(266, 87, 32));
+    names: kBlue,
+    red: Iq255.v0,
+    green: Iq255.v0,
+    blue: Iq255.v255,
+    hct: const HctData(266, 87, 32));
 const int hxBlueViolet = 0xFF8A2BE2;
 final HTML cBlueViolet = HTML(hxBlueViolet,
     names: kBlueViolet,
@@ -165,7 +170,6 @@ final HTML cCornflowerBlue = HTML(
   hct: const HctData(265.03593, 52.41255, 61.92819),
   lrv: const Percent(0.303186),
   brightness: Brightness.dark,
-
   hsv: const HSV.alt(
       h: Hue(218.54015),
       s: Percent(0.5781),
@@ -198,7 +202,6 @@ const int hxDarkBlue = 0xFF00008B;
 final HTML cDarkBlue = HTML(
   hxDarkBlue,
   names: kDarkBlue,
-
   red: Iq255.v0,
   green: Iq255.v0,
   blue: Iq255.v139,
@@ -234,7 +237,6 @@ const int hxDarkGray = 0xFFA9A9A9;
 final HTML cDarkGray = HTML(
   hxDarkGray,
   names: kDarkGray,
-
   hsv: const HSV.alt(
       h: Hue.zero, s: Percent.min, v: Percent(0.66275), a: Percent.max),
   hct: const HctData(209.49322, 2.23928, 69.2378),
@@ -263,7 +265,6 @@ final HTML cDarkMagenta = HTML(
   names: kDarkMagenta,
   hct: const HctData(334.57389, 73.8946, 32.59748),
   lrv: const Percent(0.07353),
-
   hsv: const HSV.alt(
       h: Hue.v300, s: Percent.max, v: Percent(0.5451), a: Percent.max),
   brightness: Brightness.dark,
@@ -275,7 +276,6 @@ final HTML cDarkOliveGreen = HTML(
   hct: const HctData(128.62385, 34.96939, 42.23403),
   lrv: const Percent(0.126519),
   brightness: Brightness.dark,
-
   hsv: const HSV.alt(
       h: Hue(82.0), s: Percent(0.56075), v: Percent(0.41961), a: Percent.max),
 );
@@ -287,11 +287,30 @@ const int hxDarkRed = 0xFF8B0000;
 final HTML cDarkRed =
     HTML(hxDarkRed, names: kDarkRed, hct: const HctData(25, 92, 29));
 const int hxDarkSalmon = 0xFFE9967A;
-final ColorIQ cDarkSalmon = ColorIQ(hxDarkSalmon, names: kDarkSalmon);
+final HTML cDarkSalmon = HTML(
+  hxDarkSalmon,
+  names: kDarkSalmon,
+  hct: const HctData(37.08205, 35.90155, 69.85346),
+  lrv: const Percent(0.405415),
+  brightness: Brightness.light,
+);
 const int hxDarkSeaGreen = 0xFF8FBC8F;
-final ColorIQ cDarkSeaGreen = ColorIQ(hxDarkSeaGreen, names: kDarkSeaGreen);
+final HTML cDarkSeaGreen = HTML(hxDarkSeaGreen, names: kDarkSeaGreen, hct: const HctData(149.26201,  31.26704,  72.08741),
+  lrv: const Percent(0.437892),
+  brightness: Brightness.light,);
 const int hxDarkSlateBlue = 0xFF483D8B;
-final ColorIQ cDarkSlateBlue = ColorIQ(hxDarkSlateBlue, names: kDarkSlateBlue);
+final HTML cDarkSlateBlue = HTML(
+  hxDarkSlateBlue,
+  names: kDarkSlateBlue,
+  hct: const HctData(292.19372, 45.80113, 30.82929),
+  lrv: const Percent(0.065793),
+  hsv: const HSV.alt(
+      h: Hue(248.46154),
+      s: Percent(0.56115),
+      v: Percent(0.5451),
+      a: Percent.max),
+  brightness: Brightness.dark,
+);
 const int hxDarkSlateGray = 0xFF2F4F4F;
 final HTML cDarkSlateGray = HTML(hxDarkSlateGray,
     names: kDarkSlateGray, hct: const HctData(210, 20, 56));
@@ -340,7 +359,6 @@ const HSV hsvGreen =
     HSV(Hue.v120, Percent.max, Percent.max, colorId: hxGreenHtml);
 const HSL hslGreen =
     HSL(120, Percent.max, Percent.mid, hexId: hxGreenHtml, names: kGreen);
-
 const int hxGreenYellow = 0xFFADFF2F;
 final ColorIQ cGreenYellow = ColorIQ(hxGreenYellow, names: kGreenYellow);
 const int hxHoneyDew = 0xFFF0FFF0;
@@ -349,7 +367,9 @@ final ColorIQ cHoneyDew = ColorIQ(hxHoneyDew, names: kHoneyDew);
 const int hxHotPink = 0xFFFF69B4;
 final ColorIQ cHotPink = ColorIQ(hxHotPink, names: kHotPink);
 const int hxIndianRed = 0xFFCD5C5C;
-final ColorIQ cIndianRed = ColorIQ(hxIndianRed, names: kIndianRed);
+final HTML cIndianRed = HTML(hxIndianRed, names: kIndianRed, hct: const HctData(19.9826,  54.09918,  53.39115),
+  lrv: const Percent(0.214061),
+  brightness: Brightness.dark,);
 const int hxIndigo = 0xFF4B0082;
 final ColorIQ cIndigo = ColorIQ(hxIndigo, names: kIndigo);
 const int hxIvory = 0xFFFFFFF0;
@@ -362,7 +382,6 @@ final HTML cKhaki = HTML(
   names: kKhaki,
   hct: const HctData(105.60575, 36.00867, 90.3273),
   lrv: const Percent(0.770123),
-
   hsv: const HSV.alt(
       h: Hue(54.0), s: Percent(0.41667), v: Percent(0.94118), a: Percent.max),
   brightness: Brightness.light,
@@ -372,7 +391,9 @@ final ColorIQ cLavender = ColorIQ(hxLavender, names: kLavender);
 const int hxLavenderBlush = 0xFFFFF0F5;
 final ColorIQ cLavenderBlush = ColorIQ(hxLavenderBlush, names: kLavenderBlush);
 const int hxLawnGreen = 0xFF7CFC00;
-final ColorIQ cLawnGreen = ColorIQ(hxLawnGreen, names: kLawnGreen);
+final HTML cLawnGreen = HTML(hxLawnGreen, names: kLawnGreen, hct: const HctData(136.22703,  97.59093,  88.87799),
+  lrv: const Percent(0.739059),
+  brightness: Brightness.light,);
 const int hxLemonChiffon = 0xFFFFFACD;
 final ColorIQ cLemonChiffon = ColorIQ(hxLemonChiffon, names: kLemonChiffon);
 const int hxLightBlue = 0xFFADD8E6;
@@ -386,7 +407,9 @@ const int hxLightGoldenRodYellow = 0xFFFAFAD2;
 final ColorIQ cLightGoldenRodYellow =
     ColorIQ(hxLightGoldenRodYellow, names: kLightGoldenRodYellow);
 const int hxLightGray = 0xFFD3D3D3;
-final ColorIQ cLightGray = ColorIQ(hxLightGray, names: kLightGray);
+final HTML cLightGray = HTML(hxLightGray, names: kLightGray, hct: const HctData(209.4926,  2.55959,  84.55612),
+  lrv: const Percent(0.651406),
+  brightness: Brightness.light,);
 const int hxLightGreen = 0xFF90EE90;
 final ColorIQ cLightGreen = ColorIQ(hxLightGreen, names: kLightGreen);
 const int hxLightPink = 0xFFFFB6C1;
@@ -438,8 +461,10 @@ const int hxMediumSlateBlue = 0xFF7B68EE;
 final ColorIQ cMediumSlateBlue =
     ColorIQ(hxMediumSlateBlue, names: kMediumSlateBlue);
 const int hxMediumSpringGreen = 0xFF00FA9A;
-final ColorIQ cMediumSpringGreen =
-    ColorIQ(hxMediumSpringGreen, names: kMediumSpringGreen);
+final HTML cMediumSpringGreen =
+    HTML(hxMediumSpringGreen, names: kMediumSpringGreen, hct: const HctData(158.92056,  74.16895,  87.34115),
+      lrv: const Percent(0.707043),
+      brightness: Brightness.light,);
 const int hxMediumTurquoise = 0xFF48D1CC;
 final ColorIQ cMediumTurquoise =
     ColorIQ(hxMediumTurquoise, names: kMediumTurquoise);
@@ -462,7 +487,6 @@ final HTML cMoccasin = HTML(
   hct: const HctData(83.92093, 19.97986, 91.72209),
   hsv: const HSV.alt(
       h: Hue(38.10811), s: Percent(0.2902), v: Percent.max, a: Percent.max),
-
   brightness: Brightness.light,
 );
 const int hxNavajoWhite = 0xFFFFDEAD;
@@ -470,7 +494,11 @@ final ColorIQ cNavajoWhite = ColorIQ(hxNavajoWhite, names: kNavajoWhite);
 const int hxNavy = 0xFF000080;
 final HTML cNavy = HTML(hxNavy, names: kNavy, hct: const HctData(273, 47, 13));
 const int hxOldLace = 0xFFFDF5E6;
-final ColorIQ cOldLace = ColorIQ(hxOldLace, names: kOldLace);
+final HTML cOldLace = HTML(hxOldLace, names: kOldLace, hct: const HctData(95.40681,  6.41598,  96.77967),
+  lrv: const Percent(0.919006),
+  brightness: Brightness.light,);
+
+HTML fnOldLace() => cOldLace;
 const int hxOlive = 0xFF808000;
 final HTML cOlive =
     HTML(hxOlive, names: kOlive, hct: const HctData(112, 55, 53));
@@ -478,7 +506,6 @@ final HTML cOlive =
 const int hxOliveDrab = 0xFF6B8E23;
 final HTML cOliveDrab = HTML(hxOliveDrab,
     names: kOliveDrab,
-
     lrv: const Percent(0.226),
     hct: const HctData(128, 53, 55));
 const int hxOrangeHtml = 0xFFFFA500;
@@ -495,11 +522,15 @@ const int hxPaleGoldenRod = 0xFFEEE8AA;
 final HTML cPaleGoldenRod = HTML(hxPaleGoldenRod,
     names: kPaleGoldenRod, hct: const HctData(88, 53, 55));
 const int hxPaleGreen = 0xFF98FB98;
-final ColorIQ cPaleGreen = ColorIQ(hxPaleGreen, names: kPaleGreen);
+final HTML cPaleGreen = HTML(hxPaleGreen, names: kPaleGreen, hct: const HctData(146.87387,  58.65472,  90.75104),
+    lrv: const Percent(0.779368),
+    brightness: Brightness.light,);
 const int hxPaleTurquoise = 0xFFAFEEEE;
 final ColorIQ cPaleTurquoise = ColorIQ(hxPaleTurquoise, names: kPaleTurquoise);
 const int hxPaleVioletRed = 0xFFDB7093;
-final ColorIQ cPaleVioletRed = ColorIQ(hxPaleVioletRed, names: kPaleVioletRed);
+final HTML cPaleVioletRed = HTML(hxPaleVioletRed, names: kPaleVioletRed, hct: const HctData(1.13017,  50.92357,  60.56479),
+  lrv: const Percent(0.28755),
+  brightness: Brightness.dark,);
 const int hxPapayaWhip = 0xFFFFEFD5;
 final ColorIQ cPapayaWhip = ColorIQ(hxPapayaWhip, names: kPapayaWhip);
 const int hxPeachPuff = 0xFFFFDAB9;
@@ -573,12 +604,12 @@ final HTML cPurpleHtml = HTML(
   hxPurpleHtml,
   names: kPurple,
   hct: const HctData(334.56803, 70.27262, 29.7821),
-
   hsv: const HSV.alt(
       h: Hue.v300, s: Percent.max, v: Percent(0.50196), a: Percent.max),
   lrv: const Percent(0.061477),
   brightness: Brightness.dark,
 );
+
 HTML fnPurple() => cPurpleHtml;
 const int hxRebeccaPurple = 0xFF663399;
 final ColorIQ cRebeccaPurple = ColorIQ(hxRebeccaPurple, names: kRebeccaPurple);
@@ -588,7 +619,9 @@ const HSL kHslRed =
     HSL(0, Percent.max, Percent.mid, hexId: hxRed, names: kRed); // Red
 const HSV kHsvRed = HSV(Hue.zero, Percent.max, Percent.max, colorId: hxRed);
 const int hxRosyBrown = 0xFFBC8F8F;
-final ColorIQ cRosyBrown = ColorIQ(hxRosyBrown, names: kRosyBrown);
+final HTML cRosyBrown = HTML(hxRosyBrown, names: kRosyBrown, hct: const HctData(17.25845,  19.07199,  63.60604),
+  lrv: const Percent(0.323195),
+  brightness: Brightness.dark,);
 const int hxRoyalBlue = 0xFF4169E1;
 final HTML cRoyalBlue =
     HTML(hxRoyalBlue, names: kRoyalBlue, hct: const HctData(258, 54, 47));
@@ -639,11 +672,14 @@ final HTML cTeal = HTML(
   names: kTeal,
   hct: const HctData(194, 30, 48),
 );
+
 HTML fnTeal() => cTeal;
 const int hxThistle = 0xFFD8BFD8;
 final ColorIQ cThistle = ColorIQ(hxThistle, names: kThistle);
 const int hxTomato = 0xFFFF6347;
-final ColorIQ cTomato = ColorIQ(hxTomato, names: kTomato);
+final HTML cTomato = HTML(hxTomato, names: kTomato, hct: const HctData(29.54353,  73.93671,  62.20137),
+  lrv: const Percent(0.306386),
+  brightness: Brightness.dark,);
 const int hxTurquoise = 0xFF40E0D0;
 final ColorIQ cTurquoise = ColorIQ(hxTurquoise, names: kTurquoise);
 const int hxViolet = 0xFFEE82EE;
@@ -767,7 +803,7 @@ enum HtmlEN {
   moccasin(hxMoccasin, kMoccasin, ColorFamilyHTML.orange),
   navajoWhite(hxNavajoWhite, kNavajoWhite, ColorFamilyHTML.orange),
   navy(hxNavy, kNavy, ColorFamilyHTML.blue),
-  oldLace(hxOldLace, kOldLace, ColorFamilyHTML.white),
+  oldLace(hxOldLace, kOldLace, ColorFamilyHTML.white, tdHtml: fnOldLace),
   olive(hxOlive, kOlive, ColorFamilyHTML.green),
   oliveDrab(hxOliveDrab, kOliveDrab, ColorFamilyHTML.green),
   orange(hxOrangeHtml, kOrange, ColorFamilyHTML.orange),
@@ -818,8 +854,13 @@ enum HtmlEN {
   final List<String> names;
   final ColorFamilyHTML family;
   final TdHtml? tdHtml;
-  const HtmlEN(this.value, this.names, this.family, {this.tdHtml});
+  final HctData? hct;
+
+  const HtmlEN(this.value, this.names, this.family, {this.tdHtml, this.hct});
+
   int get hexId => value;
+
   String get hexString => value.toHexStr;
+
   HTML get html => tdHtml?.call() ?? colorRegistry[value] as HTML;
 }
